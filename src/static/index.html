@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <script>
+            ;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[]; p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments) };p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1; n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://cdn.jsdelivr.net/npm/@snowplow/javascript-tracker@3.2.3/dist/sp.js","snowplow")); 
+        </script>
+    </head>
+    <script>
+        window.snowplow('newTracker', 'sp', 'localhost:8080', {
+            appId: 'site',
+            eventMethod: 'get',
+            // eventMethod: 'post',
+            cookieName: "sp-nuid",
+            cookieSameSite: 'Lax',
+            forceSecureTracker: false,
+            withCredentials: false,
+        })
+        window.snowplow('enableActivityTracking', {
+            minimumVisitLength: 3,
+            heartbeatDelay: 5
+        });
+        window.snowplow('trackPageView');
+        window.snowplow('setUserId', 'jake@bostata.com');
+    </script>
+    <body>
+        <h1>Tracker Test</h1>
+        <button id="self-describing">Press Me For Self Describing Event</button>
+        <button id="struct">Press Me For Struct Event</button>
+        <a href="http://localhost:8080/r/tp2?u=http://facebook.com" target="_blank">Redirect to Facebook but Include Tracking</a>
+    </body>
+    <footer>
+        <script>
+            document.getElementById('self-describing').addEventListener("click", function() {
+                window.snowplow('trackSelfDescribingEvent', {
+                    event: {
+                        schema: "com.sixriver/ui/clicked-button/1-0-0",
+                        data: {
+                            buttonId: "self-describing",
+                            value: "now"
+                        }
+                    }
+                })
+            });
+
+            document.getElementById('struct').addEventListener("click", function() {
+                window.snowplow('trackStructEvent', {
+                    category: "ui",
+                    action: "clicked-button",
+                    label: "struct-event",
+                    property: "someprop",
+                    value: 10.0
+                })
+            })
+        </script>
+    </footer>
+</html>

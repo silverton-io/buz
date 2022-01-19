@@ -1,0 +1,29 @@
+version: 1
+
+app:
+  environment: dev
+  port: 8080
+
+routing:
+  includeStandardRoutes: True
+  postPath: tp2/
+  getPath:  i/
+  redirectPath: r/tp2
+
+cookie:
+  name: sp-nuid
+  domain: bostata.com
+  ttlDays: 365
+  secure: True
+  sameSite: Lax
+
+cors:
+  allowedOrigins:
+    - "*"
+  maxAge: 86400
+
+parser:
+  extractCookies: True
+
+telemetry:
+  enable: False
