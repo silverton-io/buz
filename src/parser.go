@@ -45,13 +45,13 @@ func stringToHeight(val string) int {
 	return stringToInt(split[1])
 }
 
-// func getParamValue(param string, c *gin.Context) string {
-// 	if c.Request.Method == "GET" {
-// 		return c.Query(param)
-// 	} else if c.Request.Method == "POST" {
-
-// 	}
-// }
+func stringToFloat64(val string) float64 {
+	f, err := strconv.ParseFloat(val, 64)
+	if err != nil {
+		log.Fatal(err) // FIXME!
+	}
+	return f
+}
 
 func b64ToMap(encodedJson string) map[string]interface{} {
 	var decodedJSON map[string]interface{}
@@ -70,14 +70,6 @@ func b64ToMap(encodedJson string) map[string]interface{} {
 
 // func getTimeParam(param string) time.Time {
 
-// }
-
-// func getFloat64Param(param string) float64 {
-// 	f, err := strconv.ParseFloat(param, 64)
-// 	if err != nil {
-// 		fmt.Println("Cannot convert val ", param)
-// 	}
-// 	return f
 // }
 
 func getEventType(param string) string {

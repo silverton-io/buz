@@ -65,7 +65,32 @@ func HandlePost(c *gin.Context) {
 			Pp_xoffset_max:           stringToInt(e.Get("pp_max").String()),
 			Pp_yoffset_min:           stringToInt(e.Get("pp_miy").String()),
 			Pp_yoffset_max:           stringToInt(e.Get("pp_may").String()),
-			Self_describing_event:    b64ToMap(e.Get("ue_px").String()),
+
+			Tr_orderid:     e.Get("tr_id").String(),
+			Tr_affiliation: e.Get("tr_af").String(),
+			Tr_total:       stringToFloat64(e.Get("tr_tt").String()),
+			Tr_tax:         stringToFloat64(e.Get("tr_tx").String()),
+			Tr_shipping:    stringToFloat64(e.Get("tr_sh").String()),
+			Tr_city:        e.Get("tr_ci").String(),
+			Tr_state:       e.Get("tr_st").String(),
+			Tr_country:     e.Get("tr_co").String(),
+			Tr_currency:    e.Get("tr_cu").String(),
+
+			Ti_orderid:  e.Get("ti_id").String(),
+			Ti_sku:      e.Get("ti_sku").String(),
+			Ti_name:     e.Get("ti_nm").String(),
+			Ti_category: e.Get("ti_ca").String(),
+			Ti_price:    stringToFloat64(e.Get("ti_pr").String()),
+			Ti_quantity: stringToInt(e.Get("ti_qu").String()),
+			Ti_currency: e.Get("ti_cu").String(),
+
+			Se_category: e.Get("se_ca").String(),
+			Se_action:   e.Get("se_ac").String(),
+			Se_label:    e.Get("se_la").String(),
+			Se_property: e.Get("se_pr").String(),
+			Se_value:    stringToFloat64(e.Get("se_va").String()),
+
+			Self_describing_event: b64ToMap(e.Get("ue_px").String()),
 		}
 		// event.Network_userid = c.Get("identity")
 		data, _ := json.Marshal(event)
