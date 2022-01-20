@@ -1,8 +1,12 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
+	buildPubsubClient()
+
 	router := gin.Default()
 	router.RedirectTrailingSlash = false
 	if Config.environment == "dev" {
@@ -17,5 +21,5 @@ func main() {
 	router.GET(Config.redirectPath, HandleRedirect)
 	router.POST(Config.postPath, HandlePost)
 
-	router.Run()
+	router.Run(":" + Config.port)
 }

@@ -17,6 +17,9 @@ type AppConfig struct {
 	// CORS
 	corsAllowedOrigins []string
 	corsMaxAge         int
+	// Destination
+	pubsubProjectName string
+	pubsubTopicName   string
 	// Operational
 	// schemaCacheMemoryMax    int
 	// schemaCacheTtlSeconds   int
@@ -37,4 +40,6 @@ var Config = AppConfig{
 	cookieTtlDays:         365,
 	corsAllowedOrigins:    []string{"*"},
 	corsMaxAge:            86400,
+	pubsubProjectName:     "neat-dispatch-338321",
+	pubsubTopicName:       "test-topic",
 }

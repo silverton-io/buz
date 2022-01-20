@@ -7,8 +7,6 @@ import (
 
 func AdvancingCookieMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Set the tracking cookie if it doesn't already exist
-		// If it does exist, set TTL "N time from request"
 		identityCookieValue, _ := c.Cookie(Config.cookieName)
 		var useSecureCookie bool
 		if Config.environment == "dev" {
@@ -27,10 +25,10 @@ func AdvancingCookieMiddleware() gin.HandlerFunc {
 				false,
 			)
 		} else {
-			cookieValue := uuid.New()
+			identityCookieValue := uuid.New()
 			c.SetCookie(
 				Config.cookieName,
-				cookieValue.String(),
+				identityCookieValue.String(),
 				60*60*24*Config.cookieTtlDays,
 				Config.cookiePath,
 				Config.cookieDomain,
@@ -38,6 +36,7 @@ func AdvancingCookieMiddleware() gin.HandlerFunc {
 				false,
 			)
 		}
+		c.Set("identity", identityCookieValue)
 		c.Next()
 	}
 }

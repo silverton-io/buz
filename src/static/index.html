@@ -7,25 +7,41 @@
     <script>
         window.snowplow('newTracker', 'sp', 'localhost:8080', {
             appId: 'site',
-            eventMethod: 'get',
-            // eventMethod: 'post',
+            // eventMethod: 'get',
+            eventMethod: 'post',
+            bufferSize: 2, // Buffer post before sending
             cookieName: "sp-nuid",
             cookieSameSite: 'Lax',
             forceSecureTracker: false,
             withCredentials: false,
         })
+
+
+        window.snowplow('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-link-click-tracking@latest/dist/index.umd.min.js",["snowplowLinkClickTracking", "LinkClickTrackingPlugin"]);
+        window.snowplow('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-ecommerce@latest/dist/index.umd.min.js",["snowplowEcommerce", "EcommercePlugin"]);
+
         window.snowplow('enableActivityTracking', {
-            minimumVisitLength: 3,
-            heartbeatDelay: 5
+            minimumVisitLength: 10,
+            heartbeatDelay: 10
         });
         window.snowplow('trackPageView');
         window.snowplow('setUserId', 'jake@bostata.com');
+        window.snowplow('enableFormTracking');
     </script>
     <body>
         <h1>Tracker Test</h1>
-        <button id="self-describing">Press Me For Self Describing Event</button>
-        <button id="struct">Press Me For Struct Event</button>
-        <a href="http://localhost:8080/r/tp2?u=http://facebook.com" target="_blank">Redirect to Facebook but Include Tracking</a>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing">Press Me For Self Describing Event</button><br>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="struct">Press Me For Struct Event</button><br>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="transaction">Press Me For Transaction Event With One Item</button><br>
+        <a href="http://localhost:8080/r/tp2?u=http://facebook.com" target="_blank">Redirect to Facebook but Include Tracking</a><br>
+        <div style="margin-top: 2em; margin-bottom: 2em"></div>
+        <form>
+            <label for="fname">First name:</label><br>
+            <input type="text" id="fname" name="fname"><br>
+            <label for="lname">Last name:</label><br>
+            <input type="text" id="lname" name="lname">
+            <input type="submit" value="Submit">
+        </form>
     </body>
     <footer>
         <script>
@@ -49,7 +65,32 @@
                     property: "someprop",
                     value: 10.0
                 })
-            })
+            });
+
+            document.getElementById('transaction').addEventListener("click", function() {
+                window.snowplow('addTrans', {
+                    orderId: '1234',  // required
+                    total: 11.99,   // required
+                    affiliation: 'Acme Clothing', 
+                    tax: 1.29,
+                    shipping: 5,
+                    city: 'San Jose',
+                    state: 'California',
+                    country: 'USA',
+                    currency: 'USD'
+                })
+                window.snowplow('addItem', {
+                    orderId: '1234', // required
+                    sku: 'DD44',     // required
+                    name: 'T-Shirt',      
+                    category: 'Green Medium',
+                    price: 11.99,
+                    quantity: 1,
+                    currency: 'USD'
+                });
+                window.snowplow('trackTrans');
+            });
+
         </script>
     </footer>
 </html>
