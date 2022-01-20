@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,6 +16,7 @@ func HandleGet(c *gin.Context) {
 	// 	fmt.Println(err) // FIXME!
 	// }
 	// fmt.Println("Published message. ID: ", id)
+	fmt.Println(c.Request.URL.Query())
 	c.JSON(200, gin.H{
 		"message": "received",
 	})

@@ -1,13 +1,39 @@
 <html>
     <head>
         <script>
-            ;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[]; p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments) };p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1; n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://cdn.jsdelivr.net/npm/@snowplow/javascript-tracker@3.2.3/dist/sp.js","snowplow")); 
+            ;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[]; p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments) };p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1; n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://cdn.jsdelivr.net/npm/@snowplow/javascript-tracker@3.2.3/dist/sp.js","spget")); 
+            ;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[]; p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments) };p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1; n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://cdn.jsdelivr.net/npm/@snowplow/javascript-tracker@3.2.3/dist/sp.js","sppost")); 
         </script>
     </head>
     <script>
-        window.snowplow('newTracker', 'sp', 'localhost:8080', {
+        // GET-based tracker
+        window.spget('newTracker', 'sp', 'localhost:8080', {
             appId: 'site',
-            // eventMethod: 'get',
+            eventMethod: 'get',
+            // eventMethod: 'post',
+            // bufferSize: 2, // Buffer post before sending
+            cookieName: "sp-nuid",
+            cookieSameSite: 'Lax',
+            forceSecureTracker: false,
+            withCredentials: false,
+        })
+
+
+        window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-link-click-tracking@latest/dist/index.umd.min.js",["snowplowLinkClickTracking", "LinkClickTrackingPlugin"]);
+        window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-ecommerce@latest/dist/index.umd.min.js",["snowplowEcommerce", "EcommercePlugin"]);
+
+        // window.spget('enableActivityTracking', {
+        //     minimumVisitLength: 10,
+        //     heartbeatDelay: 10
+        // });
+        // window.spget('trackPageView');
+        window.spget('setUserId', 'jake@bostata.com');
+        window.spget('enableFormTracking');
+
+        // POST-based tracker
+
+        window.sppost('newTracker', 'sp', 'localhost:8080', {
+            appId: 'site',
             eventMethod: 'post',
             bufferSize: 2, // Buffer post before sending
             cookieName: "sp-nuid",
@@ -17,22 +43,22 @@
         })
 
 
-        window.snowplow('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-link-click-tracking@latest/dist/index.umd.min.js",["snowplowLinkClickTracking", "LinkClickTrackingPlugin"]);
-        window.snowplow('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-ecommerce@latest/dist/index.umd.min.js",["snowplowEcommerce", "EcommercePlugin"]);
+        window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-link-click-tracking@latest/dist/index.umd.min.js",["snowplowLinkClickTracking", "LinkClickTrackingPlugin"]);
+        window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-ecommerce@latest/dist/index.umd.min.js",["snowplowEcommerce", "EcommercePlugin"]);
 
-        window.snowplow('enableActivityTracking', {
-            minimumVisitLength: 10,
-            heartbeatDelay: 10
+        window.sppost('enableActivityTracking', {
+            minimumVisitLength: 1,
+            heartbeatDelay: 1
         });
-        window.snowplow('trackPageView');
-        window.snowplow('setUserId', 'jake@bostata.com');
-        window.snowplow('enableFormTracking');
+        window.sppost('trackPageView');
+        window.sppost('setUserId', 'jake@bostata.com');
+        window.sppost('enableFormTracking');
     </script>
     <body>
         <h1>Tracker Test</h1>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing">Press Me For Self Describing Event</button><br>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="struct">Press Me For Struct Event</button><br>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="transaction">Press Me For Transaction Event With One Item</button><br>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-get">Press Me For Self Describing Event</button><br>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="struct-get">Press Me For Struct Event</button><br>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="transaction-get">Press Me For Transaction Event With One Item</button><br>
         <a href="http://localhost:8080/r/tp2?u=http://facebook.com" target="_blank">Redirect to Facebook but Include Tracking</a><br>
         <div style="margin-top: 2em; margin-bottom: 2em"></div>
         <form>
@@ -42,23 +68,30 @@
             <input type="text" id="lname" name="lname">
             <input type="submit" value="Submit">
         </form>
+        <div style="margin-top: 3em; margin-bottom: 3em"></div>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-post">Press Me For Post-Based Self Describing Event</button><br>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="struct-post">Press Me For Post-Based Struct Event</button><br>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="transaction-post">Press Me For Post-Based Transaction Event With One Item</button><br>
     </body>
+
+
+
     <footer>
         <script>
-            document.getElementById('self-describing').addEventListener("click", function() {
-                window.snowplow('trackSelfDescribingEvent', {
+            document.getElementById('self-describing-get').addEventListener("click", function() {
+                window.spget('trackSelfDescribingEvent', {
                     event: {
                         schema: "com.sixriver/ui/clicked-button/1-0-0",
                         data: {
-                            buttonId: "self-describing",
+                            buttonId: "self-describing-get",
                             value: "now"
                         }
                     }
                 })
             });
 
-            document.getElementById('struct').addEventListener("click", function() {
-                window.snowplow('trackStructEvent', {
+            document.getElementById('struct-get').addEventListener("click", function() {
+                window.spget('trackStructEvent', {
                     category: "ui",
                     action: "clicked-button",
                     label: "struct-event",
@@ -67,8 +100,8 @@
                 })
             });
 
-            document.getElementById('transaction').addEventListener("click", function() {
-                window.snowplow('addTrans', {
+            document.getElementById('transaction-get').addEventListener("click", function() {
+                window.spget('addTrans', {
                     orderId: '1234',  // required
                     total: 11.99,   // required
                     affiliation: 'Acme Clothing', 
@@ -79,7 +112,7 @@
                     country: 'USA',
                     currency: 'USD'
                 })
-                window.snowplow('addItem', {
+                window.spget('addItem', {
                     orderId: '1234', // required
                     sku: 'DD44',     // required
                     name: 'T-Shirt',      
@@ -88,7 +121,53 @@
                     quantity: 1,
                     currency: 'USD'
                 });
-                window.snowplow('trackTrans');
+                window.spget('trackTrans');
+            });
+
+            document.getElementById('self-describing-post').addEventListener("click", function() {
+                window.sppost('trackSelfDescribingEvent', {
+                    event: {
+                        schema: "com.sixriver/ui/clicked-button/1-0-0",
+                        data: {
+                            buttonId: "self-describing-post",
+                            value: "now"
+                        }
+                    }
+                })
+            });
+
+            document.getElementById('struct-post').addEventListener("click", function() {
+                window.sppost('trackStructEvent', {
+                    category: "ui",
+                    action: "clicked-button",
+                    label: "struct-event",
+                    property: "someprop",
+                    value: 10.0
+                })
+            });
+
+            document.getElementById('transaction-post').addEventListener("click", function() {
+                window.sppost('addTrans', {
+                    orderId: '1234',  // required
+                    total: 11.99,   // required
+                    affiliation: 'Acme Clothing', 
+                    tax: 1.29,
+                    shipping: 5,
+                    city: 'San Jose',
+                    state: 'California',
+                    country: 'USA',
+                    currency: 'USD'
+                })
+                window.sppost('addItem', {
+                    orderId: '1234', // required
+                    sku: 'DD44',     // required
+                    name: 'T-Shirt',      
+                    category: 'Green Medium',
+                    price: 11.99,
+                    quantity: 1,
+                    currency: 'USD'
+                });
+                window.sppost('trackTrans');
             });
 
         </script>
