@@ -1,14 +1,15 @@
 package main
 
 type AppConfig struct {
-	environment           string
-	port                  string
-	includeStandardRoutes bool
-	// Custom routing
-	postPath     string
-	getPath      string
-	redirectPath string
-	// Internal functionality
+	environment string
+	port        string
+	// Routing
+	includeStandardSnowplowRoutes bool
+	snowplowPostPath              string
+	snowplowGetPath               string
+	snowplowRedirectPath          string
+	openPostPath                  string
+	// Identification
 	cookieName     string
 	cookieDomain   string
 	cookiePath     string
@@ -18,8 +19,11 @@ type AppConfig struct {
 	corsAllowedOrigins []string
 	corsMaxAge         int
 	// Destination
-	pubsubProjectName string
-	pubsubTopicName   string
+	pubsubProjectName      string
+	pubsubValidTopicName   string
+	pubsubInvalidTopicName string
+	// Event Validation
+	validateSnowplowEvents bool
 	// Operational
 	// schemaCacheMemoryMax    int
 	// schemaCacheTtlSeconds   int
@@ -28,18 +32,25 @@ type AppConfig struct {
 }
 
 var Config = AppConfig{
-	environment:           "dev",
-	port:                  "8080",
-	includeStandardRoutes: true,
-	postPath:              "com.snowplowanalytics.snowplow/tp2",
-	getPath:               "/i",
-	redirectPath:          "r/tp2",
-	cookieName:            "sp-nuid",
-	cookieDomain:          "localhost",
-	cookiePath:            "/",
-	cookieTtlDays:         365,
-	corsAllowedOrigins:    []string{"*"},
-	corsMaxAge:            86400,
-	pubsubProjectName:     "neat-dispatch-338321",
-	pubsubTopicName:       "test-topic",
+	environment: "dev",
+	port:        "8080",
+	// Routing
+	includeStandardSnowplowRoutes: true,
+	snowplowPostPath:              "com.snowplowanalytics.snowplow/tp2",
+	snowplowGetPath:               "/i",
+	snowplowRedirectPath:          "r/tp2",
+	// Identification
+	cookieName:    "sp-nuid",
+	cookieDomain:  "localhost",
+	cookiePath:    "/",
+	cookieTtlDays: 365,
+	// CORS
+	corsAllowedOrigins: []string{"*"},
+	corsMaxAge:         86400,
+	// Destination
+	pubsubProjectName:      "neat-dispatch-338321",
+	pubsubValidTopicName:   "test-topic",
+	pubsubInvalidTopicName: "test-topic",
+	// Validation
+	validateSnowplowEvents: false,
 }

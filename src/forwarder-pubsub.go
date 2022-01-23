@@ -7,18 +7,27 @@ import (
 	"cloud.google.com/go/pubsub"
 )
 
-var PubsubClient *pubsub.Client
-var PubsubTopic *pubsub.Topic
+var ValidClient *pubsub.Client
+var ValidTopic *pubsub.Topic
+var InvalidClient *pubsub.Client
+var InvalidTopic *pubsub.Topic
 
-func buildPubsubClient() {
+func buildPubsubClients() {
 	ctx := context.Background()
-	pubsubClient, err := pubsub.NewClient(ctx, Config.pubsubProjectName)
+	validClient, err := pubsub.NewClient(ctx, Config.pubsubProjectName)
+	invalidClient, err := pubsub.NewClient(ctx, Config.pubsubProjectName)
 	if err != nil {
-		log.Fatalf("Failure creating a pubsub topic %v", err)
+		log.Fatalf("Failure creating a pubsub client %v", err)
 	}
-	pubsubTopic := pubsubClient.Topic(Config.pubsubTopicName)
-	pubsubTopic.PublishSettings.NumGoroutines = 1
+	validTopic := validClient.Topic(Config.pubsubValidTopicName)
+	invalidTopic := invalidClient.Topic(Config.pubsubInvalidTopicName)
 
-	PubsubClient = pubsubClient
-	PubsubTopic = pubsubTopic
+	ValidClient = validClient
+	ValidTopic = validTopic
+
+	InvalidClient = invalidClient
+	InvalidTopic = invalidTopic
+
+	defer InvalidClient.Close()
+	defer ValidClient.Close()
 }

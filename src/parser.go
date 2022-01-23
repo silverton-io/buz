@@ -4,60 +4,68 @@ import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strconv"
-	"strings"
 	"time"
+
+	"github.com/tidwall/gjson"
 )
 
-func msStringToTime(ms string) time.Time {
-	msInt, err := strconv.ParseInt(ms, 10, 64)
+type SelfDescribingPayload struct {
+	Schema string                 `json:"schema"`
+	Data   map[string]interface{} `json:"data"`
+}
+
+type Base64EncodedSelfDescribingPayload struct {
+	Schema string                 `json:"schema"`
+	Data   map[string]interface{} `json:"data"`
+}
+
+func (f *Base64EncodedSelfDescribingPayload) UnmarshalJSON(bytes []byte) error {
+	var encodedPayload string
+	err := json.Unmarshal(bytes, &encodedPayload)
+	decodedPayload, err := b64.RawStdEncoding.DecodeString(encodedPayload)
 	if err != nil {
-		fmt.Println("FIXME!!")
+		fmt.Printf("error decoding b64 encoded self describing payload %s\n", err)
 	}
-	return time.Unix(0, msInt*int64(time.Millisecond))
+	schema := gjson.GetBytes(decodedPayload, "data.schema").String()
+	data := gjson.GetBytes(decodedPayload, "data.data").Value().(map[string]interface{})
+	fmt.Println("SCHEMA: ", schema)
+	fmt.Println("DATA: ", data)
+	*&f.Schema = schema
+	*&f.Data = data
+	return nil
 }
 
-func stringToInt(val string) int {
-	// FIXME! Handle this entire thing better so we don't swallow params that don't exist
-	i, err := strconv.Atoi(val)
+type MillisecondTimestampField struct {
+	time.Time
+}
+
+func (t *MillisecondTimestampField) UnmarshalJSON(bytes []byte) error {
+	var msString string
+	err := json.Unmarshal(bytes, &msString)
+	msInt, err := strconv.ParseInt(msString, 10, 64)
 	if err != nil {
-		fmt.Println("FIXME! stringToInt")
+		fmt.Printf("error decoding timestamp: %s\n", err)
+		return err
 	}
-	return i
+	*&t.Time = time.Unix(0, msInt*int64(time.Millisecond))
+	return nil
 }
 
-func stringToBool(val string) bool {
-	if val == "1" {
-		return true
-	} else {
-		return false
-	}
-}
+// func stringToWidth(val string) int {
+// 	split := strings.Split(val, "x")
+// 	return stringToInt(split[0])
+// }
 
-func stringToWidth(val string) int {
-	split := strings.Split(val, "x")
-	return stringToInt(split[0])
-}
-
-func stringToHeight(val string) int {
-	split := strings.Split(val, "x")
-	return stringToInt(split[1])
-}
-
-func stringToFloat64(val string) float64 {
-	f, err := strconv.ParseFloat(val, 64)
-	if err != nil {
-		log.Fatal(err) // FIXME!
-	}
-	return f
-}
+// func stringToHeight(val string) int {
+// 	split := strings.Split(val, "x")
+// 	return stringToInt(split[1])
+// }
 
 func b64ToMap(encodedJson string) map[string]interface{} {
 	var decodedJSON map[string]interface{}
 	bytes, err := b64.RawStdEncoding.DecodeString(encodedJson)
 	if err != nil {
-		log.Fatal(err)
 		fmt.Println("FIXME!! b64 string could not be decoded")
 	}
 	err = json.Unmarshal(bytes, &decodedJSON)

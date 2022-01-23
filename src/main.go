@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	buildPubsubClient()
+	buildPubsubClients()
 
 	router := gin.Default()
 	router.RedirectTrailingSlash = false
@@ -17,9 +17,9 @@ func main() {
 	router.Use(AdvancingCookieMiddleware())
 
 	// Write
-	router.GET(Config.getPath, HandleGet)
-	router.GET(Config.redirectPath, HandleRedirect)
-	router.POST(Config.postPath, HandlePost)
+	router.GET(Config.snowplowGetPath, HandleGet)
+	router.GET(Config.snowplowRedirectPath, HandleRedirect)
+	// router.POST(Config.snowplowPostPath, HandlePost)
 
 	router.Run(":" + Config.port)
 }

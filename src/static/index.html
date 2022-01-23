@@ -46,11 +46,11 @@
         window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-link-click-tracking@latest/dist/index.umd.min.js",["snowplowLinkClickTracking", "LinkClickTrackingPlugin"]);
         window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-ecommerce@latest/dist/index.umd.min.js",["snowplowEcommerce", "EcommercePlugin"]);
 
-        window.sppost('enableActivityTracking', {
-            minimumVisitLength: 1,
-            heartbeatDelay: 1
-        });
-        window.sppost('trackPageView');
+        // window.sppost('enableActivityTracking', {
+        //     minimumVisitLength: 1,
+        //     heartbeatDelay: 1
+        // });
+        // window.sppost('trackPageView');
         window.sppost('setUserId', 'jake@bostata.com');
         window.sppost('enableFormTracking');
     </script>
@@ -59,7 +59,7 @@
         <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-get">Press Me For Self Describing Event</button><br>
         <button style="margin-top: 2em; margin-bottom: 2em" id="struct-get">Press Me For Struct Event</button><br>
         <button style="margin-top: 2em; margin-bottom: 2em" id="transaction-get">Press Me For Transaction Event With One Item</button><br>
-        <a href="http://localhost:8080/r/tp2?u=http://facebook.com" target="_blank">Redirect to Facebook but Include Tracking</a><br>
+        <a href="http://localhost:8080/r/tp2?u=localhost:8080&tna=web&env=vendor-name&aid=site-testing&p=web&dtm=1642904307707&vid=10&cx=eyJzY2hlbWEiOiJpZ2x1OmNvbS5zbm93cGxvd2FuYWx5dGljcy5zbm93cGxvdy9jb250ZXh0cy9qc29uc2NoZW1hLzEtMC0wIiwiZGF0YSI6W3sic2NoZW1hIjoiaWdsdTpjb20uc25vd3Bsb3dhbmFseXRpY3Muc25vd3Bsb3cvd2ViX3BhZ2UvanNvbnNjaGVtYS8xLTAtMCIsImRhdGEiOnsiaWQiOiI3YmNmN2Q4YS0wODdiLTRjOTctYmMwMy1lMWI5NGIzZWYzMDYifX1dfQ&ue_px=eyJzY2hlbWEiOiJpZ2x1OmNvbS5zbm93cGxvd2FuYWx5dGljcy5zbm93cGxvdy91bnN0cnVjdF9ldmVudC9qc29uc2NoZW1hLzEtMC0wIiwiZGF0YSI6eyJzY2hlbWEiOiJjb20uc2l4cml2ZXIvdWkvY2xpY2tlZC1idXR0b24vMS0wLTAiLCJkYXRhIjp7ImJ1dHRvbklkIjoic2VsZi1kZXNjcmliaW5nLWdldCIsInZhbHVlIjoibm93In19fQ" target="_blank">Redirect With Tracking</a><br>
         <div style="margin-top: 2em; margin-bottom: 2em"></div>
         <form>
             <label for="fname">First name:</label><br>
