@@ -5,7 +5,6 @@ Br_viewwidth             int                    `json:"br_viewwidth"`      // vp
 Br_viewheight            int                    `json:"br_viewheight"`     // vp position 2
 Dvce_screenwidth         int                    `json:"dvce_screenwidth"`  // res position 1
 Dvce_screenheight        int                    `json:"dvce_screenheight"` // res position 2
-Contexts                 map[string]interface{} `json:"context"` // either co or cx
 // Page ping
 Pp_xoffset_min int `json:"pp_xoffset_min"`
 Pp_xoffset_max int `json:"pp_xoffset_max"`
@@ -46,7 +45,6 @@ Br_viewwidth:             stringToWidth(e.Get("vp").String()),
 Br_viewheight:            stringToWidth(e.Get("vp").String()),
 Dvce_screenwidth:         stringToWidth(e.Get("res").String()),
 Dvce_screenheight:        stringToHeight(e.Get("res").String()),
-Contexts:                 b64ToMap(e.Get("cx").String()),
 Pp_xoffset_min:           stringToInt(e.Get("pp_mix").String()),
 Pp_xoffset_max:           stringToInt(e.Get("pp_max").String()),
 Pp_yoffset_min:           stringToInt(e.Get("pp_miy").String()),
@@ -75,5 +73,3 @@ Se_action:   e.Get("se_ac").String(),
 Se_label:    e.Get("se_la").String(),
 Se_property: e.Get("se_pr").String(),
 Se_value:    stringToFloat64(e.Get("se_va").String()),
-
-Self_describing_event: b64ToMap(e.Get("ue_px").String()),

@@ -17,7 +17,6 @@ func mapParams(c *gin.Context) map[string]interface{} {
 }
 
 func buildEventFromMappedParams(e map[string]interface{}) Event {
-	// Turn e into ShortenedEvent
 	body, err := json.Marshal(e)
 	if err != nil {
 		fmt.Println(err)
@@ -30,9 +29,8 @@ func buildEventFromMappedParams(e map[string]interface{}) Event {
 func HandleRedirect(c *gin.Context) {
 	mappedParams := mapParams(c)
 	se := buildEventFromMappedParams(mappedParams)
-	e, _ := json.Marshal(se)
-	fmt.Printf("%+v\n", se)
-	fmt.Println(string(e))
+	fmt.Printf("\n%+v\n", se)
+	// e, _ := json.Marshal(se)
 	redirectUrl, _ := c.GetQuery("u")
 	c.Redirect(302, redirectUrl)
 }
@@ -40,15 +38,9 @@ func HandleRedirect(c *gin.Context) {
 func HandleGet(c *gin.Context) {
 	// Parse query parameters to map[string]interface{}
 	mappedParams := mapParams(c)
-	// Marshal to a bytestring
-	jsonParams, err := json.Marshal(mappedParams)
-	if err != nil {
-		fmt.Println("FIXME! Couldn't marshal params")
-	}
-	// event := buildEvent(c, payloadData)
-	// fmt.Println(mappedParams)
-	// fmt.Printf("\n%+v\n", event)
-	fmt.Println(jsonParams)
+	se := buildEventFromMappedParams(mappedParams)
+	fmt.Printf("\n%+v\n", se)
+	// e, _ := json.Marshal(se)
 	c.JSON(200, AllOk)
 }
 

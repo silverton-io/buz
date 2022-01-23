@@ -62,24 +62,6 @@ func (t *MillisecondTimestampField) UnmarshalJSON(bytes []byte) error {
 // 	return stringToInt(split[1])
 // }
 
-func b64ToMap(encodedJson string) map[string]interface{} {
-	var decodedJSON map[string]interface{}
-	bytes, err := b64.RawStdEncoding.DecodeString(encodedJson)
-	if err != nil {
-		fmt.Println("FIXME!! b64 string could not be decoded")
-	}
-	err = json.Unmarshal(bytes, &decodedJSON)
-	return decodedJSON
-}
-
-// func getJsonEncodedParam(param string) {
-
-// }
-
-// func getTimeParam(param string) time.Time {
-
-// }
-
 func getEventType(param string) string {
 	switch param {
 	case "pp":

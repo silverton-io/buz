@@ -81,13 +81,18 @@
             document.getElementById('self-describing-get').addEventListener("click", function() {
                 window.spget('trackSelfDescribingEvent', {
                     event: {
-                        schema: "com.sixriver/ui/clicked-button/1-0-0",
+                        schema: 'iglu:com.acme_company/viewed_product/jsonschema/1-0-0',
                         data: {
-                            buttonId: "self-describing-get",
-                            value: "now"
+                            productId: 'ASO01043',
+                            category: 'Dresses',
+                            brand: 'ACME',
+                            returning: true,
+                            price: 49.95,
+                            sizes: ['xs', 's', 'l', 'xl', 'xxl'],
+                            availableSince: new Date(2013,3,7)
                         }
                     }
-                })
+                });
             });
 
             document.getElementById('struct-get').addEventListener("click", function() {
@@ -126,12 +131,10 @@
 
             document.getElementById('self-describing-post').addEventListener("click", function() {
                 window.sppost('trackSelfDescribingEvent', {
-                    event: {
-                        schema: "com.sixriver/ui/clicked-button/1-0-0",
-                        data: {
-                            buttonId: "self-describing-post",
-                            value: "now"
-                        }
+                    schema: "com.sixriver/ui/clicked-button/1-0-0",
+                    data: {
+                        buttonId: "self-describing-post",
+                        value: "now"
                     }
                 })
             });
