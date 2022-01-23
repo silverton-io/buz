@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/tidwall/gjson"
@@ -15,10 +16,11 @@ type SelfDescribingPayload struct {
 	Data   map[string]interface{} `json:"data"`
 }
 
-type Base64EncodedSelfDescribingPayload struct {
-	Schema string                 `json:"schema"`
-	Data   map[string]interface{} `json:"data"`
-}
+type Context SelfDescribingPayload
+
+type Base64EncodedContexts []Context
+
+type Base64EncodedSelfDescribingPayload SelfDescribingPayload
 
 func (f *Base64EncodedSelfDescribingPayload) UnmarshalJSON(bytes []byte) error {
 	var encodedPayload string
@@ -29,10 +31,21 @@ func (f *Base64EncodedSelfDescribingPayload) UnmarshalJSON(bytes []byte) error {
 	}
 	schema := gjson.GetBytes(decodedPayload, "data.schema").String()
 	data := gjson.GetBytes(decodedPayload, "data.data").Value().(map[string]interface{})
-	fmt.Println("SCHEMA: ", schema)
-	fmt.Println("DATA: ", data)
 	*&f.Schema = schema
 	*&f.Data = data
+	return nil
+}
+
+type FlexibleBoolField bool
+
+func (b *FlexibleBoolField) UnmarshalJSON(bytes []byte) error {
+	var payload string
+	err := json.Unmarshal(bytes, &payload)
+	if err != nil {
+		fmt.Printf("error decoding FlexibleBoolField %s\n", err)
+	}
+	val, err := strconv.ParseBool(payload)
+	*b = FlexibleBoolField(val)
 	return nil
 }
 
@@ -52,15 +65,52 @@ func (t *MillisecondTimestampField) UnmarshalJSON(bytes []byte) error {
 	return nil
 }
 
-// func stringToWidth(val string) int {
-// 	split := strings.Split(val, "x")
-// 	return stringToInt(split[0])
-// }
+type WidthField int
 
-// func stringToHeight(val string) int {
-// 	split := strings.Split(val, "x")
-// 	return stringToInt(split[1])
-// }
+func (wf *WidthField) UnmarshalJSON(bytes []byte) error {
+	var payload string
+	err := json.Unmarshal(bytes, &payload)
+	if err != nil {
+		fmt.Printf("error unmarshalling WidthField %s\n", err)
+	}
+	w := strings.Split(payload, "x")[0]
+	width, err := strconv.Atoi(w)
+	if err != nil {
+		fmt.Printf("error converting width string to int")
+	}
+	*wf = WidthField(width)
+	return nil
+}
+
+type HeightField int
+
+func (hf *HeightField) UnmarshalJSON(bytes []byte) error {
+	var payload string
+	err := json.Unmarshal(bytes, &payload)
+	if err != nil {
+		fmt.Printf("error unmarshalling HeightField %s\n", err)
+	}
+	h := strings.Split(payload, "x")[1]
+	height, err := strconv.Atoi(h)
+	if err != nil {
+		fmt.Printf("error converting height string to int")
+	}
+	*hf = HeightField(height)
+	return nil
+}
+
+type EventTypeField string
+
+func (f *EventTypeField) UnmarshalJSON(bytes []byte) error {
+	var payload string
+	err := json.Unmarshal(bytes, &payload)
+	if err != nil {
+		fmt.Printf("error unmarshaling EventTypeField %s\n", err)
+	}
+	eventType := getEventType(payload)
+	*f = EventTypeField(eventType)
+	return nil
+}
 
 func getEventType(param string) string {
 	switch param {
@@ -80,4 +130,9 @@ func getEventType(param string) string {
 		return "ad_impression"
 	}
 	return "unknown"
+}
+
+type Dimension struct {
+	height int
+	width  int
 }

@@ -15,8 +15,6 @@ func main() {
 	}
 	router.Use(CORSMiddleware())
 	router.Use(AdvancingCookieMiddleware())
-
-	// Write
 	router.GET(Config.snowplowGetPath, HandleGet)
 	router.GET(Config.snowplowRedirectPath, HandleRedirect)
 	// router.POST(Config.snowplowPostPath, HandlePost)

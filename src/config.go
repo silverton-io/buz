@@ -1,8 +1,11 @@
 package main
 
+var Version string
+
 type AppConfig struct {
-	environment string
-	port        string
+	collectorVersion string
+	environment      string
+	port             string
 	// Routing
 	includeStandardSnowplowRoutes bool
 	snowplowPostPath              string
