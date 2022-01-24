@@ -12,6 +12,7 @@ func main() {
 	if Config.environment == "dev" {
 		// Serve a local file to make testing events easier
 		router.StaticFile("/", "./src/static/index.html")
+		router.StaticFile("/test/there", "./src/static/index.html")
 	}
 	router.Use(CORSMiddleware())
 	router.Use(AdvancingCookieMiddleware())

@@ -20,6 +20,26 @@ type Context SelfDescribingPayload
 
 type Base64EncodedContexts []Context
 
+func (c *Base64EncodedContexts) UnmarshalJSON(bytes []byte) error {
+	var encodedPayload string
+	var contexts []Context
+	err := json.Unmarshal(bytes, &encodedPayload)
+	decodedPayload, err := b64.RawStdEncoding.DecodeString(encodedPayload)
+	if err != nil {
+		fmt.Printf("error decoding b64 encoded contexts %s\n", err)
+	}
+	contextPayload := gjson.Parse(string(decodedPayload))
+	for _, pl := range contextPayload.Get("data").Array() {
+		context := Context{
+			Schema: pl.Get("schema").String(),
+			Data:   pl.Get("data").Value().(map[string]interface{}),
+		}
+		contexts = append(contexts, context)
+	}
+	*c = contexts
+	return nil
+}
+
 type Base64EncodedSelfDescribingPayload SelfDescribingPayload
 
 func (f *Base64EncodedSelfDescribingPayload) UnmarshalJSON(bytes []byte) error {
@@ -135,4 +155,18 @@ func getEventType(param string) string {
 type Dimension struct {
 	height int
 	width  int
+}
+
+type PageFields struct {
+	scheme   string
+	host     string
+	port     int
+	path     string
+	query    string
+	fragment string
+	medium   string
+	source   string
+	term     string
+	content  string
+	campaign string
 }
