@@ -1,32 +1,27 @@
 package main
 
-var Version string
+import "time"
 
 type AppConfig struct {
-	collectorVersion string
-	environment      string
-	port             string
-	// Routing
+	environment                   string
+	port                          string
 	includeStandardSnowplowRoutes bool
 	snowplowPostPath              string
 	snowplowGetPath               string
 	snowplowRedirectPath          string
-	openPostPath                  string
-	// Identification
-	cookieName     string
-	cookieDomain   string
-	cookiePath     string
-	cookieTtlDays  int
-	extractCookies string
-	// CORS
-	corsAllowedOrigins []string
-	corsMaxAge         int
-	// Destination
-	pubsubProjectName      string
-	pubsubValidTopicName   string
-	pubsubInvalidTopicName string
-	// Event Validation
-	validateSnowplowEvents bool
+	cookieName                    string
+	cookieDomain                  string
+	cookiePath                    string
+	cookieTtlDays                 int
+	corsAllowedOrigins            []string
+	corsMaxAge                    int
+	pubsubProjectName             string
+	pubsubValidTopicName          string
+	pubsubInvalidTopicName        string
+	bufferByteThreshold           int
+	bufferCountThreshold          int
+	bufferDelayThreshold          time.Duration
+	validateSnowplowEvents        bool
 	// Operational
 	// schemaCacheMemoryMax    int
 	// schemaCacheTtlSeconds   int
@@ -35,25 +30,23 @@ type AppConfig struct {
 }
 
 var Config = AppConfig{
-	environment: "dev",
-	port:        "8080",
-	// Routing
+	environment:                   "dev",
+	port:                          "8080",
 	includeStandardSnowplowRoutes: true,
 	snowplowPostPath:              "com.snowplowanalytics.snowplow/tp2",
 	snowplowGetPath:               "/i",
 	snowplowRedirectPath:          "r/tp2",
-	// Identification
-	cookieName:    "sp-nuid",
-	cookieDomain:  "localhost",
-	cookiePath:    "/",
-	cookieTtlDays: 365,
-	// CORS
-	corsAllowedOrigins: []string{"*"},
-	corsMaxAge:         86400,
-	// Destination
-	pubsubProjectName:      "neat-dispatch-338321",
-	pubsubValidTopicName:   "test-topic",
-	pubsubInvalidTopicName: "test-topic",
-	// Validation
-	validateSnowplowEvents: false,
+	cookieName:                    "sp-nuid",
+	cookieDomain:                  "localhost",
+	cookiePath:                    "/",
+	cookieTtlDays:                 365,
+	corsAllowedOrigins:            []string{"*"},
+	corsMaxAge:                    86400,
+	pubsubProjectName:             "neat-dispatch-338321",
+	pubsubValidTopicName:          "test-valid-topic",
+	pubsubInvalidTopicName:        "test-invalid-topic",
+	bufferByteThreshold:           0,
+	bufferCountThreshold:          0,
+	bufferDelayThreshold:          1 * time.Millisecond,
+	validateSnowplowEvents:        false,
 }

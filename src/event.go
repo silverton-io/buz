@@ -2,78 +2,76 @@ package main
 
 import "time"
 
-type Envelope struct {
-	isValid     bool
-	parseErrors *[]string
-	data        Event
+type EventEnvelope struct {
+	IsValid          bool      `json:"is_valid"`
+	ValidationErrors *[]string `json:"validation_errors"`
+	Event            Event     `json:"event"`
 }
 
 type Event struct {
 	// Application parameters - https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/snowplow-tracker-protocol/#common-parameters-platform-and-event-independent
-	Name_tracker        string                     `json:"name_tracker"`
-	Event_vendor        *string                    `json:"event_vendor,omitempty"` // deprecated
-	App_id              string                     `json:"app_id"`
-	Platform            string                     `json:"platform"`
-	Etl_tstamp          *time.Time                 `json:"etl_tstamp,omitempty"`
-	Dvce_created_tstamp MillisecondTimestampField  `json:"dvce_created_tstamp"`
-	Dvce_sent_tstamp    MillisecondTimestampField  `json:"dvce_sent_tstamp"`
-	True_tstamp         *MillisecondTimestampField `json:"true_tstamp,omitempty"`
-	Collector_tstamp    time.Time                  `json:"collector_tstamp"`
-	Derived_tstamp      *time.Time                 `json:"derived_tstamp,omitempty"`
-	Os_timezone         *string                    `json:"os_timezone,omitempty"`
-	Event               EventTypeField             `json:"event"`
-	Txn_id              *string                    `json:"txn_id,omitempty"` // deprecated
-	Event_id            string                     `json:"event_id"`
-	Event_fingerprint   string                     `json:"event_fingerprint"`
-	Tracker_version     string                     `json:"v_tracker"`
-	Collector_version   *string                    `json:"v_collector"`
-	Etl_version         *string                    `json:"v_etl,omitempty"`
-	Domain_userid       string                     `json:"domain_userid"`
-	Network_userid      *string                    `json:"network_userid,omitempty"`
-	Userid              *string                    `json:"user_id,omitempty"`
-	Domain_sessionidx   *int64                     `json:"domain_sessionidx,omitempty"`
-	Domain_sessionid    *string                    `json:"domain_sessionid,omitempty"`
-	User_ipaddress      string                     `json:"user_ipaddress"`
-	Page_url            *string                    `json:"page_url,omitempty"`
-
-	Page_urlscheme   *string `json:"page_urlscheme,omitempty"`
-	Page_urlhost     *string `json:"page_urlhost,omitempty"`
-	Page_urlport     *string `json:"page_urlport,omitempty"`
-	Page_urlpath     *string `json:"page_urlpath,omitempty"`
-	Page_urlquery    *string `json:"page_urlquery,omitempty"`
-	Page_urlfragment *string `json:"page_urlfragment,omitempty"`
-	Mkt_medium       *string `json:"mkt_medium,omitempty"`
-	Mkt_source       *string `json:"mkt_source,omitempty"`
-	Mkt_term         *string `json:"mkt_term,omitempty"`
-	Mkt_content      *string `json:"mkt_content,omitempty"`
-	Mkt_campaign     *string `json:"mkt_campaign,omitempty"`
-
-	Useragent                *string                             `json:"useragent,omitempty"`
-	Page_title               *string                             `json:"page_title,omitempty"`
-	Page_referrer            *string                             `json:"page_referrer,omitempty"`
-	Refr_urlscheme           *string                             `json:"refr_urlscheme,omitempty"`
-	Refr_urlhost             *string                             `json:"refr_urlhost,omitempty"`
-	Refr_urlport             *string                             `json:"refr_urlport,omitempty"`
-	Refr_urlpath             *string                             `json:"refr_urlpath,omitempty"`
-	Refr_urlquery            *string                             `json:"refr_urlquery,omitempty"`
-	Refr_urlfragment         *string                             `json:"refr_urlfragment,omitempty"`
-	Refr_medium              *string                             `json:"refr_medium,omitempty"`
-	Refr_source              *string                             `json:"refr_source,omitempty"`
-	Refr_term                *string                             `json:"refr_term,omitempty"`
-	Refr_content             *string                             `json:"refr_content,omitempty"`
-	Refr_campaign            *string                             `json:"refr_campaign,omitempty"`
+	Name_tracker             string                              `json:"name_tracker"`
+	Event_vendor             *string                             `json:"event_vendor,omitempty"` // deprecated
+	App_id                   string                              `json:"app_id"`
+	Platform                 string                              `json:"platform"`
+	Etl_tstamp               *time.Time                          `json:"etl_tstamp,omitempty"`
+	Dvce_created_tstamp      MillisecondTimestampField           `json:"dvce_created_tstamp"`
+	Dvce_sent_tstamp         MillisecondTimestampField           `json:"dvce_sent_tstamp"`
+	True_tstamp              *MillisecondTimestampField          `json:"true_tstamp,omitempty"`
+	Collector_tstamp         time.Time                           `json:"collector_tstamp"`
+	Derived_tstamp           *time.Time                          `json:"derived_tstamp,omitempty"`
+	Os_timezone              *string                             `json:"os_timezone,omitempty"`
+	Event                    EventTypeField                      `json:"event"`
+	Txn_id                   *string                             `json:"txn_id,omitempty"` // deprecated
+	Event_id                 string                              `json:"event_id"`
+	Event_fingerprint        string                              `json:"event_fingerprint"`
+	Tracker_version          string                              `json:"v_tracker"`
+	Collector_version        *string                             `json:"v_collector"`
+	Etl_version              *string                             `json:"v_etl,omitempty"`
+	Domain_userid            string                              `json:"domain_userid"`
+	Network_userid           *string                             `json:"network_userid,omitempty"`
+	Userid                   *string                             `json:"user_id,omitempty"`
+	Domain_sessionidx        *int64                              `json:"domain_sessionidx,omitempty"`
+	Domain_sessionid         *string                             `json:"domain_sessionid,omitempty"`
+	User_ipaddress           string                              `json:"user_ipaddress"`
+	Page_url                 *string                             `json:"page_url"`
+	Page_urlscheme           *string                             `json:"page_urlscheme"`
+	Page_urlhost             *string                             `json:"page_urlhost"`
+	Page_urlport             *string                             `json:"page_urlport"`
+	Page_urlpath             *string                             `json:"page_urlpath"`
+	Page_urlquery            *string                             `json:"page_urlquery"`
+	Page_urlfragment         *string                             `json:"page_urlfragment"`
+	Mkt_medium               *string                             `json:"mkt_medium"`
+	Mkt_source               *string                             `json:"mkt_source"`
+	Mkt_term                 *string                             `json:"mkt_term"`
+	Mkt_content              *string                             `json:"mkt_content"`
+	Mkt_campaign             *string                             `json:"mkt_campaign"`
+	Useragent                *string                             `json:"useragent"`
+	Page_title               *string                             `json:"page_title"`
+	Page_referrer            *string                             `json:"page_referrer"`
+	Refr_urlscheme           *string                             `json:"refr_urlscheme"`
+	Refr_urlhost             *string                             `json:"refr_urlhost"`
+	Refr_urlport             *string                             `json:"refr_urlport"`
+	Refr_urlpath             *string                             `json:"refr_urlpath"`
+	Refr_urlquery            *string                             `json:"refr_urlquery"`
+	Refr_urlfragment         *string                             `json:"refr_urlfragment"`
+	Refr_medium              *string                             `json:"refr_medium"`
+	Refr_source              *string                             `json:"refr_source"`
+	Refr_term                *string                             `json:"refr_term"`
+	Refr_content             *string                             `json:"refr_content"`
+	Refr_campaign            *string                             `json:"refr_campaign"`
 	User_fingerprint         *string                             `json:"user_fingerprint,omitempty"`
 	Br_cookies               FlexibleBoolField                   `json:"br_cookies"`
 	Br_lang                  *string                             `json:"br_lang,omitempty"`
-	Br_features_pdf          FlexibleBoolField                   `json:"br_features_pdf"`          // deprecate
-	Br_features_quicktime    FlexibleBoolField                   `json:"br_features_quicktime"`    // deprecate
-	Br_features_realplayer   FlexibleBoolField                   `json:"br_features_realplayer"`   // deprecate
-	Br_features_windowsmedia FlexibleBoolField                   `json:"br_features_windowsmedia"` // deprecate
-	Br_features_director     FlexibleBoolField                   `json:"br_features_director"`     // deprecate
-	Br_features_flash        FlexibleBoolField                   `json:"br_features_flash"`        // deprecate
-	Br_features_java         FlexibleBoolField                   `json:"br_features_java"`         // deprecate
-	Br_features_gears        FlexibleBoolField                   `json:"br_features_gears"`        // deprecate
-	Br_features_silverlight  FlexibleBoolField                   `json:"br_features_silverlight"`  // deprecate
+	Br_features_pdf          FlexibleBoolField                   `json:"br_features_pdf"`          // to deprecate
+	Br_features_quicktime    FlexibleBoolField                   `json:"br_features_quicktime"`    // to deprecate
+	Br_features_realplayer   FlexibleBoolField                   `json:"br_features_realplayer"`   // to deprecate
+	Br_features_windowsmedia FlexibleBoolField                   `json:"br_features_windowsmedia"` // to deprecate
+	Br_features_director     FlexibleBoolField                   `json:"br_features_director"`     // to deprecate
+	Br_features_flash        FlexibleBoolField                   `json:"br_features_flash"`        // to deprecate
+	Br_features_java         FlexibleBoolField                   `json:"br_features_java"`         // to deprecate
+	Br_features_gears        FlexibleBoolField                   `json:"br_features_gears"`        // to deprecate
+	Br_features_silverlight  FlexibleBoolField                   `json:"br_features_silverlight"`  // to deprecate
 	Br_colordepth            *int                                `json:"br_colordepth,omitempty"`
 	Doc_charset              *string                             `json:"doc_charset,omitempty"`
 	Doc_size                 *string                             `json:"doc_size,omitempty"`
@@ -113,11 +111,11 @@ type Event struct {
 	Ti_price                 *float64                            `json:"ti_price,string,omitempty"`       // Transaction Item Event
 	Ti_quantity              *int                                `json:"ti_quantity,omitempty"`           // Transaction Item Event
 	Ti_currency              *string                             `json:"ti_currency,omitempty"`           // Transaction Item Event
-	Refr_domain_userid       *string                             `json:"refr_domain_userid,omitempty"`    // Domain Linking FIXME!!
-	Refr_domain_tstamp       time.Time                           `json:"refr_domain_tstamp,omitempty"`    // Domain Linking FIXME!!
+	Refr_domain_userid       *string                             `json:"refr_domain_userid,omitempty"`    // FIXME! Domain Linker
+	Refr_domain_tstamp       time.Time                           `json:"refr_domain_tstamp,omitempty"`    // FIXME! Domain Linker
 }
 
-type ShortenedEvent struct {
+type ShortenedEvent struct { //A struct used to quickly parse incoming json props or query params. Leverages Go type conversion to long-form props.
 	Name_tracker             string                              `json:"tna"`
 	Event_vendor             *string                             `json:"evn,omitempty"` // deprecated
 	App_id                   string                              `json:"aid"`
@@ -142,44 +140,44 @@ type ShortenedEvent struct {
 	Domain_sessionidx        *int64                              `json:"vid,string,omitempty"`
 	Domain_sessionid         *string                             `json:"sid,omitempty"`
 	User_ipaddress           string                              `json:"ip,omitempty"`
-	Page_url                 *string                             `json:"url,omitempty"`
-	Page_urlscheme           *string                             `json:"page_urlscheme,omitempty"`
-	Page_urlhost             *string                             `json:"page_urlhost,omitempty"`
-	Page_urlport             *string                             `json:"page_urlport,omitempty"`
-	Page_urlpath             *string                             `json:"page_urlpath,omitempty"`
-	Page_urlquery            *string                             `json:"page_urlquery,omitempty"`
-	Page_urlfragment         *string                             `json:"page_urlfragment,omitempty"`
-	Mkt_medium               *string                             `json:"mkt_medium,omitempty"`
-	Mkt_source               *string                             `json:"mkt_source,omitempty"`
-	Mkt_term                 *string                             `json:"mkt_term,omitempty"`
-	Mkt_content              *string                             `json:"mkt_content,omitempty"`
-	Mkt_campaign             *string                             `json:"mkt_campaign,omitempty"`
-	Useragent                *string                             `json:"ua,omitempty"`
-	Page_title               *string                             `json:"page,omitempty"`
-	Page_referrer            *string                             `json:"refr,omitempty"`
-	Refr_urlscheme           *string                             `json:"refr_urlscheme,omitempty"`
-	Refr_urlhost             *string                             `json:"refr_urlhost,omitempty"`
-	Refr_urlport             *string                             `json:"refr_urlport,omitempty"`
-	Refr_urlpath             *string                             `json:"refr_urlpath,omitempty"`
-	Refr_urlquery            *string                             `json:"refr_urlquery,omitempty"`
-	Refr_urlfragment         *string                             `json:"refr_urlfragment,omitempty"`
-	Refr_medium              *string                             `json:"refr_medium,omitempty"`
-	Refr_source              *string                             `json:"refr_source,omitempty"`
-	Refr_term                *string                             `json:"refr_term,omitempty"`
-	Refr_content             *string                             `json:"refr_content,omitempty"`
+	Page_url                 *string                             `json:"url"`
+	Page_urlscheme           *string                             `json:"page_urlscheme"`
+	Page_urlhost             *string                             `json:"page_urlhost"`
+	Page_urlport             *string                             `json:"page_urlport"`
+	Page_urlpath             *string                             `json:"page_urlpath"`
+	Page_urlquery            *string                             `json:"page_urlquery"`
+	Page_urlfragment         *string                             `json:"page_urlfragment"`
+	Mkt_medium               *string                             `json:"mkt_medium"`
+	Mkt_source               *string                             `json:"mkt_source"`
+	Mkt_term                 *string                             `json:"mkt_term"`
+	Mkt_content              *string                             `json:"mkt_content"`
+	Mkt_campaign             *string                             `json:"mkt_campaign"`
+	Useragent                *string                             `json:"ua"`
+	Page_title               *string                             `json:"page"`
+	Page_referrer            *string                             `json:"refr"`
+	Refr_urlscheme           *string                             `json:"refr_urlscheme"`
+	Refr_urlhost             *string                             `json:"refr_urlhost"`
+	Refr_urlport             *string                             `json:"refr_urlport"`
+	Refr_urlpath             *string                             `json:"refr_urlpath"`
+	Refr_urlquery            *string                             `json:"refr_urlquery"`
+	Refr_urlfragment         *string                             `json:"refr_urlfragment"`
+	Refr_medium              *string                             `json:"refr_medium"`
+	Refr_source              *string                             `json:"refr_source"`
+	Refr_term                *string                             `json:"refr_term"`
+	Refr_content             *string                             `json:"refr_content"`
 	Refr_campaign            *string                             `json:"refr_campaign,omitempty"`
 	User_fingerprint         *string                             `json:"fp,omitempty"` // deprecated
 	Br_cookies               FlexibleBoolField                   `json:"cookie"`
 	Br_lang                  *string                             `json:"lang,omitempty"`
-	Br_features_pdf          FlexibleBoolField                   `json:"f_pdf"`   // deprecate
-	Br_features_quicktime    FlexibleBoolField                   `json:"f_qt"`    // deprecate
-	Br_features_realplayer   FlexibleBoolField                   `json:"f_realp"` // deprecate
-	Br_features_windowsmedia FlexibleBoolField                   `json:"f_wma"`   // deprecate
-	Br_features_director     FlexibleBoolField                   `json:"f_dir"`   // deprecate
-	Br_features_flash        FlexibleBoolField                   `json:"f_fla"`   // deprecate
-	Br_features_java         FlexibleBoolField                   `json:"f_java"`  // deprecate
-	Br_features_gears        FlexibleBoolField                   `json:"f_gears"` // deprecate
-	Br_features_silverlight  FlexibleBoolField                   `json:"f_ag"`    // deprecate
+	Br_features_pdf          FlexibleBoolField                   `json:"f_pdf"`   // to deprecate
+	Br_features_quicktime    FlexibleBoolField                   `json:"f_qt"`    // to deprecate
+	Br_features_realplayer   FlexibleBoolField                   `json:"f_realp"` // to deprecate
+	Br_features_windowsmedia FlexibleBoolField                   `json:"f_wma"`   // to deprecate
+	Br_features_director     FlexibleBoolField                   `json:"f_dir"`   // to deprecate
+	Br_features_flash        FlexibleBoolField                   `json:"f_fla"`   // to deprecate
+	Br_features_java         FlexibleBoolField                   `json:"f_java"`  // to deprecate
+	Br_features_gears        FlexibleBoolField                   `json:"f_gears"` // to deprecate
+	Br_features_silverlight  FlexibleBoolField                   `json:"f_ag"`    // to deprecate
 	Br_colordepth            *int                                `json:"cd,string,omitempty"`
 	Doc_charset              *string                             `json:"cs,omitempty"`
 	Doc_size                 *string                             `json:"ds,omitempty"`
@@ -219,6 +217,6 @@ type ShortenedEvent struct {
 	Ti_price                 *float64                            `json:"ti_pr,string,omitempty"`       // Transaction Item Event
 	Ti_quantity              *int                                `json:"ti_qu,string,omitempty"`       // Transaction Item Event
 	Ti_currency              *string                             `json:"ti_cu,omitempty"`              // Transaction Item Event
-	Refr_domain_userid       *string                             `json:"refr_domain_userid,omitempty"` // Domain Linking FIXME!!
-	Refr_domain_tstamp       time.Time                           `json:"refr_domain_tstamp,omitempty"` // Domain Linking FIXME!!
+	Refr_domain_userid       *string                             `json:"refr_domain_userid,omitempty"` // FIXME! Domain Linker
+	Refr_domain_tstamp       time.Time                           `json:"refr_domain_tstamp,omitempty"` // FIXME! Domain Linker
 }
