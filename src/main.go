@@ -5,8 +5,6 @@ import (
 )
 
 func main() {
-	buildPubsubClients()
-
 	router := gin.Default()
 	router.RedirectTrailingSlash = false
 	if Config.environment == DEV_ENVIRONMENT {
