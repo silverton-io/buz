@@ -5,34 +5,36 @@ import (
 	"github.com/google/uuid"
 )
 
-func AdvancingCookieMiddleware() gin.HandlerFunc {
+type AdvancingCookieConfig struct {
+	cookieName      string
+	useSecureCookie bool
+	cookieTtlDays   int
+	cookiePath      string
+	cookieDomain    string
+}
+
+func AdvancingCookieMiddleware(config AdvancingCookieConfig) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		identityCookieValue, _ := c.Cookie(Config.cookieName)
-		var useSecureCookie bool
-		if Config.environment == "dev" {
-			useSecureCookie = false
-		} else {
-			useSecureCookie = true
-		}
+		identityCookieValue, _ := c.Cookie(config.cookieName)
 		if identityCookieValue != "" {
 			c.SetCookie(
-				Config.cookieName,
+				config.cookieName,
 				identityCookieValue,
-				60*60*24*Config.cookieTtlDays,
-				Config.cookiePath,
-				Config.cookieDomain,
-				useSecureCookie,
+				60*60*24*config.cookieTtlDays,
+				config.cookiePath,
+				config.cookieDomain,
+				config.useSecureCookie,
 				false,
 			)
 		} else {
 			identityCookieValue := uuid.New()
 			c.SetCookie(
-				Config.cookieName,
+				config.cookieName,
 				identityCookieValue.String(),
-				60*60*24*Config.cookieTtlDays,
-				Config.cookiePath,
-				Config.cookieDomain,
-				useSecureCookie,
+				60*60*24*config.cookieTtlDays,
+				config.cookiePath,
+				config.cookieDomain,
+				config.useSecureCookie,
 				false,
 			)
 		}
@@ -41,7 +43,14 @@ func AdvancingCookieMiddleware() gin.HandlerFunc {
 	}
 }
 
-func CORSMiddleware() gin.HandlerFunc {
+type CORSConfig struct {
+	allowOrigin      []string
+	allowCredentials bool
+	allowMethods     []string
+	maxAge           int
+}
+
+func CORSMiddleware(config CORSConfig) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("Access-Control-Allow-Origin", "*") // FIXME! Make this configurable.
 		c.Header("Access-Control-Allow-Credentials", "true")

@@ -1,172 +1,151 @@
 package main
 
 import (
-	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/tidwall/gjson"
+	"github.com/gin-gonic/gin"
 )
 
-type SelfDescribingPayload struct {
-	Schema string                 `json:"schema"`
-	Data   map[string]interface{} `json:"data"`
+func mapParams(c *gin.Context) map[string]interface{} {
+	mappedParams := make(map[string]interface{})
+	params := c.Request.URL.Query()
+	for k, v := range params {
+		mappedParams[k] = v[0]
+	}
+	return mappedParams
 }
 
-type Context SelfDescribingPayload
-
-type Base64EncodedContexts []Context
-
-func (c *Base64EncodedContexts) UnmarshalJSON(bytes []byte) error {
-	var encodedPayload string
-	var contexts []Context
-	err := json.Unmarshal(bytes, &encodedPayload)
-	decodedPayload, err := b64.RawStdEncoding.DecodeString(encodedPayload)
+func parseWidthHeight(dimensionString string) (Dimension, error) {
+	dim := strings.Split(dimensionString, "x")
+	wS, hS := dim[0], dim[1]
+	width, err := strconv.Atoi(wS)
+	height, err := strconv.Atoi(hS)
 	if err != nil {
-		fmt.Printf("error decoding b64 encoded contexts %s\n", err)
+		return Dimension{}, err
 	}
-	contextPayload := gjson.Parse(string(decodedPayload))
-	for _, pl := range contextPayload.Get("data").Array() {
-		context := Context{
-			Schema: pl.Get("schema").String(),
-			Data:   pl.Get("data").Value().(map[string]interface{}),
+	return Dimension{
+		width:  width,
+		height: height,
+	}, nil
+}
+
+func setEventCollectorMetadataFields(c *gin.Context, e *Event) {}
+
+func setEventFieldsFromRequest(c *gin.Context, e *Event) {
+	nuid := c.GetString("identity")
+	ip, _ := c.RemoteIP()
+	useragent := c.Request.UserAgent()
+	e.Network_userid = &nuid
+	// NOTE!! Intentionally ignore the query-param-based ip and useragent.
+	e.User_ipaddress = ip.String()
+	e.Useragent = &useragent
+	e.Collector_tstamp = time.Now()
+}
+
+func setEventWidthHeightFields(e *Event) {
+	// Doc
+	if e.Doc_size != nil {
+		docDimension, _ := parseWidthHeight(*e.Doc_size)
+		e.Doc_width, e.Doc_height = &docDimension.width, &docDimension.height
+	}
+	// Viewport
+	if e.Viewport_size != nil {
+		vpDimension, _ := parseWidthHeight(*e.Viewport_size)
+		e.Br_viewwidth, e.Br_viewheight = &vpDimension.width, &vpDimension.height
+	}
+	// Screen
+	if e.Monitor_resolution != nil {
+		monDimension, _ := parseWidthHeight(*e.Monitor_resolution)
+		e.Dvce_screenwidth, e.Dvce_screenheight = &monDimension.width, &monDimension.height
+	}
+}
+
+func getPageFieldsFromUrl(rawUrl string) (PageFields, error) {
+	parsedUrl, err := url.Parse(rawUrl)
+	queryParams := parsedUrl.Query()
+	unescapedQry, err := url.QueryUnescape(parsedUrl.RawQuery)
+	if err != nil {
+		return PageFields{}, err
+	}
+	medium := queryParams.Get("utm_medium")
+	source := queryParams.Get("utm_source")
+	term := queryParams.Get("utm_term")
+	content := queryParams.Get("utm_content")
+	campaign := queryParams.Get("utm_campaign")
+	return PageFields{
+		scheme: parsedUrl.Scheme,
+		host:   parsedUrl.Host,
+		// port: FIXME!!!
+		path:     parsedUrl.Path,
+		query:    unescapedQry,
+		fragment: parsedUrl.Fragment,
+		medium:   medium,
+		source:   source,
+		term:     term,
+		content:  content,
+		campaign: campaign,
+	}, nil
+}
+
+func setPageFields(e *Event) {
+	if e.Page_url != nil {
+		pageFields, err := getPageFieldsFromUrl(*e.Page_url)
+		if err != nil {
+			fmt.Printf("error setting page fields %s\n", err)
 		}
-		contexts = append(contexts, context)
+		e.Page_urlscheme = &pageFields.scheme
+		e.Page_urlhost = &pageFields.host
+		e.Page_urlpath = &pageFields.path
+		e.Page_urlquery = &pageFields.query
+		e.Page_urlfragment = &pageFields.fragment
+		e.Mkt_medium = &pageFields.medium
+		e.Mkt_source = &pageFields.source
+		e.Mkt_term = &pageFields.term
+		e.Mkt_content = &pageFields.content
+		e.Mkt_campaign = &pageFields.campaign
 	}
-	*c = contexts
-	return nil
+
 }
 
-type Base64EncodedSelfDescribingPayload SelfDescribingPayload
+func setReferrerFields(e *Event) {
+	if e.Page_referrer != nil {
+		pageFields, err := getPageFieldsFromUrl(*e.Page_referrer)
+		if err != nil {
+			fmt.Printf("error setting page fields %s\n", err)
+		}
+		e.Refr_urlscheme = &pageFields.scheme
+		e.Refr_urlhost = &pageFields.host
+		e.Refr_urlpath = &pageFields.path
+		e.Refr_urlquery = &pageFields.query
+		e.Refr_urlfragment = &pageFields.fragment
+		e.Mkt_medium = &pageFields.medium
+		e.Mkt_source = &pageFields.source
+		e.Mkt_term = &pageFields.term
+		e.Mkt_content = &pageFields.content
+		e.Mkt_campaign = &pageFields.campaign
+	}
+}
 
-func (f *Base64EncodedSelfDescribingPayload) UnmarshalJSON(bytes []byte) error {
-	var encodedPayload string
-	err := json.Unmarshal(bytes, &encodedPayload)
-	decodedPayload, err := b64.RawStdEncoding.DecodeString(encodedPayload)
+func buildEventFromMappedParams(c *gin.Context, e map[string]interface{}) Event {
+	body, err := json.Marshal(e)
 	if err != nil {
-		fmt.Printf("error decoding b64 encoded self describing payload %s\n", err)
+		fmt.Println(err)
 	}
-	schema := gjson.GetBytes(decodedPayload, "data.schema").String()
-	data := gjson.GetBytes(decodedPayload, "data.data").Value().(map[string]interface{})
-	*&f.Schema = schema
-	*&f.Data = data
-	return nil
-}
-
-type FlexibleBoolField bool
-
-func (b *FlexibleBoolField) UnmarshalJSON(bytes []byte) error {
-	var payload string
-	err := json.Unmarshal(bytes, &payload)
+	shortenedEvent := ShortenedEvent{}
+	err = json.Unmarshal(body, &shortenedEvent)
 	if err != nil {
-		fmt.Printf("error decoding FlexibleBoolField %s\n", err)
+		fmt.Printf("error unmarshalling to shortened event %s", err)
 	}
-	val, err := strconv.ParseBool(payload)
-	*b = FlexibleBoolField(val)
-	return nil
-}
-
-type MillisecondTimestampField struct {
-	time.Time
-}
-
-func (t *MillisecondTimestampField) UnmarshalJSON(bytes []byte) error {
-	var msString string
-	err := json.Unmarshal(bytes, &msString)
-	msInt, err := strconv.ParseInt(msString, 10, 64)
-	if err != nil {
-		fmt.Printf("error decoding timestamp: %s\n", err)
-		return err
-	}
-	*&t.Time = time.Unix(0, msInt*int64(time.Millisecond))
-	return nil
-}
-
-type WidthField int
-
-func (wf *WidthField) UnmarshalJSON(bytes []byte) error {
-	var payload string
-	err := json.Unmarshal(bytes, &payload)
-	if err != nil {
-		fmt.Printf("error unmarshalling WidthField %s\n", err)
-	}
-	w := strings.Split(payload, "x")[0]
-	width, err := strconv.Atoi(w)
-	if err != nil {
-		fmt.Printf("error converting width string to int")
-	}
-	*wf = WidthField(width)
-	return nil
-}
-
-type HeightField int
-
-func (hf *HeightField) UnmarshalJSON(bytes []byte) error {
-	var payload string
-	err := json.Unmarshal(bytes, &payload)
-	if err != nil {
-		fmt.Printf("error unmarshalling HeightField %s\n", err)
-	}
-	h := strings.Split(payload, "x")[1]
-	height, err := strconv.Atoi(h)
-	if err != nil {
-		fmt.Printf("error converting height string to int")
-	}
-	*hf = HeightField(height)
-	return nil
-}
-
-type EventTypeField string
-
-func (f *EventTypeField) UnmarshalJSON(bytes []byte) error {
-	var payload string
-	err := json.Unmarshal(bytes, &payload)
-	if err != nil {
-		fmt.Printf("error unmarshaling EventTypeField %s\n", err)
-	}
-	eventType := getEventType(payload)
-	*f = EventTypeField(eventType)
-	return nil
-}
-
-func getEventType(param string) string {
-	switch param {
-	case "pp":
-		return "page_ping"
-	case "pv":
-		return "page_view"
-	case "se":
-		return "struct_event"
-	case "ue":
-		return "self_describing"
-	case "tr":
-		return "transaction"
-	case "ti":
-		return "transaction_item"
-	case "ad":
-		return "ad_impression"
-	}
-	return "unknown"
-}
-
-type Dimension struct {
-	height int
-	width  int
-}
-
-type PageFields struct {
-	scheme   string
-	host     string
-	port     int
-	path     string
-	query    string
-	fragment string
-	medium   string
-	source   string
-	term     string
-	content  string
-	campaign string
+	event := Event(shortenedEvent)
+	setEventCollectorMetadataFields(c, &event)
+	setEventFieldsFromRequest(c, &event)
+	setEventWidthHeightFields(&event)
+	setPageFields(&event)
+	setReferrerFields(&event)
+	return event
 }
