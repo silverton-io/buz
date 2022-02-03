@@ -1,7 +1,7 @@
 package config
 
 type App struct {
-	Env                   string `mapstructure:"env"`
-	Port                  string `mapstructure:"port"`
-	IncludeStandardRoutes bool   `mapstructure:"includeStandardRoutes"`
+	Env  string `json:"env"`
+	Port string `json:"port"`
+	Mode string `json:"mode"`
 }

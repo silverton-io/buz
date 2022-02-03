@@ -1,9 +1,9 @@
 package config
 
-type AdvancingCookie struct {
-	CookieName      string `mapstructure:"cookieName"`
-	UseSecureCookie bool   `mapstructure:"useSecureCookie"`
-	CookieTtlDays   int    `mapstructure:"cookieTtlDays"`
-	CookiePath      string `mapstructure:"cookiePath"`
-	CookieDomain    string `mapstructure:"cookieDomain"`
+type Cookie struct {
+	Name    string `json:"name"`
+	Secure  bool   `json:"secure"`
+	TtlDays int    `json:"ttlDays"`
+	Domain  string `json:"domain"`
+	Path    string `json:"path"`
 }

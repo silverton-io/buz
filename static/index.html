@@ -21,6 +21,9 @@
 
         window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-link-click-tracking@latest/dist/index.umd.min.js",["snowplowLinkClickTracking", "LinkClickTrackingPlugin"]);
         window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-ecommerce@latest/dist/index.umd.min.js",["snowplowEcommerce", "EcommercePlugin"]);
+        window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-performance-timing@latest/dist/index.umd.min.js",["snowplowPerformanceTiming", "PerformanceTimingPlugin"]);
+        window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-client-hints@latest/dist/index.umd.min.js",["snowplowClientHints", "ClientHintsPlugin"]);
+        window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-geolocation@latest/dist/index.umd.min.js",["snowplowGeolocation", "GeolocationtPlugin"],[false]);
 
         // window.spget('enableActivityTracking', {
         //     minimumVisitLength: 10,
@@ -45,6 +48,9 @@
 
         window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-link-click-tracking@latest/dist/index.umd.min.js",["snowplowLinkClickTracking", "LinkClickTrackingPlugin"]);
         window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-ecommerce@latest/dist/index.umd.min.js",["snowplowEcommerce", "EcommercePlugin"]);
+        window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-performance-timing@latest/dist/index.umd.min.js",["snowplowPerformanceTiming", "PerformanceTimingPlugin"]);
+        window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-client-hints@latest/dist/index.umd.min.js",["snowplowClientHints", "ClientHintsPlugin"]);
+        window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-geolocation@latest/dist/index.umd.min.js",["snowplowGeolocation", "GeolocationtPlugin"],[false]);
 
         // window.sppost('enableActivityTracking', {
         //     minimumVisitLength: 1,

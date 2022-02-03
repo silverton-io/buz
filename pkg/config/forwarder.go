@@ -1,10 +1,12 @@
 package config
 
+import "time"
+
 type Pubsub struct {
-	ProjectName       string `mapstructure:"projectName"`
-	ValidEventTopic   string `mapstructure:"validEventTopic"`
-	InvalidEventTopic string `mapstructure:"invalidEventTopic"`
-	// bufferByteThreshold           int
-	// bufferCountThreshold          int
-	// bufferDelayThreshold          time.Duration
+	Project               string        `json:"project"`
+	ValidEventTopic       string        `json:"validEventTopic"`
+	InvalidEventTopic     string        `json:"invalidEventTopic"`
+	BufferByteThreshold   int           `json:"bufferByteThreshold"`
+	BufferRecordThreshold int           `json:"bufferRecordThreshold"`
+	BufferDelayThreshold  time.Duration `json:"bufferDelayThreshold"`
 }

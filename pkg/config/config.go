@@ -1,8 +1,9 @@
 package config
 
 type Config struct {
-	App             `mapstructure:"app"`
-	AdvancingCookie `mapstructure:"advancingCookie"`
-	Cors            `mapstructure:"cors"`
-	Pubsub          `mapstructure:"pubsub"`
+	App     `json:"app"`
+	Routing `json:"routing"`
+	Cookie  `json:"cookie"`
+	Cors    `json:"cors"`
+	Pubsub  `json:"pubsub"`
 }

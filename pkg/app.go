@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/gin-gonic/gin"
@@ -11,11 +12,12 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/handler"
 	"github.com/silverton-io/gosnowplow/pkg/middleware"
 	"github.com/silverton-io/gosnowplow/pkg/snowplow"
+	"github.com/silverton-io/gosnowplow/pkg/util"
 	"github.com/spf13/viper"
 )
 
 type App struct {
-	config             config.Config
+	config             *config.Config
 	engine             *gin.Engine
 	pubsubClient       *pubsub.Client
 	validEventsTopic   *pubsub.Topic
@@ -23,55 +25,32 @@ type App struct {
 }
 
 func (app *App) configure() {
+	// Load app config from file
 	log.Info().Msg("configuring app")
 	viper.SetConfigFile("config.yml")
-	viper.ReadInConfig()
-	// app.advancingCookieConfig = config.AdvancingCookie{
-	// 	CookieName:      "sp-nuid",
-	// 	UseSecureCookie: false,
-	// 	CookieTtlDays:   365,
-	// 	CookiePath:      "/",
-	// 	CookieDomain:    "localhost",
-	// }
-	// app.corsConfig = config.Cors{
-	// 	AllowOrigin:      []string{"*"},
-	// 	AllowCredentials: true,
-	// 	AllowMethods:     []string{"POST", "OPTIONS", "GET"},
-	// 	MaxAge:           86400,
-	// }
-	// app.pubsubConfig = config.Pubsub{
-	// 	ProjectName:       "neat-dispatch-338321",
-	// 	ValidEventTopic:   "test-valid-topic",
-	// 	InvalidEventTopic: "test-invalid-topic",
-	// }
-	// app.appConfig = config.App{
-	// 	Env:                   "dev",
-	// 	Port:                  "8080",
-	// 	IncludeStandardRoutes: true,
-	// SnowplowPostPath:              "com.snowplowanalytics.snowplow/tp2",
-	// SnowplowGetPath:               "/i",
-	// SnowplowRedirectPath:          "r/tp2",
-	// ValidateSnowplowEvents:        false,
-	// }
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatal().Msg("could not read config")
+	}
+	app.config = &config.Config{}
+	viper.Unmarshal(app.config)
+	// util.PrettyPrint(app.config)
+	fmt.Println(viper.GetInt("pubsub.bufferRecordThreshold"))
+	util.PrettyPrint(app.config)
+	// Configure gin
+	gin.SetMode(app.config.App.Mode)
 }
 
 func (app *App) initializePubsub() {
 	log.Info().Msg("initializing pubsub")
 	ctx := context.Background()
-	client, err := pubsub.NewClient(ctx, app.pubsubConfig.ProjectName)
+	client, err := pubsub.NewClient(ctx, app.config.Pubsub.Project)
 	if err != nil {
 		log.Fatal().Msg("could not initialize pubsub client")
 	}
 	app.pubsubClient = client
-	app.validEventsTopic = app.pubsubClient.Topic(app.pubsubConfig.ValidEventTopic)
-	app.invalidEventsTopic = app.pubsubClient.Topic(app.pubsubConfig.InvalidEventTopic)
-	//defer app.pubsubClient.Close() -> This line results in things blocking forever. Ask MGL why.
-}
-
-func (app *App) initializeMiddleware() {
-	log.Info().Msg("initializing middleware")
-	app.engine.Use(middleware.AdvancingCookie(app.advancingCookieConfig))
-	app.engine.Use(middleware.CORS(app.corsConfig))
+	app.validEventsTopic = app.pubsubClient.Topic(app.config.Pubsub.ValidEventTopic)
+	app.invalidEventsTopic = app.pubsubClient.Topic(app.config.Pubsub.InvalidEventTopic)
 }
 
 func (app *App) initializeRouter() {
@@ -80,15 +59,29 @@ func (app *App) initializeRouter() {
 	app.engine.RedirectTrailingSlash = false
 }
 
+func (app *App) initializeMiddleware() {
+	log.Info().Msg("initializing middleware")
+	app.engine.Use(middleware.AdvancingCookie(app.config.Cookie))
+	app.engine.Use(middleware.CORS(app.config.Cors))
+}
+
 func (app *App) initializeRoutes() {
 	log.Info().Msg("initializing routes")
-	app.engine.GET(snowplow.DEFAULT_SNOWPLOW_HEALTH_PATH, handler.Healthcheck)
-	app.engine.GET(app.appConfig.SnowplowGetPath, handler.SnowplowGet(app.validEventsTopic))
-	app.engine.POST(app.appConfig.SnowplowPostPath, handler.SnowplowPost(app.validEventsTopic))
+	if app.config.Routing.IncludeStandardRoutes {
+		log.Info().Msg("initializing standard routes")
+		app.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowGet(app.validEventsTopic))
+		app.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowPost(app.validEventsTopic))
+		// app.engine.GET((snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowRedirect(app.validEventsTopic)))
+	} else {
+		log.Info().Msg("skipping standard route initialization")
+	}
+	app.engine.GET(snowplow.DEFAULT_HEALTH_PATH, handler.Healthcheck)
+	app.engine.GET(app.config.Routing.GetPath, handler.SnowplowGet(app.validEventsTopic))
+	app.engine.POST(app.config.Routing.PostPath, handler.SnowplowPost(app.validEventsTopic))
 }
 
 func (app *App) serveStaticIfDev() {
-	if app.appConfig.Environment == env.DEV_ENVIRONMENT {
+	if app.config.App.Env == env.DEV_ENVIRONMENT {
 		log.Info().Msg("serving static files")
 		// Serve a local file to make testing events easier
 		app.engine.StaticFile("/", "./static/index.html")
@@ -109,5 +102,6 @@ func (app *App) Initialize() {
 }
 
 func (app *App) Run() {
-	app.engine.Run(":" + app.appConfig.Port)
+	defer app.pubsubClient.Close()
+	app.engine.Run(":" + app.config.App.Port)
 }

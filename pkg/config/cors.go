@@ -1,8 +1,8 @@
 package config
 
 type Cors struct {
-	AllowOrigin      []string `mapstructure:"allowOrigin"`
-	AllowCredentials bool     `mapstructure:"allowCredentials"`
-	AllowMethods     []string `mapstructure:"allowMethods"`
-	MaxAge           int      `mapstructure:"maxAge"`
+	AllowOrigin      []string `json:"allowOrigin"`
+	AllowCredentials bool     `json:"allowCredentials"`
+	AllowMethods     []string `json:"allowMethods"`
+	MaxAge           int      `json:"maxAge"`
 }

@@ -1,29 +1,47 @@
 version: 1
 
 app:
-  environment: dev
+  env: dev
+  mode: debug
   port: 8080
+  forwarderType: pubsub
 
 routing:
-  includeStandardRoutes: True
-  postPath: tp2/
-  getPath:  i/
-  redirectPath: r/tp2
+  includeStandardRoutes: true
+  getPath: /plw/g
+  postPath: /plw/p
+  redirectPath: /plw/r
 
 cookie:
   name: sp-nuid
-  domain: bostata.com
+  secure: False
   ttlDays: 365
-  secure: True
+  domain: localhost
+  path: /
   sameSite: Lax
 
 cors:
-  allowedOrigins:
+  allowOrigin:
     - "*"
+  allowCredentials: true
+  allowMethods:
+    - POST
+    - OPTIONS
+    - GET
   maxAge: 86400
 
-parser:
-  extractCookies: True
+pubsub:
+  project: "dev-sixrs-data-platform"
+  validEventTopic: "test-valid-topic"
+  invalidEventTopic: "test-invalid-topic"
+  bufferByteThreshold: 1024
+  bufferRecordThreshold: 100
+  bufferDelayThreshold: 10000000000
 
-telemetry:
-  enable: False
+
+
+# parser:
+#   extractCookies: True
+
+# telemetry:
+#   enable: False
