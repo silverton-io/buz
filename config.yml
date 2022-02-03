@@ -2,7 +2,7 @@ version: 1
 
 app:
   env: dev
-  mode: debug
+  mode: release # Mode is either debug or release
   port: 8080
   forwarderType: pubsub
 

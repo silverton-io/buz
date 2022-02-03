@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/gin-gonic/gin"
@@ -34,9 +33,8 @@ func (app *App) configure() {
 	}
 	app.config = &config.Config{}
 	viper.Unmarshal(app.config)
-	// util.PrettyPrint(app.config)
-	fmt.Println(viper.GetInt("pubsub.bufferRecordThreshold"))
 	util.PrettyPrint(app.config)
+
 	// Configure gin
 	gin.SetMode(app.config.App.Mode)
 }
