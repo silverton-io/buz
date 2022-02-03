@@ -1,9 +1,9 @@
-package main
+package response
 
 type Response struct {
 	Message string `json:"message"`
 }
 
-var AllOk = Response{
+var Ok = Response{
 	Message: "ok",
 }

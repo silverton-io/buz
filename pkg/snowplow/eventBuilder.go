@@ -1,4 +1,4 @@
-package main
+package snowplow
 
 import (
 	"encoding/json"
@@ -10,15 +10,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-func mapParams(c *gin.Context) map[string]interface{} {
-	mappedParams := make(map[string]interface{})
-	params := c.Request.URL.Query()
-	for k, v := range params {
-		mappedParams[k] = v[0]
-	}
-	return mappedParams
-}
 
 func parseWidthHeight(dimensionString string) (Dimension, error) {
 	dim := strings.Split(dimensionString, "x")
@@ -131,7 +122,7 @@ func setReferrerFields(e *Event) {
 	}
 }
 
-func buildEventFromMappedParams(c *gin.Context, e map[string]interface{}) Event {
+func BuildEventFromMappedParams(c *gin.Context, e map[string]interface{}) Event {
 	body, err := json.Marshal(e)
 	if err != nil {
 		fmt.Println(err)

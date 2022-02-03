@@ -1,4 +1,4 @@
-package main
+package forwarder
 
 import (
 	"encoding/json"
@@ -6,10 +6,11 @@ import (
 	"sync"
 
 	"cloud.google.com/go/pubsub"
+	"github.com/silverton-io/gosnowplow/pkg/snowplow"
 	"golang.org/x/net/context"
 )
 
-func publishEvent(ctx context.Context, topic *pubsub.Topic, event Event) {
+func PublishEvent(ctx context.Context, topic *pubsub.Topic, event snowplow.Event) {
 	payload, _ := json.Marshal(event)
 	msg := &pubsub.Message{
 		Data: payload,
@@ -22,7 +23,7 @@ func publishEvent(ctx context.Context, topic *pubsub.Topic, event Event) {
 	fmt.Printf("message %v sent to pubsub\n", id)
 }
 
-func publishEvents(ctx context.Context, topic *pubsub.Topic, events []Event) {
+func PublishEvents(ctx context.Context, topic *pubsub.Topic, events []snowplow.Event) {
 	var wg sync.WaitGroup
 	for _, event := range events {
 		payload, _ := json.Marshal(event)

@@ -1,4 +1,4 @@
-package main
+package snowplow
 
 import (
 	b64 "encoding/base64"
@@ -9,12 +9,6 @@ import (
 
 	"github.com/tidwall/gjson"
 )
-
-type EventEnvelope struct {
-	IsValid          bool      `json:"is_valid"`
-	ValidationErrors *[]string `json:"validation_errors"`
-	Event            Event     `json:"event"`
-}
 
 type Event struct {
 	// Application parameters - https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/snowplow-tracker-protocol/#common-parameters-platform-and-event-independent
@@ -269,8 +263,8 @@ func (f *Base64EncodedSelfDescribingPayload) UnmarshalJSON(bytes []byte) error {
 	}
 	schema := gjson.GetBytes(decodedPayload, "data.schema").String()
 	data := gjson.GetBytes(decodedPayload, "data.data").Value().(map[string]interface{})
-	*&f.Schema = schema
-	*&f.Data = data
+	f.Schema = schema
+	f.Data = data
 	return nil
 }
 
@@ -299,7 +293,7 @@ func (t *MillisecondTimestampField) UnmarshalJSON(bytes []byte) error {
 		fmt.Printf("error decoding timestamp: %s\n", err)
 		return err
 	}
-	*&t.Time = time.Unix(0, msInt*int64(time.Millisecond))
+	t.Time = time.Unix(0, msInt*int64(time.Millisecond))
 	return nil
 }
 
