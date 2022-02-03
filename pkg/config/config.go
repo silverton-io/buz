@@ -6,4 +6,5 @@ type Config struct {
 	Cookie  `json:"cookie"`
 	Cors    `json:"cors"`
 	Pubsub  `json:"pubsub"`
+	Tele    `json:"tele"`
 }

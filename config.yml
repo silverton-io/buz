@@ -38,10 +38,5 @@ pubsub:
   bufferRecordThreshold: 100
   bufferDelayThreshold: 10000000000
 
-
-
-# parser:
-#   extractCookies: True
-
-# telemetry:
-#   enable: False
+tele:
+  enable: true
