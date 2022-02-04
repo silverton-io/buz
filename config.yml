@@ -2,7 +2,7 @@ version: 1
 
 app:
   env: dev
-  mode: release # Mode is either debug or release
+  mode: debug # Mode is either debug or release
   port: 8080
   forwarderType: pubsub
 
@@ -29,6 +29,14 @@ cors:
     - OPTIONS
     - GET
   maxAge: 86400
+
+anonymize:
+  ip: false
+  user_id: false
+
+registry:
+  type: gcs # gcs, s3, abs, or local
+  location: # either a remote url or local fs path
 
 pubsub:
   project: "dev-sixrs-data-platform"

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/gin-gonic/gin"
@@ -44,6 +45,7 @@ func (app *App) initializePubsub() {
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, app.config.Pubsub.Project)
 	if err != nil {
+		fmt.Println(err)
 		log.Fatal().Msg("could not initialize pubsub client")
 	}
 	app.pubsubClient = client
@@ -69,7 +71,7 @@ func (app *App) initializeRoutes() {
 		log.Info().Msg("initializing standard routes")
 		app.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowGet(app.validEventsTopic))
 		app.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowPost(app.validEventsTopic))
-		// app.engine.GET((snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowRedirect(app.validEventsTopic)))
+		app.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowRedirect(app.validEventsTopic))
 	} else {
 		log.Info().Msg("skipping standard route initialization")
 	}

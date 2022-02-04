@@ -11,6 +11,7 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/http"
 	"github.com/silverton-io/gosnowplow/pkg/response"
 	"github.com/silverton-io/gosnowplow/pkg/snowplow"
+	"github.com/silverton-io/gosnowplow/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
@@ -36,6 +37,7 @@ func SnowplowGet(publishTopic *pubsub.Topic) gin.HandlerFunc {
 		mappedParams := http.MapParams(c)
 		event := snowplow.BuildEventFromMappedParams(c, mappedParams)
 		forwarder.PublishEvent(ctx, publishTopic, event)
+		util.PrettyPrint(event)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)

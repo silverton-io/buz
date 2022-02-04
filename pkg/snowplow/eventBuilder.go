@@ -122,7 +122,12 @@ func setReferrerFields(e *Event) {
 	}
 }
 
+func anonymizeFields(e *Event) {
+	// TODO! Add field-level anonymization
+}
+
 func BuildEventFromMappedParams(c *gin.Context, e map[string]interface{}) Event {
+
 	body, err := json.Marshal(e)
 	if err != nil {
 		fmt.Println(err)
@@ -138,5 +143,6 @@ func BuildEventFromMappedParams(c *gin.Context, e map[string]interface{}) Event 
 	setEventWidthHeightFields(&event)
 	setPageFields(&event)
 	setReferrerFields(&event)
+	anonymizeFields(&event) // TODO, as necessary.
 	return event
 }
