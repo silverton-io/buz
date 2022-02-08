@@ -3,7 +3,7 @@ version: 1
 app:
   env: dev
   mode: debug # Mode is either debug or release
-  port: 8080
+  port: 8081
   forwarderType: pubsub
 
 routing:
@@ -39,9 +39,9 @@ registry:
   location: # either a remote url or local fs path
 
 pubsub:
-  project: "dev-sixrs-data-platform"
-  validEventTopic: "test-valid-topic"
-  invalidEventTopic: "test-invalid-topic"
+  project: "bostata-internal"
+  validEventTopic: "test-topic"
+  invalidEventTopic: "test-topic"
   bufferByteThreshold: 1024
   bufferRecordThreshold: 100
   bufferDelayThreshold: 10000000000

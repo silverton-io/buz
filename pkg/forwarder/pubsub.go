@@ -16,9 +16,11 @@ func PublishEvent(ctx context.Context, topic *pubsub.Topic, event snowplow.Event
 		Data: payload,
 	}
 	result := topic.Publish(ctx, msg)
-	_, err := result.Get(ctx)
+	id, err := result.Get(ctx)
 	if err != nil {
 		fmt.Printf("could not publish event %s\n", err)
+	} else {
+		fmt.Printf("published to pubsub, msg id %v\n", id)
 	}
 }
 
@@ -33,9 +35,11 @@ func PublishEvents(ctx context.Context, topic *pubsub.Topic, events []snowplow.E
 		wg.Add(1)
 		go func(res *pubsub.PublishResult) {
 			defer wg.Done()
-			_, err := res.Get(ctx)
+			id, err := res.Get(ctx)
 			if err != nil {
 				fmt.Printf("could not publish event %v\n", err)
+			} else {
+				fmt.Printf("published to pubsub, msg id %v\n", id)
 			}
 		}(result)
 	}
