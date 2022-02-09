@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
-	"fmt"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/gosnowplow/pkg/cache"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/env"
 	"github.com/silverton-io/gosnowplow/pkg/handler"
@@ -22,6 +22,7 @@ type App struct {
 	pubsubClient       *pubsub.Client
 	validEventsTopic   *pubsub.Topic
 	invalidEventsTopic *pubsub.Topic
+	schemaCache        *cache.SchemaCache
 }
 
 func (app *App) configure() {
@@ -35,7 +36,6 @@ func (app *App) configure() {
 	app.config = &config.Config{}
 	viper.Unmarshal(app.config)
 	util.PrettyPrint(app.config)
-
 	// Configure gin
 	gin.SetMode(app.config.App.Mode)
 }
@@ -45,12 +45,18 @@ func (app *App) initializePubsub() {
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, app.config.Pubsub.Project)
 	if err != nil {
-		fmt.Println(err)
-		log.Fatal().Msg("could not initialize pubsub client")
+		log.Fatal().Stack().Err(err).Msg("could not initialize pubsub client")
 	}
 	app.pubsubClient = client
 	app.validEventsTopic = app.pubsubClient.Topic(app.config.Pubsub.ValidEventTopic)
 	app.invalidEventsTopic = app.pubsubClient.Topic(app.config.Pubsub.InvalidEventTopic)
+}
+
+func (app *App) initializeSchemaCache() {
+	log.Info().Msg("initializing schema cache")
+	cache := cache.SchemaCache{}
+	cache.Initialize(app.config.Cache)
+	app.schemaCache = &cache
 }
 
 func (app *App) initializeRouter() {
@@ -95,13 +101,17 @@ func (app *App) Initialize() {
 	log.Info().Msg("initializing app")
 	app.configure()
 	app.initializePubsub()
+	app.initializeSchemaCache()
 	app.initializeRouter()
 	app.initializeMiddleware()
 	app.initializeRoutes()
 	app.serveStaticIfDev()
+	log.Info().Msg("getting a schema just because")
+	app.schemaCache.Get("com.snowplowanalytics.snowplow/focus_form/jsonschema/1-0-0")
 }
 
 func (app *App) Run() {
 	defer app.pubsubClient.Close()
+	// defer app.cache.Backend.CloseClient()
 	app.engine.Run(":" + app.config.App.Port)
 }

@@ -32,11 +32,15 @@ cors:
 
 anonymize:
   ip: false
-  user_id: false
+  userId: false
 
-registry:
-  type: gcs # gcs, s3, abs, or local
-  location: # either a remote url or local fs path
+cache:
+  backend:
+    type: gcs
+    location: gosnowplow-schemas-test
+    path: /
+  ttlSeconds: 300
+  maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
 
 pubsub:
   project: "bostata-internal"
