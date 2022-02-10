@@ -25,7 +25,7 @@ func (b *GcsSchemaCacheBackend) Initialize(location string, path string) {
 	b.client, b.location, b.path = client, location, path
 }
 
-func (b *GcsSchemaCacheBackend) getRemoteSchema(schema string) []byte {
+func (b *GcsSchemaCacheBackend) getRemoteSchema(schema string) (contents []byte, err error) {
 	ctx := context.Background()
 	var schemaLocation string
 	if b.path == "/" {
@@ -37,7 +37,8 @@ func (b *GcsSchemaCacheBackend) getRemoteSchema(schema string) []byte {
 	reader, err := b.client.Bucket(b.location).Object(schemaLocation).NewReader(ctx)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not get file from cache backend " + schemaLocation)
+		return nil, err
 	}
 	data, _ := ioutil.ReadAll(reader)
-	return data
+	return data, nil
 }

@@ -38,6 +38,7 @@ func (app *App) initializeForwarder() {
 	log.Info().Msg("initializing forwarder")
 	forwarder := forwarder.PubsubForwarder{}
 	forwarder.Initialize(app.config.Forwarder)
+	app.forwarder = &forwarder
 }
 
 func (app *App) initializeSchemaCache() {
@@ -59,31 +60,31 @@ func (app *App) initializeMiddleware() {
 	app.engine.Use(middleware.CORS(app.config.Cors))
 }
 
-func (app *App) initializeRoutes() {
-	log.Info().Msg("initializing routes")
+func (app *App) initializeSnowplowRoutes() {
+	log.Info().Msg("initializing snowplow routes")
 	log.Info().Msg("initializing health check route")
 	app.engine.GET(snowplow.DEFAULT_HEALTH_PATH, handler.Healthcheck)
 	if app.config.Routing.DisableStandardRoutes {
 		log.Info().Msg("skipping standard route initialization")
 	} else {
 		log.Info().Msg("initializing standard routes")
-		app.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowGet(app.forwarder))
-		app.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowPost(app.forwarder))
+		app.engine.GET(snowplow.DEFAULT_GET_PATH, snowplow.GetHandler(app.forwarder, app.schemaCache))
+		app.engine.POST(snowplow.DEFAULT_POST_PATH, snowplow.PostHandler(app.forwarder, app.schemaCache))
 		if app.config.Routing.DisableOpenRedirect {
 			log.Info().Msg("skipping standard open redirect initialization")
 		} else {
 			log.Info().Msg("initializing standard open redirect route")
-			app.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowRedirect(app.forwarder))
+			app.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, snowplow.RedirectHandler(app.forwarder, app.schemaCache))
 		}
 	}
 	log.Info().Msg("initializing custom routes")
-	app.engine.GET(app.config.Routing.GetPath, handler.SnowplowGet(app.forwarder))
-	app.engine.POST(app.config.Routing.PostPath, handler.SnowplowPost(app.forwarder))
+	app.engine.GET(app.config.Routing.GetPath, snowplow.GetHandler(app.forwarder, app.schemaCache))
+	app.engine.POST(app.config.Routing.PostPath, snowplow.PostHandler(app.forwarder, app.schemaCache))
 	if app.config.Routing.DisableOpenRedirect {
 		log.Info().Msg("skipping custom open redirect initialization")
 	} else {
 		log.Info().Msg("initializing custom open redirect route")
-		app.engine.GET(app.config.Routing.RedirectPath, handler.SnowplowRedirect(app.forwarder))
+		app.engine.GET(app.config.Routing.RedirectPath, snowplow.RedirectHandler(app.forwarder, app.schemaCache))
 	}
 }
 
@@ -105,7 +106,7 @@ func (app *App) Initialize() {
 	app.initializeSchemaCache()
 	app.initializeRouter()
 	app.initializeMiddleware()
-	app.initializeRoutes()
+	app.initializeSnowplowRoutes()
 	app.serveStaticIfDev()
 }
 

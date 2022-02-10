@@ -38,7 +38,7 @@ func (f *PubsubForwarder) publishEvent(ctx context.Context, topic *pubsub.Topic,
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not publish event")
 	} else {
-		log.Debug().Msgf("published event to pubsub %s", id)
+		log.Debug().Msgf("published event id " + id + " to topic " + topic.ID())
 	}
 }
 
@@ -57,7 +57,7 @@ func (f *PubsubForwarder) batchPublishEvents(ctx context.Context, topic *pubsub.
 			if err != nil {
 				log.Error().Stack().Err(err).Msg("could not publish event")
 			} else {
-				log.Debug().Msgf("published event to pubsub %s", id)
+				log.Debug().Msgf("published event id " + id + " to topic " + topic.ID())
 			}
 		}(result)
 	}

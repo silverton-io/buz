@@ -38,15 +38,17 @@ cache:
   backend:
     type: gcs
     location: gosnowplow-schemas-test
+    # location: watershed-schemas-test
     path: /
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
 
 forwarder:
   type: pubsub
-  project: "bostata-internal"
-  validEventTopic: "test-valid-topic"
-  invalidEventTopic: "test-invalid-topic"
+  # project: "bostata-internal"
+  project: dev-sixrs-data-platform
+  validEventTopic: test-valid-topic
+  invalidEventTopic: test-invalid-topic
   bufferByteThreshold: 1024
   bufferRecordThreshold: 100
   bufferDelayThreshold: 10000000000

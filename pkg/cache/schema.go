@@ -26,23 +26,28 @@ func (s *SchemaCache) Initialize(config config.Cache) {
 	log.Info().Msg("schema cache initialized")
 }
 
-func (s *SchemaCache) Get(key string) []byte {
+func (s *SchemaCache) Get(key string) (data []byte, exists bool) {
 	k := []byte(key)
-	val, err := s.cache.Get(k)
-	if err != nil {
-		log.Debug().Msg("could not find cache key " + key)
-	}
-	if val != nil {
+	schemaContents, _ := s.cache.Get(k)
+	if schemaContents != nil {
 		log.Debug().Msg("found cache key " + key)
-		return val
+		// Found schema cached locally
+		return schemaContents, true
+		// Did not find schema locally, going to remote
 	} else {
-		schemaContents := s.backend.getRemoteSchema(key)
+		schemaContents, err := s.backend.getRemoteSchema(key)
+		if err != nil {
+			log.Debug().Msg("error when getting remote schema")
+			// Can not get remote schema
+			return nil, false
+		}
 		log.Debug().Msg("caching " + key)
-		err := s.cache.Set(k, schemaContents, s.ttlSeconds)
+		err = s.cache.Set(k, schemaContents, s.ttlSeconds)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("error when setting key " + key)
 		}
 		log.Debug().Msg(key + " cached successfully")
-		return schemaContents
+		// Remote schema exists and was cached successfully
+		return schemaContents, true
 	}
 }
