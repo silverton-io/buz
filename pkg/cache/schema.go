@@ -33,6 +33,7 @@ func (s *SchemaCache) Get(key string) []byte {
 		log.Debug().Msg("could not find cache key " + key)
 	}
 	if val != nil {
+		log.Debug().Msg("found cache key " + key)
 		return val
 	} else {
 		schemaContents := s.backend.getRemoteSchema(key)

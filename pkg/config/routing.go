@@ -1,7 +1,8 @@
 package config
 
 type Routing struct {
-	IncludeStandardRoutes bool   `json:"includeStandardRoutes"`
+	DisableStandardRoutes bool   `json:"disableStandardRoutes"`
+	DisableOpenRedirect   bool   `json:"disableOpenRedirect"`
 	GetPath               string `json:"getPath"`
 	PostPath              string `json:"postPath"`
 	RedirectPath          string `json:"redirectPath"`

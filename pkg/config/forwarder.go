@@ -2,7 +2,8 @@ package config
 
 import "time"
 
-type Pubsub struct {
+type Forwarder struct {
+	Type                  string        `json:"type"`
 	Project               string        `json:"project"`
 	ValidEventTopic       string        `json:"validEventTopic"`
 	InvalidEventTopic     string        `json:"invalidEventTopic"`

@@ -2,15 +2,33 @@ package forwarder
 
 import (
 	"encoding/json"
-	"fmt"
+
 	"sync"
 
 	"cloud.google.com/go/pubsub"
-	"github.com/silverton-io/gosnowplow/pkg/snowplow"
+	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/gosnowplow/pkg/config"
 	"golang.org/x/net/context"
 )
 
-func PublishEvent(ctx context.Context, topic *pubsub.Topic, event snowplow.Event) {
+type PubsubForwarder struct {
+	Client             *pubsub.Client
+	validEventsTopic   *pubsub.Topic
+	invalidEventsTopic *pubsub.Topic
+}
+
+func (f *PubsubForwarder) Initialize(config config.Forwarder) {
+	ctx := context.Background()
+	client, err := pubsub.NewClient(ctx, config.Project)
+	if err != nil {
+		log.Fatal().Stack().Err(err).Msg("could not initialize forwarder")
+	}
+	validTopic := client.Topic(config.ValidEventTopic)
+	invalidTopic := client.Topic(config.InvalidEventTopic)
+	f.Client, f.validEventsTopic, f.invalidEventsTopic = client, validTopic, invalidTopic
+}
+
+func (f *PubsubForwarder) publishEvent(ctx context.Context, topic *pubsub.Topic, event interface{}) {
 	payload, _ := json.Marshal(event)
 	msg := &pubsub.Message{
 		Data: payload,
@@ -18,13 +36,13 @@ func PublishEvent(ctx context.Context, topic *pubsub.Topic, event snowplow.Event
 	result := topic.Publish(ctx, msg)
 	id, err := result.Get(ctx)
 	if err != nil {
-		fmt.Printf("could not publish event %s\n", err)
+		log.Error().Stack().Err(err).Msg("could not publish event")
 	} else {
-		fmt.Printf("published to pubsub, msg id %v\n", id)
+		log.Debug().Msgf("published event to pubsub %s", id)
 	}
 }
 
-func PublishEvents(ctx context.Context, topic *pubsub.Topic, events []snowplow.Event) {
+func (f *PubsubForwarder) batchPublishEvents(ctx context.Context, topic *pubsub.Topic, events []interface{}) {
 	var wg sync.WaitGroup
 	for _, event := range events {
 		payload, _ := json.Marshal(event)
@@ -37,11 +55,27 @@ func PublishEvents(ctx context.Context, topic *pubsub.Topic, events []snowplow.E
 			defer wg.Done()
 			id, err := res.Get(ctx)
 			if err != nil {
-				fmt.Printf("could not publish event %v\n", err)
+				log.Error().Stack().Err(err).Msg("could not publish event")
 			} else {
-				fmt.Printf("published to pubsub, msg id %v\n", id)
+				log.Debug().Msgf("published event to pubsub %s", id)
 			}
 		}(result)
 	}
 	wg.Wait()
+}
+
+func (f *PubsubForwarder) PublishValidEvent(ctx context.Context, event interface{}) {
+	f.publishEvent(ctx, f.validEventsTopic, event)
+}
+
+func (f *PubsubForwarder) PublishInvalidEvent(ctx context.Context, event interface{}) {
+	f.publishEvent(ctx, f.invalidEventsTopic, event)
+}
+
+func (f *PubsubForwarder) PublishValidEvents(ctx context.Context, events []interface{}) {
+	f.batchPublishEvents(ctx, f.validEventsTopic, events)
+}
+
+func (f *PubsubForwarder) PublishInvalidEvents(ctx context.Context, events []interface{}) {
+	f.batchPublishEvents(ctx, f.invalidEventsTopic, events)
 }

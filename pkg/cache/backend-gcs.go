@@ -22,9 +22,7 @@ func (b *GcsSchemaCacheBackend) Initialize(location string, path string) {
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not initialize gcs schema cache backend")
 	}
-	b.client = client
-	b.location = location
-	b.path = path
+	b.client, b.location, b.path = client, location, path
 }
 
 func (b *GcsSchemaCacheBackend) getRemoteSchema(schema string) []byte {

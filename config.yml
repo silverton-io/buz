@@ -2,12 +2,12 @@ version: 1
 
 app:
   env: dev
-  mode: debug # Mode is either debug or release
+  mode: release # Mode is either debug or release
   port: 8081
-  forwarderType: pubsub
 
 routing:
-  includeStandardRoutes: true
+  disableStandardRoutes: false
+  disableOpenRedirect: true # Probably want to turn this off in production if unused. 
   getPath: /plw/g
   postPath: /plw/p
   redirectPath: /plw/r
@@ -42,10 +42,11 @@ cache:
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
 
-pubsub:
+forwarder:
+  type: pubsub
   project: "bostata-internal"
-  validEventTopic: "test-topic"
-  invalidEventTopic: "test-topic"
+  validEventTopic: "test-valid-topic"
+  invalidEventTopic: "test-invalid-topic"
   bufferByteThreshold: 1024
   bufferRecordThreshold: 100
   bufferDelayThreshold: 10000000000

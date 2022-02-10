@@ -10,6 +10,17 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+// Event Types
+
+const PAGE_PING = "page_ping"
+const PAGE_VIEW = "page_view"
+const STRUCT_EVENT = "struct_event"
+const SELF_DESCRIBING_EVENT = "self_describing"
+const TRANSACTION = "transaction"
+const TRANSACTION_ITEM = "transaction_item"
+const AD_IMPRESSION = "ad_impression"
+const UNKNOWN_EVENT = "unknown"
+
 type Event struct {
 	// Application parameters - https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/snowplow-tracker-protocol/#common-parameters-platform-and-event-independent
 	Name_tracker             string                              `json:"name_tracker"`
@@ -313,21 +324,21 @@ func (f *EventTypeField) UnmarshalJSON(bytes []byte) error {
 func getEventType(param string) string {
 	switch param {
 	case "pp":
-		return "page_ping"
+		return PAGE_PING
 	case "pv":
-		return "page_view"
+		return PAGE_VIEW
 	case "se":
-		return "struct_event"
+		return STRUCT_EVENT
 	case "ue":
-		return "self_describing"
+		return SELF_DESCRIBING_EVENT
 	case "tr":
-		return "transaction"
+		return TRANSACTION
 	case "ti":
-		return "transaction_item"
+		return TRANSACTION_ITEM
 	case "ad":
-		return "ad_impression"
+		return AD_IMPRESSION
 	}
-	return "unknown"
+	return UNKNOWN_EVENT
 }
 
 type Dimension struct {

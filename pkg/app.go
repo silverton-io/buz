@@ -1,33 +1,27 @@
 package main
 
 import (
-	"context"
-
-	"cloud.google.com/go/pubsub"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/cache"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/env"
+	"github.com/silverton-io/gosnowplow/pkg/forwarder"
 	"github.com/silverton-io/gosnowplow/pkg/handler"
 	"github.com/silverton-io/gosnowplow/pkg/middleware"
 	"github.com/silverton-io/gosnowplow/pkg/snowplow"
-	"github.com/silverton-io/gosnowplow/pkg/util"
 	"github.com/spf13/viper"
 )
 
 type App struct {
-	config             *config.Config
-	engine             *gin.Engine
-	pubsubClient       *pubsub.Client
-	validEventsTopic   *pubsub.Topic
-	invalidEventsTopic *pubsub.Topic
-	schemaCache        *cache.SchemaCache
+	config      *config.Config
+	engine      *gin.Engine
+	forwarder   *forwarder.PubsubForwarder
+	schemaCache *cache.SchemaCache
 }
 
 func (app *App) configure() {
 	// Load app config from file
-	log.Info().Msg("configuring app")
 	viper.SetConfigFile("config.yml")
 	err := viper.ReadInConfig()
 	if err != nil {
@@ -35,21 +29,15 @@ func (app *App) configure() {
 	}
 	app.config = &config.Config{}
 	viper.Unmarshal(app.config)
-	util.PrettyPrint(app.config)
+	log.Debug().Interface("config", app.config).Msg("configuring app")
 	// Configure gin
 	gin.SetMode(app.config.App.Mode)
 }
 
-func (app *App) initializePubsub() {
-	log.Info().Msg("initializing pubsub")
-	ctx := context.Background()
-	client, err := pubsub.NewClient(ctx, app.config.Pubsub.Project)
-	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("could not initialize pubsub client")
-	}
-	app.pubsubClient = client
-	app.validEventsTopic = app.pubsubClient.Topic(app.config.Pubsub.ValidEventTopic)
-	app.invalidEventsTopic = app.pubsubClient.Topic(app.config.Pubsub.InvalidEventTopic)
+func (app *App) initializeForwarder() {
+	log.Info().Msg("initializing forwarder")
+	forwarder := forwarder.PubsubForwarder{}
+	forwarder.Initialize(app.config.Forwarder)
 }
 
 func (app *App) initializeSchemaCache() {
@@ -73,17 +61,30 @@ func (app *App) initializeMiddleware() {
 
 func (app *App) initializeRoutes() {
 	log.Info().Msg("initializing routes")
-	if app.config.Routing.IncludeStandardRoutes {
-		log.Info().Msg("initializing standard routes")
-		app.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowGet(app.validEventsTopic))
-		app.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowPost(app.validEventsTopic))
-		app.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowRedirect(app.validEventsTopic))
-	} else {
-		log.Info().Msg("skipping standard route initialization")
-	}
+	log.Info().Msg("initializing health check route")
 	app.engine.GET(snowplow.DEFAULT_HEALTH_PATH, handler.Healthcheck)
-	app.engine.GET(app.config.Routing.GetPath, handler.SnowplowGet(app.validEventsTopic))
-	app.engine.POST(app.config.Routing.PostPath, handler.SnowplowPost(app.validEventsTopic))
+	if app.config.Routing.DisableStandardRoutes {
+		log.Info().Msg("skipping standard route initialization")
+	} else {
+		log.Info().Msg("initializing standard routes")
+		app.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowGet(app.forwarder))
+		app.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowPost(app.forwarder))
+		if app.config.Routing.DisableOpenRedirect {
+			log.Info().Msg("skipping standard open redirect initialization")
+		} else {
+			log.Info().Msg("initializing standard open redirect route")
+			app.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowRedirect(app.forwarder))
+		}
+	}
+	log.Info().Msg("initializing custom routes")
+	app.engine.GET(app.config.Routing.GetPath, handler.SnowplowGet(app.forwarder))
+	app.engine.POST(app.config.Routing.PostPath, handler.SnowplowPost(app.forwarder))
+	if app.config.Routing.DisableOpenRedirect {
+		log.Info().Msg("skipping custom open redirect initialization")
+	} else {
+		log.Info().Msg("initializing custom open redirect route")
+		app.engine.GET(app.config.Routing.RedirectPath, handler.SnowplowRedirect(app.forwarder))
+	}
 }
 
 func (app *App) serveStaticIfDev() {
@@ -100,18 +101,15 @@ func (app *App) serveStaticIfDev() {
 func (app *App) Initialize() {
 	log.Info().Msg("initializing app")
 	app.configure()
-	app.initializePubsub()
+	app.initializeForwarder()
 	app.initializeSchemaCache()
 	app.initializeRouter()
 	app.initializeMiddleware()
 	app.initializeRoutes()
 	app.serveStaticIfDev()
-	log.Info().Msg("getting a schema just because")
-	app.schemaCache.Get("com.snowplowanalytics.snowplow/focus_form/jsonschema/1-0-0")
 }
 
 func (app *App) Run() {
-	defer app.pubsubClient.Close()
-	// defer app.cache.Backend.CloseClient()
+	// defer app.forwarder.Client.Close()
 	app.engine.Run(":" + app.config.App.Port)
 }

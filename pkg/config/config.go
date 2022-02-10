@@ -5,7 +5,7 @@ type Config struct {
 	Routing   `json:"routing"`
 	Cookie    `json:"cookie"`
 	Cors      `json:"cors"`
-	Pubsub    `json:"pubsub"`
+	Forwarder `json:"forwarder"`
 	Anonymize `json:"anonymize"`
 	Cache     `json:"cache"`
 	Tele      `json:"tele"`

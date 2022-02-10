@@ -10,8 +10,6 @@
         window.spget('newTracker', 'sp', 'localhost:8081', {
             appId: 'site',
             eventMethod: 'get',
-            // eventMethod: 'post',
-            // bufferSize: 2, // Buffer post before sending
             cookieName: "sp-nuid",
             cookieSameSite: 'Lax',
             forceSecureTracker: false,
@@ -38,7 +36,7 @@
         window.sppost('newTracker', 'sp', 'localhost:8081', {
             appId: 'site',
             eventMethod: 'post',
-            bufferSize: 10,
+            bufferSize: 2,
             cookieName: "sp-nuid",
             cookieSameSite: 'Lax',
             forceSecureTracker: false,
@@ -64,7 +62,9 @@
         <h1>Tracker Test</h1>
         <div style="margin-top: 2em; margin-bottom: 2em"></div>
         <a href="/">Home</a>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-get">Press Me For Self Describing Event</button><br>
+        <div style="margin-top: 2em; margin-bottom: 2em"></div>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-get">Press Me For Valid Self Describing Event</button><br>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-get-invalid">Press Me For Invalid Self Describing Event</button><br>
         <button style="margin-top: 2em; margin-bottom: 2em" id="struct-get">Press Me For Struct Event</button><br>
         <button style="margin-top: 2em; margin-bottom: 2em" id="transaction-get">Press Me For Transaction Event With One Item</button><br>
         <a href="http://localhost:8081/r/tp2?u=http://localhost:8081/test/there&tna=web&env=vendor-name&aid=site-testing&p=web&dtm=1642904307707&vid=10&cx=eyJzY2hlbWEiOiJpZ2x1OmNvbS5zbm93cGxvd2FuYWx5dGljcy5zbm93cGxvdy9jb250ZXh0cy9qc29uc2NoZW1hLzEtMC0wIiwiZGF0YSI6W3sic2NoZW1hIjoiaWdsdTpjb20uc25vd3Bsb3dhbmFseXRpY3Muc25vd3Bsb3cvd2ViX3BhZ2UvanNvbnNjaGVtYS8xLTAtMCIsImRhdGEiOnsiaWQiOiI3YmNmN2Q4YS0wODdiLTRjOTctYmMwMy1lMWI5NGIzZWYzMDYifX1dfQ&ue_px=eyJzY2hlbWEiOiJpZ2x1OmNvbS5zbm93cGxvd2FuYWx5dGljcy5zbm93cGxvdy91bnN0cnVjdF9ldmVudC9qc29uc2NoZW1hLzEtMC0wIiwiZGF0YSI6eyJzY2hlbWEiOiJjb20uc2l4cml2ZXIvdWkvY2xpY2tlZC1idXR0b24vMS0wLTAiLCJkYXRhIjp7ImJ1dHRvbklkIjoic2VsZi1kZXNjcmliaW5nLWdldCIsInZhbHVlIjoibm93In19fQ&ip=notrealip&ua=nodtrealuseragent&pp_miy=1&pp_may=600&pp_mix=10&pp_max=48&e=pp" target="_blank">Redirect With Tracking</a><br>
@@ -77,7 +77,8 @@
             <input type="submit" value="Submit">
         </form>
         <div style="margin-top: 3em; margin-bottom: 3em"></div>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-post">Press Me For Post-Based Self Describing Event</button><br>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-post">Press Me For Valid Post-Based Self Describing Event</button><br>
+        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-post-invalid">Press Me For Invalid Post-Based Self Describing Event</button><br>
         <button style="margin-top: 2em; margin-bottom: 2em" id="struct-post">Press Me For Post-Based Struct Event</button><br>
         <button style="margin-top: 2em; margin-bottom: 2em" id="transaction-post">Press Me For Post-Based Transaction Event With One Item</button><br>
     </body>
@@ -89,7 +90,7 @@
             document.getElementById('self-describing-get').addEventListener("click", function() {
                 window.spget('trackSelfDescribingEvent', {
                     event: {
-                        schema: 'iglu:com.acme_company/viewed_product/jsonschema/1-0-0',
+                        schema: 'iglu:com.jake/viewed_product/jsonschema/1-0-0',
                         data: {
                             productId: 'ASO01043',
                             category: 'Dresses',
@@ -98,6 +99,21 @@
                             price: 49.95,
                             sizes: ['xs', 's', 'l', 'xl', 'xxl'],
                             availableSince: new Date(2013,3,7)
+                        }
+                    }
+                });
+            });
+            document.getElementById('self-describing-get-invalid').addEventListener("click", function() {
+                window.spget('trackSelfDescribingEvent', {
+                    event: {
+                        schema: 'iglu:com.jake/viewed_product/jsonschema/1-0-0',
+                        data: {
+                            productId: 'ASO01043',
+                            category: 'Dresses',
+                            brand: 'ACME',
+                            returning: null,
+                            sizes: ['xs', 's', 'l', 'xl', 'xxl'],
+                            anotherProp: "whatevers"
                         }
                     }
                 });
@@ -139,12 +155,35 @@
 
             document.getElementById('self-describing-post').addEventListener("click", function() {
                 window.sppost('trackSelfDescribingEvent', {
-                    schema: "com.sixriver/ui/clicked-button/1-0-0",
-                    data: {
-                        buttonId: "self-describing-post",
-                        value: "now"
+                    event: {
+                        schema: 'iglu:com.jake/viewed_product/jsonschema/1-0-0',
+                        data: {
+                            productId: 'ASO01043',
+                            category: 'Dresses',
+                            brand: 'ACME',
+                            returning: true,
+                            price: 49.95,
+                            sizes: ['xs', 's', 'l', 'xl', 'xxl'],
+                            availableSince: new Date(2013,3,7)
+                        }
                     }
-                })
+                });
+            });
+
+            document.getElementById('self-describing-post-invalid').addEventListener("click", function() {
+                window.sppost('trackSelfDescribingEvent', {
+                    event: {
+                        schema: 'iglu:com.jake/viewed_product/jsonschema/1-0-0',
+                        data: {
+                            productId: 'ASO01043',
+                            category: 'Dresses',
+                            brand: 'ACME',
+                            returning: null,
+                            sizes: ['xs', 's', 'l', 'xl', 'xxl'],
+                            anotherProp: "whatevers"
+                        }
+                    }
+                });
             });
 
             document.getElementById('struct-post').addEventListener("click", function() {
