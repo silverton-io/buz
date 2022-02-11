@@ -31,7 +31,7 @@ func GetHandler(forwarder *forwarder.PubsubForwarder, cache *cache.SchemaCache) 
 		ctx := context.Background()
 		mappedParams := http.MapParams(c)
 		event := BuildEventFromMappedParams(c, mappedParams)
-		isValid, err := ValidateEvent(event, cache)
+		isValid, validationErrs, eventMetadata := ValidateEvent(event, cache)
 		if isValid {
 			forwarder.PublishValidEvent(ctx, event)
 		} else {

@@ -32,7 +32,7 @@ func setEventFieldsFromRequest(c *gin.Context, e *Event) {
 	ip, _ := c.RemoteIP()
 	useragent := c.Request.UserAgent()
 	e.Network_userid = &nuid
-	// NOTE!! Intentionally ignore the query-param-based ip and useragent.
+	// NOTE!! Ignore the query-param-based ip and useragent. FIXME!
 	e.User_ipaddress = ip.String()
 	e.Useragent = &useragent
 	e.Collector_tstamp = time.Now()
