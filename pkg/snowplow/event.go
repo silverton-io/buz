@@ -12,14 +12,33 @@ import (
 
 // Event Types
 
-const PAGE_PING = "page_ping"
-const PAGE_VIEW = "page_view"
-const STRUCT_EVENT = "struct_event"
-const SELF_DESCRIBING_EVENT = "self_describing"
-const TRANSACTION = "transaction"
-const TRANSACTION_ITEM = "transaction_item"
-const AD_IMPRESSION = "ad_impression"
-const UNKNOWN_EVENT = "unknown"
+const (
+	PAGE_PING             = "page_ping"
+	PAGE_VIEW             = "page_view"
+	STRUCT_EVENT          = "struct_event"
+	SELF_DESCRIBING_EVENT = "self_describing"
+	TRANSACTION           = "transaction"
+	TRANSACTION_ITEM      = "transaction_item"
+	AD_IMPRESSION         = "ad_impression"
+	UNKNOWN_EVENT         = "unknown"
+)
+
+type PayloadValidationError struct {
+	Field       string `json:"field"`
+	Context     string `json:"context"`
+	Description string `json:"description"`
+	ErrorType   string `json:"errorType"`
+}
+
+type ValidationError struct {
+	ErrorType *string                   `json:"errorType"`
+	Errors    *[]PayloadValidationError `json:"payloadValidationErrors"`
+}
+
+type InvalidEvent struct {
+	ValidationError *ValidationError `json:"validationError"`
+	Event           *Event           `json:"event"`
+}
 
 type Event struct {
 	// Application parameters - https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/snowplow-tracker-protocol/#common-parameters-platform-and-event-independent
@@ -241,10 +260,10 @@ type ShortenedEvent struct { //A struct used to quickly parse incoming json prop
 }
 
 type SelfDescribingMetadata struct {
-	Event_vendor  string `json:"event_vendor"`
-	Event_name    string `json:"event_name"`
-	Event_format  string `json:"event_format"`
-	Event_version string `json:"event_version"`
+	Event_vendor  *string `json:"event_vendor"`
+	Event_name    *string `json:"event_name"`
+	Event_format  *string `json:"event_format"`
+	Event_version *string `json:"event_version"`
 }
 
 type SelfDescribingPayload struct {

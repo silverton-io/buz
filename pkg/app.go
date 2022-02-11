@@ -111,6 +111,5 @@ func (app *App) Initialize() {
 }
 
 func (app *App) Run() {
-	// defer app.forwarder.Client.Close()
 	app.engine.Run(":" + app.config.App.Port)
 }

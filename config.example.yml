@@ -2,7 +2,7 @@ version: 1
 
 app:
   env: dev
-  mode: release # Mode is either debug or release
+  mode: release # Mode is either debug or releasecod
   port: 8081
 
 routing:
@@ -37,8 +37,8 @@ anonymize:
 cache:
   backend:
     type: gcs
-    location: gosnowplow-schemas-test
-    # location: watershed-schemas-test
+    # location: gosnowplow-schemas-test
+    location: watershed-schemas-test
     path: /
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024

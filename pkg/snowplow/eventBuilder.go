@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/tidwall/gjson"
 )
 
 func parseWidthHeight(dimensionString string) (Dimension, error) {
@@ -26,6 +27,18 @@ func parseWidthHeight(dimensionString string) (Dimension, error) {
 }
 
 func setEventCollectorMetadataFields(c *gin.Context, e *Event) {}
+
+func setEventMetadataFields(e *Event, schema []byte) {
+	schemaContents := gjson.ParseBytes(schema)
+	vendor := schemaContents.Get("self.vendor").String()
+	name := schemaContents.Get("self.name").String()
+	format := schemaContents.Get("self.format").String()
+	version := schemaContents.Get("self.version").String()
+	e.Event_vendor = vendor
+	e.Event_name = name
+	e.Event_format = format
+	e.Event_version = version
+}
 
 func setEventFieldsFromRequest(c *gin.Context, e *Event) {
 	nuid := c.GetString("identity")

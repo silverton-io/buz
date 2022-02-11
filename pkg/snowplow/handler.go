@@ -5,12 +5,12 @@ import (
 	"io/ioutil"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 
 	"github.com/silverton-io/gosnowplow/pkg/cache"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
 	"github.com/silverton-io/gosnowplow/pkg/http"
 	"github.com/silverton-io/gosnowplow/pkg/response"
+	"github.com/silverton-io/gosnowplow/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
@@ -31,14 +31,16 @@ func GetHandler(forwarder *forwarder.PubsubForwarder, cache *cache.SchemaCache) 
 		ctx := context.Background()
 		mappedParams := http.MapParams(c)
 		event := BuildEventFromMappedParams(c, mappedParams)
-		isValid, validationErrs, eventMetadata := ValidateEvent(event, cache)
+		isValid, validationError, schema := ValidateEvent(event, cache)
+		setEventMetadataFields(&event, schema)
 		if isValid {
 			forwarder.PublishValidEvent(ctx, event)
 		} else {
-			forwarder.PublishInvalidEvent(ctx, event)
-		}
-		if err != nil {
-			log.Error().Stack().Msg("error when validating event")
+			invalidEvent := InvalidEvent{
+				ValidationError: &validationError,
+				Event:           &event,
+			}
+			forwarder.PublishInvalidEvent(ctx, invalidEvent)
 		}
 		c.JSON(200, response.Ok)
 	}
@@ -51,11 +53,24 @@ func PostHandler(forwarder *forwarder.PubsubForwarder, cache *cache.SchemaCache)
 		body, _ := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs here
 		payloadData := gjson.GetBytes(body, "data")
 		var validEvents []interface{}
+		var invalidEvents []interface{}
 		for _, e := range payloadData.Array() {
 			event := BuildEventFromMappedParams(c, e.Value().(map[string]interface{}))
-			validEvents = append(validEvents, event)
+			isValid, validationError, schema := ValidateEvent(event, cache)
+			setEventMetadataFields(&event, schema)
+			if isValid {
+				validEvents = append(validEvents, event)
+			} else {
+				invalidEvent := InvalidEvent{
+					ValidationError: &validationError,
+					Event:           &event,
+				}
+				invalidEvents = append(invalidEvents, invalidEvent)
+				util.PrettyPrint(invalidEvent)
+			}
 		}
 		forwarder.PublishValidEvents(ctx, validEvents)
+		forwarder.PublishInvalidEvent(ctx, invalidEvents)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)
