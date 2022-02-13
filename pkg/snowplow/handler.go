@@ -18,7 +18,7 @@ func RedirectHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache) gi
 		ctx := context.Background()
 		mappedParams := http.MapParams(c)
 		event := BuildEventFromMappedParams(c, mappedParams)
-		forwarder.PublishValidEvent(ctx, event)
+		forwarder.PublishValid(ctx, event)
 		redirectUrl, _ := c.GetQuery("u")
 		c.Redirect(302, redirectUrl)
 	}
@@ -33,13 +33,13 @@ func GetHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache) gin.Han
 		isValid, validationError, schema := ValidateEvent(event, cache)
 		setEventMetadataFields(&event, schema)
 		if isValid {
-			forwarder.PublishValidEvent(ctx, event)
+			forwarder.PublishValid(ctx, event)
 		} else {
 			invalidEvent := InvalidEvent{
 				ValidationError: &validationError,
 				Event:           &event,
 			}
-			forwarder.PublishInvalidEvent(ctx, invalidEvent)
+			forwarder.PublishInvalid(ctx, invalidEvent)
 		}
 		c.JSON(200, response.Ok)
 	}
@@ -67,8 +67,8 @@ func PostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache) gin.Ha
 				invalidEvents = append(invalidEvents, invalidEvent)
 			}
 		}
-		forwarder.PublishValidEvents(ctx, validEvents)
-		forwarder.PublishInvalidEvents(ctx, invalidEvents)
+		forwarder.BatchPublishValid(ctx, validEvents)
+		forwarder.BatchPublishInvalid(ctx, invalidEvents)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)

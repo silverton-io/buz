@@ -1,9 +1,10 @@
 package cache
 
 import (
+	"errors"
+
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/config"
-	"github.com/silverton-io/gosnowplow/pkg/util"
 )
 
 const (
@@ -14,20 +15,22 @@ const (
 type SchemaCacheBackend interface {
 	Initialize(config config.SchemaCacheBackend)
 	GetRemote(schema string) (contents []byte, err error)
+	Close()
 }
 
 func BuildSchemaCacheBackend(config config.SchemaCacheBackend) (backend SchemaCacheBackend, err error) {
-	util.PrettyPrint(config)
 	switch config.Type {
 	case GCS:
 		cacheBackend := GcsSchemaCacheBackend{}
 		cacheBackend.Initialize(config)
 		return &cacheBackend, nil
 	case S3:
-		log.Fatal().Msg("S3 cache backend is currently unsupported.")
-		return nil, nil
+		cacheBackend := S3SchemaCacheBackend{}
+		cacheBackend.Initialize(config)
+		return &cacheBackend, nil
 	default:
-		log.Fatal().Msg("Unsupported cache backend")
-		return nil, nil
+		e := errors.New("unsupported schema cache backend: " + config.Type)
+		log.Fatal().Err(e).Msg("unsupported backend")
+		return nil, e
 	}
 }

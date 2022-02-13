@@ -37,8 +37,8 @@ anonymize:
 
 schemaCache:
   schemaCacheBackend:
-    type: gcs
-    location: gosnowplow-schemas-test
+    type: gcs # gcs or s3
+    bucket: gosnowplow-schemas-test
     path: /
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024

@@ -8,14 +8,13 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/env"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
-	"github.com/silverton-io/gosnowplow/pkg/handler"
+	"github.com/silverton-io/gosnowplow/pkg/health"
 	"github.com/silverton-io/gosnowplow/pkg/middleware"
 	"github.com/silverton-io/gosnowplow/pkg/snowplow"
 	"github.com/spf13/viper"
 )
 
 type App struct {
-	logger      *zerolog.Logger
 	config      *config.Config
 	engine      *gin.Engine
 	forwarder   forwarder.Forwarder
@@ -45,9 +44,8 @@ func (app *App) configure() {
 
 func (app *App) initializeForwarder() {
 	log.Info().Msg("initializing forwarder")
-	forwarder := forwarder.PubsubForwarder{}
-	forwarder.Initialize(app.config.Forwarder)
-	app.forwarder = &forwarder
+	forwarder, _ := forwarder.BuildForwarder(app.config.Forwarder)
+	app.forwarder = forwarder
 }
 
 func (app *App) initializeSchemaCache() {
@@ -72,7 +70,7 @@ func (app *App) initializeMiddleware() {
 func (app *App) initializeSnowplowRoutes() {
 	log.Info().Msg("initializing snowplow routes")
 	log.Info().Msg("initializing health check route")
-	app.engine.GET(snowplow.DEFAULT_HEALTH_PATH, handler.Healthcheck)
+	app.engine.GET(health.HEALTH_PATH, health.HealthcheckHandler)
 	if app.config.Routing.DisableStandardRoutes {
 		log.Info().Msg("skipping standard route initialization")
 	} else {

@@ -1,9 +1,10 @@
 package config
 
 type SchemaCacheBackend struct {
-	Type     string `json:"type"`
-	Location string `json:"location"`
-	Path     string `json:"path"`
+	Type   string `json:"type"`
+	Region string `json:"region"`
+	Bucket string `json:"bucket"`
+	Path   string `json:"path"`
 }
 
 type SchemaCache struct {
