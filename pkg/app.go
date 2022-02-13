@@ -53,7 +53,7 @@ func (app *App) initializeForwarder() {
 func (app *App) initializeSchemaCache() {
 	log.Info().Msg("initializing schema cache")
 	cache := cache.SchemaCache{}
-	cache.Initialize(app.config.Cache)
+	cache.Initialize(app.config.SchemaCache)
 	app.schemaCache = &cache
 }
 

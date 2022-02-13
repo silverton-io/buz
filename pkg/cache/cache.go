@@ -8,18 +8,14 @@ import (
 
 type SchemaCache struct {
 	cache        *freecache.Cache
-	backend      *GcsSchemaCacheBackend
+	backend      SchemaCacheBackend
 	maxSizeBytes int
 	ttlSeconds   int
 }
 
-func (s *SchemaCache) Initialize(config config.Cache) {
-	switch config.Backend.Type {
-	case "gcs":
-		cacheBackend := GcsSchemaCacheBackend{}
-		cacheBackend.Initialize(config.Backend.Location, config.Backend.Path)
-		s.backend = &cacheBackend
-	}
+func (s *SchemaCache) Initialize(config config.SchemaCache) {
+	cacheBackend, _ := BuildSchemaCacheBackend(config.SchemaCacheBackend)
+	s.backend = cacheBackend
 	s.cache = freecache.NewCache(config.MaxSizeBytes)
 	s.maxSizeBytes = config.MaxSizeBytes
 	s.ttlSeconds = config.TtlSeconds
@@ -35,7 +31,7 @@ func (s *SchemaCache) Get(key string) (exists bool, data []byte) {
 		return true, schemaContents
 		// Did not find schema locally, going to remote
 	} else {
-		schemaContents, err := s.backend.getRemoteSchema(key)
+		schemaContents, err := s.backend.GetRemote(key)
 		if err != nil {
 			log.Debug().Msg("error when getting remote schema")
 			// Can not get remote schema

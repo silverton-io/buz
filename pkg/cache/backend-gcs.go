@@ -7,6 +7,7 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/gosnowplow/pkg/config"
 )
 
 type GcsSchemaCacheBackend struct {
@@ -15,17 +16,17 @@ type GcsSchemaCacheBackend struct {
 	client   *storage.Client
 }
 
-func (b *GcsSchemaCacheBackend) Initialize(location string, path string) {
+func (b *GcsSchemaCacheBackend) Initialize(config config.SchemaCacheBackend) {
 	ctx := context.Background()
 	log.Debug().Msg("initializing gcs schema cache backend")
 	client, err := storage.NewClient(ctx)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not initialize gcs schema cache backend")
 	}
-	b.client, b.location, b.path = client, location, path
+	b.client, b.location, b.path = client, config.Location, config.Path
 }
 
-func (b *GcsSchemaCacheBackend) getRemoteSchema(schema string) (contents []byte, err error) {
+func (b *GcsSchemaCacheBackend) GetRemote(schema string) (contents []byte, err error) {
 	ctx := context.Background()
 	var schemaLocation string
 	if b.path == "/" {

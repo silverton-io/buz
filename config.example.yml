@@ -35,8 +35,8 @@ anonymize:
   ip: false
   userId: false
 
-cache:
-  backend:
+schemaCache:
+  schemaCacheBackend:
     type: gcs
     location: gosnowplow-schemas-test
     path: /
