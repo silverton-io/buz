@@ -10,7 +10,6 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
 	"github.com/silverton-io/gosnowplow/pkg/http"
 	"github.com/silverton-io/gosnowplow/pkg/response"
-	"github.com/silverton-io/gosnowplow/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
@@ -66,11 +65,10 @@ func PostHandler(forwarder *forwarder.PubsubForwarder, cache *cache.SchemaCache)
 					Event:           &event,
 				}
 				invalidEvents = append(invalidEvents, invalidEvent)
-				util.PrettyPrint(invalidEvent)
 			}
 		}
 		forwarder.PublishValidEvents(ctx, validEvents)
-		forwarder.PublishInvalidEvent(ctx, invalidEvents)
+		forwarder.PublishInvalidEvents(ctx, invalidEvents)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)

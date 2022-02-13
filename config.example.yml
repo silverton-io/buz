@@ -4,6 +4,7 @@ app:
   env: stg
   mode: release # Mode is either debug or releasecod
   port: 8081
+  logLevel: debug
 
 routing:
   disableStandardRoutes: false

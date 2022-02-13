@@ -34,10 +34,10 @@ func setEventMetadataFields(e *Event, schema []byte) {
 	name := schemaContents.Get("self.name").String()
 	format := schemaContents.Get("self.format").String()
 	version := schemaContents.Get("self.version").String()
-	e.Event_vendor = vendor
-	e.Event_name = name
-	e.Event_format = format
-	e.Event_version = version
+	e.Event_vendor = &vendor
+	e.Event_name = &name
+	e.Event_format = &format
+	e.Event_version = &version
 }
 
 func setEventFieldsFromRequest(c *gin.Context, e *Event) {

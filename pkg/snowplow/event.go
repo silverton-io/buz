@@ -143,11 +143,11 @@ type Event struct {
 	Ti_quantity              *int                                `json:"ti_quantity"`           // Transaction Item Event
 	Ti_currency              *string                             `json:"ti_currency"`           // Transaction Item Event
 	Refr_domain_userid       *string                             `json:"refr_domain_userid"`    // FIXME! Domain Linker
-	Refr_domain_tstamp       time.Time                           `json:"refr_domain_tstamp"`    // FIXME! Domain Linker
-	Event_vendor             string                              `json:"event_vendor"`
-	Event_name               string                              `json:"event_name"`
-	Event_format             string                              `json:"event_format"`
-	Event_version            string                              `json:"event_version"`
+	Refr_domain_tstamp       *time.Time                          `json:"refr_domain_tstamp"`    // FIXME! Domain Linker
+	Event_vendor             *string                             `json:"event_vendor"`
+	Event_name               *string                             `json:"event_name"`
+	Event_format             *string                             `json:"event_format"`
+	Event_version            *string                             `json:"event_version"`
 }
 
 type ShortenedEvent struct { //A struct used to quickly parse incoming json props or query params. Leverages Go type conversion to long-form props.
@@ -252,11 +252,11 @@ type ShortenedEvent struct { //A struct used to quickly parse incoming json prop
 	Ti_quantity              *int                                `json:"ti_qu,string"`       // Transaction Item Event
 	Ti_currency              *string                             `json:"ti_cu"`              // Transaction Item Event
 	Refr_domain_userid       *string                             `json:"refr_domain_userid"` // FIXME! Domain Linker
-	Refr_domain_tstamp       time.Time                           `json:"refr_domain_tstamp"` // FIXME! Domain Linker
-	Event_vendor             string                              `json:"event_vendor"`       // Self-describing event metadata
-	Event_name               string                              `json:"event_name"`         // Self-describing event metadata
-	Event_format             string                              `json:"event_format"`       // Self-describing event metadata
-	Event_version            string                              `json:"event_version"`      // Self-describing event metadata
+	Refr_domain_tstamp       *time.Time                          `json:"refr_domain_tstamp"` // FIXME! Domain Linker
+	Event_vendor             *string                             `json:"event_vendor"`       // Self-describing event metadata
+	Event_name               *string                             `json:"event_name"`         // Self-describing event metadata
+	Event_format             *string                             `json:"event_format"`       // Self-describing event metadata
+	Event_version            *string                             `json:"event_version"`      // Self-describing event metadata
 }
 
 type SelfDescribingMetadata struct {

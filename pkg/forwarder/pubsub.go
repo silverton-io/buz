@@ -73,6 +73,7 @@ func (f *PubsubForwarder) PublishInvalidEvent(ctx context.Context, event interfa
 }
 
 func (f *PubsubForwarder) PublishValidEvents(ctx context.Context, events []interface{}) {
+
 	f.batchPublishEvents(ctx, f.validEventsTopic, events)
 }
 

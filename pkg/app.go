@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/cache"
 	"github.com/silverton-io/gosnowplow/pkg/config"
@@ -14,6 +15,7 @@ import (
 )
 
 type App struct {
+	logger      *zerolog.Logger
 	config      *config.Config
 	engine      *gin.Engine
 	forwarder   *forwarder.PubsubForwarder
@@ -21,17 +23,24 @@ type App struct {
 }
 
 func (app *App) configure() {
+	// Set up app logger
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+
 	// Load app config from file
 	viper.SetConfigFile("config.yml")
 	err := viper.ReadInConfig()
+
 	if err != nil {
 		log.Fatal().Msg("could not read config")
 	}
 	app.config = &config.Config{}
 	viper.Unmarshal(app.config)
+	gin.SetMode(app.config.App.Mode)
+	if gin.IsDebugging() {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	}
 	log.Debug().Interface("config", app.config).Msg("configuring app")
 	// Configure gin
-	gin.SetMode(app.config.App.Mode)
 }
 
 func (app *App) initializeForwarder() {

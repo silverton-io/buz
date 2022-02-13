@@ -27,16 +27,16 @@
         //     minimumVisitLength: 10,
         //     heartbeatDelay: 10
         // });
-        window.spget('trackPageView');
+        // window.spget('trackPageView');
         window.spget('setUserId', 'jake@bostata.com');
-        window.spget('enableFormTracking');
+        // window.spget('enableFormTracking');
 
         // POST-based tracker
 
         window.sppost('newTracker', 'sp', 'localhost:8081', {
             appId: 'site',
             eventMethod: 'post',
-            bufferSize: 2,
+            bufferSize: 1,
             cookieName: "sp-nuid",
             cookieSameSite: 'Lax',
             forceSecureTracker: false,
@@ -54,7 +54,7 @@
         //     minimumVisitLength: 1,
         //     heartbeatDelay: 1
         // });
-        // window.sppost('trackPageView');
+        window.sppost('trackPageView');
         window.sppost('setUserId', 'jake@bostata.com');
         window.sppost('enableFormTracking');
     </script>
