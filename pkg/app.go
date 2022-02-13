@@ -18,7 +18,7 @@ type App struct {
 	logger      *zerolog.Logger
 	config      *config.Config
 	engine      *gin.Engine
-	forwarder   *forwarder.PubsubForwarder
+	forwarder   forwarder.Forwarder
 	schemaCache *cache.SchemaCache
 }
 

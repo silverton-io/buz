@@ -1,7 +1,6 @@
 package snowplow
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -20,7 +19,6 @@ func validateSelfDescribingPayload(payload SelfDescribingPayload, cache *cache.S
 	if schemaName[:4] == IGLU { // If schema path starts with iglu, get rid of it.
 		schemaName = schemaName[5:]
 	}
-	fmt.Println(schemaName)
 	schemaExists, schema := cache.Get(schemaName)
 	// Short-circuit if schema can't be found in either cache or remote backend.
 	if !schemaExists {

@@ -13,7 +13,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func RedirectHandler(forwarder *forwarder.PubsubForwarder, cache *cache.SchemaCache) gin.HandlerFunc {
+func RedirectHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		mappedParams := http.MapParams(c)
@@ -25,7 +25,7 @@ func RedirectHandler(forwarder *forwarder.PubsubForwarder, cache *cache.SchemaCa
 	return gin.HandlerFunc(fn)
 }
 
-func GetHandler(forwarder *forwarder.PubsubForwarder, cache *cache.SchemaCache) gin.HandlerFunc {
+func GetHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		mappedParams := http.MapParams(c)
@@ -46,7 +46,7 @@ func GetHandler(forwarder *forwarder.PubsubForwarder, cache *cache.SchemaCache) 
 	return gin.HandlerFunc(fn)
 }
 
-func PostHandler(forwarder *forwarder.PubsubForwarder, cache *cache.SchemaCache) gin.HandlerFunc {
+func PostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		body, _ := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs here
