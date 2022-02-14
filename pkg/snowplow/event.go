@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/silverton-io/gosnowplow/pkg/validator"
 	"github.com/tidwall/gjson"
 )
 
@@ -23,21 +24,9 @@ const (
 	UNKNOWN_EVENT         = "unknown"
 )
 
-type PayloadValidationError struct {
-	Field       string `json:"field"`
-	Context     string `json:"context"`
-	Description string `json:"description"`
-	ErrorType   string `json:"errorType"`
-}
-
-type ValidationError struct {
-	ErrorType *string                   `json:"errorType"`
-	Errors    *[]PayloadValidationError `json:"payloadValidationErrors"`
-}
-
 type InvalidEvent struct {
-	ValidationError *ValidationError `json:"validationError"`
-	Event           *Event           `json:"event"`
+	ValidationError *validator.ValidationError `json:"validationError"`
+	Event           *Event                     `json:"event"`
 }
 
 type Event struct {
