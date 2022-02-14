@@ -3,13 +3,17 @@ package tele
 import (
 	"time"
 
+	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/config"
+	"github.com/silverton-io/gosnowplow/pkg/http"
 	"github.com/silverton-io/gosnowplow/pkg/snowplow"
 	"github.com/silverton-io/gosnowplow/pkg/util"
 )
 
 const (
-	DEFAULT_HOST string = ""
+	DEFAULT_HOST    string = "http://localhost:8081/gen/p"
+	HEARTBEAT_1_0_0 string = "com.silverton.io.tele/heartbeat/jsonschema/1-0-0"
+	SNAPSHOT_1_0_0  string = "com.silverton.io.tele/snapshot/jsonschema/1-0-0"
 )
 
 type configSnapshot struct {
@@ -36,11 +40,12 @@ func heartbeat(t time.Ticker, c config.Config) {
 			Time:       time.Now(),
 		}
 		data := util.StructToMap(b)
-		sd := snowplow.SelfDescribingPayload{
-			Schema: "com.silverton.io.tele/heartbeat/jsonschema/1-0-0",
+		heartbeatPayload := snowplow.SelfDescribingPayload{
+			Schema: HEARTBEAT_1_0_0,
 			Data:   data,
 		}
-		util.PrettyPrint(sd)
+		http.SendJson(DEFAULT_HOST, heartbeatPayload)
+		log.Debug().Msg("heartbeat")
 	}
 }
 
@@ -54,11 +59,11 @@ func Metry(c config.Config) {
 			Config:     c,
 		}
 		data := util.StructToMap(snapshot)
-		sd := snowplow.SelfDescribingPayload{
-			Schema: "com.silverton.io.tele/snapshot/jsonschema/1-0-0",
+		snapshotPayload := snowplow.SelfDescribingPayload{
+			Schema: SNAPSHOT_1_0_0,
 			Data:   data,
 		}
-		util.PrettyPrint(sd)
+		http.SendJson(DEFAULT_HOST, snapshotPayload)
 		ticker := time.NewTicker(5 * time.Second)
 		go heartbeat(*ticker, c)
 	}

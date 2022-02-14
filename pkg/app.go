@@ -9,6 +9,7 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/env"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
+	"github.com/silverton-io/gosnowplow/pkg/generic"
 	"github.com/silverton-io/gosnowplow/pkg/health"
 	"github.com/silverton-io/gosnowplow/pkg/middleware"
 	"github.com/silverton-io/gosnowplow/pkg/snowplow"
@@ -77,31 +78,38 @@ func (app *App) initializeMiddleware() {
 	app.engine.Use(middleware.JsonAccessLogger())
 }
 
-func (app *App) initializeSnowplowRoutes() {
-	log.Info().Msg("initializing snowplow routes")
+func (app *App) initializeHealthcheck() {
 	log.Info().Msg("initializing health check route")
 	app.engine.GET(health.HEALTH_PATH, health.HealthcheckHandler)
-	if app.config.Routing.DisableStandardRoutes {
-		log.Info().Msg("skipping standard route initialization")
-	} else {
-		log.Info().Msg("initializing standard routes")
-		app.engine.GET(snowplow.DEFAULT_GET_PATH, snowplow.GetHandler(app.forwarder, app.schemaCache))
-		app.engine.POST(snowplow.DEFAULT_POST_PATH, snowplow.PostHandler(app.forwarder, app.schemaCache))
-		if app.config.Routing.DisableOpenRedirect {
-			log.Info().Msg("skipping standard open redirect initialization")
-		} else {
-			log.Info().Msg("initializing standard open redirect route")
-			app.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, snowplow.RedirectHandler(app.forwarder, app.schemaCache))
+}
+
+func (app *App) initializeSnowplowRoutes() {
+	if app.config.Snowplow.Enabled {
+		log.Info().Msg("initializing snowplow routes")
+		if app.config.Snowplow.StandardRoutesEnabled {
+			log.Info().Msg("initializing standard routes")
+			app.engine.GET(snowplow.DEFAULT_GET_PATH, snowplow.GetHandler(app.forwarder, app.schemaCache))
+			app.engine.POST(snowplow.DEFAULT_POST_PATH, snowplow.PostHandler(app.forwarder, app.schemaCache))
+			if app.config.Snowplow.OpenRedirectsEnabled {
+				log.Info().Msg("initializing standard open redirect route")
+				app.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, snowplow.RedirectHandler(app.forwarder, app.schemaCache))
+			}
+		}
+		log.Info().Msg("initializing custom routes")
+		app.engine.GET(app.config.Snowplow.GetPath, snowplow.GetHandler(app.forwarder, app.schemaCache))
+		app.engine.POST(app.config.Snowplow.PostPath, snowplow.PostHandler(app.forwarder, app.schemaCache))
+		if app.config.Snowplow.OpenRedirectsEnabled {
+			log.Info().Msg("initializing custom open redirect route")
+			app.engine.GET(app.config.Snowplow.RedirectPath, snowplow.RedirectHandler(app.forwarder, app.schemaCache))
 		}
 	}
-	log.Info().Msg("initializing custom routes")
-	app.engine.GET(app.config.Routing.GetPath, snowplow.GetHandler(app.forwarder, app.schemaCache))
-	app.engine.POST(app.config.Routing.PostPath, snowplow.PostHandler(app.forwarder, app.schemaCache))
-	if app.config.Routing.DisableOpenRedirect {
-		log.Info().Msg("skipping custom open redirect initialization")
-	} else {
-		log.Info().Msg("initializing custom open redirect route")
-		app.engine.GET(app.config.Routing.RedirectPath, snowplow.RedirectHandler(app.forwarder, app.schemaCache))
+}
+
+func (app *App) initializeGenericRoutes() {
+	if app.config.Generic.Enabled {
+		log.Info().Msg("initializing generic routes")
+		app.engine.POST(app.config.Generic.PostPath, generic.PostHandler(app.forwarder, app.schemaCache))
+		app.engine.POST(app.config.Generic.BatchPostPath, generic.BatchPostHandler(app.forwarder, app.schemaCache))
 	}
 }
 
@@ -122,7 +130,9 @@ func (app *App) Initialize() {
 	app.initializeSchemaCache()
 	app.initializeRouter()
 	app.initializeMiddleware()
+	app.initializeHealthcheck()
 	app.initializeSnowplowRoutes()
+	app.initializeGenericRoutes()
 	app.serveStaticIfDev()
 }
 

@@ -5,12 +5,20 @@ app:
   mode: debug # Mode is either debug or release
   port: 8081
 
-routing:
-  disableStandardRoutes: false
-  disableOpenRedirect: true
+snowplow: # Snowplow Events
+  enabled: true
+  standardRoutesEnabled: true
+  openRedirectsEnabled: true
   getPath: /plw/g
   postPath: /plw/p
   redirectPath: /plw/r
+
+generic: # Generic Self-Describing Events
+  enabled: true
+  postPath: /gen/p
+  batchPostPath: /gen/bp
+  contextsKey: contexts
+  payloadKey: payload
 
 cookie:
   name: sp-nuid

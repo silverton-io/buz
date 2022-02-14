@@ -1,6 +1,6 @@
 package config
 
 type Tele struct {
-	Enable   bool   `json:"enable,omitempty"`
-	HomeHost string `json:"homeHost,omitempty"`
+	Enable bool   `json:"enable,omitempty"`
+	Host   string `json:"host,omitempty"`
 }

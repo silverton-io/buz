@@ -2,7 +2,8 @@ package config
 
 type Config struct {
 	App         `json:"app"`
-	Routing     `json:"routing"`
+	Snowplow    `json:"snowplow"`
+	Generic     `json:"generic"`
 	Cookie      `json:"cookie"`
 	Cors        `json:"cors"`
 	Forwarder   `json:"forwarder"`
