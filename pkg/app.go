@@ -38,8 +38,6 @@ func (app *App) configure() {
 	if gin.IsDebugging() {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
-	log.Debug().Interface("config", app.config).Msg("configuring app")
-	// Configure gin
 }
 
 func (app *App) initializeForwarder() {
@@ -57,14 +55,16 @@ func (app *App) initializeSchemaCache() {
 
 func (app *App) initializeRouter() {
 	log.Info().Msg("initializing router")
-	app.engine = gin.Default()
+	app.engine = gin.New()
 	app.engine.RedirectTrailingSlash = false
 }
 
 func (app *App) initializeMiddleware() {
 	log.Info().Msg("initializing middleware")
+	app.engine.Use(gin.Recovery())
 	app.engine.Use(middleware.AdvancingCookie(app.config.Cookie))
 	app.engine.Use(middleware.CORS(app.config.Cors))
+	app.engine.Use(middleware.JsonAccessLogger())
 }
 
 func (app *App) initializeSnowplowRoutes() {
@@ -118,5 +118,6 @@ func (app *App) Initialize() {
 }
 
 func (app *App) Run() {
+	log.Info().Interface("config", app.config).Msg("gosnowplow running with configuration")
 	app.engine.Run(":" + app.config.App.Port)
 }

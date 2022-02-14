@@ -19,7 +19,7 @@ func (s *SchemaCache) Initialize(config config.SchemaCache) {
 	s.cache = freecache.NewCache(config.MaxSizeBytes)
 	s.maxSizeBytes = config.MaxSizeBytes
 	s.ttlSeconds = config.TtlSeconds
-	log.Info().Msg("schema cache initialized")
+	log.Info().Msg("schema cache with " + config.Type + " backend initialized")
 }
 
 func (s *SchemaCache) Get(key string) (exists bool, data []byte) {
