@@ -1,14 +1,13 @@
 version: 1
 
 app:
-  env: stg
-  mode: release # Mode is either debug or releasecod
+  env: dev
+  mode: debug # Mode is either debug or release
   port: 8081
-  logLevel: debug
 
 routing:
   disableStandardRoutes: false
-  disableOpenRedirect: true # Probably want to turn this off in production if unused. 
+  disableOpenRedirect: true
   getPath: /plw/g
   postPath: /plw/p
   redirectPath: /plw/r
@@ -17,7 +16,7 @@ cookie:
   name: sp-nuid
   secure: False
   ttlDays: 365
-  domain: localhost
+  domain: $YOUR_DOMAIN
   path: /
   sameSite: Lax
 
@@ -37,20 +36,40 @@ anonymize:
 
 schemaCache:
   schemaCacheBackend:
-    type: gcs # gcs or s3
-    bucket: gosnowplow-schemas-test
+    type: s3
+    bucket: $SCHEMA_BUCKET
     path: /
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
 
+# ============================================================
+# Example schema cache with GCS backend
+# schemaCache:
+#   schemaCacheBackend:
+#     type: s3
+#     bucket: $SCHEMA_BUCKET
+#     path: /
+#   ttlSeconds: 300
+#   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
+# ============================================================
+
 forwarder:
-  type: pubsub
-  project: silverton
-  validEventTopic: test-valid-topic
-  invalidEventTopic: test-invalid-topic
-  bufferByteThreshold: 1024
-  bufferRecordThreshold: 100
-  bufferDelayThreshold: 10000000000
+  type: kafka
+  brokers:
+    - $KAFKA_BROKER_1:9092
+    - $KAFKA_BROKER_2:9092
+    - $KAFKA_BROKER_3:9092
+  validEventTopic: $YOUR_VALID_EVENT_TOPIC
+  invalidEventTopic: $YOUR_INVALID_EVENT_TOPIC
+
+# ============================================================
+# Example pubsub forwarder config
+# forwarder:
+#   type: pubsub
+#   project: YOUR_PROJECT_HERE
+#   validEventTopic: YOUR_VALID_EVENT_TOPIC_HERE
+#   invalidEventTopic: YOUR_INVALID_EVENT_TOPIC_HERE
+# ============================================================
 
 tele:
   enable: true
