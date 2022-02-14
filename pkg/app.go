@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/cache"
@@ -41,7 +42,12 @@ func (app *App) configure() {
 	if gin.IsDebugging() {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
+	// Set version from ldflag
 	app.config.App.Version = VERSION
+	// Generate and set an instance id
+	instanceId := uuid.New()
+	app.config.App.InstanceId = instanceId.String()
+
 }
 
 func (app *App) initializeForwarder() {
@@ -102,9 +108,8 @@ func (app *App) initializeSnowplowRoutes() {
 func (app *App) serveStaticIfDev() {
 	if app.config.App.Env == env.DEV_ENVIRONMENT {
 		log.Info().Msg("serving static files")
-		// Serve a local file to make testing events easier
-		app.engine.StaticFile("/", "./static/index.html")
-		app.engine.StaticFile("/test/there", "./static/index.html")
+		app.engine.StaticFile("/", "./static/index.html")           // Serve a local file to make testing events easier
+		app.engine.StaticFile("/test/there", "./static/index.html") // Ditto
 	} else {
 		log.Info().Msg("not serving static files")
 	}
