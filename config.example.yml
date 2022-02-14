@@ -70,6 +70,3 @@ forwarder:
 #   validEventTopic: YOUR_VALID_EVENT_TOPIC_HERE
 #   invalidEventTopic: YOUR_INVALID_EVENT_TOPIC_HERE
 # ============================================================
-
-tele:
-  enable: true

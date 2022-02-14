@@ -11,6 +11,7 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/health"
 	"github.com/silverton-io/gosnowplow/pkg/middleware"
 	"github.com/silverton-io/gosnowplow/pkg/snowplow"
+	"github.com/silverton-io/gosnowplow/pkg/tele"
 	"github.com/spf13/viper"
 )
 
@@ -20,6 +21,8 @@ type App struct {
 	forwarder   forwarder.Forwarder
 	schemaCache *cache.SchemaCache
 }
+
+var VERSION string
 
 func (app *App) configure() {
 	// Set up app logger
@@ -38,6 +41,7 @@ func (app *App) configure() {
 	if gin.IsDebugging() {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
+	app.config.App.Version = VERSION
 }
 
 func (app *App) initializeForwarder() {
@@ -119,5 +123,6 @@ func (app *App) Initialize() {
 
 func (app *App) Run() {
 	log.Info().Interface("config", app.config).Msg("gosnowplow running with configuration")
+	tele.Metry(*app.config)
 	app.engine.Run(":" + app.config.App.Port)
 }
