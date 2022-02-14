@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	GCS string = "gcs"
-	S3  string = "s3"
+	GCS        string = "gcs"
+	S3         string = "s3"
+	FILESYSTEM string = "fs"
 )
 
 type SchemaCacheBackend interface {

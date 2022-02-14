@@ -1,8 +1,6 @@
 package tele
 
 import (
-	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/silverton-io/gosnowplow/pkg/config"
@@ -30,20 +28,19 @@ type beat struct {
 }
 
 func heartbeat(t time.Ticker, c config.Config) {
-	for t := range t.C {
-		fmt.Printf("tick! %v\n", t)
+	for _ = range t.C {
 		b := beat{
 			Version:    c.App.Version,
 			InstanceId: c.App.InstanceId,
 			Domain:     c.Cookie.Domain,
 			Time:       time.Now(),
 		}
-		payload, _ := json.Marshal(b)
-		sde := snowplow.SelfDescribingPayload{
-			Schema: "com.silverton.io/tele/heartbeat/jsonschema/1-0-0",
-			Data:   payload,
+		data := util.StructToMap(b)
+		sd := snowplow.SelfDescribingPayload{
+			Schema: "com.silverton.io.tele/heartbeat/jsonschema/1-0-0",
+			Data:   data,
 		}
-		util.PrettyPrint(b)
+		util.PrettyPrint(sd)
 	}
 }
 
@@ -56,7 +53,12 @@ func Metry(c config.Config) {
 			Time:       time.Now(),
 			Config:     c,
 		}
-		util.PrettyPrint(snapshot)
+		data := util.StructToMap(snapshot)
+		sd := snowplow.SelfDescribingPayload{
+			Schema: "com.silverton.io.tele/snapshot/jsonschema/1-0-0",
+			Data:   data,
+		}
+		util.PrettyPrint(sd)
 		ticker := time.NewTicker(5 * time.Second)
 		go heartbeat(*ticker, c)
 	}
