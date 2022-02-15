@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 
 	"github.com/gin-gonic/gin"
-
 	"github.com/silverton-io/gosnowplow/pkg/cache"
+	"github.com/silverton-io/gosnowplow/pkg/event"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
 	"github.com/silverton-io/gosnowplow/pkg/http"
 	"github.com/silverton-io/gosnowplow/pkg/response"
@@ -17,17 +17,17 @@ func RedirectHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache) gi
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		mappedParams := http.MapParams(c)
-		event := BuildEventFromMappedParams(c, mappedParams)
-		isValid, validationError, schema := ValidateEvent(event, cache)
-		setEventMetadataFields(&event, schema)
+		e := BuildEventFromMappedParams(c, mappedParams)
+		isValid, validationError, schema := validateEvent(e, cache)
+		setEventMetadataFields(&e, schema)
 		if isValid {
-			forwarder.PublishValid(ctx, event)
+			forwarder.PublishValid(ctx, e)
 		} else {
-			invalidEvent := InvalidEvent{
+			iE := event.InvalidEvent{
 				ValidationError: &validationError,
-				Event:           &event,
+				Event:           &e,
 			}
-			forwarder.PublishInvalid(ctx, invalidEvent)
+			forwarder.PublishInvalid(ctx, iE)
 		}
 		redirectUrl, _ := c.GetQuery("u")
 		c.Redirect(302, redirectUrl)
@@ -39,17 +39,17 @@ func GetHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache) gin.Han
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		mappedParams := http.MapParams(c)
-		event := BuildEventFromMappedParams(c, mappedParams)
-		isValid, validationError, schema := ValidateEvent(event, cache)
-		setEventMetadataFields(&event, schema)
+		e := BuildEventFromMappedParams(c, mappedParams)
+		isValid, validationError, schema := validateEvent(e, cache)
+		setEventMetadataFields(&e, schema)
 		if isValid {
-			forwarder.PublishValid(ctx, event)
+			forwarder.PublishValid(ctx, e)
 		} else {
-			invalidEvent := InvalidEvent{
+			iE := event.InvalidEvent{
 				ValidationError: &validationError,
-				Event:           &event,
+				Event:           &e,
 			}
-			forwarder.PublishInvalid(ctx, invalidEvent)
+			forwarder.PublishInvalid(ctx, iE)
 		}
 		c.JSON(200, response.Ok)
 	}
@@ -64,17 +64,17 @@ func PostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache) gin.Ha
 		var validEvents []interface{}
 		var invalidEvents []interface{}
 		for _, e := range payloadData.Array() {
-			event := BuildEventFromMappedParams(c, e.Value().(map[string]interface{}))
-			isValid, validationError, schema := ValidateEvent(event, cache)
-			setEventMetadataFields(&event, schema)
+			e := BuildEventFromMappedParams(c, e.Value().(map[string]interface{}))
+			isValid, validationError, schema := validateEvent(e, cache)
+			setEventMetadataFields(&e, schema)
 			if isValid {
-				validEvents = append(validEvents, event)
+				validEvents = append(validEvents, e)
 			} else {
-				invalidEvent := InvalidEvent{
+				iE := event.InvalidEvent{
 					ValidationError: &validationError,
-					Event:           &event,
+					Event:           &e,
 				}
-				invalidEvents = append(invalidEvents, invalidEvent)
+				invalidEvents = append(invalidEvents, iE)
 			}
 		}
 		forwarder.BatchPublishValid(ctx, validEvents)

@@ -5,8 +5,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/silverton-io/gosnowplow/pkg/config"
+	"github.com/silverton-io/gosnowplow/pkg/event"
 	"github.com/silverton-io/gosnowplow/pkg/http"
-	"github.com/silverton-io/gosnowplow/pkg/snowplow"
 	"github.com/silverton-io/gosnowplow/pkg/util"
 )
 
@@ -64,7 +64,7 @@ func heartbeat(t time.Ticker, m *Meta) {
 			ElapsedSeconds:    m.elapsed(),
 		}
 		data := util.StructToMap(b)
-		heartbeatPayload := snowplow.SelfDescribingPayload{
+		heartbeatPayload := event.SelfDescribingPayload{
 			Schema: HEARTBEAT_1_0_0,
 			Data:   data,
 		}
@@ -82,7 +82,7 @@ func Metry(c *config.Config, m *Meta) {
 			Config:            *c,
 		}
 		data := util.StructToMap(startup)
-		startupPayload := snowplow.SelfDescribingPayload{
+		startupPayload := event.SelfDescribingPayload{
 			Schema: STARTUP_1_0_0,
 			Data:   data,
 		}

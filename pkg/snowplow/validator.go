@@ -9,7 +9,7 @@ const (
 	IGLU = "iglu"
 )
 
-func ValidateEvent(event Event, cache *cache.SchemaCache) (isValid bool, validationError validator.ValidationError, schema []byte) {
+func validateEvent(event Event, cache *cache.SchemaCache) (isValid bool, validationError validator.ValidationError, schema []byte) {
 	switch event.Event {
 	case UNKNOWN_EVENT:
 		errorType := "unknown event type"

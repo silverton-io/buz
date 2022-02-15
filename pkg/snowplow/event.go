@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/silverton-io/gosnowplow/pkg/validator"
+	"github.com/silverton-io/gosnowplow/pkg/event"
 	"github.com/tidwall/gjson"
 )
 
@@ -23,11 +23,6 @@ const (
 	AD_IMPRESSION         = "ad_impression"
 	UNKNOWN_EVENT         = "unknown"
 )
-
-type InvalidEvent struct {
-	ValidationError *validator.ValidationError `json:"validationError"`
-	Event           *Event                     `json:"event"`
-}
 
 type Event struct {
 	// Application parameters - https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/snowplow-tracker-protocol/#common-parameters-platform-and-event-independent
@@ -255,18 +250,11 @@ type SelfDescribingMetadata struct {
 	Event_version *string `json:"event_version"`
 }
 
-type SelfDescribingPayload struct {
-	Schema string                 `json:"schema"`
-	Data   map[string]interface{} `json:"data"`
-}
-
-type Context SelfDescribingPayload
-
-type Base64EncodedContexts []Context
+type Base64EncodedContexts []event.SelfDescribingContext
 
 func (c *Base64EncodedContexts) UnmarshalJSON(bytes []byte) error {
 	var encodedPayload string
-	var contexts []Context
+	var contexts []event.SelfDescribingContext
 	err := json.Unmarshal(bytes, &encodedPayload)
 	decodedPayload, err := b64.RawStdEncoding.DecodeString(encodedPayload)
 	if err != nil {
@@ -274,7 +262,7 @@ func (c *Base64EncodedContexts) UnmarshalJSON(bytes []byte) error {
 	}
 	contextPayload := gjson.Parse(string(decodedPayload))
 	for _, pl := range contextPayload.Get("data").Array() {
-		context := Context{
+		context := event.SelfDescribingContext{
 			Schema: pl.Get("schema").String(),
 			Data:   pl.Get("data").Value().(map[string]interface{}),
 		}
@@ -284,7 +272,7 @@ func (c *Base64EncodedContexts) UnmarshalJSON(bytes []byte) error {
 	return nil
 }
 
-type Base64EncodedSelfDescribingPayload SelfDescribingPayload
+type Base64EncodedSelfDescribingPayload event.SelfDescribingPayload
 
 func (f *Base64EncodedSelfDescribingPayload) UnmarshalJSON(bytes []byte) error {
 	var encodedPayload string

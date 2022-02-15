@@ -11,5 +11,5 @@ type Generic struct {
 	PostPath      string               `json:"postPath"`
 	BatchPostPath string               `json:"batchPostPath"`
 	Contexts      SelfDescribingConfig `json:"contexts"`
-	Event         SelfDescribingConfig `json:"event"`
+	Payload       SelfDescribingConfig `json:"payload"`
 }
