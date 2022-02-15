@@ -17,6 +17,6 @@ func SendJson(host string, payload interface{}) {
 	buff := bytes.NewBuffer(data)
 	_, err := http.Post(host, JSON_CONTENT_TYPE, buff)
 	if err != nil {
-		log.Debug().Err(err).Msg("could not send payload to " + host)
+		log.Trace().Err(err).Msg("could not send payload to " + host)
 	}
 }

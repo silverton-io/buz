@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
@@ -22,6 +24,7 @@ type App struct {
 	engine      *gin.Engine
 	forwarder   forwarder.Forwarder
 	schemaCache *cache.SchemaCache
+	meta        *tele.Meta
 }
 
 var VERSION string
@@ -47,8 +50,13 @@ func (app *App) configure() {
 	app.config.App.Version = VERSION
 	// Generate and set an instance id
 	instanceId := uuid.New()
-	app.config.App.InstanceId = instanceId.String()
-
+	m := tele.Meta{
+		Version:    VERSION,
+		InstanceId: instanceId,
+		StartTime:  time.Now(),
+		Domain:     app.config.Cookie.Domain,
+	}
+	app.meta = &m
 }
 
 func (app *App) initializeForwarder() {
@@ -108,8 +116,8 @@ func (app *App) initializeSnowplowRoutes() {
 func (app *App) initializeGenericRoutes() {
 	if app.config.Generic.Enabled {
 		log.Info().Msg("initializing generic routes")
-		app.engine.POST(app.config.Generic.PostPath, generic.PostHandler(app.forwarder, app.schemaCache))
-		app.engine.POST(app.config.Generic.BatchPostPath, generic.BatchPostHandler(app.forwarder, app.schemaCache))
+		app.engine.POST(app.config.Generic.PostPath, generic.PostHandler(app.forwarder, app.schemaCache, app.config.Generic))
+		app.engine.POST(app.config.Generic.BatchPostPath, generic.BatchPostHandler(app.forwarder, app.schemaCache, app.config.Generic))
 	}
 }
 
@@ -138,6 +146,6 @@ func (app *App) Initialize() {
 
 func (app *App) Run() {
 	log.Info().Interface("config", app.config).Msg("gosnowplow running with configuration")
-	tele.Metry(*app.config)
+	tele.Metry(app.config, app.meta)
 	app.engine.Run(":" + app.config.App.Port)
 }

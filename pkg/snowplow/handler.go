@@ -18,7 +18,17 @@ func RedirectHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache) gi
 		ctx := context.Background()
 		mappedParams := http.MapParams(c)
 		event := BuildEventFromMappedParams(c, mappedParams)
-		forwarder.PublishValid(ctx, event)
+		isValid, validationError, schema := ValidateEvent(event, cache)
+		setEventMetadataFields(&event, schema)
+		if isValid {
+			forwarder.PublishValid(ctx, event)
+		} else {
+			invalidEvent := InvalidEvent{
+				ValidationError: &validationError,
+				Event:           &event,
+			}
+			forwarder.PublishInvalid(ctx, invalidEvent)
+		}
 		redirectUrl, _ := c.GetQuery("u")
 		c.Redirect(302, redirectUrl)
 	}

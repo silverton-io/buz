@@ -1,7 +1,40 @@
 # Things To Do
-    - Open Self-Describing Collector
-    - Support Cloudevents Spec
-    - Support Generic Self Describing Events
-        - "payload" (configurable key)
-        - "contexts" (configurable key)
-    - 
+    - Versioning
+        - Use ldflags ✅
+    - Support multiple forwarders
+        - Pubsub ✅
+        - Kafka ✅
+        - Kinesis
+    - Support multiple cache backends
+        - S3 ✅
+        - GCS ✅
+        - Filesystem
+    - Support multiple incoming payloads
+        - Snowplow ✅
+        - Generic self-describing event
+            - "payload" (configurable key)
+            - "contexts" (configurable key)
+        - Cloud events
+    - Event anonymization
+        - IP
+        - User id
+    - Better event format
+        - Build so a v2 snowplow event format is easily achievable
+    - Better event invalidation
+        - Snowplow
+            - Forward all events with "unknown" event type to invalid
+            - Validate contexts
+        - Generic
+            - Validate payload
+            - Validate contexts
+            - Append collector contexts
+        - Disable validation altogether
+    - Better telemetry
+        - Instance identifier ✅
+            - Uptime duration, "how many running instances per domain", etc
+        - Config snapshot
+        - Heartbeats
+            - Seconds of uptime
+            - Cookie domain
+            - What version is running
+            - Instance id

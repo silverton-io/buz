@@ -10,7 +10,15 @@ const (
 )
 
 func ValidateEvent(event Event, cache *cache.SchemaCache) (isValid bool, validationError validator.ValidationError, schema []byte) {
-	if event.Event == SELF_DESCRIBING_EVENT { // Only validate self describing events
+	switch event.Event {
+	case UNKNOWN_EVENT:
+		errorType := "unknown event type"
+		validationError := validator.ValidationError{
+			ErrorType: &errorType,
+			Errors:    nil,
+		}
+		return false, validationError, nil
+	case SELF_DESCRIBING_EVENT:
 		schemaName := event.Self_describing_event.Schema
 		if schemaName[:4] == IGLU { // If schema path starts with iglu:, get rid of it.
 			schemaName = schemaName[5:]
@@ -27,7 +35,7 @@ func ValidateEvent(event Event, cache *cache.SchemaCache) (isValid bool, validat
 			isValid, validationError := validator.ValidatePayload(event.Self_describing_event.Data, schemaContents)
 			return isValid, validationError, schemaContents
 		}
-	} else {
-		return true, validator.ValidationError{}, nil
+	default:
+		return true, validator.ValidationError{}, nil // Treat non-self-describing events as "valid"
 	}
 }
