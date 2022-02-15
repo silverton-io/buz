@@ -22,19 +22,28 @@
         - Build so a v2 snowplow event format is easily achievable
     - Better event invalidation
         - Snowplow
-            - Forward all events with "unknown" event type to invalid
+            - Forward all events with "unknown" event type to invalid ✅
             - Validate contexts
         - Generic
             - Validate payload
             - Validate contexts
             - Append collector contexts
         - Disable validation altogether
+    - Better event metadata
+        - Kafka metadata
+        - Pubsub metadata
+        - ?Kinesis metadata?
     - Better telemetry
         - Instance identifier ✅
             - Uptime duration, "how many running instances per domain", etc
-        - Config snapshot
+        - Startup
         - Heartbeats
             - Seconds of uptime
             - Cookie domain
             - What version is running
             - Instance id
+        - Shutdown
+            - Seconds of uptime
+            - Cookie domain
+            - What version is running
+            - Events processed summaries

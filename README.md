@@ -1,2 +1,3 @@
 # gosnowplow
-A golang-based serverless snowplow collector
+
+A wee little snowplow collector.

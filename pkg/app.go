@@ -145,7 +145,7 @@ func (app *App) Initialize() {
 }
 
 func (app *App) Run() {
-	log.Info().Interface("config", app.config).Msg("gosnowplow running with configuration")
+	log.Info().Interface("config", app.config).Msg("gosnowplow is running!")
 	tele.Metry(app.config, app.meta)
 	app.engine.Run(":" + app.config.App.Port)
 }
