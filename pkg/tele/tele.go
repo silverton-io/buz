@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/event"
 	"github.com/silverton-io/gosnowplow/pkg/http"
@@ -57,6 +58,7 @@ type shutdown struct {
 }
 
 func heartbeat(t time.Ticker, m *Meta) {
+	log.Trace().Msg("sending heartbeat")
 	for _ = range t.C {
 		b := beat{
 			GosnowplowVersion: m.Version,
@@ -74,8 +76,26 @@ func heartbeat(t time.Ticker, m *Meta) {
 	}
 }
 
+func Shutdown(m *Meta) {
+	log.Trace().Msg("sending shutdown")
+	shutdown := shutdown{
+		GosnowplowVersion: m.Version,
+		InstanceId:        m.InstanceId,
+		Domain:            m.Domain,
+		Time:              time.Now(),
+		ElapsedSeconds:    m.elapsed(),
+	}
+	data := util.StructToMap(shutdown)
+	shutdownPayload := event.SelfDescribingPayload{
+		Schema: SHUTDOWN_1_0_0,
+		Data:   data,
+	}
+	http.SendJson(DEFAULT_HOST, shutdownPayload)
+}
+
 func Metry(c *config.Config, m *Meta) {
 	if c.Tele.Enable {
+		log.Trace().Msg("sending startup")
 		startup := startup{
 			GosnowplowVersion: m.Version,
 			InstanceId:        m.InstanceId,

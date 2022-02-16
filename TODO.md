@@ -15,9 +15,13 @@
         - Filesystem ❌
         - Kafka schema registry ❌
         - ?Buf registry? ❌
+    - Server-side user identification ✅
+        - Configurable - should be able to be deactivated ✅
+    - CORS ✅
+        - Configurable - should be able to be x-domain ✅
     - Support multiple incoming payloads ✅
         - Snowplow ✅
-        - Generic self-describing event
+        - Generic self-describing event ✅
             - "payload" (configurable key) ✅
                 - "data" (configurable key) ✅
                 - "schema" (configurable key) ✅
@@ -40,8 +44,10 @@
             - Append collector contexts ❌
                 - Like what?
                     - Collector tstamp ❌
-        - Option for disabling validation altogether ❌
-    - Better event metadata ❌
+                    - Ip ❌
+                    - User agent ❌
+        - ?Option for disabling validation altogether? ❌
+    - Better event metadata so pushdown-filtering is achievable ❌
         - Kafka metadata ❌
         - Pubsub metadata ❌
         - ?Kinesis metadata? ❌
@@ -52,17 +58,18 @@
             - Elapsed uptime ✅
             - Invalid/valid snowplow events published since startup ❌
             - Invalid/valid generic events published since startup ❌
-        - Startup
-        - Heartbeats
-            - Seconds of uptime
-            - Cookie domain
-            - What version is running
-            - Instance id
-        - Shutdown (send this after sigint)
-            - Seconds of uptime
-            - Cookie domain
-            - What version is running
-            - Events processed summaries
+        - Startup ✅
+        - Heartbeats ✅
+            - Seconds of uptime ✅
+            - Cookie domain ✅
+            - What version is running ✅
+            - Instance id ✅
+            - Event stats ❌
+        - Shutdown (send this after sigint) ✅
+            - Seconds of uptime ✅
+            - Cookie domain ✅
+            - What version is running ✅
+            - Events processed summaries ❌
     - Stats endpoint(s)
         - stats
         - prometheus

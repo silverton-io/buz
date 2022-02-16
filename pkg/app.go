@@ -1,6 +1,12 @@
 package main
 
 import (
+	"context"
+	"errors"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -46,9 +52,7 @@ func (app *App) configure() {
 	if gin.IsDebugging() {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
-	// Set version from ldflag
 	app.config.App.Version = VERSION
-	// Generate and set an instance id
 	instanceId := uuid.New()
 	m := tele.Meta{
 		Version:    VERSION,
@@ -75,13 +79,16 @@ func (app *App) initializeSchemaCache() {
 func (app *App) initializeRouter() {
 	log.Info().Msg("initializing router")
 	app.engine = gin.New()
+	app.engine.SetTrustedProxies(nil)
 	app.engine.RedirectTrailingSlash = false
 }
 
 func (app *App) initializeMiddleware() {
 	log.Info().Msg("initializing middleware")
 	app.engine.Use(gin.Recovery())
-	app.engine.Use(middleware.AdvancingCookie(app.config.Cookie))
+	if app.config.Cookie.Enabled {
+		app.engine.Use(middleware.AdvancingCookie(app.config.Cookie))
+	}
 	app.engine.Use(middleware.CORS(app.config.Cors))
 	app.engine.Use(middleware.JsonAccessLogger())
 }
@@ -147,5 +154,24 @@ func (app *App) Initialize() {
 func (app *App) Run() {
 	log.Info().Interface("config", app.config).Msg("gosnowplow is running!")
 	tele.Metry(app.config, app.meta)
-	app.engine.Run(":" + app.config.App.Port)
+	srv := &http.Server{
+		Addr:    ":" + app.config.App.Port,
+		Handler: app.engine,
+	}
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
+			log.Info().Msgf("listening on %s", app.config.App.Port)
+		}
+	}()
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Info().Msg("shutting down server...")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal().Msg("server forced to shutdown")
+	}
+	log.Info().Msg("server exited")
+	tele.Shutdown(app.meta)
 }
