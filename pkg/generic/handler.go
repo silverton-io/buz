@@ -23,7 +23,7 @@ func PostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, conf *
 		payloadSchemaName := event.Get(conf.Payload.RootKey + "." + conf.Payload.SchemaKey).String()
 		payloadData := event.Get(conf.Payload.RootKey + "." + conf.Payload.DataKey)
 
-		isValid, validationError, _ := validateEvent(payloadData, payloadSchemaName, cache)
+		isValid, validationError, _ := validateEvent(payloadData, payloadSchemaName, cache, conf)
 		if isValid {
 			forwarder.PublishValid(ctx, event.Value())
 		} else {
@@ -52,7 +52,7 @@ func BatchPostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, c
 			event := gjson.ParseBytes(marshaledEvent)
 			payloadSchemaName := event.Get(conf.Payload.RootKey + "." + conf.Payload.SchemaKey).String()
 			payloadData := event.Get(conf.Payload.RootKey + "." + conf.Payload.DataKey)
-			isValid, validationError, _ := validateEvent(payloadData, payloadSchemaName, cache)
+			isValid, validationError, _ := validateEvent(payloadData, payloadSchemaName, cache, conf)
 			if isValid {
 				validEvents = append(validEvents, event)
 			} else {

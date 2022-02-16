@@ -2,13 +2,14 @@ package generic
 
 import (
 	"github.com/silverton-io/gosnowplow/pkg/cache"
+	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/validator"
 	"github.com/tidwall/gjson"
 )
 
-func validateEvent(event gjson.Result, schemaName string, cache *cache.SchemaCache) (isValid bool, validationError validator.ValidationError, schema []byte) {
+func validateEvent(event gjson.Result, schemaName string, cache *cache.SchemaCache, conf *config.Generic) (isValid bool, validationError validator.ValidationError, schema []byte) {
 	if event.Value() == nil {
-		errorType := "payload not present"
+		errorType := "payload not present at " + conf.Payload.RootKey + "." + conf.Payload.DataKey
 		validationError := validator.ValidationError{
 			ErrorType: &errorType,
 			Errors:    nil,
@@ -16,7 +17,7 @@ func validateEvent(event gjson.Result, schemaName string, cache *cache.SchemaCac
 		return false, validationError, nil
 	}
 	if schemaName == "" { // Event does not have schema associated - always invalid.
-		errorType := "schema not provided"
+		errorType := "schema not present at " + conf.Payload.RootKey + "." + conf.Payload.SchemaKey
 		validationError := validator.ValidationError{
 			ErrorType: &errorType,
 			Errors:    nil,
