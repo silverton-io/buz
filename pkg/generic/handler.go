@@ -6,32 +6,27 @@ import (
 	"io/ioutil"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/cache"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	e "github.com/silverton-io/gosnowplow/pkg/event"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
-	"github.com/silverton-io/gosnowplow/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
-func bifurcateEvents(events []interface{}, cache *cache.SchemaCache, conf *config.Generic) (validEvents []interface{}, invalidEvents []interface{}) {
+func bifurcateEvents(events []gjson.Result, cache *cache.SchemaCache, conf *config.Generic) (validEvents []interface{}, invalidEvents []interface{}) {
 	var vEvents []interface{}
 	var invEvents []interface{}
 	for _, event := range events {
-		marshaledEvent, _ := json.Marshal(event)
-		gResult := gjson.ParseBytes(marshaledEvent)
-		util.PrettyPrint(gResult.Value())
-		payloadSchemaName := gResult.Get(conf.Payload.RootKey + "." + conf.Payload.SchemaKey).String()
-		payloadData := gResult.Get(conf.Payload.RootKey + "." + conf.Payload.DataKey)
-		util.PrettyPrint(payloadSchemaName)
-		util.PrettyPrint(payloadData)
+		payloadSchemaName := event.Get(conf.Payload.RootKey + "." + conf.Payload.SchemaKey).String()
+		payloadData := event.Get(conf.Payload.RootKey + "." + conf.Payload.DataKey)
 		isValid, validationError, _ := validateEvent(payloadData, payloadSchemaName, cache, conf)
 		if isValid {
-			vEvents = append(vEvents, gResult.Value())
+			vEvents = append(vEvents, event.Value())
 		} else {
 			invalidEvent := e.InvalidEvent{
 				ValidationError: &validationError,
-				Event:           gResult.Value(),
+				Event:           event.Value(),
 			}
 			invEvents = append(invEvents, invalidEvent)
 		}
@@ -42,10 +37,10 @@ func bifurcateEvents(events []interface{}, cache *cache.SchemaCache, conf *confi
 func PostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, conf *config.Generic) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
-		reqBody, _ := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs
-		var events []interface{}
-		e := gjson.ParseBytes(reqBody)
-		events = append(events, e)
+		reqBody, _ := ioutil.ReadAll(c.Request.Body)
+		var events []gjson.Result
+		event := gjson.ParseBytes(reqBody)
+		events = append(events, event)
 		validEvents, invalidEvents := bifurcateEvents(events, cache, conf)
 		forwarder.BatchPublishValid(ctx, validEvents)
 		forwarder.BatchPublishInvalid(ctx, invalidEvents)
@@ -57,8 +52,23 @@ func BatchPostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, c
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		reqBody, _ := ioutil.ReadAll(c.Request.Body)
-		var events []interface{}
-		json.Unmarshal(reqBody, &events)
+		var rawEvents []interface{}
+		var events []gjson.Result
+		err := json.Unmarshal(reqBody, &rawEvents)
+		if err != nil {
+			log.Error().Stack().Err(err).Msg("error when unmarshaling request body")
+			// TODO! Decide whether or not to return something bad here
+		}
+		for _, rawEvent := range rawEvents {
+			marshaledEvent, err := json.Marshal(rawEvent)
+			if err != nil {
+				log.Error().Stack().Err(err).Msg("error when marshaling event")
+				// TODO! Decide whether or not to return something bad here
+			} else {
+				event := gjson.ParseBytes(marshaledEvent)
+				events = append(events, event)
+			}
+		}
 		validEvents, invalidEvents := bifurcateEvents(events, cache, conf)
 		forwarder.BatchPublishValid(ctx, validEvents)
 		forwarder.BatchPublishInvalid(ctx, invalidEvents)
