@@ -173,5 +173,5 @@ func (app *App) Run() {
 		log.Fatal().Msg("server forced to shutdown")
 	}
 	log.Info().Msg("server exited")
-	tele.Shutdown(app.meta)
+	tele.Sis(app.meta)
 }

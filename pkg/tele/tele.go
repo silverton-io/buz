@@ -76,7 +76,7 @@ func heartbeat(t time.Ticker, m *Meta) {
 	}
 }
 
-func Shutdown(m *Meta) {
+func Sis(m *Meta) {
 	log.Trace().Msg("sending shutdown")
 	shutdown := shutdown{
 		GosnowplowVersion: m.Version,
