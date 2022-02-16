@@ -10,6 +10,7 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	e "github.com/silverton-io/gosnowplow/pkg/event"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
+	"github.com/silverton-io/gosnowplow/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
@@ -19,8 +20,11 @@ func bifurcateEvents(events []interface{}, cache *cache.SchemaCache, conf *confi
 	for _, event := range events {
 		marshaledEvent, _ := json.Marshal(event)
 		gResult := gjson.ParseBytes(marshaledEvent)
+		util.PrettyPrint(gResult.Value())
 		payloadSchemaName := gResult.Get(conf.Payload.RootKey + "." + conf.Payload.SchemaKey).String()
 		payloadData := gResult.Get(conf.Payload.RootKey + "." + conf.Payload.DataKey)
+		util.PrettyPrint(payloadSchemaName)
+		util.PrettyPrint(payloadData)
 		isValid, validationError, _ := validateEvent(payloadData, payloadSchemaName, cache, conf)
 		if isValid {
 			vEvents = append(vEvents, gResult.Value())
@@ -40,7 +44,8 @@ func PostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, conf *
 		ctx := context.Background()
 		reqBody, _ := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs
 		var events []interface{}
-		events = append(events, reqBody)
+		e := gjson.ParseBytes(reqBody)
+		events = append(events, e)
 		validEvents, invalidEvents := bifurcateEvents(events, cache, conf)
 		forwarder.BatchPublishValid(ctx, validEvents)
 		forwarder.BatchPublishInvalid(ctx, invalidEvents)

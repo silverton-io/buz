@@ -47,6 +47,7 @@
                     - Ip ❌
                     - User agent ❌
         - ?Option for disabling validation altogether? ❌
+        - Ensure invalid schemas make events go to invalid topic ❌
     - Better event metadata so pushdown-filtering is achievable ❌
         - Kafka metadata ❌
         - Pubsub metadata ❌
