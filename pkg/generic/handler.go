@@ -13,56 +13,48 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// FIXME! Abstract shared logic
+func bifurcateEvents(events []interface{}, cache *cache.SchemaCache, conf *config.Generic) (validEvents []interface{}, invalidEvents []interface{}) {
+	var vEvents []interface{}
+	var invEvents []interface{}
+	for _, event := range events {
+		marshaledEvent, _ := json.Marshal(event)
+		gResult := gjson.ParseBytes(marshaledEvent)
+		payloadSchemaName := gResult.Get(conf.Payload.RootKey + "." + conf.Payload.SchemaKey).String()
+		payloadData := gResult.Get(conf.Payload.RootKey + "." + conf.Payload.DataKey)
+		isValid, validationError, _ := validateEvent(payloadData, payloadSchemaName, cache, conf)
+		if isValid {
+			vEvents = append(vEvents, gResult.Value())
+		} else {
+			invalidEvent := e.InvalidEvent{
+				ValidationError: &validationError,
+				Event:           gResult.Value(),
+			}
+			invEvents = append(invEvents, invalidEvent)
+		}
+	}
+	return vEvents, invEvents
+}
+
 func PostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, conf *config.Generic) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		reqBody, _ := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs
-
-		event := gjson.ParseBytes(reqBody)
-		payloadSchemaName := event.Get(conf.Payload.RootKey + "." + conf.Payload.SchemaKey).String()
-		payloadData := event.Get(conf.Payload.RootKey + "." + conf.Payload.DataKey)
-
-		isValid, validationError, _ := validateEvent(payloadData, payloadSchemaName, cache, conf)
-		if isValid {
-			forwarder.PublishValid(ctx, event.Value())
-		} else {
-			invalidEvent := e.InvalidEvent{
-				ValidationError: &validationError,
-				Event:           event.Value(),
-			}
-			forwarder.PublishInvalid(ctx, invalidEvent)
-		}
+		var events []interface{}
+		events = append(events, reqBody)
+		validEvents, invalidEvents := bifurcateEvents(events, cache, conf)
+		forwarder.BatchPublishValid(ctx, validEvents)
+		forwarder.BatchPublishInvalid(ctx, invalidEvents)
 	}
 	return gin.HandlerFunc(fn)
 }
 
-// FIXME! Abstract shared logic
 func BatchPostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, conf *config.Generic) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
-		var validEvents []interface{}
-		var invalidEvents []interface{}
-		var events []interface{}
 		reqBody, _ := ioutil.ReadAll(c.Request.Body)
+		var events []interface{}
 		json.Unmarshal(reqBody, &events)
-
-		for _, evnt := range events {
-			marshaledEvent, _ := json.Marshal(evnt) // It feels incredibly dirty to json.Unmarshal a request body, only to json.Marshal and then gjson.ParseBytes.
-			event := gjson.ParseBytes(marshaledEvent)
-			payloadSchemaName := event.Get(conf.Payload.RootKey + "." + conf.Payload.SchemaKey).String()
-			payloadData := event.Get(conf.Payload.RootKey + "." + conf.Payload.DataKey)
-			isValid, validationError, _ := validateEvent(payloadData, payloadSchemaName, cache, conf)
-			if isValid {
-				validEvents = append(validEvents, event)
-			} else {
-				invalidEvent := e.InvalidEvent{
-					ValidationError: &validationError,
-					Event:           event.Value(),
-				}
-				invalidEvents = append(invalidEvents, invalidEvent)
-			}
-		}
+		validEvents, invalidEvents := bifurcateEvents(events, cache, conf)
 		forwarder.BatchPublishValid(ctx, validEvents)
 		forwarder.BatchPublishInvalid(ctx, invalidEvents)
 	}
