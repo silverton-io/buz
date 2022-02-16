@@ -4,6 +4,11 @@ app:
   env: dev
   mode: debug # Mode is either debug or release
   port: 8081
+  getSslCert: false
+  trackDomain: data.silverton.io
+
+stats:
+  enabled: true
 
 snowplow: # Snowplow events
   enabled: true
@@ -86,4 +91,4 @@ forwarder:
 # ============================================================
 
 tele:
-  enable: true
+  enabled: true
