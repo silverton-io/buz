@@ -58,8 +58,8 @@ type shutdown struct {
 }
 
 func heartbeat(t time.Ticker, m *Meta) {
-	log.Trace().Msg("sending heartbeat")
 	for _ = range t.C {
+		log.Trace().Msg("sending heartbeat telemetry")
 		b := beat{
 			GosnowplowVersion: m.Version,
 			InstanceId:        m.InstanceId,
@@ -77,7 +77,7 @@ func heartbeat(t time.Ticker, m *Meta) {
 }
 
 func Sis(m *Meta) {
-	log.Trace().Msg("sending shutdown")
+	log.Trace().Msg("sending shutdown telemetry")
 	shutdown := shutdown{
 		GosnowplowVersion: m.Version,
 		InstanceId:        m.InstanceId,
@@ -95,7 +95,7 @@ func Sis(m *Meta) {
 
 func Metry(c *config.Config, m *Meta) {
 	if c.Tele.Enable {
-		log.Trace().Msg("sending startup")
+		log.Trace().Msg("sending startup telemetry")
 		startup := startup{
 			GosnowplowVersion: m.Version,
 			InstanceId:        m.InstanceId,

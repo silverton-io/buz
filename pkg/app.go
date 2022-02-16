@@ -35,7 +35,7 @@ type App struct {
 
 var VERSION string
 
-func (app *App) configure() {
+func (a *App) configure() {
 	// Set up app logger
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
@@ -46,121 +46,121 @@ func (app *App) configure() {
 	if err != nil {
 		log.Fatal().Msg("could not read config")
 	}
-	app.config = &config.Config{}
-	viper.Unmarshal(app.config)
-	gin.SetMode(app.config.App.Mode)
+	a.config = &config.Config{}
+	viper.Unmarshal(a.config)
+	gin.SetMode(a.config.App.Mode)
 	if gin.IsDebugging() {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
-	app.config.App.Version = VERSION
+	a.config.App.Version = VERSION
 	instanceId := uuid.New()
 	m := tele.Meta{
 		Version:    VERSION,
 		InstanceId: instanceId,
 		StartTime:  time.Now(),
-		Domain:     app.config.Cookie.Domain,
+		Domain:     a.config.Cookie.Domain,
 	}
-	app.meta = &m
+	a.meta = &m
 }
 
-func (app *App) initializeForwarder() {
+func (a *App) initializeForwarder() {
 	log.Info().Msg("initializing forwarder")
-	forwarder, _ := forwarder.BuildForwarder(app.config.Forwarder)
-	app.forwarder = forwarder
+	forwarder, _ := forwarder.BuildForwarder(a.config.Forwarder)
+	a.forwarder = forwarder
 }
 
-func (app *App) initializeSchemaCache() {
+func (a *App) initializeSchemaCache() {
 	log.Info().Msg("initializing schema cache")
 	cache := cache.SchemaCache{}
-	cache.Initialize(app.config.SchemaCache)
-	app.schemaCache = &cache
+	cache.Initialize(a.config.SchemaCache)
+	a.schemaCache = &cache
 }
 
-func (app *App) initializeRouter() {
+func (a *App) initializeRouter() {
 	log.Info().Msg("initializing router")
-	app.engine = gin.New()
-	app.engine.SetTrustedProxies(nil)
-	app.engine.RedirectTrailingSlash = false
+	a.engine = gin.New()
+	a.engine.SetTrustedProxies(nil)
+	a.engine.RedirectTrailingSlash = false
 }
 
-func (app *App) initializeMiddleware() {
+func (a *App) initializeMiddleware() {
 	log.Info().Msg("initializing middleware")
-	app.engine.Use(gin.Recovery())
-	if app.config.Cookie.Enabled {
-		app.engine.Use(middleware.AdvancingCookie(app.config.Cookie))
+	a.engine.Use(gin.Recovery())
+	if a.config.Cookie.Enabled {
+		a.engine.Use(middleware.AdvancingCookie(a.config.Cookie))
 	}
-	app.engine.Use(middleware.CORS(app.config.Cors))
-	app.engine.Use(middleware.JsonAccessLogger())
+	a.engine.Use(middleware.CORS(a.config.Cors))
+	a.engine.Use(middleware.JsonAccessLogger())
 }
 
-func (app *App) initializeHealthcheck() {
+func (a *App) initializeHealthcheck() {
 	log.Info().Msg("initializing health check route")
-	app.engine.GET(health.HEALTH_PATH, health.HealthcheckHandler)
+	a.engine.GET(health.HEALTH_PATH, health.HealthcheckHandler)
 }
 
-func (app *App) initializeSnowplowRoutes() {
-	if app.config.Snowplow.Enabled {
+func (a *App) initializeSnowplowRoutes() {
+	if a.config.Snowplow.Enabled {
 		log.Info().Msg("initializing snowplow routes")
-		if app.config.Snowplow.StandardRoutesEnabled {
+		if a.config.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("initializing standard routes")
-			app.engine.GET(snowplow.DEFAULT_GET_PATH, snowplow.GetHandler(app.forwarder, app.schemaCache))
-			app.engine.POST(snowplow.DEFAULT_POST_PATH, snowplow.PostHandler(app.forwarder, app.schemaCache))
-			if app.config.Snowplow.OpenRedirectsEnabled {
+			a.engine.GET(snowplow.DEFAULT_GET_PATH, snowplow.GetHandler(a.forwarder, a.schemaCache))
+			a.engine.POST(snowplow.DEFAULT_POST_PATH, snowplow.PostHandler(a.forwarder, a.schemaCache))
+			if a.config.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("initializing standard open redirect route")
-				app.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, snowplow.RedirectHandler(app.forwarder, app.schemaCache))
+				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, snowplow.RedirectHandler(a.forwarder, a.schemaCache))
 			}
 		}
 		log.Info().Msg("initializing custom routes")
-		app.engine.GET(app.config.Snowplow.GetPath, snowplow.GetHandler(app.forwarder, app.schemaCache))
-		app.engine.POST(app.config.Snowplow.PostPath, snowplow.PostHandler(app.forwarder, app.schemaCache))
-		if app.config.Snowplow.OpenRedirectsEnabled {
+		a.engine.GET(a.config.Snowplow.GetPath, snowplow.GetHandler(a.forwarder, a.schemaCache))
+		a.engine.POST(a.config.Snowplow.PostPath, snowplow.PostHandler(a.forwarder, a.schemaCache))
+		if a.config.Snowplow.OpenRedirectsEnabled {
 			log.Info().Msg("initializing custom open redirect route")
-			app.engine.GET(app.config.Snowplow.RedirectPath, snowplow.RedirectHandler(app.forwarder, app.schemaCache))
+			a.engine.GET(a.config.Snowplow.RedirectPath, snowplow.RedirectHandler(a.forwarder, a.schemaCache))
 		}
 	}
 }
 
-func (app *App) initializeGenericRoutes() {
-	if app.config.Generic.Enabled {
+func (a *App) initializeGenericRoutes() {
+	if a.config.Generic.Enabled {
 		log.Info().Msg("initializing generic routes")
-		app.engine.POST(app.config.Generic.PostPath, generic.PostHandler(app.forwarder, app.schemaCache, &app.config.Generic)) // FIXME! Consolidate these or figure out a better way to set up handlers that require a bunch of args
-		app.engine.POST(app.config.Generic.BatchPostPath, generic.BatchPostHandler(app.forwarder, app.schemaCache, &app.config.Generic))
+		a.engine.POST(a.config.Generic.PostPath, generic.PostHandler(a.forwarder, a.schemaCache, &a.config.Generic)) // FIXME! Consolidate these or figure out a better way to set up handlers that require a bunch of args
+		a.engine.POST(a.config.Generic.BatchPostPath, generic.BatchPostHandler(a.forwarder, a.schemaCache, &a.config.Generic))
 	}
 }
 
-func (app *App) serveStaticIfDev() {
-	if app.config.App.Env == env.DEV_ENVIRONMENT {
+func (a *App) serveStaticIfDev() {
+	if a.config.App.Env == env.DEV_ENVIRONMENT {
 		log.Info().Msg("serving static files")
-		app.engine.StaticFile("/", "./static/index.html")           // Serve a local file to make testing events easier
-		app.engine.StaticFile("/test/there", "./static/index.html") // Ditto
+		a.engine.StaticFile("/", "./static/index.html")           // Serve a local file to make testing events easier
+		a.engine.StaticFile("/test/there", "./static/index.html") // Ditto
 	} else {
 		log.Info().Msg("not serving static files")
 	}
 }
 
-func (app *App) Initialize() {
+func (a *App) Initialize() {
 	log.Info().Msg("initializing app")
-	app.configure()
-	app.initializeForwarder()
-	app.initializeSchemaCache()
-	app.initializeRouter()
-	app.initializeMiddleware()
-	app.initializeHealthcheck()
-	app.initializeSnowplowRoutes()
-	app.initializeGenericRoutes()
-	app.serveStaticIfDev()
+	a.configure()
+	a.initializeForwarder()
+	a.initializeSchemaCache()
+	a.initializeRouter()
+	a.initializeMiddleware()
+	a.initializeHealthcheck()
+	a.initializeSnowplowRoutes()
+	a.initializeGenericRoutes()
+	a.serveStaticIfDev()
 }
 
-func (app *App) Run() {
-	log.Info().Interface("config", app.config).Msg("gosnowplow is running!")
-	tele.Metry(app.config, app.meta)
+func (a *App) Run() {
+	log.Info().Interface("config", a.config).Msg("gosnowplow is running!")
+	tele.Metry(a.config, a.meta)
 	srv := &http.Server{
-		Addr:    ":" + app.config.App.Port,
-		Handler: app.engine,
+		Addr:    ":" + a.config.App.Port,
+		Handler: a.engine,
 	}
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
-			log.Info().Msgf("listening on %s", app.config.App.Port)
+			log.Info().Msgf("server closed")
 		}
 	}()
 	quit := make(chan os.Signal, 1)
@@ -172,6 +172,5 @@ func (app *App) Run() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal().Msg("server forced to shutdown")
 	}
-	log.Info().Msg("server exited")
-	tele.Sis(app.meta)
+	tele.Sis(a.meta)
 }
