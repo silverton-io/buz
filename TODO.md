@@ -4,17 +4,18 @@
     - Support multiple forwarders
         - Pubsub ✅
         - Kafka ✅
-        - Kinesis
+        - Kinesis ❌
     - Support multiple cache backends
         - S3 ✅
         - GCS ✅
-        - Filesystem
+        - Filesystem ❌
+        - Kafka schema registry ❌
     - Support multiple incoming payloads
         - Snowplow ✅
         - Generic self-describing event
             - "payload" (configurable key)
             - "contexts" (configurable key)
-        - Cloud events
+        - Cloud events ❌
     - Event anonymization
         - IP
         - User id
@@ -23,16 +24,16 @@
     - Better event invalidation
         - Snowplow
             - Forward all events with "unknown" event type to invalid ✅
-            - Validate contexts
+            - Validate contexts ❌
         - Generic
             - Validate payload
-            - Validate contexts
-            - Append collector contexts
-        - Disable validation altogether
-    - Better event metadata
-        - Kafka metadata
-        - Pubsub metadata
-        - ?Kinesis metadata?
+            - Validate contexts ❌
+            - Append collector contexts ❌
+        - Option for disabling validation altogether ❌
+    - Better event metadata ❌
+        - Kafka metadata ❌
+        - Pubsub metadata ❌
+        - ?Kinesis metadata? ❌
     - Better telemetry
         - Instance identifier ✅
             - Uptime duration, "how many running instances per domain", etc
@@ -47,3 +48,11 @@
             - Cookie domain
             - What version is running
             - Events processed summaries
+    - Stats endpoint(s)
+        - stats
+        - prometheus
+    - Schemas
+        - Top-level (self-describing)
+        - Schemas to match index.html
+        - 
+        

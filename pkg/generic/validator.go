@@ -15,7 +15,6 @@ func validateEvent(event gjson.Result, schemaName string, cache *cache.SchemaCac
 		}
 		return false, validationError, nil
 	}
-	schemaExists, schemaContents := cache.Get(schemaName)
 	if schemaName == "" { // Event does not have schema associated - always invalid.
 		errorType := "schema not provided"
 		validationError := validator.ValidationError{
@@ -24,6 +23,7 @@ func validateEvent(event gjson.Result, schemaName string, cache *cache.SchemaCac
 		}
 		return false, validationError, nil
 	}
+	schemaExists, schemaContents := cache.Get(schemaName)
 	// FIXME! What happens if the payload key doesn't exist?
 	if !schemaExists { // Referenced schema is not present in the cache backend - always invalid
 		errorType := "nonexistent schema"
