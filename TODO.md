@@ -5,45 +5,60 @@
         - Pubsub ✅
         - Kafka ✅
         - Kinesis ❌
+        - Logfile ❌
+        - Postgres ❌
+        - Clickhouse ❌
+        - Firebolt ❌
     - Support multiple cache backends
         - S3 ✅
         - GCS ✅
         - Filesystem ❌
         - Kafka schema registry ❌
-    - Support multiple incoming payloads
+        - ?Buf registry? ❌
+    - Support multiple incoming payloads ✅
         - Snowplow ✅
         - Generic self-describing event
-            - "payload" (configurable key)
-            - "contexts" (configurable key)
+            - "payload" (configurable key) ✅
+                - "data" (configurable key) ✅
+                - "schema" (configurable key) ✅
+            - "contexts" (configurable key) ✅
+                - "data" (configurable key) ✅
+                - "schema" (configurable key) ✅
         - Cloud events ❌
     - Event anonymization
-        - IP
-        - User id
+        - IP ❌
+        - User id ❌
     - Better event format
-        - Build so a v2 snowplow event format is easily achievable
+        - Build so a v2 snowplow event format is easily achievable ✅
     - Better event invalidation
         - Snowplow
             - Forward all events with "unknown" event type to invalid ✅
             - Validate contexts ❌
         - Generic
-            - Validate payload
+            - Validate payload ✅
             - Validate contexts ❌
             - Append collector contexts ❌
+                - Like what?
+                    - Collector tstamp ❌
         - Option for disabling validation altogether ❌
     - Better event metadata ❌
         - Kafka metadata ❌
         - Pubsub metadata ❌
         - ?Kinesis metadata? ❌
     - Better telemetry
-        - Instance identifier ✅
-            - Uptime duration, "how many running instances per domain", etc
+        - Telemetry attributes
+            - Instance identifier ✅
+                - Why?"how many running instances per domain", etc
+            - Elapsed uptime ✅
+            - Invalid/valid snowplow events published since startup ❌
+            - Invalid/valid generic events published since startup ❌
         - Startup
         - Heartbeats
             - Seconds of uptime
             - Cookie domain
             - What version is running
             - Instance id
-        - Shutdown
+        - Shutdown (send this after sigint)
             - Seconds of uptime
             - Cookie domain
             - What version is running
@@ -54,5 +69,3 @@
     - Schemas
         - Top-level (self-describing)
         - Schemas to match index.html
-        - 
-        

@@ -116,7 +116,7 @@ func (app *App) initializeSnowplowRoutes() {
 func (app *App) initializeGenericRoutes() {
 	if app.config.Generic.Enabled {
 		log.Info().Msg("initializing generic routes")
-		app.engine.POST(app.config.Generic.PostPath, generic.PostHandler(app.forwarder, app.schemaCache, &app.config.Generic))
+		app.engine.POST(app.config.Generic.PostPath, generic.PostHandler(app.forwarder, app.schemaCache, &app.config.Generic)) // FIXME! Consolidate these or figure out a better way to set up handlers that require a bunch of args
 		app.engine.POST(app.config.Generic.BatchPostPath, generic.BatchPostHandler(app.forwarder, app.schemaCache, &app.config.Generic))
 	}
 }

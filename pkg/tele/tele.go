@@ -18,12 +18,14 @@ const (
 )
 
 type Meta struct {
-	Version                string    `json:"version"`
-	InstanceId             uuid.UUID `json:"instanceId"`
-	StartTime              time.Time `json:"startTime"`
-	Domain                 string    `json:"domain"`
-	ValidEventsProcessed   int64     `json:"validEventsProcessed"`
-	InvalidEventsProcessed int64     `json:"invalidEventsProcessed"`
+	Version                        string    `json:"version"`
+	InstanceId                     uuid.UUID `json:"instanceId"`
+	StartTime                      time.Time `json:"startTime"`
+	Domain                         string    `json:"domain"`
+	ValidSnowplowEventsProcessed   int64     `json:"validSnowplowEventsProcessed"`
+	InvalidSnowplowEventsProcessed int64     `json:"invalidSnowplowEventsProcessed"`
+	ValidGenericEventsProcessed    int64     `json:"validGenericEventsProcessed"`
+	InvalidGenericEventsProcessed  int64     `json:"invalidGenericEventsProcessed"`
 }
 
 func (m *Meta) elapsed() float64 {
