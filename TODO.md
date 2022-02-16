@@ -15,10 +15,12 @@
         - Filesystem ❌
         - Kafka schema registry ❌
         - ?Buf registry? ❌
-    - Server-side user identification ✅
-        - Configurable - should be able to be deactivated ✅
-    - CORS ✅
-        - Configurable - should be able to be x-domain ✅
+    - Middleware
+        - Server-side user identification ✅
+            - Configurable - should be able to be deactivated ✅
+        - CORS ✅
+            - Configurable - should be able to be x-domain ✅
+        - IP denylist ❌
     - Support multiple incoming payloads ✅
         - Snowplow ✅
         - Generic self-describing event ✅
@@ -29,10 +31,10 @@
                 - "data" (configurable key) ✅
                 - "schema" (configurable key) ✅
         - Cloud events ❌
-    - Event anonymization
+    - Event anonymization ❌
         - IP ❌
         - User id ❌
-    - Better event format
+    - Better event format ✅
         - Build so a v2 snowplow event format is easily achievable ✅
     - Better event invalidation
         - Snowplow
@@ -47,30 +49,30 @@
                     - Ip ❌
                     - User agent ❌
         - ?Option for disabling validation altogether? ❌
-        - Ensure invalid schemas make events go to invalid topic ❌
+        - Ensure invalid schemas make events go to invalid topic ✅
     - Better event metadata so pushdown-filtering is achievable ❌
         - Kafka metadata ❌
         - Pubsub metadata ❌
         - ?Kinesis metadata? ❌
-    - Better telemetry
-        - Telemetry attributes
+    - Better telemetry ✅
+        - Telemetry attributes ✅
             - Instance identifier ✅
-                - Why?"how many running instances per domain", etc
+                - Why?"how many running instances per domain", etc ✅
             - Elapsed uptime ✅
-            - Invalid/valid snowplow events published since startup ❌
-            - Invalid/valid generic events published since startup ❌
+            - Invalid/valid snowplow events published since startup ✅
+            - Invalid/valid generic events published since startup ✅
         - Startup ✅
         - Heartbeats ✅
             - Seconds of uptime ✅
             - Cookie domain ✅
             - What version is running ✅
             - Instance id ✅
-            - Event stats ❌
+            - Event stats ✅
         - Shutdown (send this after sigint) ✅
             - Seconds of uptime ✅
             - Cookie domain ✅
             - What version is running ✅
-            - Events processed summaries ❌
+            - Events processed summaries ✅
     - Stats endpoint(s)
         - stats
         - prometheus

@@ -22,7 +22,8 @@ type Meta struct {
 	Version                        string    `json:"version"`
 	InstanceId                     uuid.UUID `json:"instanceId"`
 	StartTime                      time.Time `json:"startTime"`
-	Domain                         string    `json:"domain"`
+	TrackerDomain                  string    `json:"trackerDomain"`
+	CookieDomain                   string    `json:"cookieDomain"`
 	ValidSnowplowEventsProcessed   int64     `json:"validSnowplowEventsProcessed"`
 	InvalidSnowplowEventsProcessed int64     `json:"invalidSnowplowEventsProcessed"`
 	ValidGenericEventsProcessed    int64     `json:"validGenericEventsProcessed"`
@@ -34,43 +35,38 @@ func (m *Meta) elapsed() float64 {
 }
 
 type startup struct {
-	GosnowplowVersion string        `json:"gosnowplowVersion"`
-	InstanceId        uuid.UUID     `json:"instanceId"`
-	Domain            string        `json:"domain"`
-	Time              time.Time     `json:"time"`
-	Config            config.Config `json:"config"`
+	Meta   *Meta         `json:"meta"`
+	Time   time.Time     `json:"time"`
+	Config config.Config `json:"config"`
 }
 
 type beat struct {
-	GosnowplowVersion string    `json:"gosnowplowVersion"`
-	InstanceId        uuid.UUID `json:"instanceId"`
-	Domain            string    `json:"domain"`
-	Time              time.Time `json:"time"`
-	ElapsedSeconds    float64   `json:"elapsedSeconds"`
+	Meta           *Meta     `json:"meta"`
+	Time           time.Time `json:"time"`
+	ElapsedSeconds float64   `json:"elapsedSeconds"`
 }
 
 type shutdown struct {
-	GosnowplowVersion string    `json:"gosnowplowVersion"`
-	InstanceId        uuid.UUID `json:"instanceId"`
-	Domain            string    `json:"domain"`
-	Time              time.Time `json:"time"`
-	ElapsedSeconds    float64   `json:"elapsedSeconds"`
+	Meta           *Meta     `json:"meta"`
+	Time           time.Time `json:"time"`
+	ElapsedSeconds float64   `json:"elapsedSeconds"`
 }
 
 func heartbeat(t time.Ticker, m *Meta) {
 	for _ = range t.C {
 		log.Trace().Msg("sending heartbeat telemetry")
 		b := beat{
-			GosnowplowVersion: m.Version,
-			InstanceId:        m.InstanceId,
-			Domain:            m.Domain,
-			Time:              time.Now(),
-			ElapsedSeconds:    m.elapsed(),
+			Meta:           m,
+			Time:           time.Now(),
+			ElapsedSeconds: m.elapsed(),
 		}
 		data := util.StructToMap(b)
-		heartbeatPayload := event.SelfDescribingPayload{
-			Schema: HEARTBEAT_1_0_0,
-			Data:   data,
+		heartbeatPayload := event.SelfDescribingEnvelope{
+			Contexts: nil,
+			Event: event.SelfDescribingPayload{
+				Schema: HEARTBEAT_1_0_0,
+				Data:   data,
+			},
 		}
 		http.SendJson(DEFAULT_HOST, heartbeatPayload)
 	}
@@ -79,34 +75,36 @@ func heartbeat(t time.Ticker, m *Meta) {
 func Sis(m *Meta) {
 	log.Trace().Msg("sending shutdown telemetry")
 	shutdown := shutdown{
-		GosnowplowVersion: m.Version,
-		InstanceId:        m.InstanceId,
-		Domain:            m.Domain,
-		Time:              time.Now(),
-		ElapsedSeconds:    m.elapsed(),
+		Meta:           m,
+		Time:           time.Now(),
+		ElapsedSeconds: m.elapsed(),
 	}
 	data := util.StructToMap(shutdown)
-	shutdownPayload := event.SelfDescribingPayload{
-		Schema: SHUTDOWN_1_0_0,
-		Data:   data,
+	shutdownPayload := event.SelfDescribingEnvelope{
+		Contexts: nil,
+		Event: event.SelfDescribingPayload{
+			Schema: SHUTDOWN_1_0_0,
+			Data:   data,
+		},
 	}
 	http.SendJson(DEFAULT_HOST, shutdownPayload)
 }
 
 func Metry(c *config.Config, m *Meta) {
-	if c.Tele.Enable {
+	if c.Tele.Enabled {
 		log.Trace().Msg("sending startup telemetry")
 		startup := startup{
-			GosnowplowVersion: m.Version,
-			InstanceId:        m.InstanceId,
-			Domain:            m.Domain,
-			Time:              time.Now(),
-			Config:            *c,
+			Meta:   m,
+			Time:   time.Now(),
+			Config: *c,
 		}
 		data := util.StructToMap(startup)
-		startupPayload := event.SelfDescribingPayload{
-			Schema: STARTUP_1_0_0,
-			Data:   data,
+		startupPayload := event.SelfDescribingEnvelope{
+			Contexts: nil,
+			Event: event.SelfDescribingPayload{
+				Schema: STARTUP_1_0_0,
+				Data:   data,
+			},
 		}
 		http.SendJson(DEFAULT_HOST, startupPayload)
 		ticker := time.NewTicker(5 * time.Second)

@@ -9,5 +9,6 @@ type Config struct {
 	Forwarder   `json:"forwarder"`
 	Anonymize   `json:"anonymize"`
 	SchemaCache `json:"schemaCache"`
+	Stats       `json:"stats"`
 	Tele        `json:"tele"`
 }

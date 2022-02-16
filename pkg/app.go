@@ -21,6 +21,7 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/health"
 	"github.com/silverton-io/gosnowplow/pkg/middleware"
 	"github.com/silverton-io/gosnowplow/pkg/snowplow"
+	"github.com/silverton-io/gosnowplow/pkg/stats"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
 	"github.com/spf13/viper"
 )
@@ -55,10 +56,10 @@ func (a *App) configure() {
 	a.config.App.Version = VERSION
 	instanceId := uuid.New()
 	m := tele.Meta{
-		Version:    VERSION,
-		InstanceId: instanceId,
-		StartTime:  time.Now(),
-		Domain:     a.config.Cookie.Domain,
+		Version:      VERSION,
+		InstanceId:   instanceId,
+		StartTime:    time.Now(),
+		CookieDomain: a.config.Cookie.Domain,
 	}
 	a.meta = &m
 }
@@ -93,9 +94,14 @@ func (a *App) initializeMiddleware() {
 	a.engine.Use(middleware.JsonAccessLogger())
 }
 
-func (a *App) initializeHealthcheck() {
+func (a *App) initializeHealthcheckRoutes() {
 	log.Info().Msg("initializing health check route")
 	a.engine.GET(health.HEALTH_PATH, health.HealthcheckHandler)
+}
+
+func (a *App) initializeStatsRoutes() {
+	log.Info().Msg("intializing stats route")
+	a.engine.GET(stats.STATS_PATH, stats.StatsHandler(a.meta))
 }
 
 func (a *App) initializeSnowplowRoutes() {
@@ -103,19 +109,19 @@ func (a *App) initializeSnowplowRoutes() {
 		log.Info().Msg("initializing snowplow routes")
 		if a.config.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("initializing standard routes")
-			a.engine.GET(snowplow.DEFAULT_GET_PATH, snowplow.GetHandler(a.forwarder, a.schemaCache))
-			a.engine.POST(snowplow.DEFAULT_POST_PATH, snowplow.PostHandler(a.forwarder, a.schemaCache))
+			a.engine.GET(snowplow.DEFAULT_GET_PATH, snowplow.GetHandler(a.forwarder, a.schemaCache, a.meta))
+			a.engine.POST(snowplow.DEFAULT_POST_PATH, snowplow.PostHandler(a.forwarder, a.schemaCache, a.meta))
 			if a.config.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("initializing standard open redirect route")
-				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, snowplow.RedirectHandler(a.forwarder, a.schemaCache))
+				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, snowplow.RedirectHandler(a.forwarder, a.schemaCache, a.meta))
 			}
 		}
 		log.Info().Msg("initializing custom routes")
-		a.engine.GET(a.config.Snowplow.GetPath, snowplow.GetHandler(a.forwarder, a.schemaCache))
-		a.engine.POST(a.config.Snowplow.PostPath, snowplow.PostHandler(a.forwarder, a.schemaCache))
+		a.engine.GET(a.config.Snowplow.GetPath, snowplow.GetHandler(a.forwarder, a.schemaCache, a.meta))
+		a.engine.POST(a.config.Snowplow.PostPath, snowplow.PostHandler(a.forwarder, a.schemaCache, a.meta))
 		if a.config.Snowplow.OpenRedirectsEnabled {
 			log.Info().Msg("initializing custom open redirect route")
-			a.engine.GET(a.config.Snowplow.RedirectPath, snowplow.RedirectHandler(a.forwarder, a.schemaCache))
+			a.engine.GET(a.config.Snowplow.RedirectPath, snowplow.RedirectHandler(a.forwarder, a.schemaCache, a.meta))
 		}
 	}
 }
@@ -123,8 +129,8 @@ func (a *App) initializeSnowplowRoutes() {
 func (a *App) initializeGenericRoutes() {
 	if a.config.Generic.Enabled {
 		log.Info().Msg("initializing generic routes")
-		a.engine.POST(a.config.Generic.PostPath, generic.PostHandler(a.forwarder, a.schemaCache, &a.config.Generic)) // FIXME! Consolidate these or figure out a better way to set up handlers that require a bunch of args
-		a.engine.POST(a.config.Generic.BatchPostPath, generic.BatchPostHandler(a.forwarder, a.schemaCache, &a.config.Generic))
+		a.engine.POST(a.config.Generic.PostPath, generic.PostHandler(a.forwarder, a.schemaCache, &a.config.Generic, a.meta)) // FIXME! Consolidate these or figure out a better way to set up handlers that require a bunch of args
+		a.engine.POST(a.config.Generic.BatchPostPath, generic.BatchPostHandler(a.forwarder, a.schemaCache, &a.config.Generic, a.meta))
 	}
 }
 
@@ -145,7 +151,8 @@ func (a *App) Initialize() {
 	a.initializeSchemaCache()
 	a.initializeRouter()
 	a.initializeMiddleware()
-	a.initializeHealthcheck()
+	a.initializeHealthcheckRoutes()
+	a.initializeStatsRoutes()
 	a.initializeSnowplowRoutes()
 	a.initializeGenericRoutes()
 	a.serveStaticIfDev()
@@ -160,7 +167,7 @@ func (a *App) Run() {
 	}
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
-			log.Info().Msgf("server closed")
+			log.Info().Msgf("server shut down")
 		}
 	}()
 	quit := make(chan os.Signal, 1)
