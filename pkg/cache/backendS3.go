@@ -20,6 +20,7 @@ type S3SchemaCacheBackend struct {
 }
 
 func (b *S3SchemaCacheBackend) Initialize(conf config.SchemaCacheBackend) {
+	log.Debug().Msg("initializing s3 schema cache backend")
 	ctx := context.Background()
 	cfg, err := awsconf.LoadDefaultConfig(ctx)
 	if err != nil {
