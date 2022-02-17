@@ -15,8 +15,9 @@ type PayloadValidationError struct {
 }
 
 type ValidationError struct {
-	ErrorType *string                   `json:"errorType"`
-	Errors    *[]PayloadValidationError `json:"payloadValidationErrors"`
+	ErrorType       string                    `json:"errorType"`
+	ErrorResolution string                    `json:"errorResolution"`
+	Errors          *[]PayloadValidationError `json:"payloadValidationErrors"`
 }
 
 func ValidatePayload(payload map[string]interface{}, schema []byte) (isValid bool, validationError ValidationError) {
@@ -26,10 +27,10 @@ func ValidatePayload(payload map[string]interface{}, schema []byte) (isValid boo
 	result, err := gojsonschema.Validate(schemaLoader, docLoader)
 	if err != nil {
 		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())
-		errorType := "invalid schema"
 		validationError := ValidationError{
-			ErrorType: &errorType,
-			Errors:    nil,
+			ErrorType:       "invalid schema",
+			ErrorResolution: "ensure schema is properly-formatted",
+			Errors:          nil,
 		}
 		return false, validationError
 	}
@@ -47,10 +48,10 @@ func ValidatePayload(payload map[string]interface{}, schema []byte) (isValid boo
 			}
 			payloadValidationErrors = append(payloadValidationErrors, payloadValidationError)
 		}
-		errorType := "invalid payload"
 		validationError := ValidationError{
-			ErrorType: &errorType,
-			Errors:    &payloadValidationErrors,
+			ErrorType:       "invalid payload",
+			ErrorResolution: "correct payload format",
+			Errors:          &payloadValidationErrors,
 		}
 		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())
 		return false, validationError

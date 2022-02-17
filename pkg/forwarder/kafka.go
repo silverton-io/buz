@@ -27,12 +27,6 @@ func (f *KafkaForwarder) Initialize(config config.Forwarder) {
 	f.client, f.validEventsTopic, f.invalidEventsTopic = client, config.ValidEventTopic, config.InvalidEventTopic
 }
 
-func (f *KafkaForwarder) publish(ctx context.Context, topic string, event interface{}) {
-	var events []interface{}
-	events = append(events, event)
-	f.batchPublish(ctx, topic, events)
-}
-
 func (f *KafkaForwarder) batchPublish(ctx context.Context, topic string, events []interface{}) {
 	var wg sync.WaitGroup
 	for _, event := range events {
@@ -51,14 +45,6 @@ func (f *KafkaForwarder) batchPublish(ctx context.Context, topic string, events 
 		})
 	}
 	wg.Wait()
-}
-
-func (f *KafkaForwarder) PublishValid(ctx context.Context, event interface{}) {
-	f.publish(ctx, f.validEventsTopic, event)
-}
-
-func (f *KafkaForwarder) PublishInvalid(ctx context.Context, event interface{}) {
-	f.publish(ctx, f.invalidEventsTopic, event)
 }
 
 func (f *KafkaForwarder) BatchPublishValid(ctx context.Context, events []interface{}) {

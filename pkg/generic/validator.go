@@ -9,28 +9,28 @@ import (
 
 func validateEvent(event gjson.Result, schemaName string, cache *cache.SchemaCache, conf *config.Generic) (isValid bool, validationError validator.ValidationError, schema []byte) {
 	if event.Value() == nil {
-		errorType := "payload not present at " + conf.Payload.RootKey + "." + conf.Payload.DataKey
 		validationError := validator.ValidationError{
-			ErrorType: &errorType,
-			Errors:    nil,
+			ErrorType:       "payload not present at " + conf.Payload.RootKey + "." + conf.Payload.DataKey,
+			ErrorResolution: "generic payload configuration and payload path should match",
+			Errors:          nil,
 		}
 		return false, validationError, nil
 	}
 	if schemaName == "" { // Event does not have schema associated - always invalid.
-		errorType := "schema not present at " + conf.Payload.RootKey + "." + conf.Payload.SchemaKey
 		validationError := validator.ValidationError{
-			ErrorType: &errorType,
-			Errors:    nil,
+			ErrorType:       "schema not present at " + conf.Payload.RootKey + "." + conf.Payload.SchemaKey,
+			ErrorResolution: "generic schema configuration and schema path should match",
+			Errors:          nil,
 		}
 		return false, validationError, nil
 	}
 	schemaExists, schemaContents := cache.Get(schemaName)
 	// FIXME! What happens if the payload key doesn't exist?
 	if !schemaExists { // Referenced schema is not present in the cache backend - always invalid
-		errorType := "nonexistent schema"
 		validationError := validator.ValidationError{
-			ErrorType: &errorType,
-			Errors:    nil,
+			ErrorType:       "nonexistent schema",
+			ErrorResolution: "publish the specified schema to the cache backend",
+			Errors:          nil,
 		}
 		return false, validationError, nil
 	} else {

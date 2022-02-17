@@ -1,93 +1,71 @@
 package snowplow
 
 import (
-	"context"
 	"io/ioutil"
-	"sync/atomic"
 
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/gosnowplow/pkg/cache"
-	"github.com/silverton-io/gosnowplow/pkg/event"
+	e "github.com/silverton-io/gosnowplow/pkg/event"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
+	f "github.com/silverton-io/gosnowplow/pkg/forwarder"
 	"github.com/silverton-io/gosnowplow/pkg/http"
 	"github.com/silverton-io/gosnowplow/pkg/response"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
 	"github.com/tidwall/gjson"
 )
 
+func bifurcateEvents(events []Event, cache *cache.SchemaCache) (validEvents []interface{}, invalidEvents []interface{}) {
+	var vEvents []interface{}
+	var invEvents []interface{}
+	for _, event := range events {
+		isValid, validationError, schema := validateEvent(event, cache)
+		setEventMetadataFields(&event, schema)
+		if isValid {
+			vEvents = append(vEvents, event)
+		} else {
+			invalidEvent := e.InvalidEvent{
+				ValidationError: &validationError,
+				Event:           &event,
+			}
+			invEvents = append(invEvents, invalidEvent)
+		}
+	}
+	return vEvents, invEvents
+}
+
+func buildEventsFromRequest(c *gin.Context) []Event {
+	var events []Event
+	if c.Request.Method == "POST" {
+		body, _ := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs here
+		payloadData := gjson.GetBytes(body, "data")
+		for _, event := range payloadData.Array() {
+			event := BuildEventFromMappedParams(c, event.Value().(map[string]interface{}))
+			events = append(events, event)
+		}
+	} else {
+		mappedParams := http.MapParams(c)
+		event := BuildEventFromMappedParams(c, mappedParams)
+		events = append(events, event)
+	}
+	return events
+}
+
 func RedirectHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, meta *tele.Meta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		ctx := context.Background()
-		mappedParams := http.MapParams(c)
-		e := BuildEventFromMappedParams(c, mappedParams)
-		isValid, validationError, schema := validateEvent(e, cache)
-		setEventMetadataFields(&e, schema)
-		if isValid {
-			forwarder.PublishValid(ctx, e)
-			atomic.AddInt64(&meta.ValidSnowplowEventsProcessed, int64(1))
-		} else {
-			iE := event.InvalidEvent{
-				ValidationError: &validationError,
-				Event:           &e,
-			}
-			forwarder.PublishInvalid(ctx, iE)
-			atomic.AddInt64(&meta.InvalidSnowplowEventsProcessed, int64(1))
-		}
+		events := buildEventsFromRequest(c)
+		validEvents, invalidEvents := bifurcateEvents(events, cache)
+		f.BatchPublishValidAndInvalid(forwarder, validEvents, invalidEvents, meta)
 		redirectUrl, _ := c.GetQuery("u")
 		c.Redirect(302, redirectUrl)
 	}
 	return gin.HandlerFunc(fn)
 }
 
-func GetHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, meta *tele.Meta) gin.HandlerFunc {
+func DefaultHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, meta *tele.Meta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		ctx := context.Background()
-		mappedParams := http.MapParams(c)
-		e := BuildEventFromMappedParams(c, mappedParams)
-		isValid, validationError, schema := validateEvent(e, cache)
-		setEventMetadataFields(&e, schema)
-		if isValid {
-			forwarder.PublishValid(ctx, e)
-			atomic.AddInt64(&meta.ValidSnowplowEventsProcessed, int64(1))
-		} else {
-			iE := event.InvalidEvent{
-				ValidationError: &validationError,
-				Event:           &e,
-			}
-			forwarder.PublishInvalid(ctx, iE)
-			atomic.AddInt64(&meta.InvalidSnowplowEventsProcessed, int64(1))
-		}
-		c.JSON(200, response.Ok)
-	}
-	return gin.HandlerFunc(fn)
-}
-
-func PostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, meta *tele.Meta) gin.HandlerFunc {
-	fn := func(c *gin.Context) {
-		ctx := context.Background()
-		body, _ := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs here
-		payloadData := gjson.GetBytes(body, "data")
-		var validEvents []interface{}
-		var invalidEvents []interface{}
-		for _, e := range payloadData.Array() {
-			e := BuildEventFromMappedParams(c, e.Value().(map[string]interface{}))
-			isValid, validationError, schema := validateEvent(e, cache)
-			setEventMetadataFields(&e, schema)
-			if isValid {
-				validEvents = append(validEvents, e)
-			} else {
-				iE := event.InvalidEvent{
-					ValidationError: &validationError,
-					Event:           &e,
-				}
-				invalidEvents = append(invalidEvents, iE)
-			}
-		}
-
-		forwarder.BatchPublishValid(ctx, validEvents)
-		atomic.AddInt64(&meta.ValidSnowplowEventsProcessed, int64(len(validEvents)))
-		forwarder.BatchPublishInvalid(ctx, invalidEvents)
-		atomic.AddInt64(&meta.InvalidSnowplowEventsProcessed, int64(len(invalidEvents)))
+		events := buildEventsFromRequest(c)
+		validEvents, invalidEvents := bifurcateEvents(events, cache)
+		f.BatchPublishValidAndInvalid(forwarder, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)

@@ -12,10 +12,10 @@ const (
 func validateEvent(event Event, cache *cache.SchemaCache) (isValid bool, validationError validator.ValidationError, schema []byte) {
 	switch event.Event {
 	case UNKNOWN_EVENT:
-		errorType := "unknown event type"
 		validationError := validator.ValidationError{
-			ErrorType: &errorType,
-			Errors:    nil,
+			ErrorType:       "unknown event type",
+			ErrorResolution: "event type needs to adhere to the snowplow tracker protocol",
+			Errors:          nil,
 		}
 		return false, validationError, nil
 	case SELF_DESCRIBING_EVENT:
@@ -25,10 +25,10 @@ func validateEvent(event Event, cache *cache.SchemaCache) (isValid bool, validat
 		}
 		schemaExists, schemaContents := cache.Get(schemaName)
 		if !schemaExists {
-			errorType := "nonexistent schema"
 			validationError := validator.ValidationError{
-				ErrorType: &errorType,
-				Errors:    nil,
+				ErrorType:       "nonexistent schema",
+				ErrorResolution: "publish the specified schema to the cache backend",
+				Errors:          nil,
 			}
 			return false, validationError, nil
 		} else {
