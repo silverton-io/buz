@@ -9,18 +9,20 @@
         - Postgres ❌
         - Clickhouse ❌
         - Firebolt ❌
+        
+        - ??Set-setup streams, maybe?? ❌
     - Support multiple cache backends
         - S3 ✅
         - GCS ✅
         - Filesystem ❌
         - Kafka schema registry ❌
-        - ?Buf registry? ❌
     - Middleware
         - Server-side user identification ✅
             - Configurable - should be able to be deactivated ✅
         - CORS ✅
             - Configurable - should be able to be x-domain ✅
-        - IP denylist ❌
+        - IP honeypot ❌
+            - Redirect to rick astley or something
     - Support multiple incoming payloads ✅
         - Snowplow ✅
         - Generic self-describing event ✅
@@ -74,7 +76,7 @@
             - What version is running ✅
             - Events processed summaries ✅
     - Stats endpoint(s)
-        - stats
+        - stats ✅
         - prometheus
     - Schemas
         - Top-level (self-describing)

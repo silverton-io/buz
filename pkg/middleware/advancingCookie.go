@@ -6,28 +6,28 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/config"
 )
 
-func AdvancingCookie(config config.Cookie) gin.HandlerFunc {
+func AdvancingCookie(conf config.Cookie) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		identityCookieValue, _ := c.Cookie(config.Name)
+		identityCookieValue, _ := c.Cookie(conf.Name)
 		if identityCookieValue != "" {
 			c.SetCookie(
-				config.Name,
+				conf.Name,
 				identityCookieValue,
-				60*60*24*config.TtlDays,
-				config.Path,
-				config.Domain,
-				config.Secure,
+				60*60*24*conf.TtlDays,
+				conf.Path,
+				conf.Domain,
+				conf.Secure,
 				false,
 			)
 		} else {
 			identityCookieValue := uuid.New()
 			c.SetCookie(
-				config.Name,
+				conf.Name,
 				identityCookieValue.String(),
-				60*60*24*config.TtlDays,
-				config.Path,
-				config.Domain,
-				config.Secure,
+				60*60*24*conf.TtlDays,
+				conf.Path,
+				conf.Domain,
+				conf.Secure,
 				false,
 			)
 		}
