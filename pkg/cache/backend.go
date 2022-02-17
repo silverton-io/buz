@@ -8,9 +8,10 @@ import (
 )
 
 const (
-	GCS string = "gcs"
-	S3  string = "s3"
-	FS  string = "fs"
+	GCS  string = "gcs"
+	S3   string = "s3"
+	FS   string = "fs"
+	HTTP string = "http"
 )
 
 type SchemaCacheBackend interface {
@@ -31,6 +32,10 @@ func BuildSchemaCacheBackend(config config.SchemaCacheBackend) (backend SchemaCa
 		return &cacheBackend, nil
 	case FS:
 		cacheBackend := FilesystemCacheBackend{}
+		cacheBackend.Initialize(config)
+		return &cacheBackend, nil
+	case HTTP:
+		cacheBackend := HttpSchemaCacheBackend{}
 		cacheBackend.Initialize(config)
 		return &cacheBackend, nil
 	default:

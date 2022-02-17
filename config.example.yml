@@ -72,6 +72,16 @@ schemaCache:
 #   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
 # ============================================================
 
+# ============================================================
+# Example schema cache with FS backend
+# schemaCache:
+#   schemaCacheBackend:
+#     type: fs
+#     path: /SOME/ABSOLUTE/PATH/
+#   ttlSeconds: 300
+#   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
+# ============================================================
+
 forwarder:
   type: kafka
   brokers:

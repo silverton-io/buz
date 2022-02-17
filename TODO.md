@@ -9,12 +9,12 @@
         - Postgres ❌
         - Clickhouse ❌
         - Firebolt ❌
-        
-        - ??Set-setup streams, maybe?? ❌
+        - ??Self-setup streams, maybe?? ❌
     - Support multiple cache backends
         - S3 ✅
         - GCS ✅
-        - Filesystem ❌
+        - Filesystem ✅
+        - Http ❌
         - Kafka schema registry ❌
     - Middleware
         - Server-side user identification ✅

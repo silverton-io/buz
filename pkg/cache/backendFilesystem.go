@@ -24,7 +24,7 @@ func (b *FilesystemCacheBackend) GetRemote(schema string) (contents []byte, err 
 	schemaLocation := filepath.Join(b.path, schema)
 	content, err := ioutil.ReadFile(schemaLocation)
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not get file from filesystem: " + schemaLocation)
+		log.Error().Stack().Err(err).Msg("could not get schema from filesystem schema cache backend: " + schemaLocation)
 		return nil, err
 	}
 	return content, nil
