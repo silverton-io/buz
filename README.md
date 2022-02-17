@@ -1,2 +1,3 @@
-# gosnowplow
-A golang-based serverless snowplow collector
+# Honeypot
+
+A lightweight, easy to manage, snowplow-compatible event collection system.
