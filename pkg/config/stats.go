@@ -1,5 +1,6 @@
 package config
 
 type Stats struct {
-	Enabled bool `json:"enabled"`
+	Enabled  bool   `json:"enabled"`
+	Endpoint string `json:"endpoint"`
 }

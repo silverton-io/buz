@@ -5,10 +5,10 @@ app:
   mode: debug # Mode is either debug or release
   port: 8081
   getSslCert: false
-  trackDomain: data.silverton.io
-
-stats:
-  enabled: true
+  trackerDomain: honeypot.silverton.io
+  stats:
+    enabled: true
+    endpoint: /stats
 
 snowplow: # Snowplow events
   enabled: true
@@ -35,7 +35,7 @@ cookie:
   name: sp-nuid
   secure: False
   ttlDays: 365
-  domain: localhost
+  domain: silverton.io
   path: /
   sameSite: Lax
 
@@ -53,16 +53,19 @@ anonymize:
   ip: false
   userId: false
 
-schemaCache:
-  schemaCacheBackend:
-    type: gcs
-    bucket: BUCKET_NAME
-    path: /
-  ttlSeconds: 300
-  maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
-
 # ============================================================
 # Example schema cache with GCS backend
+# schemaCache:
+#   schemaCacheBackend:
+#     type: gcs
+#     bucket: BUCKET_NAME
+#     path: /
+#   ttlSeconds: 300
+#   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
+# ============================================================
+
+# ============================================================
+# Example schema cache with S3 backend
 # schemaCache:
 #   schemaCacheBackend:
 #     type: s3
@@ -82,14 +85,28 @@ schemaCache:
 #   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
 # ============================================================
 
-forwarder:
-  type: kafka
-  brokers:
-    - BROKER_1:9092
-    - BROKER_2:9092
-    - BROKER_3:9092
-  validEventTopic: VALID_EVENT_TOPIC_NAME
-  invalidEventTopic: INVALID_EVENT_TOPIC_NAME
+# ============================================================
+# Example schema cache with http or https backend
+# schemaCache:
+#   schemaCacheBackend:
+#     type: http
+#     host: storage.googleapis.com
+#     path: gosnowplow-schemas-test
+#   ttlSeconds: 300
+#   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
+# ============================================================
+
+# ============================================================
+# Example kafka forwarder config
+# forwarder:
+#   type: kafka
+#   brokers:
+#     - BROKER_1:9092
+#     - BROKER_2:9092
+#     - BROKER_3:9092
+#   validEventTopic: VALID_EVENT_TOPIC_NAME
+#   invalidEventTopic: INVALID_EVENT_TOPIC_NAME
+# ============================================================
 
 # ============================================================
 # Example pubsub forwarder config

@@ -14,15 +14,15 @@
         - S3 ✅
         - GCS ✅
         - Filesystem ✅
-        - Http ❌
+        - Http ✅
         - Kafka schema registry ❌
     - Middleware
         - Server-side user identification ✅
             - Configurable - should be able to be deactivated ✅
         - CORS ✅
             - Configurable - should be able to be x-domain ✅
-        - IP honeypot ❌
-            - Redirect to rick astley or something
+        - Yeet ❌
+            - Redirect to rick astley or something ❌
     - Support multiple incoming payloads ✅
         - Snowplow ✅
         - Generic self-describing event ✅
@@ -77,6 +77,7 @@
             - Events processed summaries ✅
     - Stats endpoint(s)
         - stats ✅
+            - configurable on/off ✅
         - prometheus
     - Schemas
         - Top-level (self-describing)

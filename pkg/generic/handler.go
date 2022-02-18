@@ -11,6 +11,7 @@ import (
 	e "github.com/silverton-io/gosnowplow/pkg/event"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
 	f "github.com/silverton-io/gosnowplow/pkg/forwarder"
+	"github.com/silverton-io/gosnowplow/pkg/input"
 	"github.com/silverton-io/gosnowplow/pkg/response"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
 	"github.com/tidwall/gjson"
@@ -43,7 +44,7 @@ func PostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, conf *
 		event := gjson.ParseBytes(reqBody)
 		events = append(events, event)
 		validEvents, invalidEvents := bifurcateEvents(events, cache, conf)
-		f.BatchPublishValidAndInvalid(forwarder, validEvents, invalidEvents, meta)
+		f.BatchPublishValidAndInvalid(input.GENERIC_INPUT, forwarder, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)
@@ -70,7 +71,7 @@ func BatchPostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, c
 			}
 		}
 		validEvents, invalidEvents := bifurcateEvents(events, cache, conf)
-		f.BatchPublishValidAndInvalid(forwarder, validEvents, invalidEvents, meta)
+		f.BatchPublishValidAndInvalid(input.GENERIC_INPUT, forwarder, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)

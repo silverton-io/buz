@@ -8,6 +8,7 @@ import (
 	e "github.com/silverton-io/gosnowplow/pkg/event"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
 	f "github.com/silverton-io/gosnowplow/pkg/forwarder"
+	"github.com/silverton-io/gosnowplow/pkg/input"
 	"github.com/silverton-io/gosnowplow/pkg/request"
 	"github.com/silverton-io/gosnowplow/pkg/response"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
@@ -54,7 +55,7 @@ func RedirectHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, me
 	fn := func(c *gin.Context) {
 		events := buildEventsFromRequest(c)
 		validEvents, invalidEvents := bifurcateEvents(events, cache)
-		f.BatchPublishValidAndInvalid(forwarder, validEvents, invalidEvents, meta)
+		f.BatchPublishValidAndInvalid(input.SNOWPLOW_INPUT, forwarder, validEvents, invalidEvents, meta)
 		redirectUrl, _ := c.GetQuery("u")
 		c.Redirect(302, redirectUrl)
 	}
@@ -65,7 +66,7 @@ func DefaultHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, met
 	fn := func(c *gin.Context) {
 		events := buildEventsFromRequest(c)
 		validEvents, invalidEvents := bifurcateEvents(events, cache)
-		f.BatchPublishValidAndInvalid(forwarder, validEvents, invalidEvents, meta)
+		f.BatchPublishValidAndInvalid(input.SNOWPLOW_INPUT, forwarder, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)

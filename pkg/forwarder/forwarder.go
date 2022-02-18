@@ -6,6 +6,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/config"
+	"github.com/silverton-io/gosnowplow/pkg/input"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
 	"golang.org/x/net/context"
 )
@@ -41,12 +42,22 @@ func BuildForwarder(config config.Forwarder) (forwarder Forwarder, err error) {
 	}
 }
 
-func BatchPublishValidAndInvalid(forwarder Forwarder, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta) {
+func BatchPublishValidAndInvalid(inputType string, forwarder Forwarder, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta) {
 	ctx := context.Background()
+	var validCounter *int64
+	var invalidCounter *int64
+	switch inputType {
+	case input.GENERIC_INPUT:
+		validCounter = &meta.ValidGenericEventsProcessed
+		invalidCounter = &meta.InvalidGenericEventsProcessed
+	default:
+		validCounter = &meta.ValidSnowplowEventsProcessed
+		invalidCounter = &meta.InvalidSnowplowEventsProcessed
+	}
 	// Publish
 	forwarder.BatchPublishValid(ctx, validEvents)
 	forwarder.BatchPublishInvalid(ctx, invalidEvents)
 	// Increment global metadata counters
-	atomic.AddInt64(&meta.ValidSnowplowEventsProcessed, int64(len(validEvents)))
-	atomic.AddInt64(&meta.InvalidSnowplowEventsProcessed, int64(len(invalidEvents)))
+	atomic.AddInt64(validCounter, int64(len(validEvents)))
+	atomic.AddInt64(invalidCounter, int64(len(invalidEvents)))
 }

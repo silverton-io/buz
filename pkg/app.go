@@ -56,10 +56,11 @@ func (a *App) configure() {
 	a.config.App.Version = VERSION
 	instanceId := uuid.New()
 	m := tele.Meta{
-		Version:      VERSION,
-		InstanceId:   instanceId,
-		StartTime:    time.Now(),
-		CookieDomain: a.config.Cookie.Domain,
+		Version:       VERSION,
+		InstanceId:    instanceId,
+		StartTime:     time.Now(),
+		TrackerDomain: a.config.App.TrackerDomain,
+		CookieDomain:  a.config.Cookie.Domain,
 	}
 	a.meta = &m
 }
@@ -101,8 +102,16 @@ func (a *App) initializeHealthcheckRoutes() {
 }
 
 func (a *App) initializeStatsRoutes() {
-	log.Info().Msg("intializing stats route")
-	a.engine.GET(stats.STATS_PATH, stats.StatsHandler(a.meta))
+	if a.config.App.Stats.Enabled {
+		log.Info().Msg("intializing stats route")
+		var statsPath string
+		if a.config.App.Stats.Endpoint == "" {
+			statsPath = stats.STATS_PATH
+		} else {
+			statsPath = a.config.App.Stats.Endpoint
+		}
+		a.engine.GET(statsPath, stats.StatsHandler(a.meta))
+	}
 }
 
 func (a *App) initializeSnowplowRoutes() {
