@@ -14,6 +14,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/cache"
+	"github.com/silverton-io/gosnowplow/pkg/ce"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/env"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
@@ -144,6 +145,13 @@ func (a *App) initializeGenericRoutes() {
 	}
 }
 
+func (a *App) initializeCloudeventsRoutes() {
+	if a.config.Cloudevents.Enabled {
+		log.Info().Msg("initializing cloudevents routes")
+		a.engine.POST(a.config.Cloudevents.PostPath, ce.PostHandler(a.forwarder, a.schemaCache, &a.config.Cloudevents, a.meta))
+	}
+}
+
 func (a *App) serveStaticIfDev() {
 	if a.config.App.Env == env.DEV_ENVIRONMENT {
 		log.Info().Msg("serving static files")
@@ -165,6 +173,7 @@ func (a *App) Initialize() {
 	a.initializeStatsRoutes()
 	a.initializeSnowplowRoutes()
 	a.initializeGenericRoutes()
+	a.initializeCloudeventsRoutes()
 	a.serveStaticIfDev()
 }
 
