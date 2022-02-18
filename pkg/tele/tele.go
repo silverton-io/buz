@@ -1,21 +1,22 @@
 package tele
 
 import (
+	"net/url"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/event"
-	"github.com/silverton-io/gosnowplow/pkg/http"
+	h "github.com/silverton-io/gosnowplow/pkg/http"
 	"github.com/silverton-io/gosnowplow/pkg/util"
 )
 
 const (
-	DEFAULT_HOST    string = "http://some.where.else:8081/gen/p"
-	STARTUP_1_0_0   string = "com.silverton.io.tele/startup/1-0-0"
-	HEARTBEAT_1_0_0 string = "com.silverton.io.tele/heartbeat/1-0-0"
-	SHUTDOWN_1_0_0  string = "com.silverton.io.tele/shutdown/1-0-0"
+	DEFAULT_ENDPOINT string = "http://some.where.else:8081/gen/p"
+	STARTUP_1_0_0    string = "com.silverton.io.tele/startup/1-0-0"
+	HEARTBEAT_1_0_0  string = "com.silverton.io.tele/heartbeat/1-0-0"
+	SHUTDOWN_1_0_0   string = "com.silverton.io.tele/shutdown/1-0-0"
 )
 
 type Meta struct {
@@ -68,7 +69,8 @@ func heartbeat(t time.Ticker, m *Meta) {
 				Data:   data,
 			},
 		}
-		http.SendJson(DEFAULT_HOST, heartbeatPayload)
+		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
+		h.SendJson(*endpoint, heartbeatPayload)
 	}
 }
 
@@ -87,7 +89,8 @@ func Sis(m *Meta) {
 			Data:   data,
 		},
 	}
-	http.SendJson(DEFAULT_HOST, shutdownPayload)
+	endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
+	h.SendJson(*endpoint, shutdownPayload)
 }
 
 func Metry(c *config.Config, m *Meta) {
@@ -106,7 +109,8 @@ func Metry(c *config.Config, m *Meta) {
 				Data:   data,
 			},
 		}
-		http.SendJson(DEFAULT_HOST, startupPayload)
+		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
+		h.SendJson(*endpoint, startupPayload)
 		ticker := time.NewTicker(5 * time.Second)
 		go heartbeat(*ticker, m)
 	}

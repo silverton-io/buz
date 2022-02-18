@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/rs/zerolog/log"
 )
@@ -13,19 +14,19 @@ const (
 	JSON_CONTENT_TYPE string = "application/json"
 )
 
-func SendJson(host string, payload interface{}) {
+func SendJson(url url.URL, payload interface{}) {
 	data, _ := json.Marshal(payload)
 	buff := bytes.NewBuffer(data)
-	_, err := http.Post(host, JSON_CONTENT_TYPE, buff)
+	_, err := http.Post(url.String(), JSON_CONTENT_TYPE, buff)
 	if err != nil {
-		log.Trace().Err(err).Msg("could not send payload to " + host)
+		log.Trace().Err(err).Msg("could not send payload to " + url.String())
 	}
 }
 
-func Get(uri string) (body []byte, err error) {
-	resp, err := http.Get(uri)
+func Get(url url.URL) (body []byte, err error) {
+	resp, err := http.Get(url.String())
 	if err != nil {
-		log.Trace().Err(err).Msg("could not get url " + uri)
+		log.Trace().Err(err).Msg("could not get url " + url.String())
 		return nil, err
 	}
 	defer resp.Body.Close()

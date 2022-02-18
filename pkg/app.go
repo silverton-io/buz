@@ -90,7 +90,7 @@ func (a *App) initializeMiddleware() {
 	if a.config.Cookie.Enabled {
 		a.engine.Use(middleware.AdvancingCookie(a.config.Cookie))
 	}
-	a.engine.Use(middleware.IpHoneypot())
+	a.engine.Use(middleware.Yeet())
 	a.engine.Use(middleware.CORS(a.config.Cors))
 	a.engine.Use(middleware.JsonAccessLogger())
 }
