@@ -5,7 +5,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/config"
-	h "github.com/silverton-io/gosnowplow/pkg/http"
+	"github.com/silverton-io/gosnowplow/pkg/request"
 )
 
 type HttpSchemaCacheBackend struct {
@@ -24,7 +24,7 @@ func (b *HttpSchemaCacheBackend) Initialize(conf config.SchemaCacheBackend) {
 
 func (b *HttpSchemaCacheBackend) GetRemote(schema string) (contents []byte, err error) {
 	schemaLocation, _ := url.Parse(b.protocol + "://" + b.host + "/" + b.path + "/" + schema) // FIXME!! There's gotta be a better way here.
-	content, err := h.Get(*schemaLocation)
+	content, err := request.Get(*schemaLocation)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not get schema from http schema cache backend")
 		return nil, err

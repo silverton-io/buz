@@ -8,7 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/event"
-	h "github.com/silverton-io/gosnowplow/pkg/http"
+	"github.com/silverton-io/gosnowplow/pkg/request"
 	"github.com/silverton-io/gosnowplow/pkg/util"
 )
 
@@ -70,7 +70,7 @@ func heartbeat(t time.Ticker, m *Meta) {
 			},
 		}
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-		h.SendJson(*endpoint, heartbeatPayload)
+		request.SendJson(*endpoint, heartbeatPayload)
 	}
 }
 
@@ -90,7 +90,7 @@ func Sis(m *Meta) {
 		},
 	}
 	endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-	h.SendJson(*endpoint, shutdownPayload)
+	request.SendJson(*endpoint, shutdownPayload)
 }
 
 func Metry(c *config.Config, m *Meta) {
@@ -110,7 +110,7 @@ func Metry(c *config.Config, m *Meta) {
 			},
 		}
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-		h.SendJson(*endpoint, startupPayload)
+		request.SendJson(*endpoint, startupPayload)
 		ticker := time.NewTicker(5 * time.Second)
 		go heartbeat(*ticker, m)
 	}

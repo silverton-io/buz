@@ -8,7 +8,7 @@ import (
 	e "github.com/silverton-io/gosnowplow/pkg/event"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
 	f "github.com/silverton-io/gosnowplow/pkg/forwarder"
-	"github.com/silverton-io/gosnowplow/pkg/http"
+	"github.com/silverton-io/gosnowplow/pkg/request"
 	"github.com/silverton-io/gosnowplow/pkg/response"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
 	"github.com/tidwall/gjson"
@@ -43,7 +43,7 @@ func buildEventsFromRequest(c *gin.Context) []Event {
 			events = append(events, event)
 		}
 	} else {
-		mappedParams := http.MapParams(c)
+		mappedParams := request.MapParams(c)
 		event := BuildEventFromMappedParams(c, mappedParams)
 		events = append(events, event)
 	}
