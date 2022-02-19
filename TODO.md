@@ -33,6 +33,8 @@
         - Filesystem ✅
         - Http ✅
         - Kafka schema registry ❌
+
+        - Flip up schema cache config ❌
     - Middleware
         - Server-side user identification ✅
             - Configurable - should be able to be deactivated ✅
@@ -89,3 +91,5 @@
     - Schemas
         - Top-level (self-describing)
         - Schemas to match index.html
+
+    -  Schem
