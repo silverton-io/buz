@@ -1,0 +1,126 @@
+version: 1
+
+app:
+  env: dev
+  mode: debug # Mode is either debug or release
+  port: 8081
+  getSslCert: false
+  trackerDomain: honeypot.silverton.io
+  stats:
+    enabled: true
+    endpoint: /stats
+
+snowplow: # Snowplow events
+  enabled: true
+  standardRoutesEnabled: true
+  openRedirectsEnabled: true
+  getPath: /plw/g
+  postPath: /plw/p
+  redirectPath: /plw/r
+
+generic: # Generic self describing events
+  enabled: true
+  postPath: /gen/p
+  batchPostPath: /gen/bp
+  contexts:
+    rootKey: contexts
+    schemaKey: schema
+    dataKey: payload
+  event:
+    rootKey: payload
+    schemaKey: schema
+    dataKey: payload
+
+cloudevents: # Cloudevents
+  enabled: true
+  postPath: /ce/p
+  batchPostPath: /ce/bp
+
+cookie:
+  name: sp-nuid
+  secure: False
+  ttlDays: 365
+  domain: silverton.io
+  path: /
+  sameSite: Lax
+
+cors:
+  allowOrigin:
+    - "*"
+  allowCredentials: true
+  allowMethods:
+    - POST
+    - OPTIONS
+    - GET
+  maxAge: 86400
+
+anonymize:
+  ip: false
+  userId: false
+
+# ============================================================
+# Example schema cache with GCS backend
+# schemaCache:
+#   schemaCacheBackend:
+#     type: gcs
+#     bucket: BUCKET_NAME
+#     path: /
+#   ttlSeconds: 300
+#   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
+# ============================================================
+
+# ============================================================
+# Example schema cache with S3 backend
+# schemaCache:
+#   schemaCacheBackend:
+#     type: s3
+#     bucket: BUCKET_NAME
+#     path: /
+#   ttlSeconds: 300
+#   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
+# ============================================================
+
+# ============================================================
+# Example schema cache with FS backend
+# schemaCache:
+#   schemaCacheBackend:
+#     type: fs
+#     path: /SOME/ABSOLUTE/PATH/
+#   ttlSeconds: 300
+#   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
+# ============================================================
+
+# ============================================================
+# Example schema cache with http or https backend
+# schemaCache:
+#   schemaCacheBackend:
+#     type: http
+#     host: storage.googleapis.com
+#     path: gosnowplow-schemas-test
+#   ttlSeconds: 300
+#   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
+# ============================================================
+
+# ============================================================
+# Example kafka forwarder config
+# forwarder:
+#   type: kafka
+#   brokers:
+#     - BROKER_1:9092
+#     - BROKER_2:9092
+#     - BROKER_3:9092
+#   validEventTopic: VALID_EVENT_TOPIC_NAME
+#   invalidEventTopic: INVALID_EVENT_TOPIC_NAME
+# ============================================================
+
+# ============================================================
+# Example pubsub forwarder config
+# forwarder:
+#   type: pubsub
+#   project: PROJECT_NAME_HERE
+#   validEventTopic: VALID_EVENT_TOPIC_NAME
+#   invalidEventTopic: INVALID_EVENT_TOPIC_NAME
+# ============================================================
+
+tele:
+  enabled: true

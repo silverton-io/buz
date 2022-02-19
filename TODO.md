@@ -1,0 +1,91 @@
+# Things To Do
+    - Versioning
+        - Use ldflags ✅
+    - Support multiple incoming payloads ✅
+        - Snowplow ✅
+        - Generic self-describing event ✅
+            - "payload" (configurable key) ✅
+                - "data" (configurable key) ✅
+                - "schema" (configurable key) ✅
+            - "contexts" (configurable key) ✅
+                - "data" (configurable key) ✅
+                - "schema" (configurable key) ✅
+            - single-post endpoint ✅
+            - batch-post endpoint ✅
+        - Cloud events ❌
+            - single-post endpoint ❌
+            - batch-post endpoint ❌
+    - Support multiple forwarders
+        - Types
+            - Pubsub ✅
+            - Kafka ✅
+            - Kinesis ❌
+            - Logfile ❌
+            - Postgres ❌
+            - Clickhouse ❌
+            - Firebolt ❌
+        - ??Self-setup streams, maybe?? ❌
+        - Fail-fast when forwarder unreachable
+            - Inability to publish should result in a timeout and non-200 status code
+    - Support multiple cache backends
+        - S3 ✅
+        - GCS ✅
+        - Filesystem ✅
+        - Http ✅
+        - Kafka schema registry ❌
+    - Middleware
+        - Server-side user identification ✅
+            - Configurable - should be able to be deactivated ✅
+        - CORS ✅
+            - Configurable - should be able to be x-domain ✅
+        - Yeet ❌
+            - Redirect to rick astley or something ❌
+    - Event anonymization ❌
+        - IP ❌
+        - User id ❌
+    - Better event format ✅
+        - Build so a v2 snowplow event format is easily achievable ✅
+    - Better event invalidation
+        - Snowplow
+            - Forward all events with "unknown" event type to invalid ✅
+            - Validate contexts ❌
+        - Generic
+            - Validate payload ✅
+            - Validate contexts ❌
+            - Append collector contexts ❌
+                - Like what?
+                    - Collector tstamp ❌
+                    - Ip ❌
+                    - User agent ❌
+        - ?Option for disabling validation altogether? ❌
+        - Ensure invalid schemas make events go to invalid topic ✅
+    - Better event metadata so pushdown-filtering is achievable ❌
+        - Kafka metadata ❌
+        - Pubsub metadata ❌
+        - ?Kinesis metadata? ❌
+    - Better telemetry ✅
+        - Telemetry attributes ✅
+            - Instance identifier ✅
+                - Why?"how many running instances per domain", etc ✅
+            - Elapsed uptime ✅
+            - Invalid/valid snowplow events published since startup ✅
+            - Invalid/valid generic events published since startup ✅
+        - Startup ✅
+        - Heartbeats ✅
+            - Seconds of uptime ✅
+            - Cookie domain ✅
+            - What version is running ✅
+            - Instance id ✅
+            - Event stats ✅
+        - Shutdown (send this after sigint) ✅
+            - Seconds of uptime ✅
+            - Cookie domain ✅
+            - What version is running ✅
+            - Events processed summaries ✅
+    - Stats endpoint(s)
+        - stats ✅
+            - configurable on/off ✅
+        - prometheus
+    - Schemas
+        - Top-level (self-describing)
+        - Schemas to match index.html
