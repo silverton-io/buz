@@ -1,7 +1,7 @@
 
 # Honeypot
 
-![Honeypot](src/honeypot.png)
+![Honeypot](img/honeypot.png)
 
 A lightweight, snowplow-compatible streaming event collection system.
 
