@@ -16,7 +16,7 @@ Honeypot is built for flexibility, scalability, and speed. While simultaneously 
 - Custom self-describing events ✅
 
 
-## Suppported Schema Cache Backends
+## Supported Schema Cache Backends
 
 - S3 ✅
 - GCS ✅
