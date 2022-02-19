@@ -5,8 +5,9 @@
 
 A lightweight, snowplow-compatible streaming event collection system.
 
-Honeypot is built for flexibility, scalability, and speed. While simultaneously being easy to configure, deploy, and manage.
+Honeypot is primarily built for flexibility, scalability, and speed.
 
+Secondarily for configuration, deployment, and management ease.
 
 
 ## Supported Event Payloads
@@ -39,7 +40,7 @@ Honeypot is built for flexibility, scalability, and speed. While simultaneously 
 - Knative ✅
 - Serverless ✅
 - Regular ol' vm's ✅
-- Anything else that runs wee little docker containers ✅
+- Anything else that runs wee little persistent docker containers or go binaries ✅
 
 
 ## Supported Endpoint Configuration
