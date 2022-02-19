@@ -50,6 +50,9 @@ func BatchPublishValidAndInvalid(inputType string, forwarder Forwarder, validEve
 	case input.GENERIC_INPUT:
 		validCounter = &meta.ValidGenericEventsProcessed
 		invalidCounter = &meta.InvalidGenericEventsProcessed
+	case input.CLOUDEVENTS_INPUT:
+		validCounter = &meta.ValidCloudEventsProcessed
+		invalidCounter = &meta.InvalidCloudEventsProcessed
 	default:
 		validCounter = &meta.ValidSnowplowEventsProcessed
 		invalidCounter = &meta.InvalidSnowplowEventsProcessed

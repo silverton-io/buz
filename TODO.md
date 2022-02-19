@@ -1,15 +1,32 @@
 # Things To Do
     - Versioning
         - Use ldflags ✅
+    - Support multiple incoming payloads ✅
+        - Snowplow ✅
+        - Generic self-describing event ✅
+            - "payload" (configurable key) ✅
+                - "data" (configurable key) ✅
+                - "schema" (configurable key) ✅
+            - "contexts" (configurable key) ✅
+                - "data" (configurable key) ✅
+                - "schema" (configurable key) ✅
+            - single-post endpoint ✅
+            - batch-post endpoint ✅
+        - Cloud events ❌
+            - single-post endpoint ❌
+            - batch-post endpoint ❌
     - Support multiple forwarders
-        - Pubsub ✅
-        - Kafka ✅
-        - Kinesis ❌
-        - Logfile ❌
-        - Postgres ❌
-        - Clickhouse ❌
-        - Firebolt ❌
+        - Types
+            - Pubsub ✅
+            - Kafka ✅
+            - Kinesis ❌
+            - Logfile ❌
+            - Postgres ❌
+            - Clickhouse ❌
+            - Firebolt ❌
         - ??Self-setup streams, maybe?? ❌
+        - Fail-fast when forwarder unreachable
+            - Inability to publish should result in a timeout and non-200 status code
     - Support multiple cache backends
         - S3 ✅
         - GCS ✅
@@ -23,16 +40,6 @@
             - Configurable - should be able to be x-domain ✅
         - Yeet ❌
             - Redirect to rick astley or something ❌
-    - Support multiple incoming payloads ✅
-        - Snowplow ✅
-        - Generic self-describing event ✅
-            - "payload" (configurable key) ✅
-                - "data" (configurable key) ✅
-                - "schema" (configurable key) ✅
-            - "contexts" (configurable key) ✅
-                - "data" (configurable key) ✅
-                - "schema" (configurable key) ✅
-        - Cloud events ❌
     - Event anonymization ❌
         - IP ❌
         - User id ❌

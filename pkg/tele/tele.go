@@ -29,6 +29,8 @@ type Meta struct {
 	InvalidSnowplowEventsProcessed int64     `json:"invalidSnowplowEventsProcessed"`
 	ValidGenericEventsProcessed    int64     `json:"validGenericEventsProcessed"`
 	InvalidGenericEventsProcessed  int64     `json:"invalidGenericEventsProcessed"`
+	ValidCloudEventsProcessed      int64     `json:"validCloudEventsProcessed"`
+	InvalidCloudEventsProcessed    int64     `json:"invalidCloudEventsProcessed"`
 }
 
 func (m *Meta) elapsed() float64 {
