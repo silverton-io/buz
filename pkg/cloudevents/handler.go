@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"time"
 
-	cloudevents "github.com/cloudevents/sdk-go/v2"
+	c "github.com/cloudevents/sdk-go/v2"
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/gosnowplow/pkg/cache"
@@ -36,14 +36,14 @@ func bifurcateEvents(events []event.Event, cache *cache.SchemaCache) (validEvent
 }
 
 func buildCloudevent(e gjson.Result) event.Event {
-	evnt := cloudevents.NewEvent()
-	evnt.Context.SetDataSchema(e.Get("dataschema").String())
-	evnt.SetTime(time.Now())
-	evnt.SetID(e.Get("id").String())
-	evnt.SetSource(e.Get("source").String())
-	evnt.SetType(e.Get("type").String())
-	evnt.SetData(cloudevents.ApplicationJSON, e.Get("data"))
-	return evnt
+	event := c.NewEvent()
+	event.Context.SetDataSchema(e.Get("dataschema").String())
+	event.SetTime(time.Now())
+	event.SetID(e.Get("id").String())
+	event.SetSource(e.Get("source").String())
+	event.SetType(e.Get("type").String())
+	event.SetData(c.ApplicationJSON, e.Get("data"))
+	return event
 }
 
 func PostHandler(forwarder f.Forwarder, cache *cache.SchemaCache, conf *config.Cloudevents, meta *tele.Meta) gin.HandlerFunc {

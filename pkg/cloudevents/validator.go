@@ -1,11 +1,8 @@
 package ce
 
 import (
-	"encoding/json"
-
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/silverton-io/gosnowplow/pkg/cache"
-	"github.com/silverton-io/gosnowplow/pkg/util"
 	"github.com/silverton-io/gosnowplow/pkg/validator"
 	"github.com/tidwall/gjson"
 )
@@ -30,12 +27,9 @@ func validateEvent(event event.Event, cache *cache.SchemaCache) (isValid bool, v
 		return false, validationError
 	} else {
 		data := gjson.ParseBytes(event.Data())
-		// util.PrettyPrint(data)
-		rawData := data.Get("Raw").Value()
-		payload, _ := json.Marshal(rawData)
-		util.PrettyPrint(schemaContents)
-		util.PrettyPrint(rawData)
+		rawData := data.Get("Raw").String()
+		payload := gjson.Parse(rawData).Value().(map[string]interface{})
 		isValid, validationError := validator.ValidatePayload(payload, schemaContents)
-		return false, validator.ValidationError{}
+		return isValid, validationError
 	}
 }
