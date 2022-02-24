@@ -12,9 +12,9 @@
                 - "schema" (configurable key) ✅
             - single-post endpoint ✅
             - batch-post endpoint ✅
-        - Cloud events ❌
+        - Cloud events ✅
             - single-post endpoint ✅
-            - batch-post endpoint ❌
+            - batch-post endpoint ✅
     - Support multiple forwarders
         - Types
             - Pubsub ✅
