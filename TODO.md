@@ -3,6 +3,9 @@
         - Use ldflags ✅
     - Support multiple incoming payloads ✅
         - Snowplow ✅
+            - Event anonymization ❌
+                - IP ❌
+                - User id ❌
         - Generic self-describing event ✅
             - "payload" (configurable key) ✅
                 - "data" (configurable key) ✅
@@ -43,9 +46,6 @@
             - Configurable - should be able to be x-domain ✅
         - Yeet ❌
             - Redirect to rick astley or something ❌
-    - Event anonymization ❌
-        - IP ❌
-        - User id ❌
     - Better event format ✅
         - Build so a v2 snowplow event format is easily achievable ✅
     - Better event invalidation

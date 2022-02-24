@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/gosnowplow/pkg/cache"
+	"github.com/silverton-io/gosnowplow/pkg/config"
 	e "github.com/silverton-io/gosnowplow/pkg/event"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
 	f "github.com/silverton-io/gosnowplow/pkg/forwarder"
@@ -34,26 +35,26 @@ func bifurcateEvents(events []Event, cache *cache.SchemaCache) (validEvents []in
 	return vEvents, invEvents
 }
 
-func buildEventsFromRequest(c *gin.Context) []Event {
+func buildEventsFromRequest(c *gin.Context, conf config.Snowplow) []Event {
 	var events []Event
 	if c.Request.Method == "POST" {
 		body, _ := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs here
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
-			event := BuildEventFromMappedParams(c, event.Value().(map[string]interface{}))
+			event := BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf)
 			events = append(events, event)
 		}
 	} else {
 		mappedParams := request.MapParams(c)
-		event := BuildEventFromMappedParams(c, mappedParams)
+		event := BuildEventFromMappedParams(c, mappedParams, conf)
 		events = append(events, event)
 	}
 	return events
 }
 
-func RedirectHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, meta *tele.Meta) gin.HandlerFunc {
+func RedirectHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, meta *tele.Meta, conf config.Snowplow) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		events := buildEventsFromRequest(c)
+		events := buildEventsFromRequest(c, conf)
 		validEvents, invalidEvents := bifurcateEvents(events, cache)
 		f.BatchPublishValidAndInvalid(input.SNOWPLOW_INPUT, forwarder, validEvents, invalidEvents, meta)
 		redirectUrl, _ := c.GetQuery("u")
@@ -62,9 +63,9 @@ func RedirectHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, me
 	return gin.HandlerFunc(fn)
 }
 
-func DefaultHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, meta *tele.Meta) gin.HandlerFunc {
+func DefaultHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, meta *tele.Meta, conf config.Snowplow) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		events := buildEventsFromRequest(c)
+		events := buildEventsFromRequest(c, conf)
 		validEvents, invalidEvents := bifurcateEvents(events, cache)
 		f.BatchPublishValidAndInvalid(input.SNOWPLOW_INPUT, forwarder, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)

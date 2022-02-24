@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/tidwall/gjson"
 )
 
@@ -135,13 +136,18 @@ func setReferrerFields(e *Event) {
 	}
 }
 
-func anonymizeFields(e *Event) {
-	// TODO! Add field-level anonymization
+func anonymizeFields(e *Event, conf config.Snowplow) {
+	if conf.Anonymize.Ip {
+
+	}
+	if conf.Anonymize.UserId {
+
+	}
 }
 
-func BuildEventFromMappedParams(c *gin.Context, e map[string]interface{}) Event {
+func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Snowplow) Event {
 
-	body, err := json.Marshal(e)
+	body, err := json.Marshal(params)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -156,6 +162,6 @@ func BuildEventFromMappedParams(c *gin.Context, e map[string]interface{}) Event 
 	setEventWidthHeightFields(&event)
 	setPageFields(&event)
 	setReferrerFields(&event)
-	anonymizeFields(&event) // TODO, as necessary.
+	anonymizeFields(&event, conf)
 	return event
 }

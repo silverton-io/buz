@@ -52,6 +52,7 @@ func buildCloudevent(e gjson.Result) event.Event {
 
 func PostHandler(forwarder f.Forwarder, cache *cache.SchemaCache, conf *config.Cloudevents, meta *tele.Meta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
+
 		var cloudevents []event.Event
 		if c.ContentType() == "application/cloudevents+json" { // Only accept request if content type is set appropriately
 			reqBody, _ := ioutil.ReadAll(c.Request.Body)
