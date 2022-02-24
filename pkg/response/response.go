@@ -11,3 +11,7 @@ var Ok = Response{
 var InvalidContentType = Response{
 	Message: "invalid content type",
 }
+
+var BadRequest = Response{
+	Message: "bad request",
+}

@@ -149,6 +149,7 @@ func (a *App) initializeCloudeventsRoutes() {
 	if a.config.Cloudevents.Enabled {
 		log.Info().Msg("initializing cloudevents routes")
 		a.engine.POST(a.config.Cloudevents.PostPath, ce.PostHandler(a.forwarder, a.schemaCache, &a.config.Cloudevents, a.meta))
+		a.engine.POST(a.config.Cloudevents.BatchPostPath, ce.BatchPostHandler(a.forwarder, a.schemaCache, &a.config.Cloudevents, a.meta))
 	}
 }
 
