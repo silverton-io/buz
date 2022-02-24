@@ -14,7 +14,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/cache"
-	"github.com/silverton-io/gosnowplow/pkg/ce"
+	ce "github.com/silverton-io/gosnowplow/pkg/cloudevents"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/env"
 	"github.com/silverton-io/gosnowplow/pkg/forwarder"
