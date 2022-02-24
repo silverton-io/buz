@@ -1,12 +1,14 @@
 package ce
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"time"
 
 	c "github.com/cloudevents/sdk-go/v2"
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/cache"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	e "github.com/silverton-io/gosnowplow/pkg/event"
@@ -42,7 +44,9 @@ func buildCloudevent(e gjson.Result) event.Event {
 	event.SetID(e.Get("id").String())
 	event.SetSource(e.Get("source").String())
 	event.SetType(e.Get("type").String())
-	event.SetData(c.ApplicationJSON, e.Get("data"))
+	rawData := e.Get("data").String()
+	payload := gjson.Parse(rawData).Value().(map[string]interface{})
+	event.SetData(c.ApplicationJSON, payload)
 	return event
 }
 
@@ -65,12 +69,36 @@ func PostHandler(forwarder f.Forwarder, cache *cache.SchemaCache, conf *config.C
 	return gin.HandlerFunc(fn)
 }
 
-// func BatchPostHandler(forwarder f.Forwarder, cache *cache.SchemaCache, meta *tele.Meta) gin.HandlerFunc {
-// 	fn := func(c *gin.Context) {
-// 		if c.ContentType() == "application/cloudevents-batch+json" {
-// 		} else {
-// 			c.JSON(400, response.InvalidContentType)
-// 		}
-// 	}
-// 	return gin.HandlerFunc(fn)
-// }
+func BatchPostHandler(forwarder f.Forwarder, cache *cache.SchemaCache, conf *config.Cloudevents, meta *tele.Meta) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		var cloudevents []event.Event
+		if c.ContentType() == "application/cloudevents-batch+json" {
+			reqBody, _ := ioutil.ReadAll(c.Request.Body)
+			var rawEvents []interface{}
+			err := json.Unmarshal(reqBody, &rawEvents)
+			if err != nil {
+				log.Error().Stack().Err(err).Msg("error when unmarshaling request body")
+				c.JSON(400, response.BadRequest)
+				return
+			}
+			for _, rawEvent := range rawEvents {
+				marshaledEvent, err := json.Marshal(rawEvent)
+				if err != nil {
+					log.Error().Stack().Err(err).Msg("error when marshaling event")
+					c.JSON(400, response.BadRequest)
+					return
+				} else {
+					event := gjson.ParseBytes(marshaledEvent)
+					cloudevent := buildCloudevent(event)
+					cloudevents = append(cloudevents, cloudevent)
+				}
+			}
+			validEvents, invalidEvents := bifurcateEvents(cloudevents, cache)
+			f.BatchPublishValidAndInvalid(input.CLOUDEVENTS_INPUT, forwarder, validEvents, invalidEvents, meta)
+			c.JSON(200, response.Ok)
+		} else {
+			c.JSON(400, response.InvalidContentType)
+		}
+	}
+	return gin.HandlerFunc(fn)
+}

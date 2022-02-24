@@ -13,7 +13,7 @@
             - single-post endpoint ✅
             - batch-post endpoint ✅
         - Cloud events ❌
-            - single-post endpoint ❌
+            - single-post endpoint ✅
             - batch-post endpoint ❌
     - Support multiple forwarders
         - Types
@@ -21,6 +21,7 @@
             - Kafka ✅
             - Kinesis ❌
             - Logfile ❌
+            - Stdout ❌
             - Postgres ❌
             - Clickhouse ❌
             - Firebolt ❌
@@ -87,9 +88,7 @@
     - Stats endpoint(s)
         - stats ✅
             - configurable on/off ✅
-        - prometheus
+        - prometheus ❌
     - Schemas
         - Top-level (self-describing)
         - Schemas to match index.html
-
-    -  Schem
