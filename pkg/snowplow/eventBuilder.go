@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/silverton-io/gosnowplow/pkg/config"
+	"github.com/silverton-io/gosnowplow/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
@@ -43,10 +45,11 @@ func setEventMetadataFields(e *Event, schema []byte) {
 func setEventFieldsFromRequest(c *gin.Context, e *Event) {
 	nuid := c.GetString("identity")
 	ip, _ := c.RemoteIP()
+	sIp := ip.String()
 	useragent := c.Request.UserAgent()
 	e.Network_userid = &nuid
 	// NOTE!! Ignore the query-param-based ip and useragent. FIXME!
-	e.User_ipaddress = ip.String()
+	e.User_ipaddress = &sIp
 	e.Useragent = &useragent
 	e.Collector_tstamp = time.Now()
 }
@@ -135,13 +138,20 @@ func setReferrerFields(e *Event) {
 	}
 }
 
-func anonymizeFields(e *Event) {
-	// TODO! Add field-level anonymization
+func anonymizeFields(e *Event, conf config.Snowplow) {
+	if conf.Anonymize.Ip && e.User_ipaddress != nil {
+		hashedIp := util.Md5(*e.User_ipaddress)
+		e.User_ipaddress = &hashedIp
+	}
+	if conf.Anonymize.UserId && e.Userid != nil {
+		hashedUserId := util.Md5(*e.Userid)
+		e.Userid = &hashedUserId
+	}
 }
 
-func BuildEventFromMappedParams(c *gin.Context, e map[string]interface{}) Event {
+func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Snowplow) Event {
 
-	body, err := json.Marshal(e)
+	body, err := json.Marshal(params)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -156,6 +166,6 @@ func BuildEventFromMappedParams(c *gin.Context, e map[string]interface{}) Event 
 	setEventWidthHeightFields(&event)
 	setPageFields(&event)
 	setReferrerFields(&event)
-	anonymizeFields(&event) // TODO, as necessary.
+	anonymizeFields(&event, conf)
 	return event
 }

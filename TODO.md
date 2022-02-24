@@ -3,6 +3,15 @@
         - Use ldflags ✅
     - Support multiple incoming payloads ✅
         - Snowplow ✅
+            - Event anonymization ✅
+                - IP ✅
+                - User id ✅
+            - Add collector metadata to sp event format ❌
+                - v_collector ❌
+                - v_etl ❌
+                - etl_tstamp ❌
+                - true_tstamp ❌
+                - derived_tstamp ❌
         - Generic self-describing event ✅
             - "payload" (configurable key) ✅
                 - "data" (configurable key) ✅
@@ -43,9 +52,6 @@
             - Configurable - should be able to be x-domain ✅
         - Yeet ❌
             - Redirect to rick astley or something ❌
-    - Event anonymization ❌
-        - IP ❌
-        - User id ❌
     - Better event format ✅
         - Build so a v2 snowplow event format is easily achievable ✅
     - Better event invalidation
