@@ -156,8 +156,8 @@ func (a *App) initializeCloudeventsRoutes() {
 func (a *App) serveStaticIfDev() {
 	if a.config.App.Env == env.DEV_ENVIRONMENT {
 		log.Info().Msg("serving static files")
-		a.engine.StaticFile("/", "./static/index.html")           // Serve a local file to make testing events easier
-		a.engine.StaticFile("/test/there", "./static/index.html") // Ditto
+		a.engine.StaticFile("/", "./static/index.html")     // Serve a local file to make testing events easier
+		a.engine.StaticFile("/test", "./static/index.html") // Ditto
 	} else {
 		log.Info().Msg("not serving static files")
 	}

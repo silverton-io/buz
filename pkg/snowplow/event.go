@@ -38,17 +38,17 @@ type Event struct {
 	Os_timezone              *string                             `json:"os_timezone"`
 	Event                    EventTypeField                      `json:"event"`
 	Txn_id                   *string                             `json:"txn_id"` // deprecated
-	Event_id                 string                              `json:"event_id"`
-	Event_fingerprint        string                              `json:"event_fingerprint"`
-	Tracker_version          string                              `json:"v_tracker"`
+	Event_id                 *string                             `json:"event_id"`
+	Event_fingerprint        *string                             `json:"event_fingerprint"`
+	Tracker_version          *string                             `json:"v_tracker"`
 	Collector_version        *string                             `json:"v_collector"`
 	Etl_version              *string                             `json:"v_etl"`
-	Domain_userid            string                              `json:"domain_userid"`
+	Domain_userid            *string                             `json:"domain_userid"`
 	Network_userid           *string                             `json:"network_userid"`
 	Userid                   *string                             `json:"user_id"`
 	Domain_sessionidx        *int64                              `json:"domain_sessionidx"`
 	Domain_sessionid         *string                             `json:"domain_sessionid"`
-	User_ipaddress           string                              `json:"user_ipaddress"`
+	User_ipaddress           *string                             `json:"user_ipaddress"`
 	Page_url                 *string                             `json:"page_url"`
 	Page_urlscheme           *string                             `json:"page_urlscheme"`
 	Page_urlhost             *string                             `json:"page_urlhost"`
@@ -147,17 +147,17 @@ type ShortenedEvent struct { //A struct used to quickly parse incoming json prop
 	Os_timezone              *string                             `json:"tz"`
 	Event                    EventTypeField                      `json:"e"`
 	Txn_id                   *string                             `json:"tid"` // deprecated
-	Event_id                 string                              `json:"eid"`
-	Event_fingerprint        string                              `json:"event_fingerprint"`
-	Tracker_version          string                              `json:"tv"`
+	Event_id                 *string                             `json:"eid"`
+	Event_fingerprint        *string                             `json:"event_fingerprint"`
+	Tracker_version          *string                             `json:"tv"`
 	Collector_version        *string                             `json:"v_collector"`
 	Etl_version              *string                             `json:"v_etl"`
-	Domain_userid            string                              `json:"duid"`
+	Domain_userid            *string                             `json:"duid"`
 	Network_userid           *string                             `json:"nuid"`
 	Userid                   *string                             `json:"uid"`
 	Domain_sessionidx        *int64                              `json:"vid,string"`
 	Domain_sessionid         *string                             `json:"sid"`
-	User_ipaddress           string                              `json:"ip"`
+	User_ipaddress           *string                             `json:"ip"`
 	Page_url                 *string                             `json:"url"`
 	Page_urlscheme           *string                             `json:"page_urlscheme"`
 	Page_urlhost             *string                             `json:"page_urlhost"`
