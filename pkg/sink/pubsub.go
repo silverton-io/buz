@@ -59,20 +59,12 @@ func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, even
 	wg.Wait()
 }
 
-func (s *PubsubSink) PublishValid(ctx context.Context, event interface{}) {
-	s.publish(ctx, s.validEventsTopic, event)
-}
-
-func (s *PubsubSink) PublishInvalid(ctx context.Context, event interface{}) {
-	s.publish(ctx, s.invalidEventsTopic, event)
-}
-
-func (s *PubsubSink) BatchPublishValid(ctx context.Context, events []interface{}) {
+func (s *PubsubSink) batchPublishValid(ctx context.Context, events []interface{}) {
 
 	s.batchPublish(ctx, s.validEventsTopic, events)
 }
 
-func (s *PubsubSink) BatchPublishInvalid(ctx context.Context, events []interface{}) {
+func (s *PubsubSink) batchPublishInvalid(ctx context.Context, events []interface{}) {
 	s.batchPublish(ctx, s.invalidEventsTopic, events)
 }
 
@@ -91,8 +83,8 @@ func (s *PubsubSink) BatchPublishValidAndInvalid(ctx context.Context, inputType 
 		invalidCounter = &meta.InvalidSnowplowEventsProcessed
 	}
 	// Publish
-	s.BatchPublishValid(ctx, validEvents)
-	s.BatchPublishInvalid(ctx, invalidEvents)
+	s.batchPublishValid(ctx, validEvents)
+	s.batchPublishInvalid(ctx, invalidEvents)
 	// Increment global metadata counters
 	atomic.AddInt64(validCounter, int64(len(validEvents)))
 	atomic.AddInt64(invalidCounter, int64(len(invalidEvents)))

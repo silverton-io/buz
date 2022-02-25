@@ -50,11 +50,11 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, events []int
 	wg.Wait()
 }
 
-func (s *KafkaSink) BatchPublishValid(ctx context.Context, events []interface{}) {
+func (s *KafkaSink) batchPublishValid(ctx context.Context, events []interface{}) {
 	s.batchPublish(ctx, s.validEventsTopic, events)
 }
 
-func (s *KafkaSink) BatchPublishInvalid(ctx context.Context, events []interface{}) {
+func (s *KafkaSink) batchPublishInvalid(ctx context.Context, events []interface{}) {
 	s.batchPublish(ctx, s.invalidEventsTopic, events)
 }
 
@@ -73,8 +73,8 @@ func (s *KafkaSink) BatchPublishValidAndInvalid(ctx context.Context, inputType s
 		invalidCounter = &meta.InvalidSnowplowEventsProcessed
 	}
 	// Publish
-	s.BatchPublishValid(ctx, validEvents)
-	s.BatchPublishInvalid(ctx, invalidEvents)
+	s.batchPublishValid(ctx, validEvents)
+	s.batchPublishInvalid(ctx, invalidEvents)
 	// Increment global metadata counters
 	atomic.AddInt64(validCounter, int64(len(validEvents)))
 	atomic.AddInt64(invalidCounter, int64(len(invalidEvents)))

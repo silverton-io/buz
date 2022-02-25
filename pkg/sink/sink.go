@@ -16,8 +16,6 @@ const (
 
 type Sink interface {
 	Initialize(config config.Forwarder)
-	BatchPublishValid(ctx context.Context, events []interface{})
-	BatchPublishInvalid(ctx context.Context, events []interface{})
 	BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta)
 	Close()
 }
