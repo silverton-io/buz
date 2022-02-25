@@ -1,4 +1,4 @@
-package forwarder
+package sink
 
 import (
 	"encoding/json"
@@ -11,29 +11,29 @@ import (
 	"golang.org/x/net/context"
 )
 
-type KafkaForwarder struct {
+type KafkaSink struct {
 	client             *kgo.Client
 	validEventsTopic   string
 	invalidEventsTopic string
 }
 
-func (f *KafkaForwarder) Initialize(config config.Forwarder) {
+func (s *KafkaSink) Initialize(config config.Forwarder) {
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(config.Brokers...),
 	)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not create kafka forwarder client")
 	}
-	f.client, f.validEventsTopic, f.invalidEventsTopic = client, config.ValidEventTopic, config.InvalidEventTopic
+	s.client, s.validEventsTopic, s.invalidEventsTopic = client, config.ValidEventTopic, config.InvalidEventTopic
 }
 
-func (f *KafkaForwarder) batchPublish(ctx context.Context, topic string, events []interface{}) {
+func (s *KafkaSink) batchPublish(ctx context.Context, topic string, events []interface{}) {
 	var wg sync.WaitGroup
 	for _, event := range events {
 		payload, _ := json.Marshal(event)
 		record := &kgo.Record{Topic: topic, Value: payload}
 		wg.Add(1)
-		f.client.Produce(ctx, record, func(r *kgo.Record, err error) {
+		s.client.Produce(ctx, record, func(r *kgo.Record, err error) {
 			defer wg.Done()
 			if err != nil {
 				log.Error().Stack().Err(err).Msg("could not publish event to kafka")
@@ -47,15 +47,15 @@ func (f *KafkaForwarder) batchPublish(ctx context.Context, topic string, events 
 	wg.Wait()
 }
 
-func (f *KafkaForwarder) BatchPublishValid(ctx context.Context, events []interface{}) {
-	f.batchPublish(ctx, f.validEventsTopic, events)
+func (s *KafkaSink) BatchPublishValid(ctx context.Context, events []interface{}) {
+	s.batchPublish(ctx, s.validEventsTopic, events)
 }
 
-func (f *KafkaForwarder) BatchPublishInvalid(ctx context.Context, events []interface{}) {
-	f.batchPublish(ctx, f.invalidEventsTopic, events)
+func (s *KafkaSink) BatchPublishInvalid(ctx context.Context, events []interface{}) {
+	s.batchPublish(ctx, s.invalidEventsTopic, events)
 }
 
-func (f *KafkaForwarder) Close() {
+func (s *KafkaSink) Close() {
 	log.Debug().Msg("closing kafka forwarder client")
-	f.client.Close()
+	s.client.Close()
 }

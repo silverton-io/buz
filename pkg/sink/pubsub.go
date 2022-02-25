@@ -1,4 +1,4 @@
-package forwarder
+package sink
 
 import (
 	"encoding/json"
@@ -11,13 +11,13 @@ import (
 	"golang.org/x/net/context"
 )
 
-type PubsubForwarder struct {
+type PubsubSink struct {
 	client             *pubsub.Client
 	validEventsTopic   *pubsub.Topic
 	invalidEventsTopic *pubsub.Topic
 }
 
-func (f *PubsubForwarder) Initialize(config config.Forwarder) {
+func (s *PubsubSink) Initialize(config config.Forwarder) {
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, config.Project)
 	if err != nil {
@@ -25,16 +25,16 @@ func (f *PubsubForwarder) Initialize(config config.Forwarder) {
 	}
 	validTopic := client.Topic(config.ValidEventTopic)
 	invalidTopic := client.Topic(config.InvalidEventTopic)
-	f.client, f.validEventsTopic, f.invalidEventsTopic = client, validTopic, invalidTopic
+	s.client, s.validEventsTopic, s.invalidEventsTopic = client, validTopic, invalidTopic
 }
 
-func (f *PubsubForwarder) publish(ctx context.Context, topic *pubsub.Topic, event interface{}) {
+func (s *PubsubSink) publish(ctx context.Context, topic *pubsub.Topic, event interface{}) {
 	var events []interface{}
 	events = append(events, event)
-	f.batchPublish(ctx, topic, events)
+	s.batchPublish(ctx, topic, events)
 }
 
-func (f *PubsubForwarder) batchPublish(ctx context.Context, topic *pubsub.Topic, events []interface{}) {
+func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, events []interface{}) {
 	var wg sync.WaitGroup
 	for _, event := range events {
 		payload, _ := json.Marshal(event)
@@ -56,24 +56,24 @@ func (f *PubsubForwarder) batchPublish(ctx context.Context, topic *pubsub.Topic,
 	wg.Wait()
 }
 
-func (f *PubsubForwarder) PublishValid(ctx context.Context, event interface{}) {
-	f.publish(ctx, f.validEventsTopic, event)
+func (s *PubsubSink) PublishValid(ctx context.Context, event interface{}) {
+	s.publish(ctx, s.validEventsTopic, event)
 }
 
-func (f *PubsubForwarder) PublishInvalid(ctx context.Context, event interface{}) {
-	f.publish(ctx, f.invalidEventsTopic, event)
+func (s *PubsubSink) PublishInvalid(ctx context.Context, event interface{}) {
+	s.publish(ctx, s.invalidEventsTopic, event)
 }
 
-func (f *PubsubForwarder) BatchPublishValid(ctx context.Context, events []interface{}) {
+func (s *PubsubSink) BatchPublishValid(ctx context.Context, events []interface{}) {
 
-	f.batchPublish(ctx, f.validEventsTopic, events)
+	s.batchPublish(ctx, s.validEventsTopic, events)
 }
 
-func (f *PubsubForwarder) BatchPublishInvalid(ctx context.Context, events []interface{}) {
-	f.batchPublish(ctx, f.invalidEventsTopic, events)
+func (s *PubsubSink) BatchPublishInvalid(ctx context.Context, events []interface{}) {
+	s.batchPublish(ctx, s.invalidEventsTopic, events)
 }
 
-func (f *PubsubForwarder) Close() {
+func (s *PubsubSink) Close() {
 	log.Debug().Msg("closing pubsub forwarder client")
-	f.client.Close() // Technically does not need to be called since it's available for lifetime
+	s.client.Close() // Technically does not need to be called since it's available for lifetime
 }

@@ -7,11 +7,10 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/cache"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	e "github.com/silverton-io/gosnowplow/pkg/event"
-	"github.com/silverton-io/gosnowplow/pkg/forwarder"
-	f "github.com/silverton-io/gosnowplow/pkg/forwarder"
 	"github.com/silverton-io/gosnowplow/pkg/input"
 	"github.com/silverton-io/gosnowplow/pkg/request"
 	"github.com/silverton-io/gosnowplow/pkg/response"
+	"github.com/silverton-io/gosnowplow/pkg/sink"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
 	"github.com/silverton-io/gosnowplow/pkg/util"
 	"github.com/tidwall/gjson"
@@ -54,22 +53,22 @@ func buildEventsFromRequest(c *gin.Context, s config.Snowplow, t *tele.Meta) []E
 	return events
 }
 
-func RedirectHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, meta *tele.Meta, s config.Snowplow, t *tele.Meta) gin.HandlerFunc {
+func RedirectHandler(s sink.Sink, cache *cache.SchemaCache, meta *tele.Meta, spConf config.Snowplow, t *tele.Meta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		events := buildEventsFromRequest(c, s, t)
+		events := buildEventsFromRequest(c, spConf, t)
 		validEvents, invalidEvents := bifurcateEvents(events, cache)
-		f.BatchPublishValidAndInvalid(input.SNOWPLOW_INPUT, forwarder, validEvents, invalidEvents, meta)
+		s.BatchPublishValidAndInvalid(input.SNOWPLOW_INPUT, s, validEvents, invalidEvents, meta)
 		redirectUrl, _ := c.GetQuery("u")
 		c.Redirect(302, redirectUrl)
 	}
 	return gin.HandlerFunc(fn)
 }
 
-func DefaultHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, meta *tele.Meta, s config.Snowplow, t *tele.Meta) gin.HandlerFunc {
+func DefaultHandler(s sink.Sink, cache *cache.SchemaCache, meta *tele.Meta, spConf config.Snowplow, t *tele.Meta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		events := buildEventsFromRequest(c, s, t)
+		events := buildEventsFromRequest(c, spConf, t)
 		validEvents, invalidEvents := bifurcateEvents(events, cache)
-		f.BatchPublishValidAndInvalid(input.SNOWPLOW_INPUT, forwarder, validEvents, invalidEvents, meta)
+		s.BatchPublishValidAndInvalid(input.SNOWPLOW_INPUT, s, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)

@@ -1,4 +1,4 @@
-package forwarder
+package sink
 
 import (
 	"errors"
@@ -16,33 +16,33 @@ const (
 	KAFKA  string = "kafka"
 )
 
-type Forwarder interface {
+type Sink interface {
 	Initialize(config config.Forwarder)
 	BatchPublishValid(ctx context.Context, events []interface{})
 	BatchPublishInvalid(ctx context.Context, events []interface{})
 	Close()
 }
 
-func BuildForwarder(config config.Forwarder) (forwarder Forwarder, err error) {
+func BuildSink(config config.Forwarder) (sink Sink, err error) {
 	switch config.Type {
 	case PUBSUB:
-		forwarder := PubsubForwarder{}
-		forwarder.Initialize(config)
-		log.Debug().Msg("pubsub forwarder initialized")
-		return &forwarder, nil
+		sink := PubsubSink{}
+		sink.Initialize(config)
+		log.Debug().Msg("pubsub sink initialized")
+		return &sink, nil
 	case KAFKA:
-		forwarder := KafkaForwarder{}
-		forwarder.Initialize(config)
-		log.Debug().Msg("kafka forwarder initialized")
-		return &forwarder, nil
+		sink := KafkaSink{}
+		sink.Initialize(config)
+		log.Debug().Msg("kafka sink initialized")
+		return &sink, nil
 	default:
-		e := errors.New("unsupported forwarder: " + config.Type)
-		log.Fatal().Err(e).Msg("unsupported forwarder")
+		e := errors.New("unsupported sink: " + config.Type)
+		log.Fatal().Err(e).Msg("unsupported sink")
 		return nil, e
 	}
 }
 
-func BatchPublishValidAndInvalid(inputType string, forwarder Forwarder, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta) {
+func BatchPublishValidAndInvalid(inputType string, sink Sink, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta) {
 	ctx := context.Background()
 	var validCounter *int64
 	var invalidCounter *int64
@@ -58,8 +58,8 @@ func BatchPublishValidAndInvalid(inputType string, forwarder Forwarder, validEve
 		invalidCounter = &meta.InvalidSnowplowEventsProcessed
 	}
 	// Publish
-	forwarder.BatchPublishValid(ctx, validEvents)
-	forwarder.BatchPublishInvalid(ctx, invalidEvents)
+	sink.BatchPublishValid(ctx, validEvents)
+	sink.BatchPublishInvalid(ctx, invalidEvents)
 	// Increment global metadata counters
 	atomic.AddInt64(validCounter, int64(len(validEvents)))
 	atomic.AddInt64(invalidCounter, int64(len(invalidEvents)))

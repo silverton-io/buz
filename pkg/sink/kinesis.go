@@ -1,3 +1,3 @@
-package forwarder
+package sink
 
 // TODO! Implement me!

@@ -17,10 +17,10 @@ import (
 	ce "github.com/silverton-io/gosnowplow/pkg/cloudevents"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/env"
-	"github.com/silverton-io/gosnowplow/pkg/forwarder"
 	"github.com/silverton-io/gosnowplow/pkg/generic"
 	"github.com/silverton-io/gosnowplow/pkg/health"
 	"github.com/silverton-io/gosnowplow/pkg/middleware"
+	forwarder "github.com/silverton-io/gosnowplow/pkg/sink"
 	"github.com/silverton-io/gosnowplow/pkg/snowplow"
 	"github.com/silverton-io/gosnowplow/pkg/stats"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
@@ -30,7 +30,7 @@ import (
 type App struct {
 	config      *config.Config
 	engine      *gin.Engine
-	forwarder   forwarder.Forwarder
+	sink        *sink.Sink
 	schemaCache *cache.SchemaCache
 	meta        *tele.Meta
 }
