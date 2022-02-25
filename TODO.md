@@ -6,12 +6,12 @@
             - Event anonymization ✅
                 - IP ✅
                 - User id ✅
-            - Add collector metadata to sp event format ❌
-                - v_collector ❌
-                - v_etl ❌
-                - etl_tstamp ❌
-                - true_tstamp ❌
-                - derived_tstamp ❌
+            - Add collector metadata to sp event format ✅
+                - v_collector ✅
+                - v_etl ✅
+                - etl_tstamp ✅
+                - true_tstamp ✅ (handled within tracker protocol)
+                - derived_tstamp ✅
         - Generic self-describing event ✅
             - "payload" (configurable key) ✅
                 - "data" (configurable key) ✅
@@ -95,6 +95,3 @@
         - stats ✅
             - configurable on/off ✅
         - prometheus ❌
-    - Schemas
-        - Top-level (self-describing)
-        - Schemas to match index.html

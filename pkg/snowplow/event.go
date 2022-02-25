@@ -29,12 +29,12 @@ type Event struct {
 	Name_tracker             string                              `json:"name_tracker"`
 	App_id                   string                              `json:"app_id"`
 	Platform                 string                              `json:"platform"`
-	Etl_tstamp               *time.Time                          `json:"etl_tstamp"`
+	Etl_tstamp               time.Time                           `json:"etl_tstamp"`
 	Dvce_created_tstamp      MillisecondTimestampField           `json:"dvce_created_tstamp"`
 	Dvce_sent_tstamp         MillisecondTimestampField           `json:"dvce_sent_tstamp"`
 	True_tstamp              *MillisecondTimestampField          `json:"true_tstamp"`
 	Collector_tstamp         time.Time                           `json:"collector_tstamp"`
-	Derived_tstamp           *time.Time                          `json:"derived_tstamp"`
+	Derived_tstamp           time.Time                           `json:"derived_tstamp"`
 	Os_timezone              *string                             `json:"os_timezone"`
 	Event                    EventTypeField                      `json:"event"`
 	Txn_id                   *string                             `json:"txn_id"` // deprecated
@@ -138,12 +138,12 @@ type ShortenedEvent struct { //A struct used to quickly parse incoming json prop
 	Name_tracker             string                              `json:"tna"`
 	App_id                   string                              `json:"aid"`
 	Platform                 string                              `json:"p"`
-	Etl_tstamp               *time.Time                          `json:"etl_tstamp"` // not in the tracker protocol
+	Etl_tstamp               time.Time                           `json:"etl_tstamp"` // not in the tracker protocol
 	Dvce_created_tstamp      MillisecondTimestampField           `json:"dtm"`
 	Dvce_sent_tstamp         MillisecondTimestampField           `json:"stm"`
 	True_tstamp              *MillisecondTimestampField          `json:"ttm"`
 	Collector_tstamp         time.Time                           `json:"collector_tstamp"` // not in the tracker protocol
-	Derived_tstamp           *time.Time                          `json:"derived_tstamp"`   // not in the tracker protocol
+	Derived_tstamp           time.Time                           `json:"derived_tstamp"`   // not in the tracker protocol
 	Os_timezone              *string                             `json:"tz"`
 	Event                    EventTypeField                      `json:"e"`
 	Txn_id                   *string                             `json:"tid"` // deprecated

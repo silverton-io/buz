@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/gosnowplow/pkg/config"
+	"github.com/silverton-io/gosnowplow/pkg/tele"
 	"github.com/silverton-io/gosnowplow/pkg/util"
 	"github.com/tidwall/gjson"
 )
@@ -28,8 +29,6 @@ func parseWidthHeight(dimensionString string) (Dimension, error) {
 	}, nil
 }
 
-func setEventCollectorMetadataFields(c *gin.Context, e *Event) {}
-
 func setEventMetadataFields(e *Event, schema []byte) {
 	schemaContents := gjson.ParseBytes(schema)
 	vendor := schemaContents.Get("self.vendor").String()
@@ -42,30 +41,32 @@ func setEventMetadataFields(e *Event, schema []byte) {
 	e.Event_version = &version
 }
 
-func setEventFieldsFromRequest(c *gin.Context, e *Event) {
+func setEventFieldsFromRequest(c *gin.Context, e *Event, t *tele.Meta) {
 	nuid := c.GetString("identity")
 	ip, _ := c.RemoteIP()
 	sIp := ip.String()
 	useragent := c.Request.UserAgent()
 	e.Network_userid = &nuid
-	// NOTE!! Ignore the query-param-based ip and useragent. FIXME!
+	// NOTE!! Ignore query-param-based ip and useragent. FIXME!
 	e.User_ipaddress = &sIp
 	e.Useragent = &useragent
 	e.Collector_tstamp = time.Now()
+	e.Etl_tstamp = time.Now()
+	timeOnDevice := e.Dvce_sent_tstamp.Time.Sub(e.Dvce_created_tstamp.Time)
+	e.Derived_tstamp = e.Collector_tstamp.Add(-timeOnDevice)
+	e.Collector_version = &t.Version
+	e.Etl_version = &t.Version
 }
 
 func setEventWidthHeightFields(e *Event) {
-	// Doc
 	if e.Doc_size != nil {
 		docDimension, _ := parseWidthHeight(*e.Doc_size)
 		e.Doc_width, e.Doc_height = &docDimension.width, &docDimension.height
 	}
-	// Viewport
 	if e.Viewport_size != nil {
 		vpDimension, _ := parseWidthHeight(*e.Viewport_size)
 		e.Br_viewwidth, e.Br_viewheight = &vpDimension.width, &vpDimension.height
 	}
-	// Screen
 	if e.Monitor_resolution != nil {
 		monDimension, _ := parseWidthHeight(*e.Monitor_resolution)
 		e.Dvce_screenwidth, e.Dvce_screenheight = &monDimension.width, &monDimension.height
@@ -149,8 +150,7 @@ func anonymizeFields(e *Event, conf config.Snowplow) {
 	}
 }
 
-func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Snowplow) Event {
-
+func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, s config.Snowplow, t *tele.Meta) Event {
 	body, err := json.Marshal(params)
 	if err != nil {
 		fmt.Println(err)
@@ -161,11 +161,10 @@ func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, c
 		fmt.Printf("error unmarshalling to shortened event %s", err)
 	}
 	event := Event(shortenedEvent)
-	setEventCollectorMetadataFields(c, &event)
-	setEventFieldsFromRequest(c, &event)
+	setEventFieldsFromRequest(c, &event, t)
 	setEventWidthHeightFields(&event)
 	setPageFields(&event)
 	setReferrerFields(&event)
-	anonymizeFields(&event, conf)
+	anonymizeFields(&event, s)
 	return event
 }
