@@ -20,7 +20,8 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/generic"
 	"github.com/silverton-io/gosnowplow/pkg/health"
 	"github.com/silverton-io/gosnowplow/pkg/middleware"
-	forwarder "github.com/silverton-io/gosnowplow/pkg/sink"
+	"github.com/silverton-io/gosnowplow/pkg/sink"
+	s "github.com/silverton-io/gosnowplow/pkg/sink"
 	"github.com/silverton-io/gosnowplow/pkg/snowplow"
 	"github.com/silverton-io/gosnowplow/pkg/stats"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
@@ -30,7 +31,7 @@ import (
 type App struct {
 	config      *config.Config
 	engine      *gin.Engine
-	sink        *sink.Sink
+	sink        sink.Sink
 	schemaCache *cache.SchemaCache
 	meta        *tele.Meta
 }
@@ -68,8 +69,8 @@ func (a *App) configure() {
 
 func (a *App) initializeForwarder() {
 	log.Info().Msg("initializing forwarder")
-	forwarder, _ := forwarder.BuildForwarder(a.config.Forwarder)
-	a.forwarder = forwarder
+	sink, _ := s.BuildSink(a.config.Forwarder)
+	a.sink = sink
 }
 
 func (a *App) initializeSchemaCache() {
@@ -120,19 +121,19 @@ func (a *App) initializeSnowplowRoutes() {
 		log.Info().Msg("initializing snowplow routes")
 		if a.config.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("initializing standard routes")
-			a.engine.GET(snowplow.DEFAULT_GET_PATH, snowplow.DefaultHandler(a.forwarder, a.schemaCache, a.meta, a.config.Snowplow, a.meta))
-			a.engine.POST(snowplow.DEFAULT_POST_PATH, snowplow.DefaultHandler(a.forwarder, a.schemaCache, a.meta, a.config.Snowplow, a.meta))
+			a.engine.GET(snowplow.DEFAULT_GET_PATH, snowplow.DefaultHandler(a.sink, a.schemaCache, a.meta, a.config.Snowplow, a.meta))
+			a.engine.POST(snowplow.DEFAULT_POST_PATH, snowplow.DefaultHandler(a.sink, a.schemaCache, a.meta, a.config.Snowplow, a.meta))
 			if a.config.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("initializing standard open redirect route")
-				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, snowplow.RedirectHandler(a.forwarder, a.schemaCache, a.meta, a.config.Snowplow, a.meta))
+				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, snowplow.RedirectHandler(a.sink, a.schemaCache, a.meta, a.config.Snowplow, a.meta))
 			}
 		}
 		log.Info().Msg("initializing custom routes")
-		a.engine.GET(a.config.Snowplow.GetPath, snowplow.DefaultHandler(a.forwarder, a.schemaCache, a.meta, a.config.Snowplow, a.meta))
-		a.engine.POST(a.config.Snowplow.PostPath, snowplow.DefaultHandler(a.forwarder, a.schemaCache, a.meta, a.config.Snowplow, a.meta))
+		a.engine.GET(a.config.Snowplow.GetPath, snowplow.DefaultHandler(a.sink, a.schemaCache, a.meta, a.config.Snowplow, a.meta))
+		a.engine.POST(a.config.Snowplow.PostPath, snowplow.DefaultHandler(a.sink, a.schemaCache, a.meta, a.config.Snowplow, a.meta))
 		if a.config.Snowplow.OpenRedirectsEnabled {
 			log.Info().Msg("initializing custom open redirect route")
-			a.engine.GET(a.config.Snowplow.RedirectPath, snowplow.RedirectHandler(a.forwarder, a.schemaCache, a.meta, a.config.Snowplow, a.meta))
+			a.engine.GET(a.config.Snowplow.RedirectPath, snowplow.RedirectHandler(a.sink, a.schemaCache, a.meta, a.config.Snowplow, a.meta))
 		}
 	}
 }
@@ -140,16 +141,16 @@ func (a *App) initializeSnowplowRoutes() {
 func (a *App) initializeGenericRoutes() {
 	if a.config.Generic.Enabled {
 		log.Info().Msg("initializing generic routes")
-		a.engine.POST(a.config.Generic.PostPath, generic.PostHandler(a.forwarder, a.schemaCache, &a.config.Generic, a.meta)) // FIXME! Consolidate these or figure out a better way to set up handlers that require a bunch of args
-		a.engine.POST(a.config.Generic.BatchPostPath, generic.BatchPostHandler(a.forwarder, a.schemaCache, &a.config.Generic, a.meta))
+		a.engine.POST(a.config.Generic.PostPath, generic.PostHandler(a.sink, a.schemaCache, &a.config.Generic, a.meta)) // FIXME! Consolidate these or figure out a better way to set up handlers that require a bunch of args
+		a.engine.POST(a.config.Generic.BatchPostPath, generic.BatchPostHandler(a.sink, a.schemaCache, &a.config.Generic, a.meta))
 	}
 }
 
 func (a *App) initializeCloudeventsRoutes() {
 	if a.config.Cloudevents.Enabled {
 		log.Info().Msg("initializing cloudevents routes")
-		a.engine.POST(a.config.Cloudevents.PostPath, ce.PostHandler(a.forwarder, a.schemaCache, &a.config.Cloudevents, a.meta))
-		a.engine.POST(a.config.Cloudevents.BatchPostPath, ce.BatchPostHandler(a.forwarder, a.schemaCache, &a.config.Cloudevents, a.meta))
+		a.engine.POST(a.config.Cloudevents.PostPath, ce.PostHandler(a.sink, a.schemaCache, &a.config.Cloudevents, a.meta))
+		a.engine.POST(a.config.Cloudevents.BatchPostPath, ce.BatchPostHandler(a.sink, a.schemaCache, &a.config.Cloudevents, a.meta))
 	}
 }
 

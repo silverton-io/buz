@@ -1,6 +1,7 @@
 package snowplow
 
 import (
+	"context"
 	"io/ioutil"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +13,6 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/response"
 	"github.com/silverton-io/gosnowplow/pkg/sink"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
-	"github.com/silverton-io/gosnowplow/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
@@ -49,26 +49,27 @@ func buildEventsFromRequest(c *gin.Context, s config.Snowplow, t *tele.Meta) []E
 		event := BuildEventFromMappedParams(c, params, s, t)
 		events = append(events, event)
 	}
-	util.PrettyPrint(events)
 	return events
 }
 
-func RedirectHandler(s sink.Sink, cache *cache.SchemaCache, meta *tele.Meta, spConf config.Snowplow, t *tele.Meta) gin.HandlerFunc {
+func RedirectHandler(sink sink.Sink, cache *cache.SchemaCache, meta *tele.Meta, spConf config.Snowplow, t *tele.Meta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
+		ctx := context.Background()
 		events := buildEventsFromRequest(c, spConf, t)
 		validEvents, invalidEvents := bifurcateEvents(events, cache)
-		s.BatchPublishValidAndInvalid(input.SNOWPLOW_INPUT, s, validEvents, invalidEvents, meta)
+		sink.BatchPublishValidAndInvalid(ctx, input.SNOWPLOW_INPUT, validEvents, invalidEvents, meta)
 		redirectUrl, _ := c.GetQuery("u")
 		c.Redirect(302, redirectUrl)
 	}
 	return gin.HandlerFunc(fn)
 }
 
-func DefaultHandler(s sink.Sink, cache *cache.SchemaCache, meta *tele.Meta, spConf config.Snowplow, t *tele.Meta) gin.HandlerFunc {
+func DefaultHandler(sink sink.Sink, cache *cache.SchemaCache, meta *tele.Meta, spConf config.Snowplow, t *tele.Meta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
+		ctx := context.Background()
 		events := buildEventsFromRequest(c, spConf, t)
 		validEvents, invalidEvents := bifurcateEvents(events, cache)
-		s.BatchPublishValidAndInvalid(input.SNOWPLOW_INPUT, s, validEvents, invalidEvents, meta)
+		sink.BatchPublishValidAndInvalid(ctx, input.SNOWPLOW_INPUT, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)

@@ -4,9 +4,12 @@ import (
 	"encoding/json"
 	"strconv"
 	"sync"
+	"sync/atomic"
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/config"
+	"github.com/silverton-io/gosnowplow/pkg/input"
+	"github.com/silverton-io/gosnowplow/pkg/tele"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"golang.org/x/net/context"
 )
@@ -53,6 +56,28 @@ func (s *KafkaSink) BatchPublishValid(ctx context.Context, events []interface{})
 
 func (s *KafkaSink) BatchPublishInvalid(ctx context.Context, events []interface{}) {
 	s.batchPublish(ctx, s.invalidEventsTopic, events)
+}
+
+func (s *KafkaSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta) {
+	var validCounter *int64
+	var invalidCounter *int64
+	switch inputType {
+	case input.GENERIC_INPUT:
+		validCounter = &meta.ValidGenericEventsProcessed
+		invalidCounter = &meta.InvalidGenericEventsProcessed
+	case input.CLOUDEVENTS_INPUT:
+		validCounter = &meta.ValidCloudEventsProcessed
+		invalidCounter = &meta.InvalidCloudEventsProcessed
+	default:
+		validCounter = &meta.ValidSnowplowEventsProcessed
+		invalidCounter = &meta.InvalidSnowplowEventsProcessed
+	}
+	// Publish
+	s.BatchPublishValid(ctx, validEvents)
+	s.BatchPublishInvalid(ctx, invalidEvents)
+	// Increment global metadata counters
+	atomic.AddInt64(validCounter, int64(len(validEvents)))
+	atomic.AddInt64(invalidCounter, int64(len(invalidEvents)))
 }
 
 func (s *KafkaSink) Close() {
