@@ -20,12 +20,12 @@ type KafkaSink struct {
 	invalidEventsTopic string
 }
 
-func (s *KafkaSink) Initialize(config config.Forwarder) {
+func (s *KafkaSink) Initialize(config config.Sink) {
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(config.Brokers...),
 	)
 	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("could not create kafka forwarder client")
+		log.Fatal().Stack().Err(err).Msg("could not create kafka sink client")
 	}
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, config.ValidEventTopic, config.InvalidEventTopic
 }
@@ -81,6 +81,6 @@ func (s *KafkaSink) BatchPublishValidAndInvalid(ctx context.Context, inputType s
 }
 
 func (s *KafkaSink) Close() {
-	log.Debug().Msg("closing kafka forwarder client")
+	log.Debug().Msg("closing kafka sink client")
 	s.client.Close()
 }

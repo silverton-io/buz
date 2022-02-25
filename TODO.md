@@ -24,7 +24,7 @@
         - Cloud events ✅
             - single-post endpoint ✅
             - batch-post endpoint ✅
-    - Support multiple forwarders
+    - Support multiple sinks
         - Types
             - Pubsub ✅
             - Kafka ✅
@@ -35,8 +35,8 @@
             - Clickhouse ❌
             - Firebolt ❌
         - ??Self-setup streams, maybe?? ❌
-        - Fail-fast when forwarder unreachable
-            - Inability to publish should result in a timeout and non-200 status code
+        - Fail-fast when sink unreachable
+            - Inability to publish in X time should result in a timeout and non-200 status code
     - Support multiple cache backends
         - S3 ✅
         - GCS ✅

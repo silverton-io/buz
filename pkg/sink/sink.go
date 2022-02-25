@@ -15,12 +15,12 @@ const (
 )
 
 type Sink interface {
-	Initialize(config config.Forwarder)
+	Initialize(config config.Sink)
 	BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta)
 	Close()
 }
 
-func BuildSink(config config.Forwarder) (sink Sink, err error) {
+func BuildSink(config config.Sink) (sink Sink, err error) {
 	switch config.Type {
 	case PUBSUB:
 		sink := PubsubSink{}

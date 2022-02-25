@@ -21,7 +21,6 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/health"
 	"github.com/silverton-io/gosnowplow/pkg/middleware"
 	"github.com/silverton-io/gosnowplow/pkg/sink"
-	s "github.com/silverton-io/gosnowplow/pkg/sink"
 	"github.com/silverton-io/gosnowplow/pkg/snowplow"
 	"github.com/silverton-io/gosnowplow/pkg/stats"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
@@ -67,10 +66,10 @@ func (a *App) configure() {
 	a.meta = &m
 }
 
-func (a *App) initializeForwarder() {
-	log.Info().Msg("initializing forwarder")
-	sink, _ := s.BuildSink(a.config.Forwarder)
-	a.sink = sink
+func (a *App) initializeSink() {
+	log.Info().Msg("initializing sink")
+	s, _ := sink.BuildSink(a.config.Sink)
+	a.sink = s
 }
 
 func (a *App) initializeSchemaCache() {
@@ -167,7 +166,7 @@ func (a *App) serveStaticIfDev() {
 func (a *App) Initialize() {
 	log.Info().Msg("initializing app")
 	a.configure()
-	a.initializeForwarder()
+	a.initializeSink()
 	a.initializeSchemaCache()
 	a.initializeRouter()
 	a.initializeMiddleware()

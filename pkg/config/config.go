@@ -7,7 +7,7 @@ type Config struct {
 	Cloudevents `json:"cloudevents"`
 	Cookie      `json:"cookie"`
 	Cors        `json:"cors"`
-	Forwarder   `json:"forwarder"`
+	Sink        `json:"sink"`
 	SchemaCache `json:"schemaCache"`
 	Stats       `json:"stats"`
 	Tele        `json:"tele"`

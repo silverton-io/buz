@@ -20,11 +20,11 @@ type PubsubSink struct {
 	invalidEventsTopic *pubsub.Topic
 }
 
-func (s *PubsubSink) Initialize(config config.Forwarder) {
+func (s *PubsubSink) Initialize(config config.Sink) {
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, config.Project)
 	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("could not initialize forwarder")
+		log.Fatal().Stack().Err(err).Msg("could not initialize pubsub sink")
 	}
 	validTopic := client.Topic(config.ValidEventTopic)
 	invalidTopic := client.Topic(config.InvalidEventTopic)
@@ -91,6 +91,6 @@ func (s *PubsubSink) BatchPublishValidAndInvalid(ctx context.Context, inputType 
 }
 
 func (s *PubsubSink) Close() {
-	log.Debug().Msg("closing pubsub forwarder client")
+	log.Debug().Msg("closing pubsub sink client")
 	s.client.Close() // Technically does not need to be called since it's available for lifetime
 }
