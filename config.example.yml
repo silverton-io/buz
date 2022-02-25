@@ -102,8 +102,8 @@ anonymize:
 # ============================================================
 
 # ============================================================
-# Example kafka forwarder config
-# forwarder:
+# Example kafka sink config
+# sink:
 #   type: kafka
 #   brokers:
 #     - BROKER_1:9092
@@ -114,8 +114,8 @@ anonymize:
 # ============================================================
 
 # ============================================================
-# Example pubsub forwarder config
-# forwarder:
+# Example pubsub sink config
+# sink:
 #   type: pubsub
 #   project: PROJECT_NAME_HERE
 #   validEventTopic: VALID_EVENT_TOPIC_NAME

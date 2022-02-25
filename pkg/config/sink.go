@@ -2,7 +2,7 @@ package config
 
 import "time"
 
-type Forwarder struct {
+type Sink struct {
 	Type                  string        `json:"type"`
 	Project               string        `json:"project,omitempty"`
 	Brokers               []string      `json:"brokers,omitempty"`

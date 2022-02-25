@@ -1,6 +1,7 @@
 package generic
 
 import (
+	"context"
 	"encoding/json"
 	"io/ioutil"
 
@@ -9,10 +10,9 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/cache"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	e "github.com/silverton-io/gosnowplow/pkg/event"
-	"github.com/silverton-io/gosnowplow/pkg/forwarder"
-	f "github.com/silverton-io/gosnowplow/pkg/forwarder"
 	"github.com/silverton-io/gosnowplow/pkg/input"
 	"github.com/silverton-io/gosnowplow/pkg/response"
+	"github.com/silverton-io/gosnowplow/pkg/sink"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
 	"github.com/tidwall/gjson"
 )
@@ -37,21 +37,23 @@ func bifurcateEvents(events []gjson.Result, cache *cache.SchemaCache, conf *conf
 	return vEvents, invEvents
 }
 
-func PostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, conf *config.Generic, meta *tele.Meta) gin.HandlerFunc {
+func PostHandler(sink sink.Sink, cache *cache.SchemaCache, conf *config.Generic, meta *tele.Meta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
+		ctx := context.Background()
 		reqBody, _ := ioutil.ReadAll(c.Request.Body)
 		var events []gjson.Result
 		event := gjson.ParseBytes(reqBody)
 		events = append(events, event)
 		validEvents, invalidEvents := bifurcateEvents(events, cache, conf)
-		f.BatchPublishValidAndInvalid(input.GENERIC_INPUT, forwarder, validEvents, invalidEvents, meta)
+		sink.BatchPublishValidAndInvalid(ctx, input.GENERIC_INPUT, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)
 }
 
-func BatchPostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, conf *config.Generic, meta *tele.Meta) gin.HandlerFunc {
+func BatchPostHandler(sink sink.Sink, cache *cache.SchemaCache, conf *config.Generic, meta *tele.Meta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
+		ctx := context.Background()
 		reqBody, _ := ioutil.ReadAll(c.Request.Body)
 		var rawEvents []interface{}
 		var events []gjson.Result
@@ -71,7 +73,7 @@ func BatchPostHandler(forwarder forwarder.Forwarder, cache *cache.SchemaCache, c
 			}
 		}
 		validEvents, invalidEvents := bifurcateEvents(events, cache, conf)
-		f.BatchPublishValidAndInvalid(input.GENERIC_INPUT, forwarder, validEvents, invalidEvents, meta)
+		sink.BatchPublishValidAndInvalid(ctx, input.GENERIC_INPUT, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)
