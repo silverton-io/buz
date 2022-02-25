@@ -31,12 +31,6 @@ func (s *PubsubSink) Initialize(config config.Sink) {
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, validTopic, invalidTopic
 }
 
-func (s *PubsubSink) publish(ctx context.Context, topic *pubsub.Topic, event interface{}) {
-	var events []interface{}
-	events = append(events, event)
-	s.batchPublish(ctx, topic, events)
-}
-
 func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, events []interface{}) {
 	var wg sync.WaitGroup
 	for _, event := range events {

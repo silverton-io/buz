@@ -52,10 +52,10 @@ func buildEventsFromRequest(c *gin.Context, s config.Snowplow, t *tele.Meta) []E
 	return events
 }
 
-func RedirectHandler(sink sink.Sink, cache *cache.SchemaCache, spConf config.Snowplow, meta *tele.Meta) gin.HandlerFunc {
+func RedirectHandler(sink sink.Sink, cache *cache.SchemaCache, conf config.Snowplow, meta *tele.Meta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
-		events := buildEventsFromRequest(c, spConf, meta)
+		events := buildEventsFromRequest(c, conf, meta)
 		validEvents, invalidEvents := bifurcateEvents(events, cache)
 		sink.BatchPublishValidAndInvalid(ctx, input.SNOWPLOW_INPUT, validEvents, invalidEvents, meta)
 		redirectUrl, _ := c.GetQuery("u")
@@ -64,10 +64,10 @@ func RedirectHandler(sink sink.Sink, cache *cache.SchemaCache, spConf config.Sno
 	return gin.HandlerFunc(fn)
 }
 
-func DefaultHandler(sink sink.Sink, cache *cache.SchemaCache, spConf config.Snowplow, meta *tele.Meta) gin.HandlerFunc {
+func DefaultHandler(sink sink.Sink, cache *cache.SchemaCache, conf config.Snowplow, meta *tele.Meta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
-		events := buildEventsFromRequest(c, spConf, meta)
+		events := buildEventsFromRequest(c, conf, meta)
 		validEvents, invalidEvents := bifurcateEvents(events, cache)
 		sink.BatchPublishValidAndInvalid(ctx, input.SNOWPLOW_INPUT, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)
