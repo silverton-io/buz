@@ -21,11 +21,16 @@ type KafkaSink struct {
 }
 
 func (s *KafkaSink) Initialize(config config.Sink) {
+	ctx := context.Background()
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(config.Brokers...),
 	)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not create kafka sink client")
+	}
+	err = client.Ping(ctx)
+	if err != nil {
+		log.Fatal().Stack().Err(err).Msg("could not ping kafka sink brokers")
 	}
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, config.ValidEventTopic, config.InvalidEventTopic
 }
