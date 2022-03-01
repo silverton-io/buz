@@ -3,6 +3,7 @@ package sink
 import (
 	"encoding/json"
 	"sync/atomic"
+	"time"
 
 	"sync"
 
@@ -20,14 +21,30 @@ type PubsubSink struct {
 	invalidEventsTopic *pubsub.Topic
 }
 
-func (s *PubsubSink) Initialize(config config.Sink) {
-	ctx := context.Background()
-	client, err := pubsub.NewClient(ctx, config.Project)
+const INIT_TIMEOUT_SECONDS = 10
+
+func (s *PubsubSink) Initialize(conf config.Sink) {
+	ctx, _ := context.WithTimeout(context.Background(), INIT_TIMEOUT_SECONDS*time.Second)
+	client, err := pubsub.NewClient(ctx, conf.Project)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not initialize pubsub sink")
 	}
-	validTopic := client.Topic(config.ValidEventTopic)
-	invalidTopic := client.Topic(config.InvalidEventTopic)
+	validTopic := client.Topic(conf.ValidEventTopic)
+	invalidTopic := client.Topic(conf.InvalidEventTopic)
+	vTopicExists, err := validTopic.Exists(ctx)
+	if err != nil {
+		log.Fatal().Stack().Err(err).Msg("cannot check valid event topic existence")
+	}
+	if !vTopicExists {
+		log.Fatal().Stack().Err(err).Msg("valid event topic doesn't exist in project " + conf.Project)
+	}
+	invTopicExists, err := invalidTopic.Exists(ctx)
+	if err != nil {
+		log.Fatal().Stack().Err(err).Msg("cannot check invalid event topic existence")
+	}
+	if !invTopicExists {
+		log.Fatal().Stack().Err(err).Msg("invalid event topic doesn't exist in project " + conf.Project)
+	}
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, validTopic, invalidTopic
 }
 
