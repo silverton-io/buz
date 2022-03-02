@@ -23,15 +23,21 @@ Secondarily for configuration, deployment, and management ease.
 - GCS ✅
 - Filesystem ✅
 - Remote HTTP/S ✅
-- Kafka Schema Registry ✅
+- Kafka Schema Registry ❌
 
 
-## Supported Outputs
+## Supported Sinks
 
 - Kafka/ Redpanda ✅
 - Pubsub ✅
-- Kinesis ❌ (in progress)
+- Kinesis ✅
+- Kinesis Firehose ❌ (in progress)
 - File ✅
+- HTTP/S ❌
+- Clickhouse ❌
+- Postgres ❌
+- Firebolt ❌
+- PubNub ❌
 
 
 ## Supported Deployment Methods
