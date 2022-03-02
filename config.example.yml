@@ -143,5 +143,14 @@ anonymize:
 #   produceTimeout: 3
 # ============================================================
 
+# ============================================================
+# Example kinesis firehose sink config
+# sink:
+#   type: kinesis-firehose
+#   validEventTopic: test-honeypot-valid
+#   invalidEventTopic: test-honeypot-invalid
+#   produceTimeout: 3
+# ============================================================
+
 tele:
   enabled: true

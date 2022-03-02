@@ -31,7 +31,7 @@ Secondarily for configuration, deployment, and management ease.
 - Kafka/ Redpanda ✅
 - Pubsub ✅
 - Kinesis ✅
-- Kinesis Firehose ❌ (in progress)
+- Kinesis Firehose ✅
 - File ✅
 - HTTP/S ❌
 - Clickhouse ❌
