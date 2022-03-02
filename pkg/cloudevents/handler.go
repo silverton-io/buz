@@ -51,7 +51,7 @@ func buildCloudevent(e gjson.Result) event.Event {
 	return event
 }
 
-func PostHandler(sink sink.Sink, cache *cache.SchemaCache, conf *config.Cloudevents, meta *tele.Meta) gin.HandlerFunc {
+func PostHandler(conf *config.Cloudevents, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		var cloudevents []event.Event
 		if c.ContentType() == "application/cloudevents+json" { // Only accept request if content type is set appropriately
@@ -71,7 +71,7 @@ func PostHandler(sink sink.Sink, cache *cache.SchemaCache, conf *config.Cloudeve
 	return gin.HandlerFunc(fn)
 }
 
-func BatchPostHandler(sink sink.Sink, cache *cache.SchemaCache, conf *config.Cloudevents, meta *tele.Meta) gin.HandlerFunc {
+func BatchPostHandler(conf *config.Cloudevents, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		var cloudevents []event.Event

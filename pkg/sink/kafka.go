@@ -21,11 +21,11 @@ type KafkaSink struct {
 	invalidEventsTopic string
 }
 
-func (s *KafkaSink) Initialize(config config.Sink) {
+func (s *KafkaSink) Initialize(conf config.Sink) {
 	ctx := context.Background()
 	log.Debug().Msg("initializing kafka client")
 	client, err := kgo.NewClient(
-		kgo.SeedBrokers(config.Brokers...),
+		kgo.SeedBrokers(conf.Brokers...),
 	)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not create kafka sink client")
@@ -37,13 +37,13 @@ func (s *KafkaSink) Initialize(config config.Sink) {
 	}
 	admClient := kadm.NewClient(client)
 	log.Debug().Msg("verifying topics exist")
-	topicDetails, err := admClient.DescribeTopicConfigs(ctx, config.ValidEventTopic, config.InvalidEventTopic)
+	topicDetails, err := admClient.DescribeTopicConfigs(ctx, conf.ValidEventTopic, conf.InvalidEventTopic)
 	for _, d := range topicDetails {
 		if d.Err != nil {
 			log.Fatal().Stack().Err(d.Err).Msg(d.Name + " topic doesn't exist")
 		}
 	}
-	s.client, s.validEventsTopic, s.invalidEventsTopic = client, config.ValidEventTopic, config.InvalidEventTopic
+	s.client, s.validEventsTopic, s.invalidEventsTopic = client, conf.ValidEventTopic, conf.InvalidEventTopic
 }
 
 func (s *KafkaSink) batchPublish(ctx context.Context, topic string, events []interface{}) {

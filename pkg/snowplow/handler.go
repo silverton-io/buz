@@ -52,7 +52,7 @@ func buildEventsFromRequest(c *gin.Context, s config.Snowplow, t *tele.Meta) []E
 	return events
 }
 
-func RedirectHandler(sink sink.Sink, cache *cache.SchemaCache, conf config.Snowplow, meta *tele.Meta) gin.HandlerFunc {
+func RedirectHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		events := buildEventsFromRequest(c, conf, meta)
@@ -64,7 +64,7 @@ func RedirectHandler(sink sink.Sink, cache *cache.SchemaCache, conf config.Snowp
 	return gin.HandlerFunc(fn)
 }
 
-func DefaultHandler(sink sink.Sink, cache *cache.SchemaCache, conf config.Snowplow, meta *tele.Meta) gin.HandlerFunc {
+func DefaultHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		events := buildEventsFromRequest(c, conf, meta)

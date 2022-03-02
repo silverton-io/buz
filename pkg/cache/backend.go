@@ -21,30 +21,30 @@ type SchemaCacheBackend interface {
 	Close()
 }
 
-func BuildSchemaCacheBackend(config config.SchemaCacheBackend) (backend SchemaCacheBackend, err error) {
-	switch config.Type {
+func BuildSchemaCacheBackend(conf config.SchemaCacheBackend) (backend SchemaCacheBackend, err error) {
+	switch conf.Type {
 	case GCS:
 		cacheBackend := GcsSchemaCacheBackend{}
-		cacheBackend.Initialize(config)
+		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case S3:
 		cacheBackend := S3SchemaCacheBackend{}
-		cacheBackend.Initialize(config)
+		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case FS:
 		cacheBackend := FilesystemCacheBackend{}
-		cacheBackend.Initialize(config)
+		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case HTTP:
 		cacheBackend := HttpSchemaCacheBackend{}
-		cacheBackend.Initialize(config)
+		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case HTTPS:
 		cacheBackend := HttpSchemaCacheBackend{}
-		cacheBackend.Initialize(config)
+		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	default:
-		e := errors.New("unsupported schema cache backend: " + config.Type)
+		e := errors.New("unsupported schema cache backend: " + conf.Type)
 		log.Fatal().Err(e).Msg("unsupported backend")
 		return nil, e
 	}

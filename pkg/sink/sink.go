@@ -15,25 +15,25 @@ const (
 )
 
 type Sink interface {
-	Initialize(config config.Sink)
+	Initialize(conf config.Sink)
 	BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta)
 	Close()
 }
 
-func BuildSink(config config.Sink) (sink Sink, err error) {
-	switch config.Type {
+func BuildSink(conf config.Sink) (sink Sink, err error) {
+	switch conf.Type {
 	case PUBSUB:
 		sink := PubsubSink{}
-		sink.Initialize(config)
+		sink.Initialize(conf)
 		log.Debug().Msg("pubsub sink initialized")
 		return &sink, nil
 	case KAFKA:
 		sink := KafkaSink{}
-		sink.Initialize(config)
+		sink.Initialize(conf)
 		log.Debug().Msg("kafka sink initialized")
 		return &sink, nil
 	default:
-		e := errors.New("unsupported sink: " + config.Type)
+		e := errors.New("unsupported sink: " + conf.Type)
 		log.Fatal().Err(e).Msg("unsupported sink")
 		return nil, e
 	}
