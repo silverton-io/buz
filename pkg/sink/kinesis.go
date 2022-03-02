@@ -29,24 +29,25 @@ func (s *KinesisSink) Initialize(conf config.Sink) {
 
 func (s *KinesisSink) batchPublish(ctx context.Context, stream string, events []interface{}) {
 	var wg sync.WaitGroup
-	go func() {
-		for _, event := range events {
-			payload, _ := json.Marshal(event)
-			input := &kinesis.PutRecordInput{
-				Data: payload,
-				// PartitionKey: partitionName, FIXME! Add configurable partition key
-				StreamName: &stream,
-			}
+	for _, event := range events {
+		partitionKey := "blah"
+		payload, _ := json.Marshal(event)
+		input := &kinesis.PutRecordInput{
+			Data:         payload,
+			PartitionKey: &partitionKey,
+			StreamName:   &stream,
+		}
+		go func() {
 			wg.Add(1)
-			_, err := s.client.PutRecord(ctx, input)
+			output, err := s.client.PutRecord(ctx, input)
 			defer wg.Done()
 			if err != nil {
 				log.Error().Stack().Err(err).Msg("could not publish event to kinesis")
 			} else {
-				log.Debug().Msgf("published event to stream " + stream)
+				log.Debug().Msgf("published event " + *output.SequenceNumber + " to stream " + stream)
 			}
-		}
-	}()
+		}()
+	}
 	wg.Wait()
 }
 
