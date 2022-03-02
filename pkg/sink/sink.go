@@ -10,9 +10,10 @@ import (
 )
 
 const (
-	PUBSUB  string = "pubsub"
-	KAFKA   string = "kafka"
-	KINESIS string = "kinesis"
+	PUBSUB           string = "pubsub"
+	KAFKA            string = "kafka"
+	KINESIS          string = "kinesis"
+	KINESIS_FIREHOSE string = "kinesis-firehose"
 )
 
 type Sink interface {
@@ -37,6 +38,11 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		sink := KinesisSink{}
 		sink.Initialize(conf)
 		log.Debug().Msg("kinesis sink initialized")
+		return &sink, nil
+	case KINESIS_FIREHOSE:
+		sink := KinesisFirehoseSink{}
+		sink.Initialize(conf)
+		log.Debug().Msg("kinesis firehose sink initialized")
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
