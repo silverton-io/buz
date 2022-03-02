@@ -10,6 +10,7 @@ import (
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/input"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
+	"github.com/twmb/franz-go/pkg/kadm"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"golang.org/x/net/context"
 )
@@ -22,15 +23,25 @@ type KafkaSink struct {
 
 func (s *KafkaSink) Initialize(config config.Sink) {
 	ctx := context.Background()
+	log.Debug().Msg("initializing kafka client")
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(config.Brokers...),
 	)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not create kafka sink client")
 	}
+	log.Debug().Msg("pinging kafka brokers")
 	err = client.Ping(ctx)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not ping kafka sink brokers")
+	}
+	admClient := kadm.NewClient(client)
+	log.Debug().Msg("verifying topics exist")
+	topicDetails, err := admClient.DescribeTopicConfigs(ctx, config.ValidEventTopic, config.InvalidEventTopic)
+	for _, d := range topicDetails {
+		if d.Err != nil {
+			log.Fatal().Stack().Err(d.Err).Msg(d.Name + " topic doesn't exist")
+		}
 	}
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, config.ValidEventTopic, config.InvalidEventTopic
 }
