@@ -2,9 +2,11 @@ package sink
 
 import (
 	"errors"
+	"sync/atomic"
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/config"
+	"github.com/silverton-io/gosnowplow/pkg/input"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
 	"golang.org/x/net/context"
 )
@@ -49,4 +51,22 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		log.Fatal().Err(e).Msg("unsupported sink")
 		return nil, e
 	}
+}
+
+func incrementStats(inputType string, validCount int, invalidCount int, meta *tele.Meta) {
+	var validCounter *int64
+	var invalidCounter *int64
+	switch inputType {
+	case input.GENERIC_INPUT:
+		validCounter = &meta.ValidGenericEventsProcessed
+		invalidCounter = &meta.InvalidGenericEventsProcessed
+	case input.CLOUDEVENTS_INPUT:
+		validCounter = &meta.ValidCloudEventsProcessed
+		invalidCounter = &meta.InvalidCloudEventsProcessed
+	default:
+		validCounter = &meta.ValidSnowplowEventsProcessed
+		invalidCounter = &meta.InvalidSnowplowEventsProcessed
+	}
+	atomic.AddInt64(validCounter, int64(validCount))
+	atomic.AddInt64(invalidCounter, int64(invalidCount))
 }

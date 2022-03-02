@@ -2,7 +2,6 @@ package sink
 
 import (
 	"encoding/json"
-	"sync/atomic"
 	"time"
 
 	"sync"
@@ -10,7 +9,6 @@ import (
 	"cloud.google.com/go/pubsub"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/config"
-	"github.com/silverton-io/gosnowplow/pkg/input"
 	"github.com/silverton-io/gosnowplow/pkg/tele"
 	"golang.org/x/net/context"
 )
@@ -80,25 +78,11 @@ func (s *PubsubSink) batchPublishInvalid(ctx context.Context, events []interface
 }
 
 func (s *PubsubSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta) {
-	var validCounter *int64
-	var invalidCounter *int64
-	switch inputType {
-	case input.GENERIC_INPUT:
-		validCounter = &meta.ValidGenericEventsProcessed
-		invalidCounter = &meta.InvalidGenericEventsProcessed
-	case input.CLOUDEVENTS_INPUT:
-		validCounter = &meta.ValidCloudEventsProcessed
-		invalidCounter = &meta.InvalidCloudEventsProcessed
-	default:
-		validCounter = &meta.ValidSnowplowEventsProcessed
-		invalidCounter = &meta.InvalidSnowplowEventsProcessed
-	}
 	// Publish
 	s.batchPublishValid(ctx, validEvents)
 	s.batchPublishInvalid(ctx, invalidEvents)
-	// Increment global metadata counters
-	atomic.AddInt64(validCounter, int64(len(validEvents)))
-	atomic.AddInt64(invalidCounter, int64(len(invalidEvents)))
+	// Increment stats counters
+	incrementStats(inputType, len(validEvents), len(invalidEvents), meta)
 }
 
 func (s *PubsubSink) Close() {
