@@ -32,6 +32,8 @@ func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, e
 	var wg sync.WaitGroup
 	for _, event := range events {
 		payload, _ := json.Marshal(event)
+		newline := []byte("\n")
+		payload = append(payload, newline...)
 		record := types.Record{
 			Data: payload,
 		}
