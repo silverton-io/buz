@@ -2,11 +2,13 @@ package sink
 
 import (
 	"context"
+	"encoding/json"
 	"sync"
 	"sync/atomic"
 
 	awsconf "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/firehose"
+	"github.com/aws/aws-sdk-go-v2/service/firehose/types"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/gosnowplow/pkg/config"
 	"github.com/silverton-io/gosnowplow/pkg/input"
@@ -28,6 +30,27 @@ func (s *KinesisFirehoseSink) Initialize(conf config.Sink) {
 
 func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, events []interface{}) {
 	var wg sync.WaitGroup
+	for _, event := range events {
+		payload, _ := json.Marshal(event)
+		record := types.Record{
+			Data: payload,
+		}
+		input := &firehose.PutRecordInput{
+			DeliveryStreamName: &stream,
+			Record:             &record,
+		}
+		go func() {
+			wg.Add(1)
+			output, err := s.client.PutRecord(ctx, input) // Will want to use `PutRecordBatch`
+			defer wg.Done()
+			if err != nil {
+				log.Error().Stack().Err(err).Msg("could not publish event to kinesis firehose")
+			} else {
+				log.Debug().Msgf("published event " + *output.RecordId + " to stream " + stream)
+			}
+		}()
+	}
+	wg.Wait()
 }
 
 func (s *KinesisFirehoseSink) batchPublishValid(ctx context.Context, events []interface{}) {

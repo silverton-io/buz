@@ -39,7 +39,7 @@ func (s *KinesisSink) batchPublish(ctx context.Context, stream string, events []
 		}
 		go func() {
 			wg.Add(1)
-			output, err := s.client.PutRecord(ctx, input)
+			output, err := s.client.PutRecord(ctx, input) // Will want to use `PutRecordBatch`
 			defer wg.Done()
 			if err != nil {
 				log.Error().Stack().Err(err).Msg("could not publish event to kinesis")
