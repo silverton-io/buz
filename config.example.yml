@@ -134,5 +134,14 @@ anonymize:
 #   invalidEventTopic: INVALID_EVENT_TOPIC_NAME
 # ============================================================
 
+# ============================================================
+# Example kinesis sink config
+# sink:
+#   type: kinesis
+#   validEventTopic: test-honeypot-valid
+#   invalidEventTopic: test-honeypot-invalid
+#   produceTimeout: 3
+# ============================================================
+
 tele:
   enabled: true
