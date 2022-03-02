@@ -37,7 +37,7 @@ func bifurcateEvents(events []gjson.Result, cache *cache.SchemaCache, conf *conf
 	return vEvents, invEvents
 }
 
-func PostHandler(sink sink.Sink, cache *cache.SchemaCache, conf *config.Generic, meta *tele.Meta) gin.HandlerFunc {
+func PostHandler(conf *config.Generic, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		reqBody, _ := ioutil.ReadAll(c.Request.Body)
@@ -51,7 +51,7 @@ func PostHandler(sink sink.Sink, cache *cache.SchemaCache, conf *config.Generic,
 	return gin.HandlerFunc(fn)
 }
 
-func BatchPostHandler(sink sink.Sink, cache *cache.SchemaCache, conf *config.Generic, meta *tele.Meta) gin.HandlerFunc {
+func BatchPostHandler(conf *config.Generic, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		reqBody, _ := ioutil.ReadAll(c.Request.Body)

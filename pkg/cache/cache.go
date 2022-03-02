@@ -13,13 +13,13 @@ type SchemaCache struct {
 	ttlSeconds   int
 }
 
-func (s *SchemaCache) Initialize(config config.SchemaCache) {
-	cacheBackend, _ := BuildSchemaCacheBackend(config.SchemaCacheBackend)
+func (s *SchemaCache) Initialize(conf config.SchemaCache) {
+	cacheBackend, _ := BuildSchemaCacheBackend(conf.SchemaCacheBackend)
 	s.Backend = cacheBackend
-	s.cache = freecache.NewCache(config.MaxSizeBytes)
-	s.maxSizeBytes = config.MaxSizeBytes
-	s.ttlSeconds = config.TtlSeconds
-	log.Info().Msg("schema cache with " + config.Type + " backend initialized")
+	s.cache = freecache.NewCache(conf.MaxSizeBytes)
+	s.maxSizeBytes = conf.MaxSizeBytes
+	s.ttlSeconds = conf.TtlSeconds
+	log.Info().Msg("schema cache with " + conf.Type + " backend initialized")
 }
 
 func (s *SchemaCache) Get(key string) (exists bool, data []byte) {
