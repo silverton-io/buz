@@ -1,0 +1,6 @@
+---
+tags:
+  - sink
+---
+
+# Pubsub Sink
