@@ -6,9 +6,10 @@ COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
 
+COPY cmd cmd
 COPY pkg pkg
 COPY .VERSION .VERSION
-RUN go build -ldflags="-X main.VERSION=$(cat .VERSION)" -o honeypot pkg/*.go
+RUN go build -ldflags="-X main.VERSION=$(cat .VERSION)" -o honeypot ./cmd/*.go
 RUN rm -rf pkg
 
 ENTRYPOINT [ "./honeypot" ]
