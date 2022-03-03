@@ -1,7 +1,7 @@
 FROM golang:1.17-alpine
 
 
-LABEL org.opencontainers.image.description DESCRIPTION
+LABEL org.opencontainers.image.description "A lightweight, Snowplow-compatible event collection system."
 
 WORKDIR /app
 
