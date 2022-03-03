@@ -8,8 +8,7 @@ RUN go mod download
 
 COPY pkg pkg
 COPY .VERSION .VERSION
-ENV export VERSION=$(cat .VERSION)
-RUN go build -ldflags="-X main.VERSION=$VERSION" -o honeypot pkg/*.go
+RUN go build -ldflags="-X main.VERSION=$(cat .VERSION)" -o honeypot pkg/*.go
 RUN rm -rf pkg
 
 # CMD [ "./honeypot" ]
