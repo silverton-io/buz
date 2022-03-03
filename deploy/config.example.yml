@@ -123,6 +123,7 @@ anonymize:
 #     - BROKER_3:9092
 #   validEventTopic: VALID_EVENT_TOPIC_NAME
 #   invalidEventTopic: INVALID_EVENT_TOPIC_NAME
+#   produceTimeout: 3
 # ============================================================
 
 # ============================================================
@@ -132,6 +133,7 @@ anonymize:
 #   project: PROJECT_NAME_HERE
 #   validEventTopic: VALID_EVENT_TOPIC_NAME
 #   invalidEventTopic: INVALID_EVENT_TOPIC_NAME
+#   produceTimeout: 3
 # ============================================================
 
 # ============================================================
