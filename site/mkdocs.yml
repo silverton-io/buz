@@ -1,4 +1,55 @@
-site_name: Honeypot Documentation
+site_name: Honeypot
+repo_url: https://github.com/silverton-io/honeypot
 
 theme:
   name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    primary: orange
+    accent: amber
+  features:
+    - navigation.sections
+    - navigation.instant
+    - navigation.expand
+    - navigation.indexes
+
+plugins:
+  - tags
+  - search
+
+extra:
+  generator: false
+
+nav:
+  - index.md
+  - Quickstart:
+    - quickstart/overview.md
+    - quickstart/configuration.md
+    - quickstart/deployment.md
+  - Event Protocols:
+    - protocols/snowplow.md
+    - protocols/cloudevents.md
+    - protocols/self-describing.md
+  - Schema Backends:
+    - schema-backends/s3.md
+    - schema-backends/gcs.md
+    - schema-backends/filesystem.md
+    - schema-backends/http.md
+  - Sinks:
+    - sinks/kafka.md
+    - sinks/pubsub.md
+    - sinks/kinesis.md
+    - sinks/kinesis-firehose.md
+  - Middleware:
+    - middleware/advancing-cookie.md
+    - middleware/cors.md
+    - middleware/json-logger.md
+  - Configuration:
+    - configuration/snowplow.md
+    - configuration/cloudevents.md
+    - configuration/self-describing.md
+    - configuration/cors.md
+    - configuration/cookie.md
+    - configuration/stats.md
+    - configuration/telemetry.md
