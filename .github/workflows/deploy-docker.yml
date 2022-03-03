@@ -7,7 +7,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  VERSION: $(cat .VERSION)
 
 jobs:
   build-and-push-image:
@@ -19,9 +18,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Test env var
-        run: echo $VERSION
+      
+      - name: Get Version from file
+        id: get-version
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./.VERSION
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
@@ -42,5 +44,5 @@ jobs:
           context: .
           file: ./deploy/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.get-version.outputs.content }}
           labels: ${{ steps.meta.outputs.labels }}
