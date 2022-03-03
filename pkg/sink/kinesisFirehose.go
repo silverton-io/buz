@@ -9,8 +9,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/firehose"
 	"github.com/aws/aws-sdk-go-v2/service/firehose/types"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/gosnowplow/pkg/config"
-	"github.com/silverton-io/gosnowplow/pkg/tele"
+	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
 type KinesisFirehoseSink struct {

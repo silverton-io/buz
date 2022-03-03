@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/gosnowplow/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/config"
 )
 
 type S3SchemaCacheBackend struct {

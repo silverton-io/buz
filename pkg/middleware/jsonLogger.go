@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/gosnowplow/pkg/util"
+	"github.com/silverton-io/honeypot/pkg/util"
 )
 
 type request struct {

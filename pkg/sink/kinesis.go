@@ -8,8 +8,8 @@ import (
 	awsconf "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/kinesis"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/gosnowplow/pkg/config"
-	"github.com/silverton-io/gosnowplow/pkg/tele"
+	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
 type KinesisSink struct {

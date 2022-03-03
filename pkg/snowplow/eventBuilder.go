@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/silverton-io/gosnowplow/pkg/config"
-	"github.com/silverton-io/gosnowplow/pkg/tele"
-	"github.com/silverton-io/gosnowplow/pkg/util"
+	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/tele"
+	"github.com/silverton-io/honeypot/pkg/util"
 	"github.com/tidwall/gjson"
 )
 

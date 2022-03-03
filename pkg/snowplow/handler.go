@@ -5,14 +5,14 @@ import (
 	"io/ioutil"
 
 	"github.com/gin-gonic/gin"
-	"github.com/silverton-io/gosnowplow/pkg/cache"
-	"github.com/silverton-io/gosnowplow/pkg/config"
-	e "github.com/silverton-io/gosnowplow/pkg/event"
-	"github.com/silverton-io/gosnowplow/pkg/input"
-	"github.com/silverton-io/gosnowplow/pkg/request"
-	"github.com/silverton-io/gosnowplow/pkg/response"
-	"github.com/silverton-io/gosnowplow/pkg/sink"
-	"github.com/silverton-io/gosnowplow/pkg/tele"
+	"github.com/silverton-io/honeypot/pkg/cache"
+	"github.com/silverton-io/honeypot/pkg/config"
+	e "github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/input"
+	"github.com/silverton-io/honeypot/pkg/request"
+	"github.com/silverton-io/honeypot/pkg/response"
+	"github.com/silverton-io/honeypot/pkg/sink"
+	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/tidwall/gjson"
 )
 

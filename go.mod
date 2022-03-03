@@ -1,4 +1,4 @@
-module github.com/silverton-io/gosnowplow
+module github.com/silverton-io/honeypot
 
 go 1.17
 

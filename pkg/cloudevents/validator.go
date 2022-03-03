@@ -2,8 +2,8 @@ package ce
 
 import (
 	"github.com/cloudevents/sdk-go/v2/event"
-	"github.com/silverton-io/gosnowplow/pkg/cache"
-	"github.com/silverton-io/gosnowplow/pkg/validator"
+	"github.com/silverton-io/honeypot/pkg/cache"
+	"github.com/silverton-io/honeypot/pkg/validator"
 	"github.com/tidwall/gjson"
 )
 

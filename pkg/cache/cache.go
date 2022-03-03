@@ -3,7 +3,7 @@ package cache
 import (
 	"github.com/coocood/freecache"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/gosnowplow/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/config"
 )
 
 type SchemaCache struct {

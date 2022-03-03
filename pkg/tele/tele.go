@@ -6,10 +6,10 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/gosnowplow/pkg/config"
-	"github.com/silverton-io/gosnowplow/pkg/event"
-	"github.com/silverton-io/gosnowplow/pkg/request"
-	"github.com/silverton-io/gosnowplow/pkg/util"
+	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/request"
+	"github.com/silverton-io/honeypot/pkg/util"
 )
 
 const (

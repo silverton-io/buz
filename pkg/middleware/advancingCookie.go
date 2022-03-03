@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/silverton-io/gosnowplow/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/config"
 )
 
 func AdvancingCookie(conf config.Cookie) gin.HandlerFunc {

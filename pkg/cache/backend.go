@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/gosnowplow/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/config"
 )
 
 const (

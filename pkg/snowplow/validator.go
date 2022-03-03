@@ -1,8 +1,8 @@
 package snowplow
 
 import (
-	"github.com/silverton-io/gosnowplow/pkg/cache"
-	"github.com/silverton-io/gosnowplow/pkg/validator"
+	"github.com/silverton-io/honeypot/pkg/cache"
+	"github.com/silverton-io/honeypot/pkg/validator"
 )
 
 const (

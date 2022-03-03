@@ -13,17 +13,17 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/gosnowplow/pkg/cache"
-	ce "github.com/silverton-io/gosnowplow/pkg/cloudevents"
-	"github.com/silverton-io/gosnowplow/pkg/config"
-	"github.com/silverton-io/gosnowplow/pkg/env"
-	"github.com/silverton-io/gosnowplow/pkg/generic"
-	"github.com/silverton-io/gosnowplow/pkg/health"
-	"github.com/silverton-io/gosnowplow/pkg/middleware"
-	"github.com/silverton-io/gosnowplow/pkg/sink"
-	"github.com/silverton-io/gosnowplow/pkg/snowplow"
-	"github.com/silverton-io/gosnowplow/pkg/stats"
-	"github.com/silverton-io/gosnowplow/pkg/tele"
+	"github.com/silverton-io/honeypot/pkg/cache"
+	ce "github.com/silverton-io/honeypot/pkg/cloudevents"
+	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/env"
+	"github.com/silverton-io/honeypot/pkg/generic"
+	"github.com/silverton-io/honeypot/pkg/health"
+	"github.com/silverton-io/honeypot/pkg/middleware"
+	"github.com/silverton-io/honeypot/pkg/sink"
+	"github.com/silverton-io/honeypot/pkg/snowplow"
+	"github.com/silverton-io/honeypot/pkg/stats"
+	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/spf13/viper"
 )
 
@@ -187,7 +187,7 @@ func (a *App) Initialize() {
 }
 
 func (a *App) Run() {
-	log.Info().Interface("config", a.config).Msg("gosnowplow is running!")
+	log.Info().Interface("config", a.config).Msg("honeypot is running!")
 	tele.Metry(a.config, a.meta)
 	srv := &http.Server{
 		Addr:    ":" + a.config.App.Port,

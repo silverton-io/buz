@@ -4,8 +4,8 @@ import (
 	"net/url"
 
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/gosnowplow/pkg/config"
-	"github.com/silverton-io/gosnowplow/pkg/request"
+	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/request"
 )
 
 type HttpSchemaCacheBackend struct {

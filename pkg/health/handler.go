@@ -2,7 +2,7 @@ package health
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/silverton-io/gosnowplow/pkg/response"
+	"github.com/silverton-io/honeypot/pkg/response"
 )
 
 func HealthcheckHandler(c *gin.Context) {

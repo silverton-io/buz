@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/gosnowplow/pkg/config"
-	"github.com/silverton-io/gosnowplow/pkg/util"
+	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/util"
 )
 
 type FilesystemCacheBackend struct {

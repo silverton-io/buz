@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/silverton-io/gosnowplow/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/tidwall/gjson"
 )
 

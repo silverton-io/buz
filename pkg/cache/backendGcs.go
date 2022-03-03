@@ -7,7 +7,7 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/gosnowplow/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/config"
 )
 
 type GcsSchemaCacheBackend struct {

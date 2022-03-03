@@ -2,7 +2,7 @@ package stats
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/silverton-io/gosnowplow/pkg/tele"
+	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
 func StatsHandler(meta *tele.Meta) gin.HandlerFunc {
