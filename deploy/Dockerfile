@@ -1,11 +1,11 @@
-FROM golang:1.17 AS build
+FROM golang:1.17-alpine AS build
 
 WORKDIR /app
 
 COPY . /app/
 
 RUN go mod download
-RUN GCO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-X main.VERSION=$(cat .VERSION)" -o honeypot ./cmd/*.go
+RUN GCO_ENABLED=0 GOOS=linux go build -ldflags="-X main.VERSION=$(cat .VERSION)" -o honeypot ./cmd/*.go
 
 FROM alpine AS pack
 
