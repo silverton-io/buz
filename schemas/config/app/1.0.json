@@ -5,7 +5,7 @@
     "type": "object",
     "properties": {
         "version": {
-            "type": "string",
+            "type": "number",
             "description": "The config version"
         },
         "app": {
@@ -297,7 +297,36 @@
         },
         "sink": {
             "type": "object",
-            "description": "Sink configuration"
+            "description": "Sink configuration",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "The sink configuration",
+                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose"]
+                },
+                "validEventTopic": {
+                    "type": "string",
+                    "description": "The name of the valid event topic (or 'stream', if kinesis)"
+                },
+                "invalidEventTopic": {
+                    "type": "string",
+                    "description": "The name of the invalid event topic (or 'stream', if kinesis)"
+                },
+                "produceTimeout": {
+                    "type": "integer",
+                    "description": "The sink producer timeout in seconds"
+                },
+                "project": {
+                    "type": "string",
+                    "description": "The name of the GCP project, if sink type is pubsub"
+                },
+                "brokers": {
+                    "type": "array",
+                    "description": "A list of brokers (HOST:PORT), if sink type is kafka"
+                }
+            },
+            "additionalProperties": false,
+            "required": ["type", "validEventTopic", "invalidEventTopic", "produceTimeout"]
         },
         "tele": {
             "type": "object",
