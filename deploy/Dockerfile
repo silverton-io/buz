@@ -1,13 +1,13 @@
-FROM golang:1.17-alpine AS build
+FROM golang:1.17 AS build
 
 WORKDIR /app
 
 COPY . /app/
 
 RUN go mod download
-RUN GCO_ENABLED=0 GOOS=linux go build -ldflags="-X main.VERSION=$(cat .VERSION)" -o honeypot ./cmd/*.go
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-X main.VERSION=$(cat .VERSION)" -o honeypot ./cmd/*.go
 
-FROM alpine AS pack
+FROM busybox
 
 LABEL maintainer="Jake Thomas <jake@bostata.com>"
 LABEL org.opencontainers.image.description "A lightweight, Snowplow-compatible streaming event collection system."
@@ -15,8 +15,7 @@ LABEL org.opencontainers.image.description "A lightweight, Snowplow-compatible s
 WORKDIR /app
 COPY --from=build /app/.VERSION .
 COPY --from=build /app/honeypot .
-
-RUN apk add ca-certificates && update-ca-certificates
+COPY --from=build /etc/ssl/certs /etc/ssl/certs
 
 EXPOSE 8080
 
