@@ -8,6 +8,9 @@ app:
   stats:
     enabled: true
     path: /stats
+  timeout:
+    enabled: false
+    ms: 10000
 
 snowplow: # Snowplow events
   enabled: true
