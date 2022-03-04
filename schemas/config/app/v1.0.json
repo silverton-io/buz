@@ -57,7 +57,9 @@
                             "type": "integer",
                             "description": "Time out request and return a 4xx status code if this number of milliseconds is exceeded"
                         }
-                    }
+                    },
+                    "additionalProperties": false,
+                    "required": ["enabled", "ms"]
                 }
             },
             "additionalProperties": false,
