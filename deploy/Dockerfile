@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . /app/
 
 RUN go mod download
-RUN GCO_ENABLED=0 GOOS=linux go build -ldflags="-X main.VERSION=$(cat .VERSION)" -o honeypot ./cmd/*.go
+RUN GCO_ENABLED=0 go build -ldflags="-X main.VERSION=$(cat .VERSION)" -o honeypot ./cmd/*.go
 
 FROM alpine AS pack
 
