@@ -2,13 +2,12 @@ version: 1
 
 app:
   env: dev
-  mode: debug # Mode is either debug or release
+  mode: release
   port: 8081
-  getSslCert: false
   trackerDomain: honeypot.silverton.io
   stats:
     enabled: true
-    endpoint: /stats
+    path: /stats
 
 snowplow: # Snowplow events
   enabled: true
@@ -17,6 +16,9 @@ snowplow: # Snowplow events
   getPath: /plw/g
   postPath: /plw/p
   redirectPath: /plw/r
+  anonymize:
+    ip: false
+    userId: false
 
 generic: # Generic self describing events
   enabled: true
@@ -54,105 +56,26 @@ cors:
     - GET
   maxAge: 86400
 
-anonymize:
-  ip: false
-  userId: false
+schemaCache:
+  schemaCacheBackend:
+    type: gcs
+    bucket: BUCKET_NAME
+    path: /
+  ttlSeconds: 300
+  maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
+  purge:
+    enabled: true
+    path: /c/purge
 
-# ============================================================
-# Example schema cache with GCS backend
-# schemaCache:
-#   schemaCacheBackend:
-#     type: gcs
-#     bucket: BUCKET_NAME
-#     path: /
-#   ttlSeconds: 300
-#   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
-#   purge:
-#     enabled: true
-#     path: /c/purge
-# ============================================================
-
-# ============================================================
-# Example schema cache with S3 backend
-# schemaCache:
-#   schemaCacheBackend:
-#     type: s3
-#     bucket: BUCKET_NAME
-#     path: /
-#   ttlSeconds: 300
-#   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
-#   purge:
-#     enabled: true
-#     path: /c/purge
-# ============================================================
-
-# ============================================================
-# Example schema cache with FS backend
-# schemaCache:
-#   schemaCacheBackend:
-#     type: fs
-#     path: /SOME/ABSOLUTE/PATH/
-#   ttlSeconds: 300
-#   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
-#   purge:
-#     enabled: true
-#     path: /c/purge
-# ============================================================
-
-# ============================================================
-# Example schema cache with http or https backend
-# schemaCache:
-#   schemaCacheBackend:
-#     type: http
-#     host: storage.googleapis.com
-#     path: honeypot-schemas-test
-#   ttlSeconds: 300
-#   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
-#   purge:
-#     enabled: true
-#     path: /c/purge
-# ============================================================
-
-# ============================================================
-# Example kafka sink config
-# sink:
-#   type: kafka
-#   brokers:
-#     - BROKER_1:9092
-#     - BROKER_2:9092
-#     - BROKER_3:9092
-#   validEventTopic: VALID_EVENT_TOPIC_NAME
-#   invalidEventTopic: INVALID_EVENT_TOPIC_NAME
-#   produceTimeout: 3
-# ============================================================
-
-# ============================================================
-# Example pubsub sink config
-# sink:
-#   type: pubsub
-#   project: PROJECT_NAME_HERE
-#   validEventTopic: VALID_EVENT_TOPIC_NAME
-#   invalidEventTopic: INVALID_EVENT_TOPIC_NAME
-#   produceTimeout: 3
-# ============================================================
-
-# ============================================================
-# Example kinesis sink config
-# sink:
-#   type: kinesis
-#   validEventTopic: test-honeypot-valid
-#   invalidEventTopic: test-honeypot-invalid
-#   produceTimeout: 3
-# ============================================================
-
-# ============================================================
-# Example kinesis firehose sink config
-# sink:
-#   type: kinesis-firehose
-#   validEventTopic: test-honeypot-valid
-#   invalidEventTopic: test-honeypot-invalid
-#   produceTimeout: 3
-# ============================================================
+sink:
+  type: kafka
+  brokers:
+    - BROKER_1:9092
+    - BROKER_2:9092
+    - BROKER_3:9092
+  validEventTopic: VALID_EVENT_TOPIC_NAME
+  invalidEventTopic: INVALID_EVENT_TOPIC_NAME
+  produceTimeout: 3
 
 tele:
   enabled: true
