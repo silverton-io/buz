@@ -103,6 +103,7 @@ func Metry(c *config.Config, m *Meta) {
 			Time:   time.Now(),
 			Config: *c,
 		}
+		util.PrettyPrint(startup)
 		data := util.StructToMap(startup)
 		startupPayload := event.SelfDescribingEnvelope{
 			Contexts: nil,
