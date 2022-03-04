@@ -44,6 +44,20 @@
                     },
                     "additionalProperties": false,
                     "required": ["enabled", "path"]
+                },
+                "timeout": {
+                    "type": "object",
+                    "description": "Request timeout configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "Whether or not to time out all requests after a specified period of time"   
+                        },
+                        "ms": {
+                            "type": "integer",
+                            "description": "Time out request and return a 4xx status code if this number of milliseconds is exceeded"
+                        }
+                    }
                 }
             },
             "additionalProperties": false,

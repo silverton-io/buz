@@ -90,7 +90,12 @@ func (a *App) initializeMiddleware() {
 	log.Info().Msg("initializing middleware")
 	a.engine.Use(gin.Recovery())
 	if a.config.Cookie.Enabled {
+		log.Info().Msg("initializing advancing cookie middleware")
 		a.engine.Use(middleware.AdvancingCookie(a.config.Cookie))
+	}
+	if a.config.App.Timeout.Enabled {
+		log.Info().Msg("initializing request timeout middleware")
+		a.engine.Use(middleware.Timeout(a.config.App.Timeout))
 	}
 	a.engine.Use(middleware.Yeet())
 	a.engine.Use(middleware.CORS(a.config.Cors))
