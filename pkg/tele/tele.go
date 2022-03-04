@@ -14,9 +14,9 @@ import (
 
 const (
 	DEFAULT_ENDPOINT string = "http://some.where.else:8081/gen/p"
-	STARTUP_1_0_0    string = "com.silverton.io.tele/startup/1-0-0"
-	HEARTBEAT_1_0_0  string = "com.silverton.io.tele/heartbeat/1-0-0"
-	SHUTDOWN_1_0_0   string = "com.silverton.io.tele/shutdown/1-0-0"
+	STARTUP_1_0      string = "tele/startup/v1.0.json"
+	HEARTBEAT_1_0    string = "tele/beat/v1.0.json"
+	SHUTDOWN_1_0     string = "tele/shutdown/v1.0.json"
 )
 
 type Meta struct {
@@ -67,7 +67,7 @@ func heartbeat(t time.Ticker, m *Meta) {
 		heartbeatPayload := event.SelfDescribingEnvelope{
 			Contexts: nil,
 			Event: event.SelfDescribingPayload{
-				Schema: HEARTBEAT_1_0_0,
+				Schema: HEARTBEAT_1_0,
 				Data:   data,
 			},
 		}
@@ -87,7 +87,7 @@ func Sis(m *Meta) {
 	shutdownPayload := event.SelfDescribingEnvelope{
 		Contexts: nil,
 		Event: event.SelfDescribingPayload{
-			Schema: SHUTDOWN_1_0_0,
+			Schema: SHUTDOWN_1_0,
 			Data:   data,
 		},
 	}
@@ -107,7 +107,7 @@ func Metry(c *config.Config, m *Meta) {
 		startupPayload := event.SelfDescribingEnvelope{
 			Contexts: nil,
 			Event: event.SelfDescribingPayload{
-				Schema: STARTUP_1_0_0,
+				Schema: STARTUP_1_0,
 				Data:   data,
 			},
 		}

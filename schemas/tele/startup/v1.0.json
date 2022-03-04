@@ -1,0 +1,23 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://schemas.silverton.io/tele/startup/v1.0.json",
+    "title": "tele/startup/v1.0.json",
+    "type": "object",
+    "properties": {
+        "config": {
+            "type": "object",
+            "description": "Configuration at time of startup"
+        },
+        "meta": {
+            "type": "object",
+            "description": "Startup metadata"
+        },
+        "time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "TS of the beat"
+        }
+    },
+    "additionalProperties": false,
+    "required": ["meta", "time", "config"]
+}
