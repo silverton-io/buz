@@ -106,10 +106,10 @@ func (a *App) initializeStatsRoutes() {
 	if a.config.App.Stats.Enabled {
 		log.Info().Msg("intializing stats route")
 		var statsPath string
-		if a.config.App.Stats.Endpoint == "" {
+		if a.config.App.Stats.Path == "" {
 			statsPath = stats.STATS_PATH
 		} else {
-			statsPath = a.config.App.Stats.Endpoint
+			statsPath = a.config.App.Stats.Path
 		}
 		a.engine.GET(statsPath, stats.StatsHandler(a.meta))
 	}
