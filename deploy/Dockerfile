@@ -6,6 +6,7 @@ COPY . /app/
 
 RUN go mod download
 RUN GCO_ENABLED=0 go build -ldflags="-X main.VERSION=$(cat .VERSION)" -o honeypot ./cmd/*.go
+RUN apk add ca-certificates && update-ca-certificates
 
 FROM alpine AS pack
 
@@ -15,8 +16,7 @@ LABEL org.opencontainers.image.description "A lightweight, Snowplow-compatible s
 WORKDIR /app
 COPY --from=build /app/.VERSION .
 COPY --from=build /app/honeypot .
-
-RUN apk add ca-certificates && update-ca-certificates
+COPY --from=build /etc/ssl/certs /etc/ssl/certs
 
 EXPOSE 8080
 
