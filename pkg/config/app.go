@@ -8,4 +8,5 @@ type App struct {
 	TrackerDomain string `json:"trackerDomain"`
 	Stats         `json:"stats"`
 	Timeout       `json:"timeout"`
+	RateLimiter   `json:"rateLimiter"`
 }

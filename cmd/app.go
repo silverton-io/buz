@@ -97,6 +97,12 @@ func (a *App) initializeMiddleware() {
 		log.Info().Msg("initializing request timeout middleware")
 		a.engine.Use(middleware.Timeout(a.config.App.Timeout))
 	}
+	if a.config.App.RateLimiter.Enabled {
+		log.Info().Msg("initializing rate limiter middleware")
+		limiter := middleware.BuildRateLimiter(a.config.App.RateLimiter)
+		limiterMiddleware := middleware.BuildRateLimiterMiddleware(limiter)
+		a.engine.Use(limiterMiddleware)
+	}
 	a.engine.Use(middleware.Yeet())
 	a.engine.Use(middleware.CORS(a.config.Cors))
 	a.engine.Use(middleware.JsonAccessLogger())

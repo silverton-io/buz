@@ -11,7 +11,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/response"
 )
 
-func timeoutResponse(c *gin.Context) {
+func timeoutHandler(c *gin.Context) {
 	log.Trace().Stack().Msg("request timed out")
 	c.JSON(http.StatusRequestTimeout, response.Timeout)
 }
@@ -23,6 +23,6 @@ func Timeout(conf config.Timeout) gin.HandlerFunc {
 		timeout.WithHandler(func(c *gin.Context) {
 			c.Next()
 		}),
-		timeout.WithResponse(timeoutResponse),
+		timeout.WithResponse(timeoutHandler),
 	)
 }

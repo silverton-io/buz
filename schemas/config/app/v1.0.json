@@ -14,19 +14,23 @@
             "properties": {
                 "env": {
                     "type": "string",
+                    "default": "dev",
                     "description": "Collector environment"
                 },
                 "mode": {
                     "type": "string",
+                    "default": "debug",
                     "description": "Collector mode",
                     "enum": ["release", "debug"]
                 },
                 "port": {
                     "type": "integer",
+                    "default": "8081",
                     "description": "Collector port"
                 },
                 "trackerDomain": {
                     "type": "string",
+                    "default": "test.silverton.io",
                     "description": "The collector domain"
                 },
                 "stats": {
@@ -35,10 +39,12 @@
                     "properties": {
                         "enabled": {
                             "type": "boolean",
+                            "default": "true",
                             "description": "Switch to enable or disable stats endpoints"
                         },
                         "path": {
                             "type": "string",
+                            "default": "/stats",
                             "description": "The path by which to expose collector statistics"
                         }
                     },
@@ -51,19 +57,45 @@
                     "properties": {
                         "enabled": {
                             "type": "boolean",
+                            "default": "false",
                             "description": "Whether or not to time out all requests after a specified period of time"   
                         },
                         "ms": {
                             "type": "integer",
+                            "default": "2000",
                             "description": "Time out request and return a 4xx status code if this number of milliseconds is exceeded"
                         }
                     },
                     "additionalProperties": false,
                     "required": ["enabled", "ms"]
+                },
+                "rateLimiter": {
+                    "type": "object",
+                    "description": "Rate limiter configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "false",
+                            "description": "Whether or not to enable the rate limiter"
+                        },
+                        "period": {
+                            "type": "string",
+                            "default": "H",
+                            "description": "The period by which to limit requests",
+                            "enum": ["MS", "S", "M", "H", "D"]
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "default": "10",
+                            "description": "The number of requests allowed within the specified period"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["enabled", "period", "limit"]
                 }
             },
             "additionalProperties": false,
-            "required": ["env", "mode", "port", "trackerDomain", "stats"]
+            "required": ["env", "mode", "port", "trackerDomain", "stats", "timeout", "rateLimiter"]
         },
         "snowplow": {
             "type": "object",
@@ -71,26 +103,32 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
+                    "default": "true",
                     "description": "Whether or not to activate snowplow tracking"
                 },
                 "standardRoutesEnabled": {
                     "type": "boolean",
+                    "default": "true",
                     "description": "Whether to not to activate the standard snowplow routes"
                 },
                 "openRedirectsEnabled": {
                     "type": "boolean",
+                    "default": "true",
                     "description": "Whether or not to activate redirect-based tracking"
                 },
                 "getPath": {
                     "type": "string",
+                    "default": "/plw/g",
                     "description": "The path by which to process get-based events"
                 },
                 "postPath": {
                     "type": "string",
+                    "default": "/plw/p",
                     "description": "The path by which to process post-based events"
                 },
                 "redirectPath": {
                     "type": "string",
+                    "default": "/plw/r",
                     "description": "The path by which to process redirect-based events"
                 },
                 "anonymize": {
@@ -99,10 +137,12 @@
                     "properties": {
                         "ip": {
                             "type": "boolean",
+                            "default": "false",
                             "description": "Whether or not to hash the ip address of incoming snowplow events"
                         },
                         "userId": {
                             "type": "boolean",
+                            "default": "false",
                             "description": "Whether or not to hash the userId of incoming snowplow events"
                         }
                     }
@@ -117,14 +157,17 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
+                    "default": "true",
                     "description": "Whether or not to activate cloudevents tracking"
                 },
                 "postPath": {
                     "type": "string",
+                    "default": "/ce/p",
                     "description": "The path by which to process incoming single-message cloudevents payloads"
                 },
                 "batchPostPath": {
                     "type": "string",
+                    "default": "/ce/bp",
                     "description": "The path by which to process incoming batch cloudevents payloads"
                 }
             },
@@ -137,14 +180,17 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
+                    "default": "true",
                     "description": "Whether or not to activate generic self-describing event tracking"
                 },
                 "postPath": {
                     "type": "string",
+                    "default": "/gen/p",
                     "description": "The path by which to process incoming single-message self describing payloads"
                 },
                 "batchPostPath": {
                     "type": "string",
+                    "default": "/gen/bp",
                     "description": "The path by which to process incoming batch self describing payloads"
                 },
                 "contexts": {
@@ -153,14 +199,17 @@
                     "properties": {
                         "rootKey": {
                             "type": "string",
+                            "default": "contexts",
                             "description": "The root json key that defines event contexts"
                         },
                         "schemaKey": {
                             "type": "string",
+                            "default": "schema",
                             "description": "The key that defines the context schema. (root.CONTEXTKEY.SCHEMAKEY)"
                         },
                         "dataKey": {
                             "type": "string",
+                            "default": "data",
                             "description": "The key that defines the context data. (root.CONTEXTKEY.DATAKEY)"
                         }
                     },
@@ -173,21 +222,26 @@
                     "properties": {
                         "rootKey": {
                             "type": "string",
+                            "default": "data",
                             "description": "The root json key that defines event data. (root.EVENTKEY)"
                         },
                         "schemaKey": {
                             "type": "string",
+                            "default": "schema",
                             "description": "The key that defines the event schema. (root.EVENTKEY.SCHEMAKEY)"
                         },
                         "dataKey": {
                             "type": "string",
+                            "default": "data",
                             "description": "The key that defines the event data. (root.EVENTKEY.DATAKEY)"
                         }
                     },
                     "additionalProperties": false,
                     "required": ["rootKey", "schemaKey", "dataKey"]
                 }
-            }
+            },
+            "additionalProperties": false,
+            "required": ["enabled", "postPath", "batchPostPath", "contexts", "event"]
         },
         "cookie": {
             "type": "object",
@@ -195,30 +249,37 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
+                    "default": "true",
                     "description": "Whether or not to activate the server-side id cookie"
                 },
                 "name": {
                     "type": "string",
+                    "default": "sp-nuid",
                     "description": "The name of the id cookie"
                 },
                 "secure": {
                     "type": "boolean",
+                    "default": "true",
                     "description": "Secure cookie?"
                 },
                 "ttlDays": {
                     "type": "integer",
+                    "default": "365",
                     "description": "The number of days to persist the id cookie"
                 },
                 "domain": {
                     "type": "string",
+                    "default": "silverton.io",
                     "description": "The id cookie domain"
                 },
                 "path": {
                     "type": "string",
+                    "default": "/",
                     "description": "The id cookie path"
                 },
                 "sameSite": {
                     "type": "string",
+                    "default": "Lax",
                     "description": "The sameSite attribute of the id cookie",
                     "enum": ["Lax", "Strict", "None"]
                 }
@@ -232,6 +293,7 @@
             "properties": {
                 "allowOrigin": {
                     "type": "array",
+                    "default": ["*"],
                     "description": "A list of origins to allow CORS",
                     "items": {
                         "type": "string"
@@ -239,10 +301,12 @@
                 },
                 "allowCredentials": {
                     "type": "boolean",
+                    "default": "true",
                     "description": "CORS allow credentials"
                 },
                 "allowMethods": {
                     "type": "array",
+                    "default": ["GET", "POST", "OPTIONS"],
                     "description": "HTTP methods to allow CORS",
                     "items": {
                         "type": "string",
@@ -251,6 +315,7 @@
                 },
                 "maxAge": {
                     "type": "integer",
+                    "default": "86400",
                     "description": "Preflight request cache duration"
                 }
             },
@@ -267,15 +332,18 @@
                     "properties": {
                         "type": {
                             "type": "string",
+                            "default": "s3",
                             "description": "The type of schema cache backend",
                             "enum": ["gcs", "s3", "fs", "http", "https"]
                         },
                         "path": {
                             "type": "string",
+                            "default": "/",
                             "description": "The root path of the schema cache backend"
                         },
                         "bucket": {
                             "type": "string",
+                            "default": "honeypot-schemas",
                             "description": "The schema cache bucket, if applicable"
                         },
                         "host": {
@@ -288,10 +356,12 @@
                 },
                 "ttlSeconds": {
                     "type": "integer",
+                    "default": "300",
                     "description": "The number of seconds to cache schemas for"
                 },
                 "maxSizeBytes": {
                     "type": "integer",
+                    "default": "104857600",
                     "description": "The max schema cache size, in bytes"
                 },
                 "purge": {
@@ -300,16 +370,20 @@
                     "properties": {
                         "enabled": {
                             "type": "boolean",
+                            "default": "false",
                             "description": "Whether or not to enabled schema cache purge endpoints"
                         },
                         "path": {
                             "type": "string",
+                            "default": "/c/purge",
                             "description": "The path by which to purge the schema cache"
                         }
                     },
                     "required": ["enabled", "path"]
                 }
-            }
+            },
+            "additionalProperties": false,
+            "required": ["schemaCacheBackend", "ttlSeconds", "maxSizeBytes", "purge"]
         },
         "sink": {
             "type": "object",
@@ -317,32 +391,72 @@
             "properties": {
                 "type": {
                     "type": "string",
+                    "default": "pubsub",
                     "description": "The sink configuration",
                     "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose"]
                 },
                 "validEventTopic": {
                     "type": "string",
+                    "default": "honeypot-valid-topic",
                     "description": "The name of the valid event topic (or 'stream', if kinesis)"
                 },
                 "invalidEventTopic": {
                     "type": "string",
+                    "default": "honeypot-invalid-topic",
                     "description": "The name of the invalid event topic (or 'stream', if kinesis)"
                 },
                 "produceTimeout": {
                     "type": "integer",
+                    "default": "5",
                     "description": "The sink producer timeout in seconds"
                 },
                 "project": {
                     "type": "string",
+                    "default": "honeypot-gcp-project",
                     "description": "The name of the GCP project, if sink type is pubsub"
                 },
                 "brokers": {
                     "type": "array",
+                    "default": ["BROKER1:9092", "BROKER2:9092", "BROKER3:9092"],
                     "description": "A list of brokers (HOST:PORT), if sink type is kafka"
                 }
             },
             "additionalProperties": false,
-            "required": ["type", "validEventTopic", "invalidEventTopic", "produceTimeout"]
+            "required": ["type", "validEventTopic", "invalidEventTopic", "produceTimeout"],
+            "anyOf": [
+                {
+                    "properties": {
+                        "type": {
+                            "const": "kafka"
+                        }
+                    },
+                    "required": ["brokers", "validEventTopic", "invalidEventTopic"]
+                },
+                {
+                    "properties": {
+                        "type": {
+                            "const": "pubsub"
+                        }
+                    },
+                    "required": ["project", "validEventTopic", "invalidEventTopic"]
+                },
+                {
+                    "properties": {
+                        "type": {
+                            "const": "kinesis"
+                        }
+                    },
+                    "required": ["validEventTopic", "invalidEventTopic"]
+                },
+                {
+                    "properties": {
+                        "type": {
+                            "const": "kinesis-firehose"
+                        }
+                    },
+                    "required": ["validEventTopic", "invalidEventTopic"]
+                }
+            ]
         },
         "tele": {
             "type": "object",
@@ -355,5 +469,6 @@
             }
         }
     },
-    "additionalProperties": false
+    "additionalProperties": false,
+    "required": [ "version", "app", "snowplow", "generic", "cloudevents", "cookie", "cors", "schemaCache", "sink"]
 }
