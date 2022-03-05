@@ -19,3 +19,7 @@ var BadRequest = Response{
 var Timeout = Response{
 	Message: "request timed out",
 }
+
+var RateLimitExceeded = Response{
+	Message: "rate limit exceeded",
+}
