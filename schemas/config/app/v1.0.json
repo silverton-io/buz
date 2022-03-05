@@ -82,7 +82,7 @@
                             "type": "string",
                             "default": "H",
                             "description": "The period by which to limit requests",
-                            "enum": ["S", "M", "H", "D"]
+                            "enum": ["MS", "S", "M", "H", "D"]
                         },
                         "limit": {
                             "type": "integer",
