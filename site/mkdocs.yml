@@ -45,6 +45,8 @@ nav:
     - middleware/advancing-cookie.md
     - middleware/cors.md
     - middleware/json-logger.md
+    - middleware/rate-limiter.md
+    - middleware/timeout.md
   - Configuration:
     - configuration/snowplow.md
     - configuration/cloudevents.md
