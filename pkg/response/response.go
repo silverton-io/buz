@@ -15,3 +15,7 @@ var InvalidContentType = Response{
 var BadRequest = Response{
 	Message: "bad request",
 }
+
+var Timeout = Response{
+	Message: "request timed out",
+}

@@ -3,3 +3,4 @@ config.yml
 scratch/*
 honeypot
 site/site/*
+static/*
