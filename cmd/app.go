@@ -42,7 +42,7 @@ func (a *App) configure() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	// Load app config from file
-	conf := os.Getenv("HONEYPOT_CONFIG_PATH")
+	conf := os.Getenv(env.HONEYPOT_CONFIG_PATH)
 	if conf == "" {
 		conf = "config.yml"
 	}
