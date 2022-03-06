@@ -1,4 +1,4 @@
-.PHONY: help build-docker
+.PHONY: help build-docker buildx-deploy
 S=silverton
 REGISTRY:=us-east1-docker.pkg.dev/silverton-io/docker
 VERSION:=$(shell cat .VERSION)
