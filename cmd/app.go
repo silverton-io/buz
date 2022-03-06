@@ -42,7 +42,12 @@ func (a *App) configure() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	// Load app config from file
-	viper.SetConfigFile("config.yml")
+	conf := os.Getenv("HONEYPOT_CONFIG_PATH")
+	if conf == "" {
+		conf = "config.yml"
+	}
+	log.Info().Msg("loading config from " + conf)
+	viper.SetConfigFile(conf)
 	err := viper.ReadInConfig()
 
 	if err != nil {
