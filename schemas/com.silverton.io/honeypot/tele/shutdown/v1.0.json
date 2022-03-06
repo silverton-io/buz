@@ -1,17 +1,17 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "http://schemas.silverton.io/tele/beat/v1.0.json",
-    "title": "tele/beat/v1.0.json",
+    "$id": "http://schemas.silverton.io/com.silverton.io/honeypot/tele/shutdown/v1.0.json",
+    "title": "com.silverton.io/honeypot/tele/shutdown/v1.0.json",
     "type": "object",
     "properties": {
         "meta": {
             "type": "object",
-            "description": "Metadata about a beat"
+            "description": "Metadata about the instance being shut down"
         },
         "time": {
             "type": "string",
             "format": "date-time",
-            "description": "TS of the beat"
+            "description": "TS of the shutdown"
         },
         "elapsedSeconds": {
             "type": "number",

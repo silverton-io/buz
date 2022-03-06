@@ -113,7 +113,7 @@ func Metry(c *config.Config, m *Meta) {
 		}
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
 		request.SendJson(*endpoint, startupPayload)
-		ticker := time.NewTicker(5 * time.Second)
+		ticker := time.NewTicker(time.Duration(c.Tele.HeartbeatMs) * time.Millisecond)
 		go heartbeat(*ticker, m)
 	}
 }

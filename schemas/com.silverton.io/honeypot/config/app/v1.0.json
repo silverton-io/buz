@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "http://schemas.silverton.io/config/app/v1.0.json",
-    "title": "config/app/v1.0.json",
+    "$id": "http://schemas.silverton.io/com.silverton.io/honeypot/config/app/v1.0.json",
+    "title": "com.silverton.io/honeypot/config/app/v1.0.json",
     "type": "object",
     "properties": {
         "version": {
@@ -465,11 +465,20 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "description": "Whether or not to allow telemetry"
-                }
-            }
+                    "description": "Whether or not to allow telemetry",
+                    "default": "true"
+                },
+                "heartbeatMs": {
+                    "type": "integer",
+                    "description": "The number of ms to send a heartbeat",
+                    "default": 30000
+                },
+                "host": {}
+            },
+            "additionalProperties": false,
+            "required": ["enabled", "heartbeatMs"]
         }
     },
     "additionalProperties": false,
-    "required": [ "version", "app", "snowplow", "generic", "cloudevents", "cookie", "cors", "schemaCache", "sink"]
+    "required": [ "version", "app", "snowplow", "generic", "cloudevents", "cookie", "cors", "schemaCache", "sink", "tele"]
 }
