@@ -465,11 +465,20 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "description": "Whether or not to allow telemetry"
-                }
-            }
+                    "description": "Whether or not to allow telemetry",
+                    "default": "true"
+                },
+                "heartbeatMs": {
+                    "type": "integer",
+                    "description": "The number of ms to send a heartbeat",
+                    "default": 30000
+                },
+                "host": {}
+            },
+            "additionalProperties": false,
+            "required": ["enabled", "heartbeatMs"]
         }
     },
     "additionalProperties": false,
-    "required": [ "version", "app", "snowplow", "generic", "cloudevents", "cookie", "cors", "schemaCache", "sink"]
+    "required": [ "version", "app", "snowplow", "generic", "cloudevents", "cookie", "cors", "schemaCache", "sink", "tele"]
 }
