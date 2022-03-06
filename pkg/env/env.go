@@ -1,5 +1,5 @@
 package env
 
-const DEV_ENVIRONMENT = "dev"
-const STG_ENVIRONMENT = "stg"
-const PROD_ENVIRONMENT = "prod"
+const DEV_ENVIRONMENT = "development"
+const STG_ENVIRONMENT = "staging"
+const PROD_ENVIRONMENT = "production"
