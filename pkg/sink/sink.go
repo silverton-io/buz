@@ -48,7 +48,7 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
-		log.Fatal().Err(e).Msg("unsupported sink")
+		log.Fatal().Stack().Err(e).Msg("unsupported sink")
 		return nil, e
 	}
 }

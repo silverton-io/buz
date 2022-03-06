@@ -51,7 +51,7 @@ func (a *App) configure() {
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		log.Fatal().Err(err).Msg("could not read config")
+		log.Fatal().Stack().Err(err).Msg("could not read config")
 	}
 	a.config = &config.Config{}
 	viper.Unmarshal(a.config)
@@ -221,7 +221,7 @@ func (a *App) Run() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatal().Msg("server forced to shutdown")
+		log.Fatal().Stack().Err(err).Msg("server forced to shutdown")
 	}
 	tele.Sis(a.meta)
 }

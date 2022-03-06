@@ -45,7 +45,7 @@ func BuildSchemaCacheBackend(conf config.SchemaCacheBackend) (backend SchemaCach
 		return &cacheBackend, nil
 	default:
 		e := errors.New("unsupported schema cache backend: " + conf.Type)
-		log.Fatal().Err(e).Msg("unsupported backend")
+		log.Fatal().Stack().Err(e).Msg("unsupported backend")
 		return nil, e
 	}
 }
