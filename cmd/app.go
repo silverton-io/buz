@@ -51,7 +51,7 @@ func (a *App) configure() {
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		log.Fatal().Msg("could not read config")
+		log.Fatal().Err(err).Msg("could not read config")
 	}
 	a.config = &config.Config{}
 	viper.Unmarshal(a.config)
