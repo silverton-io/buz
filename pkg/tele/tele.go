@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	DEFAULT_ENDPOINT string = "http://some.where.else:8081/gen/p"
+	DEFAULT_ENDPOINT string = "https://trck.slvrtnio.com/gen/p"
 	STARTUP_1_0      string = "tele/startup/v1.0.json"
 	HEARTBEAT_1_0    string = "tele/beat/v1.0.json"
 	SHUTDOWN_1_0     string = "tele/shutdown/v1.0.json"
