@@ -3,7 +3,7 @@ name: Push reftag
 on:
   push:
     branches:
-      - auto-reftag-two
+      - main
 
 jobs:
   reftag:
