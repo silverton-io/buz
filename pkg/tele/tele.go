@@ -14,9 +14,9 @@ import (
 
 const (
 	DEFAULT_ENDPOINT string = "https://trck.slvrtnio.com/gen/p"
-	STARTUP_1_0      string = "tele/startup/v1.0.json"
-	HEARTBEAT_1_0    string = "tele/beat/v1.0.json"
-	SHUTDOWN_1_0     string = "tele/shutdown/v1.0.json"
+	STARTUP_1_0      string = "com.silverton.io/honeypot/tele/startup/v1.0.json"
+	HEARTBEAT_1_0    string = "com.silverton.io/honeypot/tele/beat/v1.0.json"
+	SHUTDOWN_1_0     string = "com.silverton.io/honeypot/tele/shutdown/v1.0.json"
 )
 
 type Meta struct {
