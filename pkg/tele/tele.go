@@ -66,13 +66,13 @@ func heartbeat(t time.Ticker, m *Meta) {
 		data := util.StructToMap(b)
 		heartbeatPayload := event.SelfDescribingEnvelope{
 			Contexts: nil,
-			Event: event.SelfDescribingPayload{
+			Payload: event.SelfDescribingPayload{
 				Schema: HEARTBEAT_1_0,
 				Data:   data,
 			},
 		}
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-		request.SendJson(*endpoint, heartbeatPayload)
+		request.PostPayload(*endpoint, heartbeatPayload)
 	}
 }
 
@@ -86,13 +86,13 @@ func Sis(m *Meta) {
 	data := util.StructToMap(shutdown)
 	shutdownPayload := event.SelfDescribingEnvelope{
 		Contexts: nil,
-		Event: event.SelfDescribingPayload{
+		Payload: event.SelfDescribingPayload{
 			Schema: SHUTDOWN_1_0,
 			Data:   data,
 		},
 	}
 	endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-	request.SendJson(*endpoint, shutdownPayload)
+	request.PostPayload(*endpoint, shutdownPayload)
 }
 
 func Metry(c *config.Config, m *Meta) {
@@ -106,13 +106,13 @@ func Metry(c *config.Config, m *Meta) {
 		data := util.StructToMap(startup)
 		startupPayload := event.SelfDescribingEnvelope{
 			Contexts: nil,
-			Event: event.SelfDescribingPayload{
+			Payload: event.SelfDescribingPayload{
 				Schema: STARTUP_1_0,
 				Data:   data,
 			},
 		}
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-		request.SendJson(*endpoint, startupPayload)
+		request.PostPayload(*endpoint, startupPayload)
 		ticker := time.NewTicker(time.Duration(c.Tele.HeartbeatMs) * time.Millisecond)
 		go heartbeat(*ticker, m)
 	}
