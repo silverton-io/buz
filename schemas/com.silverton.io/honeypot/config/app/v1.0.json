@@ -372,7 +372,7 @@
                         "enabled": {
                             "type": "boolean",
                             "default": "false",
-                            "description": "Whether or not to enabled schema cache purge endpoints"
+                            "description": "Whether or not to enable schema cache purge endpoints"
                         },
                         "path": {
                             "type": "string",
@@ -380,11 +380,25 @@
                             "description": "The path by which to purge the schema cache"
                         }
                     },
+                    "additionalProperties": false,
                     "required": ["enabled", "path"]
+                },
+                "schemaEndpoints": {
+                    "type": "object",
+                    "description": "Schema endpoint configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to enable schema cache endpoints"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["enabled"]
                 }
             },
             "additionalProperties": false,
-            "required": ["schemaCacheBackend", "ttlSeconds", "maxSizeBytes", "purge"]
+            "required": ["schemaCacheBackend", "ttlSeconds", "maxSizeBytes", "purge", "schemaEndpoints"]
         },
         "sink": {
             "type": "object",
