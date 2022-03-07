@@ -13,9 +13,14 @@ type SchemaCacheBackend struct {
 	Path   string `json:"path"`
 }
 
+type SchemaEndpoints struct {
+	Enabled bool `json:"enabled"`
+}
+
 type SchemaCache struct {
 	SchemaCacheBackend `json:"schemaCacheBackend"`
 	TtlSeconds         int `json:"ttlSeconds"`
 	MaxSizeBytes       int `json:"maxSizeBytes"`
 	Purge              `json:"purge"`
+	SchemaEndpoints    `json:"schemaEndpoints"`
 }

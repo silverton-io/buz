@@ -16,6 +16,10 @@ var BadRequest = Response{
 	Message: "bad request",
 }
 
+var SchemaNotCached = Response{
+	Message: "schema not cached",
+}
+
 var Timeout = Response{
 	Message: "request timed out",
 }
