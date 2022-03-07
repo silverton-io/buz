@@ -57,7 +57,7 @@ func (a *App) configure() {
 	viper.Unmarshal(a.config)
 	gin.SetMode(a.config.App.Mode)
 	if gin.IsDebugging() {
-		zerolog.SetGlobalLevel(zerolog.TraceLevel)
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
 	a.config.App.Version = VERSION
 	instanceId := uuid.New()
