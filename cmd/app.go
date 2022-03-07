@@ -132,13 +132,15 @@ func (a *App) initializeStatsRoutes() {
 }
 
 func (a *App) initializeSchemaCacheRoutes() {
-	log.Info().Msg("initializing schema cache routes")
 	if a.config.SchemaCache.Purge.Enabled {
 		log.Info().Msg("initializing schema cache purge route")
 		a.engine.GET(a.config.SchemaCache.Purge.Path, cache.CachePurgeHandler(a.schemaCache))
 	}
-	a.engine.GET("/schemas", cache.CacheIndexHandler(a.schemaCache))
-	a.engine.GET("/schemas/*schema", cache.CacheGetHandler(a.schemaCache))
+	if a.config.SchemaCache.SchemaEndpoints.Enabled {
+		log.Info().Msg("initializing schema cache index and getter routes")
+		a.engine.GET(cache.SCHEMA_CACHE_ROOT_ROUTE, cache.CacheIndexHandler(a.schemaCache))
+		a.engine.GET(cache.SCHEMA_CACHE_ROOT_ROUTE+"/*"+cache.SCHEMA_ROUTE_PARAM, cache.CacheGetHandler(a.schemaCache))
+	}
 }
 
 func (a *App) initializeSnowplowRoutes() {

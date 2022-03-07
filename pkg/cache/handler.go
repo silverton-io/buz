@@ -9,6 +9,11 @@ import (
 	"github.com/silverton-io/honeypot/pkg/response"
 )
 
+const (
+	SCHEMA_CACHE_ROOT_ROUTE = "/schemas"
+	SCHEMA_ROUTE_PARAM      = "schema"
+)
+
 type CacheIndex struct {
 	Count   int      `json:"count"`
 	Schemas []string `json:"schemas"`
@@ -45,7 +50,7 @@ func CacheIndexHandler(s *SchemaCache) gin.HandlerFunc {
 
 func CacheGetHandler(s *SchemaCache) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		schemaName := c.Param("schema")[1:]
+		schemaName := c.Param(SCHEMA_ROUTE_PARAM)[1:]
 		cacheKey := []byte(schemaName)
 		cachedSchema, _ := s.cache.Get(cacheKey)
 		if cachedSchema != nil {
