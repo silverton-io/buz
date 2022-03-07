@@ -217,24 +217,24 @@
                     "additionalProperties": false,
                     "required": ["rootKey", "schemaKey", "dataKey"]
                 },
-                "event": {
+                "payload": {
                     "type": "object",
-                    "description": "Self describing events event data config",
+                    "description": "Self describing events payload data config",
                     "properties": {
                         "rootKey": {
                             "type": "string",
                             "default": "data",
-                            "description": "The root json key that defines event data. (root.EVENTKEY)"
+                            "description": "The root json key that defines payload data. (root.PAYLOADKEY)"
                         },
                         "schemaKey": {
                             "type": "string",
                             "default": "schema",
-                            "description": "The key that defines the event schema. (root.EVENTKEY.SCHEMAKEY)"
+                            "description": "The key that defines the payload schema. (root.PAYLOADKEY.SCHEMAKEY)"
                         },
                         "dataKey": {
                             "type": "string",
                             "default": "data",
-                            "description": "The key that defines the event data. (root.EVENTKEY.DATAKEY)"
+                            "description": "The key that defines the payload data. (root.PAYLOADKEY.DATAKEY)"
                         }
                     },
                     "additionalProperties": false,
@@ -242,7 +242,7 @@
                 }
             },
             "additionalProperties": false,
-            "required": ["enabled", "postPath", "batchPostPath", "contexts", "event"]
+            "required": ["enabled", "postPath", "batchPostPath", "contexts", "payload"]
         },
         "cookie": {
             "type": "object",

@@ -2,7 +2,7 @@ package event
 
 type SelfDescribingEnvelope struct {
 	Contexts []SelfDescribingContext `json:"contexts"`
-	Event    SelfDescribingPayload   `json:"event"`
+	Payload  SelfDescribingPayload   `json:"payload"`
 }
 
 type SelfDescribingPayload struct {

@@ -6,7 +6,6 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/util"
 )
 
 type FilesystemCacheBackend struct {
@@ -20,7 +19,6 @@ func (b *FilesystemCacheBackend) Initialize(conf config.SchemaCacheBackend) {
 }
 
 func (b *FilesystemCacheBackend) GetRemote(schema string) (contents []byte, err error) {
-	util.PrettyPrint(b.path)
 	schemaLocation := filepath.Join(b.path, schema)
 	content, err := ioutil.ReadFile(schemaLocation)
 	if err != nil {

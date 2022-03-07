@@ -14,7 +14,7 @@ const (
 	JSON_CONTENT_TYPE string = "application/json"
 )
 
-func SendJson(url url.URL, payload interface{}) {
+func PostPayload(url url.URL, payload interface{}) {
 	data, _ := json.Marshal(payload)
 	buff := bytes.NewBuffer(data)
 	_, err := http.Post(url.String(), JSON_CONTENT_TYPE, buff)
