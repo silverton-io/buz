@@ -3,13 +3,13 @@ name: Push reftag
 on:
   push:
     branches:
-      - main
+      - auto-reftag-two
 
 jobs:
   reftag:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
     steps:
       - name: Checkout repository
