@@ -1,5 +1,5 @@
 package config
 
 type Yeet struct {
-	Enabled bool `json:"yeet"`
+	Enabled bool `json:"enabled"`
 }
