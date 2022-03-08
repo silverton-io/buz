@@ -63,6 +63,7 @@ require (
 	github.com/pelletier/go-toml v1.9.4 // indirect
 	github.com/pierrec/lz4/v4 v4.1.14 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/santhosh-tekuri/jsonschema v1.2.4 // indirect
 	github.com/spf13/afero v1.8.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

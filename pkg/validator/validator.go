@@ -1,9 +1,11 @@
 package validator
 
 import (
+	"bytes"
 	"time"
 
 	"github.com/rs/zerolog/log"
+	"github.com/santhosh-tekuri/jsonschema"
 	"github.com/xeipuuv/gojsonschema"
 )
 
@@ -22,6 +24,12 @@ type ValidationError struct {
 
 func ValidatePayload(payload map[string]interface{}, schema []byte) (isValid bool, validationError ValidationError) {
 	startTime := time.Now()
+
+	compiler := jsonschema.NewCompiler()
+	err := compiler.AddResource("schema.json", bytes.NewBuffer(schema))
+	s, _ := compiler.Compile("schema.json")
+	validationErr := s.Validate(payload)
+
 	docLoader := gojsonschema.NewGoLoader(payload)
 	schemaLoader := gojsonschema.NewBytesLoader(schema)
 	result, err := gojsonschema.Validate(schemaLoader, docLoader)
