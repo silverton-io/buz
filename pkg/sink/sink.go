@@ -16,6 +16,7 @@ const (
 	KAFKA            string = "kafka"
 	KINESIS          string = "kinesis"
 	KINESIS_FIREHOSE string = "kinesis-firehose"
+	STDOUT           string = "stdout"
 )
 
 type Sink interface {
@@ -45,6 +46,11 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		sink := KinesisFirehoseSink{}
 		sink.Initialize(conf)
 		log.Debug().Msg("kinesis firehose sink initialized")
+		return &sink, nil
+	case STDOUT:
+		sink := StdoutSink{}
+		sink.Initialize(conf)
+		log.Debug().Msg("stdout sink initialized")
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)

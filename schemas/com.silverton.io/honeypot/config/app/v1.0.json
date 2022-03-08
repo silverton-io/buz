@@ -409,7 +409,7 @@
                     "type": "string",
                     "default": "pubsub",
                     "description": "The sink configuration",
-                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose"]
+                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout"]
                 },
                 "validEventTopic": {
                     "type": "string",
@@ -438,8 +438,16 @@
                 }
             },
             "additionalProperties": false,
-            "required": ["type", "validEventTopic", "invalidEventTopic", "produceTimeout"],
+            "required": ["type", "produceTimeout"],
             "anyOf": [
+                {
+                    "properties": {
+                        "type": {
+                            "const": "stdout"
+                        }
+                    },
+                    "required": []
+                },
                 {
                     "properties": {
                         "type": {

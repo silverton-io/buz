@@ -71,11 +71,7 @@ schemaCache:
     path: /c/purge
 
 sink:
-  type: kafka
-  brokers:
-    - BROKER_1:9092
-    - BROKER_2:9092
-    - BROKER_3:9092
+  type: stdout
   validEventTopic: VALID_EVENT_TOPIC_NAME
   invalidEventTopic: INVALID_EVENT_TOPIC_NAME
   produceTimeout: 3
