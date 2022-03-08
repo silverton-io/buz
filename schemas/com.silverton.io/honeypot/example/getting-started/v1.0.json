@@ -1,0 +1,23 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://schemas.silverton.io/com.silverton.io/honeypot/example/getting-started/v1.0.json",
+    "title": "com.silverton.io/honeypot/example/getting-started/v1.0.json",
+    "description": "A getting started event used to bootstrap and demonstrate validation",
+    "type": "object",
+    "properties": {
+        "userId": {
+            "type": "integer",
+            "description": "The id of the user"
+        },
+        "name": {
+            "type": "string",
+            "description": "The name of the user"
+        },
+        "action": {
+            "type": "string",
+            "description": "The associated user action"
+        }
+    },
+    "additionalProperties": false,
+    "required": ["userId", "name", "action"]
+}
