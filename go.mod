@@ -8,15 +8,21 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.14.0
 	github.com/aws/aws-sdk-go-v2/config v1.13.1
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.9.1
+	github.com/aws/aws-sdk-go-v2/service/firehose v1.13.0
+	github.com/aws/aws-sdk-go-v2/service/kinesis v1.14.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.24.1
+	github.com/cloudevents/sdk-go/v2 v2.6.0
 	github.com/coocood/freecache v1.2.0
+	github.com/gin-contrib/timeout v0.0.3
 	github.com/gin-gonic/gin v1.7.7
 	github.com/google/uuid v1.3.0
+	github.com/qri-io/jsonschema v0.2.1
 	github.com/rs/zerolog v1.26.1
 	github.com/spf13/viper v1.10.1
 	github.com/tidwall/gjson v1.13.0
 	github.com/twmb/franz-go v1.4.0
-	github.com/xeipuuv/gojsonschema v1.2.0
+	github.com/twmb/franz-go/pkg/kadm v0.0.0-20220301200403-ffaee5b878c6
+	github.com/ulule/limiter/v3 v3.9.0
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f
 )
 
@@ -30,19 +36,15 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.5 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.3.0 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/firehose v1.13.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.7.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.7.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.11.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/kinesis v1.14.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.9.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.14.0 // indirect
 	github.com/aws/smithy-go v1.11.0 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
-	github.com/cloudevents/sdk-go/v2 v2.6.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-contrib/timeout v0.0.3 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
@@ -63,7 +65,7 @@ require (
 	github.com/pelletier/go-toml v1.9.4 // indirect
 	github.com/pierrec/lz4/v4 v4.1.14 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/santhosh-tekuri/jsonschema v1.2.4 // indirect
+	github.com/qri-io/jsonpointer v0.1.1 // indirect
 	github.com/spf13/afero v1.8.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
@@ -71,13 +73,9 @@ require (
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
-	github.com/twmb/franz-go/pkg/kadm v0.0.0-20220301200403-ffaee5b878c6 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v0.0.0-20220301200403-ffaee5b878c6 // indirect
 	github.com/twmb/go-rbtree v1.0.0 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
-	github.com/ulule/limiter/v3 v3.9.0 // indirect
-	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
-	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/multierr v1.1.0 // indirect

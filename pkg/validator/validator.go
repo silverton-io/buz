@@ -1,17 +1,16 @@
 package validator
 
 import (
-	"bytes"
+	"context"
+	"encoding/json"
 	"time"
 
+	"github.com/qri-io/jsonschema"
 	"github.com/rs/zerolog/log"
-	"github.com/santhosh-tekuri/jsonschema"
-	"github.com/xeipuuv/gojsonschema"
 )
 
 type PayloadValidationError struct {
 	Field       string `json:"field"`
-	Context     string `json:"context"`
 	Description string `json:"description"`
 	ErrorType   string `json:"errorType"`
 }
@@ -23,16 +22,13 @@ type ValidationError struct {
 }
 
 func ValidatePayload(payload map[string]interface{}, schema []byte) (isValid bool, validationError ValidationError) {
+	ctx := context.Background()
 	startTime := time.Now()
+	s := &jsonschema.Schema{}
+	json.Unmarshal(schema, s)
+	data, _ := json.Marshal(payload)
+	validationErrs, err := s.ValidateBytes(ctx, data)
 
-	compiler := jsonschema.NewCompiler()
-	err := compiler.AddResource("schema.json", bytes.NewBuffer(schema))
-	s, _ := compiler.Compile("schema.json")
-	validationErr := s.Validate(payload)
-
-	docLoader := gojsonschema.NewGoLoader(payload)
-	schemaLoader := gojsonschema.NewBytesLoader(schema)
-	result, err := gojsonschema.Validate(schemaLoader, docLoader)
 	if err != nil {
 		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())
 		validationError := ValidationError{
@@ -42,17 +38,16 @@ func ValidatePayload(payload map[string]interface{}, schema []byte) (isValid boo
 		}
 		return false, validationError
 	}
-	if result.Valid() {
+	if len(validationErrs) == 0 {
 		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())
 		return true, ValidationError{}
 	} else {
 		var payloadValidationErrors []PayloadValidationError
-		for _, validationError := range result.Errors() {
+		for _, validationErr := range validationErrs {
 			payloadValidationError := PayloadValidationError{
-				Field:       validationError.Field(),
-				Context:     validationError.Context().String(),
-				Description: validationError.Description(),
-				ErrorType:   validationError.Type(),
+				Field:       validationErr.PropertyPath,
+				Description: validationErr.Message,
+				ErrorType:   validationErr.Error(),
 			}
 			payloadValidationErrors = append(payloadValidationErrors, payloadValidationError)
 		}
