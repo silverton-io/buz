@@ -52,7 +52,15 @@
                     },
                     "additionalProperties": false,
                     "required": ["enabled", "path"]
-                },
+                }
+            },
+            "additionalProperties": false,
+            "required": ["env", "mode", "port", "trackerDomain", "stats"]
+        },
+        "middleware": {
+            "type": "object",
+            "description": "Middleware configuration",
+            "properties": {
                 "timeout": {
                     "type": "object",
                     "description": "Request timeout configuration",
@@ -82,7 +90,7 @@
                         },
                         "period": {
                             "type": "string",
-                            "default": "H",
+                            "default": "S",
                             "description": "The period by which to limit requests",
                             "enum": ["MS", "S", "M", "H", "D"]
                         },
@@ -94,10 +102,114 @@
                     },
                     "additionalProperties": false,
                     "required": ["enabled", "period", "limit"]
+                },
+                "cookie": {
+                    "type": "object",
+                    "description": "Server-set cookie configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to activate the server-side id cookie"
+                        },
+                        "name": {
+                            "type": "string",
+                            "default": "nuid",
+                            "description": "The name of the id cookie"
+                        },
+                        "secure": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Secure cookie?"
+                        },
+                        "ttlDays": {
+                            "type": "integer",
+                            "default": "365",
+                            "description": "The number of days to persist the id cookie"
+                        },
+                        "domain": {
+                            "type": "string",
+                            "default": "silverton.io",
+                            "description": "The id cookie domain"
+                        },
+                        "path": {
+                            "type": "string",
+                            "default": "/",
+                            "description": "The id cookie path"
+                        },
+                        "sameSite": {
+                            "type": "string",
+                            "default": "Lax",
+                            "description": "The sameSite attribute of the id cookie",
+                            "enum": ["Lax", "Strict", "None"]
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["enabled", "name", "secure", "ttlDays", "domain", "path", "sameSite"]
+                },
+                "cors": {
+                    "type": "object",
+                    "description": "CORS configuration",
+                    "properties": {
+                        "allowOrigin": {
+                            "type": "array",
+                            "default": ["*"],
+                            "description": "A list of origins to allow CORS",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "allowCredentials": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "CORS allow credentials"
+                        },
+                        "allowMethods": {
+                            "type": "array",
+                            "default": ["GET", "POST", "OPTIONS"],
+                            "description": "HTTP methods to allow CORS",
+                            "items": {
+                                "type": "string",
+                                "enum": ["OPTIONS", "GET", "POST"]
+                            }
+                        },
+                        "maxAge": {
+                            "type": "integer",
+                            "default": "86400",
+                            "description": "Preflight request cache duration"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["allowOrigin", "allowCredentials", "allowMethods", "maxAge"]
+                },
+                "requestLogger": {
+                    "type": "object",
+                    "description": "Request logger configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to activate the json request logging middleware"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["enabled"]
+                },
+                "yeet": {
+                    "type": "object",
+                    "description": "Yeet configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "false",
+                            "description": "Whether or not to activate the yeet middleware"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["enabled"]
                 }
             },
-            "additionalProperties": false,
-            "required": ["env", "mode", "port", "trackerDomain", "stats", "timeout", "rateLimiter"]
+            "required": ["timeout", "rateLimiter", "cookie", "cors", "requestLogger", "yeet"]
         },
         "snowplow": {
             "type": "object",
@@ -244,85 +356,6 @@
             },
             "additionalProperties": false,
             "required": ["enabled", "postPath", "batchPostPath", "contexts", "payload"]
-        },
-        "cookie": {
-            "type": "object",
-            "description": "Server-set cookie configuration",
-            "properties": {
-                "enabled": {
-                    "type": "boolean",
-                    "default": "true",
-                    "description": "Whether or not to activate the server-side id cookie"
-                },
-                "name": {
-                    "type": "string",
-                    "default": "sp-nuid",
-                    "description": "The name of the id cookie"
-                },
-                "secure": {
-                    "type": "boolean",
-                    "default": "true",
-                    "description": "Secure cookie?"
-                },
-                "ttlDays": {
-                    "type": "integer",
-                    "default": "365",
-                    "description": "The number of days to persist the id cookie"
-                },
-                "domain": {
-                    "type": "string",
-                    "default": "silverton.io",
-                    "description": "The id cookie domain"
-                },
-                "path": {
-                    "type": "string",
-                    "default": "/",
-                    "description": "The id cookie path"
-                },
-                "sameSite": {
-                    "type": "string",
-                    "default": "Lax",
-                    "description": "The sameSite attribute of the id cookie",
-                    "enum": ["Lax", "Strict", "None"]
-                }
-            },
-            "additionalProperties": false,
-            "required": ["enabled", "name", "secure", "ttlDays", "domain", "path", "sameSite"]
-        },
-        "cors": {
-            "type": "object",
-            "description": "CORS configuration",
-            "properties": {
-                "allowOrigin": {
-                    "type": "array",
-                    "default": ["*"],
-                    "description": "A list of origins to allow CORS",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "allowCredentials": {
-                    "type": "boolean",
-                    "default": "true",
-                    "description": "CORS allow credentials"
-                },
-                "allowMethods": {
-                    "type": "array",
-                    "default": ["GET", "POST", "OPTIONS"],
-                    "description": "HTTP methods to allow CORS",
-                    "items": {
-                        "type": "string",
-                        "enum": ["OPTIONS", "GET", "POST"]
-                    }
-                },
-                "maxAge": {
-                    "type": "integer",
-                    "default": "86400",
-                    "description": "Preflight request cache duration"
-                }
-            },
-            "additionalProperties": false,
-            "required": ["allowOrigin", "allowCredentials", "allowMethods", "maxAge"]
         },
         "schemaCache": {
             "type": "object",
@@ -503,5 +536,5 @@
         }
     },
     "additionalProperties": false,
-    "required": [ "version", "app", "snowplow", "generic", "cloudevents", "cookie", "cors", "schemaCache", "sink", "tele"]
+    "required": [ "version", "app", "middleware", "snowplow", "generic", "cloudevents", "schemaCache", "sink", "tele"]
 }
