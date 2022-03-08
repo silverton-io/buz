@@ -4,10 +4,12 @@ app:
   env: development
   mode: release
   port: 8080
-  trackerDomain: track.example.ieee
+  trackerDomain: "127.0.0.1"
   stats:
     enabled: true
     path: /stats
+
+middleware:
   timeout:
     enabled: false
     ms: 2000
@@ -15,6 +17,28 @@ app:
     enabled: false
     period: S
     limit: 10
+  cookie:
+    enabled: true
+    name: nuid
+    secure: false
+    ttlDays: 365
+    domain: "127.0.0.1"
+    path: /
+    sameSite: Lax
+  cors:
+    enabled: true
+    allowOrigin:
+      - "*"
+    allowCredentials: true
+    allowMethods:
+      - POST
+      - OPTIONS
+      - GET
+    maxAge: 86400
+  requestLogger:
+    enabled: false
+  yeet:
+    enabled: false
 
 snowplow:
   enabled: true
@@ -44,25 +68,6 @@ generic:
     rootKey: payload
     schemaKey: schema
     dataKey: data
-
-cookie:
-  enabled: true
-  name: nuid
-  secure: false
-  ttlDays: 365
-  domain: example.ieee
-  path: /
-  sameSite: Lax
-
-cors:
-  allowOrigin:
-    - "*"
-  allowCredentials: true
-  allowMethods:
-    - POST
-    - OPTIONS
-    - GET
-  maxAge: 86400
 
 schemaCache:
   schemaCacheBackend:
