@@ -67,7 +67,7 @@ cors:
 schemaCache:
   schemaCacheBackend:
     type: fs
-    path: schemas
+    path: /schemas
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
   purge:

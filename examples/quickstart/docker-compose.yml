@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  collector:
+    image: ghcr.io/silverton-io/honeypot:v0.1.17
+    volumes:
+      - "./quickstart.conf.yml:/etc/honeypot/config.yml"
+      - "../../schemas/:/schemas/"
+    environment:
+      - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
+    ports:
+      - 8081:8080
