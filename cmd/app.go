@@ -95,23 +95,32 @@ func (a *App) initializeRouter() {
 func (a *App) initializeMiddleware() {
 	log.Info().Msg("initializing middleware")
 	a.engine.Use(gin.Recovery())
-	if a.config.Cookie.Enabled {
-		log.Info().Msg("initializing advancing cookie middleware")
-		a.engine.Use(middleware.AdvancingCookie(a.config.Cookie))
-	}
-	if a.config.App.Timeout.Enabled {
+	if a.config.Middleware.Timeout.Enabled {
 		log.Info().Msg("initializing request timeout middleware")
-		a.engine.Use(middleware.Timeout(a.config.App.Timeout))
+		a.engine.Use(middleware.Timeout(a.config.Middleware.Timeout))
 	}
-	if a.config.App.RateLimiter.Enabled {
+	if a.config.Middleware.RateLimiter.Enabled {
 		log.Info().Msg("initializing rate limiter middleware")
-		limiter := middleware.BuildRateLimiter(a.config.App.RateLimiter)
+		limiter := middleware.BuildRateLimiter(a.config.Middleware.RateLimiter)
 		limiterMiddleware := middleware.BuildRateLimiterMiddleware(limiter)
 		a.engine.Use(limiterMiddleware)
 	}
-	a.engine.Use(middleware.Yeet())
-	a.engine.Use(middleware.CORS(a.config.Cors))
-	a.engine.Use(middleware.JsonAccessLogger())
+	if a.config.Middleware.Cookie.Enabled {
+		log.Info().Msg("initializing advancing cookie middleware")
+		a.engine.Use(middleware.AdvancingCookie(a.config.Cookie))
+	}
+	if a.config.Middleware.Cors.Enabled {
+		log.Info().Msg("initializing cors middleware")
+		a.engine.Use(middleware.CORS(a.config.Middleware.Cors))
+	}
+	if a.config.Middleware.RequestLogger.Enabled {
+		log.Info().Msg("initializing request logger middleware")
+		a.engine.Use(middleware.RequestLogger())
+	}
+	if a.config.Middleware.Yeet.Enabled {
+		log.Info().Msg("initializing yeet middleware")
+		a.engine.Use(middleware.Yeet())
+	}
 }
 
 func (a *App) initializeHealthcheckRoutes() {

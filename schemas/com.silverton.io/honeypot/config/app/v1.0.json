@@ -151,6 +151,11 @@
                     "type": "object",
                     "description": "CORS configuration",
                     "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to activate the CORS middleware"
+                        },
                         "allowOrigin": {
                             "type": "array",
                             "default": ["*"],
@@ -180,7 +185,7 @@
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["allowOrigin", "allowCredentials", "allowMethods", "maxAge"]
+                    "required": ["enabled", "allowOrigin", "allowCredentials", "allowMethods", "maxAge"]
                 },
                 "requestLogger": {
                     "type": "object",

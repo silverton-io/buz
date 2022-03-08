@@ -8,6 +8,5 @@ type Config struct {
 	Cloudevents `json:"cloudevents"`
 	Sink        `json:"sink"`
 	SchemaCache `json:"schemaCache"`
-	Stats       `json:"stats"`
 	Tele        `json:"tele"`
 }

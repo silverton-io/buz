@@ -32,7 +32,7 @@ func getIp(c *gin.Context) string {
 	return ip
 }
 
-func JsonAccessLogger() gin.HandlerFunc {
+func RequestLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 		c.Next()

@@ -5,6 +5,6 @@ type Middleware struct {
 	RateLimiter   `json:"rateLimiter"`
 	Cookie        `json:"cookie"`
 	Cors          `json:"cors"`
-	RequestLogger `json:"jsonLogger"`
+	RequestLogger `json:"requestLogger"`
 	Yeet          `json:"yeet"`
 }

@@ -7,6 +7,4 @@ type App struct {
 	Port          string `json:"port"`
 	TrackerDomain string `json:"trackerDomain"`
 	Stats         `json:"stats"`
-	Timeout       `json:"timeout"`
-	RateLimiter   `json:"rateLimiter"`
 }
