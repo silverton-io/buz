@@ -438,8 +438,16 @@
                 }
             },
             "additionalProperties": false,
-            "required": ["type", "validEventTopic", "invalidEventTopic", "produceTimeout"],
+            "required": ["type", "produceTimeout"],
             "anyOf": [
+                {
+                    "properties": {
+                        "type": {
+                            "const": "stdout"
+                        }
+                    },
+                    "required": []
+                },
                 {
                     "properties": {
                         "type": {
