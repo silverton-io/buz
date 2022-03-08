@@ -21,4 +21,4 @@ COPY --from=build /app/deploy/config.example.yml /etc/honeypot/config.yml
 EXPOSE 8080
 ENV HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
 
-# ENTRYPOINT [ "./honeypot" ]
+ENTRYPOINT [ "./honeypot" ]
