@@ -1,0 +1,12 @@
+version: "3.9"
+   
+services:
+  collector:
+    image: ghcr.io/silverton-io/honeypot:v0.1.15
+    volumes:
+      - "../../deploy/:/conf/"
+      - "../../schemas/:/schemas/"
+    environment:
+      - HONEYPOT_CONFIG_PATH=/conf/config.example.yml
+    ports:
+      - 8081:8081

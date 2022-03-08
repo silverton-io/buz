@@ -1,29 +1,38 @@
 version: 1
 
 app:
-  env: dev
+  env: development
   mode: release
   port: 8081
-  trackerDomain: honeypot.silverton.io
+  trackerDomain: demo.example.io
   stats:
     enabled: true
     path: /stats
   timeout:
+    enabled: true
+    ms: 5000
+  rateLimiter:
     enabled: false
-    ms: 10000
+    period: S
+    limit: 15
 
-snowplow: # Snowplow events
+snowplow:
   enabled: true
   standardRoutesEnabled: true
-  openRedirectsEnabled: true
+  openRedirectsEnabled: false
   getPath: /plw/g
   postPath: /plw/p
   redirectPath: /plw/r
   anonymize:
-    ip: false
-    userId: false
+    ip: true
+    userId: true
 
-generic: # Generic self describing events
+cloudevents:
+  enabled: true
+  postPath: /ce/p
+  batchPostPath: /ce/bp
+
+generic:
   enabled: true
   postPath: /gen/p
   batchPostPath: /gen/bp
@@ -31,21 +40,17 @@ generic: # Generic self describing events
     rootKey: contexts
     schemaKey: schema
     dataKey: payload
-  event:
+  payload:
     rootKey: payload
     schemaKey: schema
     dataKey: payload
 
-cloudevents: # Cloudevents
-  enabled: true
-  postPath: /ce/p
-  batchPostPath: /ce/bp
-
 cookie:
+  enabled: true
   name: sp-nuid
-  secure: False
+  secure: true
   ttlDays: 365
-  domain: silverton.io
+  domain: example.io
   path: /
   sameSite: Lax
 
@@ -61,24 +66,26 @@ cors:
 
 schemaCache:
   schemaCacheBackend:
-    type: gcs
-    bucket: BUCKET_NAME
-    path: /
+    type: fs
+    path: /schemas
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
   purge:
-    enabled: true
+    enabled: false
     path: /c/purge
+  schemaEndpoints:
+    enabled: true
 
 sink:
   type: kafka
   brokers:
-    - BROKER_1:9092
-    - BROKER_2:9092
-    - BROKER_3:9092
-  validEventTopic: VALID_EVENT_TOPIC_NAME
-  invalidEventTopic: INVALID_EVENT_TOPIC_NAME
-  produceTimeout: 3
+    - BROKER1:9092
+    - BROKER2:9092
+    - BROKER3:9092
+  validEventTopic: test-valid-topic
+  invalidEventTopic: test-invalid-topic
+  produceTimeout: 5
 
 tele:
   enabled: true
+  heartbeatMs: 30000
