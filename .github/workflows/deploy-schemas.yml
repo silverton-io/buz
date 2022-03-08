@@ -23,5 +23,6 @@ jobs:
       - name: Upload schemas
         uses: 'google-github-actions/upload-cloud-storage@v0'
         with:
-          path: schemas/com.silverton.io
+          path: schemas
           destination: silverton-schemas
+          parent: false
