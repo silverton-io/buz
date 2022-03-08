@@ -48,6 +48,7 @@ func (a *App) configure() {
 	}
 	log.Info().Msg("loading config from " + conf)
 	viper.SetConfigFile(conf)
+	viper.SetConfigType("yaml")
 	err := viper.ReadInConfig()
 
 	if err != nil {
