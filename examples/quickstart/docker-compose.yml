@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   collector:
-    image: ghcr.io/silverton-io/honeypot:v0.1.17
+    image: ghcr.io/silverton-io/honeypot:v0.1.18
     volumes:
       - "./quickstart.conf.yml:/etc/honeypot/config.yml"
       - "../../schemas/:/schemas/"

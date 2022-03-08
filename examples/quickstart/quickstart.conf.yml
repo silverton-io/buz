@@ -36,7 +36,7 @@ middleware:
       - GET
     maxAge: 86400
   requestLogger:
-    enabled: true
+    enabled: false
   yeet:
     enabled: false
 
