@@ -4,7 +4,7 @@ app:
   env: development
   mode: release
   port: 8080
-  trackerDomain: "127.0.0.1"
+  trackerDomain: 127.0.0.1
   stats:
     enabled: true
     path: /stats
@@ -22,7 +22,7 @@ middleware:
     name: nuid
     secure: false
     ttlDays: 365
-    domain: "127.0.0.1"
+    domain: 127.0.0.1
     path: /
     sameSite: Lax
   cors:
@@ -82,7 +82,13 @@ schemaCache:
     enabled: true
 
 sink:
-  type: stdout
+  type: kafka
+  brokers:
+    - redpanda-1:29092
+    - redpanda-2:29093
+    - redpanda-3:29094
+  invalidEventTopic: honeypot-invalid-topic
+  validEventTopic: honeypot-valid-topic
   produceTimeout: 3
 
 tele:

@@ -1,12 +1,95 @@
 version: "3.9"
 
 services:
-  collector:
+  redpanda-1:
+    image: docker.vectorized.io/vectorized/redpanda:v21.11.9
+    container_name: redpanda-1
+    command:
+      - redpanda start
+      - --overprovisioned
+      - --check=false
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --node-id 0
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda-1:29092,OUTSIDE://127.0.0.1:9092
+      - --rpc-addr 0.0.0.0:33145
+      - --advertise-rpc-addr redpanda-1:33145
+      - --set redpanda.enable_transactions=true
+      - --set redpanda.enable_idempotence=true
+    ports:
+      - 9092:9092
+
+  redpanda-2:
+    image: docker.vectorized.io/vectorized/redpanda:v21.11.9
+    container_name: redpanda-2
+    command:
+      - redpanda start
+      - --overprovisioned
+      - --check=false
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --node-id 1
+      - --seeds "redpanda-1:33145"
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:29093,OUTSIDE://0.0.0.0:9093
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda-2:29093,OUTSIDE://127.0.0.1:9093
+      - --rpc-addr 0.0.0.0:33146
+      - --advertise-rpc-addr redpanda-2:33146
+      - --set redpanda.enable_transactions=true
+      - --set redpanda.enable_idempotence=true
+    ports:
+      - 9093:9093
+
+  redpanda-3:
+    image: docker.vectorized.io/vectorized/redpanda:v21.11.9
+    container_name: redpanda-3
+    command:
+      - redpanda start
+      - --overprovisioned
+      - --check=false
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --node-id 2
+      - --seeds "redpanda-1:33145"
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:29094,OUTSIDE://0.0.0.0:9094
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda-2:29094,OUTSIDE://127.0.0.1:9094
+      - --rpc-addr 0.0.0.0:33147
+      - --advertise-rpc-addr redpanda-3:33147
+      - --set redpanda.enable_transactions=true
+      - --set redpanda.enable_idempotence=true
+    ports:
+      - 9094:9094
+
+  materialized:
+    container_name: materialized
+    image: materialize/materialized
+    init: true
+    command: -w2 --disable-telemetry
+    ports:
+      - 6875:6875
+
+  honeypot:
+    container_name: honeypot
     image: ghcr.io/silverton-io/honeypot:v0.1.18
     volumes:
       - "./quickstart.conf.yml:/etc/honeypot/config.yml"
       - "../../schemas/:/schemas/"
     environment:
       - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
+    depends_on:
+      - redpanda-1
+      - materialized
     ports:
-      - 8081:8080
+      - 8080:8080
+    deploy:
+      restart_policy:
+        condition: always
