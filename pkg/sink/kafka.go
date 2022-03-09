@@ -13,6 +13,11 @@ import (
 	"golang.org/x/net/context"
 )
 
+const (
+	DEFAULT_PARTITIONS         int32 = 3
+	DEFAULT_REPLICATION_FACTOR int16 = 3
+)
+
 type KafkaSink struct {
 	client             *kgo.Client
 	validEventsTopic   string
@@ -36,10 +41,15 @@ func (s *KafkaSink) Initialize(conf config.Sink) {
 	admClient := kadm.NewClient(client)
 	log.Debug().Msg("verifying topics exist")
 	topicDetails, err := admClient.DescribeTopicConfigs(ctx, conf.ValidEventTopic, conf.InvalidEventTopic)
+	if err != nil {
+		log.Fatal().Stack().Err(err).Msg("could not describe topic configs")
+	}
 	for _, d := range topicDetails {
-		if d.Err != nil {
-			log.Fatal().Stack().Err(d.Err).Msg(d.Name + " topic doesn't exist")
+		resp, createErr := admClient.CreateTopics(ctx, DEFAULT_PARTITIONS, DEFAULT_REPLICATION_FACTOR, nil, d.Name)
+		if createErr != nil {
+			log.Debug().Interface("response", resp).Msg("topic create response")
 		}
+		log.Debug().Interface("response", resp).Msg("topic created: " + d.Name)
 	}
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, conf.ValidEventTopic, conf.InvalidEventTopic
 }
