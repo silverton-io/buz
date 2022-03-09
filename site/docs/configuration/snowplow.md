@@ -4,4 +4,4 @@ tags:
   - snowplow
 ---
 
-# Snowplow Configuration
+# Snowplow

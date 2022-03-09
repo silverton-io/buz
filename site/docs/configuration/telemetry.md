@@ -4,4 +4,4 @@ tags:
   - telemetry
 ---
 
-# Telemetry Configuration
+# Telemetry

@@ -132,7 +132,6 @@ services:
   kowl:
     image: quay.io/cloudhut/kowl:v1.5.0
     restart: on-failure
-    hostname: kowl
     container_name: kowl
     volumes:
     - ./kowl/quickstart.yml:/etc/kowl/config.yml

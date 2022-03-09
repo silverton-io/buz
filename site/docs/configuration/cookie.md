@@ -4,4 +4,4 @@ tags:
   - advancing cookie middleware
 ---
 
-# Advancing Cookie Configuration
+# Advancing Cookie

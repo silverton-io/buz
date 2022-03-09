@@ -1,6 +1,8 @@
 ---
 tags:
   - sink
+  - gcp
+  - pubsub
 ---
 
-# Pubsub Sink
+# Pubsub

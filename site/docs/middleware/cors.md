@@ -1,6 +1,7 @@
 ---
 tags:
   - middleware
+  - cors
 ---
 
-# CORS Middleware
+# CORS
