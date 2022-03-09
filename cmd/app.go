@@ -218,7 +218,7 @@ func (a *App) Initialize() {
 }
 
 func (a *App) Run() {
-	log.Info().Interface("config", a.config).Msg("honeypot is running!")
+	log.Info().Interface("config", a.config).Msg("🍯🍯🍯 honeypot is running! 🍯🍯🍯")
 	tele.Metry(a.config, a.meta)
 	srv := &http.Server{
 		Addr:    ":" + a.config.App.Port,
