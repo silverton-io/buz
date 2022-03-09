@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   redpanda-1:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.9
+    image: docker.vectorized.io/vectorized/redpanda:v21.11.9 # Note! Use the latest version :)
     container_name: redpanda-1
     command:
       - redpanda start
@@ -24,7 +24,7 @@ services:
       - 9092:9092
 
   redpanda-2:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.9
+    image: docker.vectorized.io/vectorized/redpanda:v21.11.9 # Note! Use the latest version :)
     container_name: redpanda-2
     command:
       - redpanda start
@@ -47,7 +47,7 @@ services:
       - 9093:9093
 
   redpanda-3:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.9
+    image: docker.vectorized.io/vectorized/redpanda:v21.11.9 # Note! Use the latest version :)
     container_name: redpanda-3
     command:
       - redpanda start
@@ -71,7 +71,7 @@ services:
 
   materialized:
     container_name: materialized
-    image: materialize/materialized
+    image: materialize/materialized # Note! Use the latest version :)
     init: true
     command: -w2 --disable-telemetry
     ports:
@@ -79,7 +79,7 @@ services:
 
   honeypot:
     container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.1.18
+    image: ghcr.io/silverton-io/honeypot:v0.1.19 # Note! Use the latest version :)
     volumes:
       - "./quickstart.conf.yml:/etc/honeypot/config.yml"
       - "../../schemas/:/schemas/"
