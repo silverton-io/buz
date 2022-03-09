@@ -129,6 +129,24 @@ services:
     ports:
       - 6875:6875
 
+  kowl:
+    image: quay.io/cloudhut/kowl:v1.5.0
+    restart: on-failure
+    hostname: kowl
+    container_name: kowl
+    volumes:
+    - ./kowl/quickstart.yml:/etc/kowl/config.yml
+    ports:
+    - "8081:8081"
+    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yml
+    depends_on:
+      redpanda-1:
+        condition: service_healthy
+      redpanda-2:
+        condition: service_healthy
+      redpanda-3:
+        condition: service_healthy
+
   mzcli:
     container_name: mzcli
     image: materialize/cli
