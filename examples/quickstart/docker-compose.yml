@@ -1,6 +1,30 @@
 version: "3.9"
 
 services:
+  honeypot:
+    container_name: honeypot
+    image: ghcr.io/silverton-io/honeypot:v0.1.21 # Note! Use the latest version :)
+    volumes:
+      - type: bind
+        source: ./honeypot/quickstart.conf.yml
+        target: /etc/honeypot/config.yml
+      - type: bind
+        source: ../../schemas
+        target: /schemas/
+    environment:
+      - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
+    ports:
+      - 8080:8080
+    deploy:
+      restart_policy:
+        condition: always
+    healthcheck:
+      test: curl -f localhost:8080/health
+      interval: 15s
+    depends_on:
+      redpanda-init:
+        condition: service_completed_successfully
+
   redpanda-1:
     image: docker.vectorized.io/vectorized/redpanda:v21.11.9 # Note! Use the latest version :)
     container_name: redpanda-1
@@ -13,15 +37,19 @@ services:
       - --reserve-memory 0M
       - --node-id 0
       - --kafka-addr
-      - PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
       - --advertise-kafka-addr
-      - PLAINTEXT://redpanda-1:29092,OUTSIDE://127.0.0.1:9092
+      - INSIDE://redpanda-1:29092,OUTSIDE://127.0.0.1:9092
       - --rpc-addr 0.0.0.0:33145
       - --advertise-rpc-addr redpanda-1:33145
       - --set redpanda.enable_transactions=true
       - --set redpanda.enable_idempotence=true
     ports:
       - 9092:9092
+    healthcheck:
+      test: curl -f localhost:9644/v1/status/ready
+      interval: 1s
+      start_period: 30s
 
   redpanda-2:
     image: docker.vectorized.io/vectorized/redpanda:v21.11.9 # Note! Use the latest version :)
@@ -36,15 +64,19 @@ services:
       - --node-id 1
       - --seeds "redpanda-1:33145"
       - --kafka-addr
-      - PLAINTEXT://0.0.0.0:29093,OUTSIDE://0.0.0.0:9093
+      - INSIDE://0.0.0.0:29093,OUTSIDE://0.0.0.0:9093
       - --advertise-kafka-addr
-      - PLAINTEXT://redpanda-2:29093,OUTSIDE://127.0.0.1:9093
+      - INSIDE://redpanda-2:29093,OUTSIDE://127.0.0.1:9093
       - --rpc-addr 0.0.0.0:33146
       - --advertise-rpc-addr redpanda-2:33146
       - --set redpanda.enable_transactions=true
       - --set redpanda.enable_idempotence=true
     ports:
       - 9093:9093
+    healthcheck:
+      test: curl -f localhost:9644/v1/status/ready
+      interval: 1s
+      start_period: 30s
 
   redpanda-3:
     image: docker.vectorized.io/vectorized/redpanda:v21.11.9 # Note! Use the latest version :)
@@ -59,24 +91,32 @@ services:
       - --node-id 2
       - --seeds "redpanda-1:33145"
       - --kafka-addr
-      - PLAINTEXT://0.0.0.0:29094,OUTSIDE://0.0.0.0:9094
+      - INSIDE://0.0.0.0:29094,OUTSIDE://0.0.0.0:9094
       - --advertise-kafka-addr
-      - PLAINTEXT://redpanda-2:29094,OUTSIDE://127.0.0.1:9094
+      - INSIDE://redpanda-3:29094,OUTSIDE://127.0.0.1:9094
       - --rpc-addr 0.0.0.0:33147
       - --advertise-rpc-addr redpanda-3:33147
       - --set redpanda.enable_transactions=true
       - --set redpanda.enable_idempotence=true
     ports:
       - 9094:9094
+    healthcheck:
+      test: curl -f localhost:9644/v1/status/ready
+      interval: 1s
+      start_period: 30s
 
   redpanda-init:
     image: docker.vectorized.io/vectorized/redpanda:v21.11.9 # Note! Use the latest version :)
     container_name: redpanda-init
     command:
-      - cluster metadata --brokers redpanda-1:9092,redpanda-2:9093,redpanda-3:9094 # There is a better way.
-      - topic create htp-valid --brokers redpanda-1:9092,redpanda-2:9093,redpanda-3:9094
-      - topic create htp-invalid --brokers redpanda-1:9092,redpanda-2:9093,redpanda-3:9094
-      - cluster metadata --brokers redpanda-1:9092,redpanda-2:9093,redpanda-3:9094
+      - cluster metadata --brokers redpanda-1:29092,redpanda-2:29093,redpanda-3:29094
+    depends_on:
+      redpanda-1:
+        condition: service_healthy
+      redpanda-2:
+        condition: service_healthy
+      redpanda-3:
+        condition: service_healthy
     deploy:
       restart_policy:
         condition: on-failure
@@ -89,21 +129,24 @@ services:
     ports:
       - 6875:6875
 
-  honeypot:
-    container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.1.20 # Note! Use the latest version :)
+  kowl:
+    image: quay.io/cloudhut/kowl:v1.5.0
+    restart: on-failure
+    hostname: kowl
+    container_name: kowl
     volumes:
-      - "./quickstart.conf.yml:/etc/honeypot/config.yml"
-      - "../../schemas/:/schemas/"
-    environment:
-      - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
-    depends_on:
-      - redpanda-1
-      - redpanda-2
-      - redpanda-3
-      - materialized
+    - ./kowl/quickstart.yml:/etc/kowl/config.yml
     ports:
-      - 8080:8080
-    deploy:
-      restart_policy:
-        condition: always
+    - "8081:8081"
+    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yml
+    depends_on:
+      redpanda-1:
+        condition: service_healthy
+      redpanda-2:
+        condition: service_healthy
+      redpanda-3:
+        condition: service_healthy
+
+  mzcli:
+    container_name: mzcli
+    image: materialize/cli
