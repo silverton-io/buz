@@ -45,9 +45,11 @@ func (s *KafkaSink) Initialize(conf config.Sink) {
 		log.Fatal().Stack().Err(err).Msg("could not describe topic configs")
 	}
 	for _, d := range topicDetails {
+		log.Debug().Msg("ensuring topic exists: " + d.Name)
 		resp, createErr := admClient.CreateTopics(ctx, DEFAULT_PARTITIONS, DEFAULT_REPLICATION_FACTOR, nil, d.Name)
 		if createErr != nil {
-			log.Debug().Interface("response", resp).Msg("topic create response")
+			log.Debug().Interface("response", resp).Msg("topic creation response")
+			log.Fatal().Err(createErr).Msg("could not create topic")
 		}
 		log.Debug().Interface("response", resp).Msg("topic created: " + d.Name)
 	}

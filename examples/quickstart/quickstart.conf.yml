@@ -2,7 +2,7 @@ version: 1.1
 
 app:
   env: development
-  mode: release
+  mode: debug
   port: 8080
   trackerDomain: 127.0.0.1
   stats:

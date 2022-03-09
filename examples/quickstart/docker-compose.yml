@@ -69,6 +69,18 @@ services:
     ports:
       - 9094:9094
 
+  redpanda-init:
+    image: docker.vectorized.io/vectorized/redpanda:v21.11.9 # Note! Use the latest version :)
+    container_name: redpanda-init
+    command:
+      - cluster metadata --brokers redpanda-1:9092,redpanda-2:9093,redpanda-3:9094 # There is a better way.
+      - topic create htp-valid --brokers redpanda-1:9092,redpanda-2:9093,redpanda-3:9094
+      - topic create htp-invalid --brokers redpanda-1:9092,redpanda-2:9093,redpanda-3:9094
+      - cluster metadata --brokers redpanda-1:9092,redpanda-2:9093,redpanda-3:9094
+    deploy:
+      restart_policy:
+        condition: on-failure
+
   materialized:
     container_name: materialized
     image: materialize/materialized # Note! Use the latest version :)
@@ -79,7 +91,7 @@ services:
 
   honeypot:
     container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.1.19 # Note! Use the latest version :)
+    image: ghcr.io/silverton-io/honeypot:v0.1.20 # Note! Use the latest version :)
     volumes:
       - "./quickstart.conf.yml:/etc/honeypot/config.yml"
       - "../../schemas/:/schemas/"
@@ -87,6 +99,8 @@ services:
       - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
     depends_on:
       - redpanda-1
+      - redpanda-2
+      - redpanda-3
       - materialized
     ports:
       - 8080:8080

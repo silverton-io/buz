@@ -23,13 +23,13 @@
         window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-client-hints@latest/dist/index.umd.min.js",["snowplowClientHints", "ClientHintsPlugin"]);
         window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-geolocation@latest/dist/index.umd.min.js",["snowplowGeolocation", "GeolocationtPlugin"],[false]);
 
-        // window.spget('enableActivityTracking', {
-        //     minimumVisitLength: 10,
-        //     heartbeatDelay: 10
-        // });
-        // window.spget('trackPageView');
-        window.spget('setUserId', 'jake@bostata.com');
-        // window.spget('enableFormTracking');
+        window.spget('setUserId', 'jake@slvrtn.io');
+        window.spget('enableFormTracking');
+        window.spget('trackPageView');
+        window.spget('enableActivityTracking', {
+            minimumVisitLength: 10,
+            heartbeatDelay: 10
+        });
 
         // POST-based tracker
 
@@ -43,19 +43,18 @@
             withCredentials: false,
         })
 
-
         window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-link-click-tracking@latest/dist/index.umd.min.js",["snowplowLinkClickTracking", "LinkClickTrackingPlugin"]);
         window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-ecommerce@latest/dist/index.umd.min.js",["snowplowEcommerce", "EcommercePlugin"]);
         window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-performance-timing@latest/dist/index.umd.min.js",["snowplowPerformanceTiming", "PerformanceTimingPlugin"]);
         window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-client-hints@latest/dist/index.umd.min.js",["snowplowClientHints", "ClientHintsPlugin"]);
         window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-geolocation@latest/dist/index.umd.min.js",["snowplowGeolocation", "GeolocationtPlugin"],[false]);
 
-        // window.sppost('enableActivityTracking', {
-        //     minimumVisitLength: 1,
-        //     heartbeatDelay: 1
-        // });
+        window.sppost('enableActivityTracking', {
+            minimumVisitLength: 1,
+            heartbeatDelay: 1
+        });
         window.sppost('trackPageView');
-        window.sppost('setUserId', 'jake@bostata.com');
+        window.sppost('setUserId', 'jake@slvrtn.io');
         window.sppost('enableFormTracking');
     </script>
     <body>
