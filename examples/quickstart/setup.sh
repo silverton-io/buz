@@ -12,4 +12,4 @@ psql \
     -h 127.0.0.1 \
     -p 6875 \
     -U materialize \
-    -f create_sources_and_views.sql;
+    -f examples/quickstart/materialize/create_sources_and_views.sql;

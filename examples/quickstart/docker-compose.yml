@@ -7,7 +7,7 @@ services:
     image: honeypot:v0.1.21
     volumes:
       - type: bind
-        source: ./quickstart.conf.yml
+        source: ./honeypot/quickstart.conf.yml
         target: /etc/honeypot/config.yml
       - type: bind
         source: ../../schemas
