@@ -42,8 +42,8 @@ middleware:
 
 snowplow:
   enabled: true
-  standardRoutesEnabled: false
-  openRedirectsEnabled: false
+  standardRoutesEnabled: true
+  openRedirectsEnabled: true
   getPath: /plw/g
   postPath: /plw/p
   redirectPath: /plw/r
