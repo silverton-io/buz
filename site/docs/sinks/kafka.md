@@ -1,6 +1,8 @@
 ---
 tags:
   - sink
+  - redpanda
+  - kafka
 ---
 
-# Kafka Sink
+# Kafka

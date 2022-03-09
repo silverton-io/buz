@@ -24,9 +24,10 @@ extra:
 nav:
   - index.md
   - Quickstart:
-    - quickstart/overview.md
-    - quickstart/configuration.md
-    - quickstart/deployment.md
+    - quickstart/getting-started.md
+    # - quickstart/honeypot-and-benthos.md
+  - Roadmap:
+    - roadmap/2022.md
   - Event Protocols:
     - protocols/snowplow.md
     - protocols/cloudevents.md
@@ -41,12 +42,14 @@ nav:
     - sinks/pubsub.md
     - sinks/kinesis.md
     - sinks/kinesis-firehose.md
+    - sinks/stdout.md
   - Middleware:
     - middleware/advancing-cookie.md
     - middleware/cors.md
-    - middleware/json-logger.md
+    - middleware/request-logger.md
     - middleware/rate-limiter.md
     - middleware/timeout.md
+    - middleware/yeet.md
   - Configuration:
     - configuration/snowplow.md
     - configuration/cloudevents.md

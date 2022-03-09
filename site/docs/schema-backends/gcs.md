@@ -1,6 +1,8 @@
 ---
 tags:
   - schema backend
+  - gcs
+  - google cloud storage
 ---
 
-# GCS Schema Backend
+# GCS

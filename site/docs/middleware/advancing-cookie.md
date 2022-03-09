@@ -1,6 +1,7 @@
 ---
 tags:
   - middleware
+  - advancing cookie
 ---
 
-# Advancing Cookie Middleware
+# Advancing Cookie

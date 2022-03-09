@@ -4,4 +4,4 @@ tags:
   - stats
 ---
 
-# Statistics Configuration
+# Statistics

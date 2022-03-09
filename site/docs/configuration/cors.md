@@ -4,4 +4,4 @@ tags:
   - cors middleware
 ---
 
-# CORS Configuration
+# CORS

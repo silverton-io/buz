@@ -4,4 +4,4 @@ tags:
   - generic self-describing events
 ---
 
-# Generic Self-Describing Events Configuration
+# Generic Self-Describing Events

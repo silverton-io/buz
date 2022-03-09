@@ -1,6 +1,7 @@
 ---
 tags:
   - middleware
+  - timeout
 ---
 
-# Request Timeout Middleware
+# Request Timeout

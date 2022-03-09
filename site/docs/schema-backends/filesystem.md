@@ -1,6 +1,8 @@
 ---
 tags:
   - schema backend
+  - fs
+  - filesystem
 ---
 
-# Filesystem Schema Backend
+# Filesystem

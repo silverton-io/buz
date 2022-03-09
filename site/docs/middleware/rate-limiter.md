@@ -1,6 +1,7 @@
 ---
 tags:
   - middleware
+  - rate limiter
 ---
 
-# Rate Limiter Middleware
+# Rate Limiter

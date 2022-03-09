@@ -1,6 +1,8 @@
 ---
 tags:
   - sink
+  - aws
+  - kinesis
 ---
 
-# Kinesis Sink
+# Kinesis

@@ -4,4 +4,4 @@ tags:
   - cloudevents
 ---
 
-# CloudEvents Configuration
+# CloudEvents
