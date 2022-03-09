@@ -30,27 +30,27 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	case PUBSUB:
 		sink := PubsubSink{}
 		sink.Initialize(conf)
-		log.Debug().Msg("pubsub sink initialized")
+		log.Info().Msg("pubsub sink initialized")
 		return &sink, nil
 	case KAFKA:
 		sink := KafkaSink{}
 		sink.Initialize(conf)
-		log.Debug().Msg("kafka sink initialized")
+		log.Info().Msg("kafka sink initialized")
 		return &sink, nil
 	case KINESIS:
 		sink := KinesisSink{}
 		sink.Initialize(conf)
-		log.Debug().Msg("kinesis sink initialized")
+		log.Info().Msg("kinesis sink initialized")
 		return &sink, nil
 	case KINESIS_FIREHOSE:
 		sink := KinesisFirehoseSink{}
 		sink.Initialize(conf)
-		log.Debug().Msg("kinesis firehose sink initialized")
+		log.Info().Msg("kinesis firehose sink initialized")
 		return &sink, nil
 	case STDOUT:
 		sink := StdoutSink{}
 		sink.Initialize(conf)
-		log.Debug().Msg("stdout sink initialized")
+		log.Info().Msg("stdout sink initialized")
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)

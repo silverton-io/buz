@@ -87,8 +87,8 @@ sink:
     - redpanda-1:29092
     - redpanda-2:29093
     - redpanda-3:29094
-  invalidEventTopic: honeypot-invalid-topic
-  validEventTopic: honeypot-valid-topic
+  invalidEventTopic: hpt-invalid
+  validEventTopic: hpt-valid
   produceTimeout: 3
 
 tele:
