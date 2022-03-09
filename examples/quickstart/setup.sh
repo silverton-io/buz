@@ -8,6 +8,7 @@ rpk topic \
     create hpt-valid \
     --brokers 127.0.0.1:9092;
 
+# Set up materialize
 psql \
     -h 127.0.0.1 \
     -p 6875 \
