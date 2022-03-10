@@ -18,7 +18,7 @@ psql \
     -f examples/quickstart/materialize/create_sources_and_views.sql;
 
 echo "\nWaiting for services...\n"
-for run in {1..5}; do printf "🍯" && sleep 1; done
+for run in {1..15}; do printf "🍯" && sleep 1; done
 echo "\n\nOpening associated resources...\n";
 
 open http://localhost:8080/;
