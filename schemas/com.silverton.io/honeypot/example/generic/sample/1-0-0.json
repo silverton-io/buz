@@ -1,0 +1,21 @@
+{
+	"$schema": "http://iglucentral.com/schemas/com.snowplowanalytics.self-desc/schema/jsonschema/1-0-0#",
+	"description": "Schema for viewing product",
+	"self": {
+		"vendor": "com.jake.generic",
+		"name": "sample",
+		"format": "jsonschema",
+		"version": "1-0-0"
+	},
+	"type": "object",
+	"properties": {
+		"id": {
+			"description": "The product id",
+			"type": "string",
+			"minLength": 0,
+			"maxLength": 4096
+		}
+	},
+	"required": ["id"],
+	"additionalProperties": false
+}

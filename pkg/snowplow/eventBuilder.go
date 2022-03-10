@@ -35,10 +35,18 @@ func setEventMetadataFields(e *Event, schema []byte) {
 	name := schemaContents.Get("self.name").String()
 	format := schemaContents.Get("self.format").String()
 	version := schemaContents.Get("self.version").String()
-	e.Event_vendor = &vendor
-	e.Event_name = &name
-	e.Event_format = &format
-	e.Event_version = &version
+	if vendor != "" {
+		e.Event_vendor = &vendor
+	}
+	if name != "" {
+		e.Event_name = &name
+	}
+	if format != "" {
+		e.Event_format = &format
+	}
+	if version != "" {
+		e.Event_version = &version
+	}
 }
 
 func setEventFieldsFromRequest(c *gin.Context, e *Event, t *tele.Meta) {
@@ -89,7 +97,7 @@ func getPageFieldsFromUrl(rawUrl string) (PageFields, error) {
 		scheme: parsedUrl.Scheme,
 		host:   parsedUrl.Host,
 		// port: FIXME!!!
-		path:     parsedUrl.Path,
+		path:     parsedUrl.Path, // FIXME! These are all "" instead of nil (and therefore null in json)
 		query:    unescapedQry,
 		fragment: parsedUrl.Fragment,
 		medium:   medium,

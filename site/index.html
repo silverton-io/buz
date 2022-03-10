@@ -58,7 +58,7 @@
         window.sppost('enableFormTracking');
     </script>
     <body>
-        <h1>Tracker Test</h1>
+        <h1>Honeypot </h1>
         <div style="margin-top: 2em; margin-bottom: 2em"></div>
         <a href="/">Home</a>
         <div style="margin-top: 2em; margin-bottom: 2em"></div>
@@ -91,7 +91,7 @@
             document.getElementById('self-describing-get').addEventListener("click", function() {
                 window.spget('trackSelfDescribingEvent', {
                     event: {
-                        schema: 'iglu:com.jake/viewed_product/jsonschema/1-0-0',
+                        schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
                         data: {
                             productId: 'ASO01043',
                             category: 'Dresses',
@@ -107,7 +107,7 @@
             document.getElementById('self-describing-get-invalid').addEventListener("click", function() {
                 window.spget('trackSelfDescribingEvent', {
                     event: {
-                        schema: 'iglu:com.jake/viewed_product/jsonschema/1-0-0',
+                        schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
                         data: {
                             productId: 'ASO01043',
                             category: 'Dresses',
@@ -157,7 +157,7 @@
             document.getElementById('self-describing-post').addEventListener("click", function() {
                 window.sppost('trackSelfDescribingEvent', {
                     event: {
-                        schema: 'iglu:com.jake/viewed_product/jsonschema/1-0-0',
+                        schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
                         data: {
                             productId: 'ASO01043',
                             category: 'Dresses',
@@ -174,7 +174,7 @@
             document.getElementById('self-describing-post-invalid').addEventListener("click", function() {
                 window.sppost('trackSelfDescribingEvent', {
                     event: {
-                        schema: 'iglu:com.jake/viewed_product/jsonschema/1-0-0',
+                        schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
                         data: {
                             productId: 'ASO01043',
                             category: 'Dresses',
