@@ -11,7 +11,7 @@ Yet uncompromising with its speed, guarantees, and operational flexibility.
 
 # Quickstart
 
-To dive head-first into an example of running Honeypot locally with a three-node [Redpanda](https://github.com/redpanda-data/) cluster, [Kowl](https://github.com/cloudhut/kowl/) for observability, and [Materialize](https://github.com/MaterializeInc/materialize) as a streaming DB please see the [Quickstart](quickstart/getting-started/).
+To dive head-first into an example of running Honeypot locally with a three-node [Redpanda](https://github.com/redpanda-data/) cluster, [Kowl](https://github.com/cloudhut/kowl/), and [Materialize](https://github.com/MaterializeInc/materialize) please see the [Quickstart](quickstart/getting-started/).
 
 # Philosophy
 
