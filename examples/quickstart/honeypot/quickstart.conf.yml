@@ -4,7 +4,7 @@ app:
   env: development
   mode: debug
   port: 8080
-  trackerDomain: 127.0.0.1
+  trackerDomain: localhost
   stats:
     enabled: true
     path: /stats
@@ -19,10 +19,10 @@ middleware:
     limit: 10
   cookie:
     enabled: true
-    name: nuid
+    name: sp-nuid
     secure: false
     ttlDays: 365
-    domain: 127.0.0.1
+    domain: localhost
     path: /
     sameSite: Lax
   cors:
