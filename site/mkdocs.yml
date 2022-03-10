@@ -29,20 +29,28 @@ nav:
   - Roadmap:
     - roadmap/2022.md
   - Event Protocols:
-    - protocols/snowplow.md
-    - protocols/cloudevents.md
-    - protocols/self-describing.md
+    - event-protocols/snowplow.md
+    - event-protocols/cloudevents.md
+    - event-protocols/self-describing.md
   - Schema Backends:
     - schema-backends/s3.md
     - schema-backends/gcs.md
     - schema-backends/filesystem.md
     - schema-backends/http.md
+    - schema-backends/kafka-registry.md
   - Sinks:
     - sinks/kafka.md
     - sinks/pubsub.md
     - sinks/kinesis.md
     - sinks/kinesis-firehose.md
     - sinks/stdout.md
+    - sinks/file.md
+    - sinks/pubnub.md
+    - sinks/postgres.md
+    - sinks/clickhouse.md
+  - Validation Protocols:
+    - validation-protocols/jsonschema.md
+    - validation-protocols/avro.md
   - Middleware:
     - middleware/advancing-cookie.md
     - middleware/cors.md

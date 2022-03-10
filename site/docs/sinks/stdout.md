@@ -4,5 +4,4 @@ tags:
   - stdout
 ---
 
-# Stdout
-
+# 🟢 Stdout

@@ -36,7 +36,7 @@ Resolving deltas: 100% (611/611), done.
 
 ## 2. Bootstrap Honeypot, Redpanda, Kowl, and Materialize
 
-**`docker-compose -f examples/quickstart/docker-compose.yml up`**
+**`docker-compose -f examples/quickstart/docker-compose.yml up -d`**
 
 
 ```

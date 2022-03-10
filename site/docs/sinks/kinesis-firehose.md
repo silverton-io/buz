@@ -5,4 +5,4 @@ tags:
   - kinesis firehose
 ---
 
-# Kinesis Firehose
+# 🟢 Kinesis Firehose
