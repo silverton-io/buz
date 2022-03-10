@@ -132,10 +132,6 @@ Honeypot is a multi-protocol event collection, validation, and routing system.
 
 **Have a more custom, self-describing event implementation?** Think Honeypot.
 
-
-In this example we will be collecting Snowplow events, validating them using `jsonschema`, and sinking them to a three-node Kafka (Redpanda) cluster.
-
-
 ## Redpanda
 
 Redpanda is Kafka-compatible streaming platform, with 100% less Zookeeper and JVM. It is blazing fast, quick to set up, and incredibly operator-oriented.
@@ -164,4 +160,3 @@ More on Kowl can be found here: [cloudhut.dev](https://cloudhut.dev/)
 This example uses Materialize to create real-time aggregates and activity funnels by streaming data from Honeypot, through Redpanda, into a Materialize Source, before aggregating in a materialized view.
 
 ![materialize](../img/materialize.png)
-
