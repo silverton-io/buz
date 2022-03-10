@@ -5,4 +5,4 @@ tags:
   - self describing
 ---
 
-# Generic Self-Describing Events
+# 🟢 Generic Self-Describing Events

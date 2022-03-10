@@ -4,4 +4,4 @@ tags:
   - cors
 ---
 
-# CORS
+# 🟢 CORS

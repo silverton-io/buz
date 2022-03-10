@@ -5,4 +5,4 @@ tags:
   - google cloud storage
 ---
 
-# GCS
+# 🟢 GCS

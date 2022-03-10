@@ -2,7 +2,7 @@
 tags:
   - collector
   - event protocol
-  - snowplow
+  - cloud events
 ---
 
-# Snowplow
+# 🟢 CloudEvents
