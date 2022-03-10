@@ -17,7 +17,6 @@ COPY --from=build /app/.VERSION .
 COPY --from=build /app/honeypot .
 COPY --from=build /etc/ssl/certs /etc/ssl/certs
 COPY --from=build /app/examples/quickstart/honeypot/quickstart.conf.yml /etc/honeypot/config.yml
-COPY --from=build /app/site/index.html ./site/index.html
 
 EXPOSE 8080
 ENV HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml

@@ -28,6 +28,10 @@ nav:
     # - quickstart/honeypot-and-benthos.md
   - Roadmap:
     - roadmap/2022.md
+  # - Deploying Honeypot:
+  #   - deployment/gcp.md
+  #   - deployment/aws.md
+  #   - deployment/azure.md
   - Event Protocols:
     - event-protocols/snowplow.md
     - event-protocols/cloudevents.md
@@ -51,16 +55,20 @@ nav:
     - sinks/http.md
     - sinks/pubnub.md
     - sinks/postgres.md
+    - sinks/snowflake.md
+    - sinks/firebolt.md
     - sinks/clickhouse.md
   - Validation Protocols:
     - validation-protocols/jsonschema.md
-    - validation-protocols/avro.md
+  - Serialization Protocols:
+    - serialization-protocols/json.md
+    - serialization-protocols/avro.md
   - Middleware:
+    - middleware/timeout.md
+    - middleware/rate-limiter.md
     - middleware/advancing-cookie.md
     - middleware/cors.md
     - middleware/request-logger.md
-    - middleware/rate-limiter.md
-    - middleware/timeout.md
     - middleware/yeet.md
   - Configuration:
     - configuration/snowplow.md

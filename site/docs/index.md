@@ -1,8 +1,12 @@
 # What is Honeypot?
 
+## Event Streaming for The Rest of Us
+
 Honeypot is a multi-protocol event collection, validation, pipelining, and observability system.
 
-It is built to be ***easily-configured***, ***easily-deployed***, and ***easily-maintained***. Yet uncompromising with its speed, guarantees, and operational flexibility. 
+It is designed to be ***easily-configured***, ***easily-deployed***, and ***easily-maintained***.
+
+Yet uncompromising with its speed, guarantees, and operational flexibility. 
 
 
 # Quickstart
@@ -12,7 +16,7 @@ To dive head-first into an example of running Honeypot locally with a three-node
 # Philosophy
 
 
-## Lean on the shoulders of giants
+## Stand on the shoulders of giants
 **Data systems and infrastructure are getting very very cool**.
 
 When popular event tracking systems like [Snowplow Analytics](https://github.com/snowplow/snowplow) were first created, deployment systems like K8S and Knative didn't exist. Nor did the "serverless" mindset.
@@ -37,7 +41,7 @@ Serverless scales to zero, and then back up again...
 
 Snowflake scales to zero, and then back up again...
 
-Event collection systems should too.
+***Event collection systems should too.***
 
 
 ## Validate and redirect on the edge

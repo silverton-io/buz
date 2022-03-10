@@ -7,4 +7,4 @@ tags:
 
 # 🟡 Avro
 
-Avro-based validation is not yet supported. Stay tuned!
+Avro serialization is not yet supported. Stay tuned!
