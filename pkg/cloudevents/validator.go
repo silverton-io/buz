@@ -27,7 +27,7 @@ func validateEvent(event event.Event, cache *cache.SchemaCache) (isValid bool, v
 		return false, validationError
 	} else {
 		payload := gjson.ParseBytes(event.Data()).Value().(map[string]interface{})
-		isValid, validationError := validator.ValidatePayload(payload, schemaContents)
+		isValid, validationError := validator.JsonschemaValidatePayload(payload, schemaContents)
 		return isValid, validationError
 	}
 }

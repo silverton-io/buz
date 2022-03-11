@@ -33,7 +33,7 @@ func validateEvent(event gjson.Result, schemaName string, cache *cache.SchemaCac
 		}
 		return false, validationError, nil
 	} else {
-		isValid, validationError := validator.ValidatePayload(event.Value().(map[string]interface{}), schemaContents)
+		isValid, validationError := validator.JsonschemaValidatePayload(event.Value().(map[string]interface{}), schemaContents)
 		return isValid, validationError, schemaContents
 	}
 }

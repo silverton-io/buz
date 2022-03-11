@@ -32,7 +32,7 @@ func validateEvent(event Event, cache *cache.SchemaCache) (isValid bool, validat
 			}
 			return false, validationError, nil
 		} else {
-			isValid, validationError := validator.ValidatePayload(event.Self_describing_event.Data, schemaContents)
+			isValid, validationError := validator.JsonschemaValidatePayload(event.Self_describing_event.Data, schemaContents)
 			return isValid, validationError, schemaContents
 		}
 	default:
