@@ -72,7 +72,7 @@ func heartbeat(t time.Ticker, m *Meta) {
 			},
 		}
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-		request.PostPayload(*endpoint, heartbeatPayload)
+		request.PostEnvelope(*endpoint, heartbeatPayload)
 	}
 }
 
@@ -92,7 +92,7 @@ func Sis(m *Meta) {
 		},
 	}
 	endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-	request.PostPayload(*endpoint, shutdownPayload)
+	request.PostEnvelope(*endpoint, shutdownPayload)
 }
 
 func Metry(c *config.Config, m *Meta) {
@@ -112,7 +112,7 @@ func Metry(c *config.Config, m *Meta) {
 			},
 		}
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-		request.PostPayload(*endpoint, startupPayload)
+		request.PostEnvelope(*endpoint, startupPayload)
 		ticker := time.NewTicker(time.Duration(c.Tele.HeartbeatMs) * time.Millisecond)
 		go heartbeat(*ticker, m)
 	}

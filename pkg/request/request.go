@@ -8,13 +8,14 @@ import (
 	"net/url"
 
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/honeypot/pkg/event"
 )
 
 const (
 	JSON_CONTENT_TYPE string = "application/json"
 )
 
-func PostPayload(url url.URL, payload interface{}) {
+func PostEnvelope(url url.URL, payload event.SelfDescribingEnvelope) {
 	data, _ := json.Marshal(payload)
 	buff := bytes.NewBuffer(data)
 	_, err := http.Post(url.String(), JSON_CONTENT_TYPE, buff)
