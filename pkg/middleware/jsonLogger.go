@@ -36,7 +36,8 @@ func RequestLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 		c.Next()
-		duration := util.GetDuration(start)
+		end := time.Now()
+		duration := util.GetDuration(start, end)
 		r := request{
 			ResponseCode:             c.Writer.Status(),
 			RequestDuration:          duration,
