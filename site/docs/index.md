@@ -15,6 +15,22 @@ To dive head-first into an example of running Honeypot locally with a three-node
 
 # Philosophy
 
+## Build new systems on proven API's and mental models
+
+There are some very good API's out there. Oftentimes these API's were originally built using best-in-class tech, but said tech has since been supplanted. Why recreate the world when advancing an existing API or mental model will do the trick?
+
+Examples of building new technology on top of pre-existing API's include:
+
+- [Redpanda](https://redpanda.com/), which is built on [Kafka](https://kafka.apache.org/documentation/)'s API.
+
+- [Materialize](https://materialize.com/), whose clients are built on the Postgres API.
+
+- [Airbyte](https://airbyte.com/), which builds upon the conceptual model of Fivetran or Stich (and the technical model of [Singer](https://www.singer.io/)).
+
+- [Timescale](https://www.timescale.com/), which builds on the Postgres API.
+
+- [PipelineDB](https://github.com/pipelinedb/pipelinedb), which was built on the Postgres API.
+
 
 ## Stand on the shoulders of giants
 **Data systems and infrastructure are getting very very cool**.
