@@ -9,7 +9,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/response"
 	limiter "github.com/ulule/limiter/v3"
-	mgin "github.com/ulule/limiter/v3/drivers/middleware/gin"
+	ginMiddleware "github.com/ulule/limiter/v3/drivers/middleware/gin"
 	"github.com/ulule/limiter/v3/drivers/store/memory"
 )
 
@@ -47,6 +47,6 @@ func BuildRateLimiter(conf config.RateLimiter) *limiter.Limiter {
 }
 
 func BuildRateLimiterMiddleware(l *limiter.Limiter) gin.HandlerFunc {
-	middleware := mgin.NewMiddleware(l, mgin.WithLimitReachedHandler(onLimitReachedHandler))
+	middleware := ginMiddleware.NewMiddleware(l, ginMiddleware.WithLimitReachedHandler(onLimitReachedHandler))
 	return middleware
 }

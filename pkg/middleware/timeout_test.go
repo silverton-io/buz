@@ -27,7 +27,7 @@ func TestTimeout(t *testing.T) {
 	}
 	slowTimeout := config.Timeout{
 		Enabled: true,
-		Ms:      10,
+		Ms:      30,
 	}
 	okResponse, _ := json.Marshal(response.Ok)
 	timeoutResponse, _ := json.Marshal(response.Timeout)
