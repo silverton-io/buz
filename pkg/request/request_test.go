@@ -47,4 +47,26 @@ func TestPostEnvelope(t *testing.T) {
 
 }
 
-func TestGet(t *testing.T) {}
+func TestGet(t *testing.T) {
+	u := "/somewhere"
+	wantResp := []byte("something important of course")
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		d := r.URL.EscapedPath()
+		t.Run("proper url", func(t *testing.T) {
+			if d != u {
+				t.Fatalf(`got url %v, want %v`, d, u)
+			}
+		})
+		w.Write(wantResp)
+	}))
+
+	dest, _ := url.Parse(ts.URL + u)
+
+	respBody, _ := Get(*dest)
+	t.Run("proper response", func(t *testing.T) {
+		equiv := reflect.DeepEqual(respBody, wantResp)
+		if !equiv {
+			t.Fatalf(`got %v, want %v`, respBody, wantResp)
+		}
+	})
+}
