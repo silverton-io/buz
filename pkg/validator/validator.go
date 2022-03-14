@@ -16,24 +16,26 @@ type PayloadValidationError struct {
 }
 
 type ValidationError struct {
-	ErrorType       string                    `json:"errorType"`
-	ErrorResolution string                    `json:"errorResolution"`
-	Errors          *[]PayloadValidationError `json:"payloadValidationErrors"`
+	ErrorType       string                   `json:"errorType"`
+	ErrorResolution string                   `json:"errorResolution"`
+	Errors          []PayloadValidationError `json:"payloadValidationErrors"`
 }
 
-func ValidatePayload(payload map[string]interface{}, schema []byte) (isValid bool, validationError ValidationError) {
+func ValidatePayload(payload []byte, schema []byte) (isValid bool, validationError ValidationError) {
 	ctx := context.Background()
 	startTime := time.Now()
 	s := &jsonschema.Schema{}
-	json.Unmarshal(schema, s)
-	data, _ := json.Marshal(payload)
-	validationErrs, err := s.ValidateBytes(ctx, data)
+	unmarshalErr := json.Unmarshal(schema, s)
+	if unmarshalErr != nil {
+		log.Error().Stack().Err(unmarshalErr).Msg("failed to unmarshal schema")
+	}
+	validationErrs, vErr := s.ValidateBytes(ctx, payload)
 
-	if err != nil {
+	if unmarshalErr != nil || vErr != nil {
 		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())
 		validationError := ValidationError{
 			ErrorType:       "invalid schema",
-			ErrorResolution: "ensure schema is properly-formatted",
+			ErrorResolution: "ensure schema is properly formatted",
 			Errors:          nil,
 		}
 		return false, validationError
@@ -54,7 +56,7 @@ func ValidatePayload(payload map[string]interface{}, schema []byte) (isValid boo
 		validationError := ValidationError{
 			ErrorType:       "invalid payload",
 			ErrorResolution: "correct payload format",
-			Errors:          &payloadValidationErrors,
+			Errors:          payloadValidationErrors,
 		}
 		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())
 		return false, validationError
