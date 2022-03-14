@@ -1,6 +1,9 @@
 package snowplow
 
 import (
+	"encoding/json"
+
+	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/cache"
 	"github.com/silverton-io/honeypot/pkg/validator"
 )
@@ -32,7 +35,11 @@ func validateEvent(event Event, cache *cache.SchemaCache) (isValid bool, validat
 			}
 			return false, validationError, nil
 		} else {
-			isValid, validationError := validator.ValidatePayload(event.Self_describing_event.Data, schemaContents)
+			eventData, err := json.Marshal(event.Self_describing_event.Data)
+			if err != nil {
+				log.Error().Stack().Err(err).Msg("could not marshal event")
+			}
+			isValid, validationError := validator.ValidatePayload(eventData, schemaContents)
 			return isValid, validationError, schemaContents
 		}
 	default:

@@ -158,7 +158,7 @@ func anonymizeFields(e *Event, conf config.Snowplow) {
 	}
 }
 
-func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, s config.Snowplow, t *tele.Meta) Event {
+func BuildEventFromMappedParams(c *gin.Context, params map[string]string, s config.Snowplow, t *tele.Meta) Event {
 	body, err := json.Marshal(params)
 	if err != nil {
 		fmt.Println(err)

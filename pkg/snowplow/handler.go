@@ -41,7 +41,7 @@ func buildEventsFromRequest(c *gin.Context, s config.Snowplow, t *tele.Meta) []E
 		body, _ := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs here
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
-			event := BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), s, t)
+			event := BuildEventFromMappedParams(c, event.Value().(map[string]string), s, t)
 			events = append(events, event)
 		}
 	} else {
