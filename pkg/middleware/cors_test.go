@@ -24,12 +24,21 @@ func TestCors(t *testing.T) {
 	r.GET(u, testHandler)
 	ts := httptest.NewServer(r)
 	defer ts.Close()
-	var client = &http.Client{}
-	req, _ := http.NewRequest(http.MethodOptions, ts.URL+u, nil)
-	resp, _ := client.Do(req)
 
-	assert.Equal(t, []string{"false"}, resp.Header["Access-Control-Allow-Credentials"])
-	assert.Equal(t, []string{"GET, OPTIONS"}, resp.Header["Access-Control-Allow-Methods"])
-	assert.Equal(t, []string{"*"}, resp.Header["Access-Control-Allow-Origin"])
-	assert.Equal(t, []string{"86400"}, resp.Header["Access-Control-Max-Age"])
+	t.Run("preflight", func(t *testing.T) {
+		var client = &http.Client{}
+		req, _ := http.NewRequest(http.MethodOptions, ts.URL+u, nil)
+		resp, _ := client.Do(req)
+
+		assert.Equal(t, []string{"false"}, resp.Header["Access-Control-Allow-Credentials"])
+		assert.Equal(t, []string{"GET, OPTIONS"}, resp.Header["Access-Control-Allow-Methods"])
+		assert.Equal(t, []string{"*"}, resp.Header["Access-Control-Allow-Origin"])
+		assert.Equal(t, []string{"86400"}, resp.Header["Access-Control-Max-Age"])
+		assert.Equal(t, http.StatusNoContent, resp.StatusCode)
+	})
+
+	t.Run("get", func(t *testing.T) {
+		resp, _ := http.Get(ts.URL + u)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+	})
 }

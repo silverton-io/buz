@@ -27,6 +27,7 @@ func TestAdvancingCookieNoCookie(t *testing.T) {
 	r.GET(u, testHandler)
 
 	ts := httptest.NewServer(r)
+	defer ts.Close()
 
 	t.Run("no cookie", func(t *testing.T) {
 		resp, _ := http.Get(ts.URL + u)
