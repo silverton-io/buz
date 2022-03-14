@@ -42,6 +42,7 @@ func TestTimeout(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
+		gin.SetMode(gin.TestMode)
 		r := gin.New()
 		r.Use(Timeout(tc.config))
 		r.GET(u, testHandler)
