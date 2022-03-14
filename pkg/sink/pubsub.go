@@ -79,8 +79,8 @@ func (s *PubsubSink) batchPublishInvalid(ctx context.Context, events []interface
 
 func (s *PubsubSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta) {
 	// Publish
-	s.batchPublishValid(ctx, validEvents)
-	s.batchPublishInvalid(ctx, invalidEvents)
+	go s.batchPublishValid(ctx, validEvents)
+	go s.batchPublishInvalid(ctx, invalidEvents)
 	// Increment stats counters
 	incrementStats(inputType, len(validEvents), len(invalidEvents), meta)
 }
