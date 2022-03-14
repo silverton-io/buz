@@ -1,13 +1,12 @@
 package ce
 
 import (
-	"github.com/cloudevents/sdk-go/v2/event"
+	ce "github.com/cloudevents/sdk-go/v2/event"
 	"github.com/silverton-io/honeypot/pkg/cache"
 	"github.com/silverton-io/honeypot/pkg/validator"
-	"github.com/tidwall/gjson"
 )
 
-func validateEvent(event event.Event, cache *cache.SchemaCache) (isValid bool, validationError validator.ValidationError) {
+func validateEvent(event ce.Event, cache *cache.SchemaCache) (isValid bool, validationError validator.ValidationError) {
 	schemaName := event.Context.GetDataSchema()
 	if schemaName == "" {
 		validationError := validator.ValidationError{ // Enforce dataschema is present in all cloudevents
@@ -26,8 +25,7 @@ func validateEvent(event event.Event, cache *cache.SchemaCache) (isValid bool, v
 		}
 		return false, validationError
 	} else {
-		payload := gjson.ParseBytes(event.Data()).Value().(map[string]interface{})
-		isValid, validationError := validator.ValidatePayload(payload, schemaContents)
+		isValid, validationError := validator.ValidatePayload(event.Data(), schemaContents)
 		return isValid, validationError
 	}
 }
