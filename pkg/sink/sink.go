@@ -29,34 +29,29 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	switch conf.Type {
 	case PUBSUB:
 		sink := PubsubSink{}
-		sink.Initialize(conf)
-		log.Info().Msg("pubsub sink initialized")
 		return &sink, nil
 	case KAFKA:
 		sink := KafkaSink{}
-		sink.Initialize(conf)
-		log.Info().Msg("kafka sink initialized")
 		return &sink, nil
 	case KINESIS:
 		sink := KinesisSink{}
-		sink.Initialize(conf)
-		log.Info().Msg("kinesis sink initialized")
 		return &sink, nil
 	case KINESIS_FIREHOSE:
 		sink := KinesisFirehoseSink{}
-		sink.Initialize(conf)
-		log.Info().Msg("kinesis firehose sink initialized")
 		return &sink, nil
 	case STDOUT:
 		sink := StdoutSink{}
-		sink.Initialize(conf)
-		log.Info().Msg("stdout sink initialized")
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
-		log.Fatal().Stack().Err(e).Msg("unsupported sink")
+		log.Error().Stack().Err(e).Msg("unsupported sink")
 		return nil, e
 	}
+}
+
+func InitializeSink(conf config.Sink, s Sink) {
+	s.Initialize(conf)
+	log.Info().Msg(conf.Type + " sink initialized")
 }
 
 func incrementStats(inputType string, validCount int, invalidCount int, meta *tele.Meta) {

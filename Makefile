@@ -4,15 +4,15 @@ REGISTRY:=us-east1-docker.pkg.dev/silverton-io/docker
 VERSION:=$(shell cat .VERSION)
 TEST_PROFILE=testprofile.out
 
-build-docker: ## Build honeypot docker image locally
+build-docker: ## Build local honeypot image
 	docker build -f deploy/Dockerfile -t honeypot:$(VERSION) .
 
-buildx-deploy: ## Build multi-platform honeypot docker image and push it to internal repo
+buildx-deploy: ## Build multi-platform honeypot image and push it to edge repo
 	docker buildx create --name $(S) || true;
 	docker buildx use $(S)
 	docker buildx build --platform linux/arm64,linux/amd64 -f deploy/Dockerfile -t $(REGISTRY)/honeypot:$(VERSION)-edge . --push
 
-test-cover-pkg: ## Run tests against pkg, output test profile, and open profile up
+test-cover-pkg: ## Run tests against pkg, output test profile, and open profile in browser
 	go test ./pkg/... -v -coverprofile=$(TEST_PROFILE) || true
 	go tool cover -html=$(TEST_PROFILE) || true
 

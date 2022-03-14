@@ -75,6 +75,7 @@ func (a *App) configure() {
 func (a *App) initializeSink() {
 	log.Info().Msg("initializing sink")
 	s, _ := sink.BuildSink(a.config.Sink)
+	sink.InitializeSink(a.config.Sink, s)
 	a.sink = s
 }
 
