@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/tidwall/gjson"
 )
@@ -132,6 +133,16 @@ type Event struct {
 	Event_name               *string                             `json:"event_name"`
 	Event_format             *string                             `json:"event_format"`
 	Event_version            *string                             `json:"event_version"`
+}
+
+func (e *Event) toMap() map[string]interface{} {
+	var m map[string]interface{}
+	b, err := json.Marshal(e)
+	if err != nil {
+		log.Error().Stack().Err(err).Msg("could not marshal event")
+	}
+	json.Unmarshal(b, &m)
+	return m
 }
 
 type ShortenedEvent struct { //A struct used to quickly parse incoming json props or query params. Leverages Go type conversion to long-form props.
@@ -358,13 +369,12 @@ type Dimension struct {
 type PageFields struct {
 	scheme   string
 	host     string
-	port     int
 	path     string
-	query    string
-	fragment string
-	medium   string
-	source   string
-	term     string
-	content  string
-	campaign string
+	query    *string
+	fragment *string
+	medium   *string
+	source   *string
+	term     *string
+	content  *string
+	campaign *string
 }

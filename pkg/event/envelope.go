@@ -1,14 +1,16 @@
 package event
 
-import "time"
+import (
+	"time"
+
+	"github.com/silverton-io/honeypot/pkg/validator"
+)
 
 type Envelope struct {
-	Protocol          string                 `json:"protocol"`
-	EventVendor       string                 `json:"eventVendor"`
-	EventName         string                 `json:"eventName"`
-	EventVersion      string                 `json:"eventVersion"`
-	EventSchemaFormat string                 `json:"eventSchemaFormat"`
-	Tstamp            time.Time              `json:"tstamp"`
-	Ip                string                 `json:"ip"`
-	Event             map[string]interface{} `json:"event"`
+	EventProtocol    string                       `json:"eventProtocol"`
+	Tstamp           time.Time                    `json:"tstamp"`
+	Ip               string                       `json:"ip"`
+	IsValid          *bool                        `json:"isValid"`
+	ValidationErrors *[]validator.ValidationError `json:"validationErrors"`
+	Event            map[string]interface{}       `json:"event"`
 }

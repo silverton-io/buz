@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/silverton-io/honeypot/pkg/util"
@@ -52,10 +53,9 @@ func setEventMetadataFields(e *Event, schema []byte) {
 func setEventFieldsFromRequest(c *gin.Context, e *Event, t *tele.Meta) {
 	nuid := c.GetString("identity")
 	ip, _ := c.RemoteIP()
-	sIp := ip.String()
+	sIp := ip.String() // FIXME! Should incorporate other IP sources
 	useragent := c.Request.UserAgent()
 	e.Network_userid = &nuid
-	// NOTE!! Ignore query-param-based ip and useragent. FIXME!
 	e.User_ipaddress = &sIp
 	e.Useragent = &useragent
 	e.Collector_tstamp = time.Now()
@@ -93,39 +93,52 @@ func getPageFieldsFromUrl(rawUrl string) (PageFields, error) {
 	term := queryParams.Get("utm_term")
 	content := queryParams.Get("utm_content")
 	campaign := queryParams.Get("utm_campaign")
-	return PageFields{
+	pageFields := PageFields{
 		scheme: parsedUrl.Scheme,
 		host:   parsedUrl.Host,
-		// port: FIXME!!!
-		path:     parsedUrl.Path, // FIXME! These are all "" instead of nil (and therefore null in json)
-		query:    unescapedQry,
-		fragment: parsedUrl.Fragment,
-		medium:   medium,
-		source:   source,
-		term:     term,
-		content:  content,
-		campaign: campaign,
-	}, nil
+		path:   parsedUrl.Path,
+	}
+	if unescapedQry != "" {
+		pageFields.query = &unescapedQry
+	}
+	if medium != "" {
+		pageFields.medium = &medium
+	}
+	if source != "" {
+		pageFields.source = &source
+	}
+	if term != "" {
+		pageFields.term = &term
+	}
+	if content != "" {
+		pageFields.content = &content
+	}
+	if campaign != "" {
+		pageFields.campaign = &campaign
+	}
+	if parsedUrl.Fragment != "" {
+		pageFields.fragment = &parsedUrl.Fragment
+	}
+	return pageFields, nil
 }
 
 func setPageFields(e *Event) {
 	if e.Page_url != nil {
 		pageFields, err := getPageFieldsFromUrl(*e.Page_url)
 		if err != nil {
-			fmt.Printf("error setting page fields %s\n", err)
+			log.Error().Stack().Err(err).Msg("error getting page fields from url")
 		}
 		e.Page_urlscheme = &pageFields.scheme
 		e.Page_urlhost = &pageFields.host
 		e.Page_urlpath = &pageFields.path
-		e.Page_urlquery = &pageFields.query
-		e.Page_urlfragment = &pageFields.fragment
-		e.Mkt_medium = &pageFields.medium
-		e.Mkt_source = &pageFields.source
-		e.Mkt_term = &pageFields.term
-		e.Mkt_content = &pageFields.content
-		e.Mkt_campaign = &pageFields.campaign
+		e.Page_urlquery = pageFields.query
+		e.Page_urlfragment = pageFields.fragment
+		e.Mkt_medium = pageFields.medium
+		e.Mkt_source = pageFields.source
+		e.Mkt_term = pageFields.term
+		e.Mkt_content = pageFields.content
+		e.Mkt_campaign = pageFields.campaign
 	}
-
 }
 
 func setReferrerFields(e *Event) {
@@ -137,13 +150,13 @@ func setReferrerFields(e *Event) {
 		e.Refr_urlscheme = &pageFields.scheme
 		e.Refr_urlhost = &pageFields.host
 		e.Refr_urlpath = &pageFields.path
-		e.Refr_urlquery = &pageFields.query
-		e.Refr_urlfragment = &pageFields.fragment
-		e.Mkt_medium = &pageFields.medium
-		e.Mkt_source = &pageFields.source
-		e.Mkt_term = &pageFields.term
-		e.Mkt_content = &pageFields.content
-		e.Mkt_campaign = &pageFields.campaign
+		e.Refr_urlquery = pageFields.query
+		e.Refr_urlfragment = pageFields.fragment
+		e.Refr_medium = pageFields.medium
+		e.Refr_source = pageFields.source
+		e.Refr_term = pageFields.term
+		e.Refr_content = pageFields.content
+		e.Refr_campaign = pageFields.campaign
 	}
 }
 

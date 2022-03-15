@@ -1,7 +1,6 @@
 package snowplow
 
 import (
-	"context"
 	"io/ioutil"
 	"time"
 
@@ -15,29 +14,30 @@ import (
 	"github.com/silverton-io/honeypot/pkg/response"
 	"github.com/silverton-io/honeypot/pkg/sink"
 	"github.com/silverton-io/honeypot/pkg/tele"
+	"github.com/silverton-io/honeypot/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
-func bifurcateEvents(events []Event, cache *cache.SchemaCache) (validEvents []interface{}, invalidEvents []interface{}) {
-	var vEvents []interface{}
-	var invEvents []interface{}
-	for _, event := range events {
-		isValid, validationError, schema := validateEvent(event, cache)
-		setEventMetadataFields(&event, schema)
-		if isValid {
-			vEvents = append(vEvents, event)
-		} else {
-			invalidEvent := e.InvalidEvent{
-				ValidationError: &validationError,
-				Event:           &event,
-			}
-			invEvents = append(invEvents, invalidEvent)
-		}
-	}
-	return vEvents, invEvents
-}
+// func bifurcateEvents(events []e.Envelope, cache *cache.SchemaCache) (validEvents []interface{}, invalidEvents []interface{}) {
+// 	var vEvents []e.Envelope
+// 	var invEvents []e.Envelope
+// 	for _, envelope := range events {
+// 		isValid, validationError, schema := validateEvent(envelope.Event, cache)
+// 		setEventMetadataFields(&event, schema)
+// 		if isValid {
+// 			vEvents = append(vEvents, event)
+// 		} else {
+// 			invalidEvent := e.InvalidEvent{
+// 				ValidationError: &validationError,
+// 				Event:           &event,
+// 			}
+// 			invEvents = append(invEvents, invalidEvent)
+// 		}
+// 	}
+// 	return vEvents, invEvents
+// }
 
-func buildEventsFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.Meta) []Event {
+func buildEventsFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.Meta) []e.Envelope {
 	var events []e.Envelope
 	if c.Request.Method == "POST" {
 		body, err := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs here
@@ -46,32 +46,35 @@ func buildEventsFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.Met
 		}
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
-			event := BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf, meta)
-			env := e.Envelope{
-				Protocol:     input.SNOWPLOW_INPUT,
-				EventVendor:  *event.Event_vendor,
-				EventName:    *event.Event_name,
-				EventVersion: *event.Event_version,
-				Tstamp:       time.Now(),
-				Ip:           *event.User_ipaddress,
-				Event:        event,
+			spEvent := BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf, meta)
+			envelope := e.Envelope{
+				EventProtocol: input.SNOWPLOW_INPUT,
+				Tstamp:        time.Now(),
+				Ip:            *spEvent.User_ipaddress,
+				Event:         spEvent.toMap(),
 			}
-			wrappedEvents = append(events, event)
+			events = append(events, envelope)
 		}
 	} else {
 		params := request.MapParams(c)
-		event := BuildEventFromMappedParams(c, params, conf, meta)
-		events = append(events, event)
+		spEvent := BuildEventFromMappedParams(c, params, conf, meta)
+		envelope := e.Envelope{
+			EventProtocol: input.SNOWPLOW_INPUT,
+			Tstamp:        time.Now(),
+			Ip:            *spEvent.User_ipaddress,
+			Event:         spEvent.toMap(),
+		}
+		events = append(events, envelope)
 	}
 	return events
 }
 
 func RedirectHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		ctx := context.Background()
-		events := buildEventsFromRequest(c, conf, meta)
-		validEvents, invalidEvents := bifurcateEvents(events, cache)
-		sink.BatchPublishValidAndInvalid(ctx, input.SNOWPLOW_INPUT, validEvents, invalidEvents, meta)
+		// ctx := context.Background()
+		// events := buildEventsFromRequest(c, conf, meta)
+		// validEvents, invalidEvents := bifurcateEvents(events, cache)
+		// sink.BatchPublishValidAndInvalid(ctx, input.SNOWPLOW_INPUT, validEvents, invalidEvents, meta)
 		redirectUrl, _ := c.GetQuery("u")
 		c.Redirect(302, redirectUrl)
 	}
@@ -80,10 +83,11 @@ func RedirectHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaC
 
 func DefaultHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		ctx := context.Background()
+		// ctx := context.Background()
 		events := buildEventsFromRequest(c, conf, meta)
-		validEvents, invalidEvents := bifurcateEvents(events, cache)
-		sink.BatchPublishValidAndInvalid(ctx, input.SNOWPLOW_INPUT, validEvents, invalidEvents, meta)
+		util.Pprint(events)
+		// validEvents, invalidEvents := bifurcateEvents(events, cache)
+		// sink.BatchPublishValidAndInvalid(ctx, input.SNOWPLOW_INPUT, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)
