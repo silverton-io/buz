@@ -7,6 +7,10 @@ import (
 
 	"github.com/qri-io/jsonschema"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/honeypot/pkg/cache"
+	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/protocol"
+	"github.com/silverton-io/honeypot/pkg/snowplow"
 )
 
 type PayloadValidationError struct {
@@ -19,6 +23,28 @@ type ValidationError struct {
 	ErrorType       string                   `json:"errorType"`
 	ErrorResolution string                   `json:"errorResolution"`
 	Errors          []PayloadValidationError `json:"payloadValidationErrors"`
+}
+
+func ValidateEnvelope(envelope *event.Envelope, cache *cache.SchemaCache) (schema []byte, err error) {
+	switch envelope.EventProtocol {
+	case protocol.SNOWPLOW_PROTOCOL:
+		switch envelope.Event["event"] {
+		case snowplow.UNKNOWN_EVENT:
+			valid := false
+			envelope.IsValid = &valid
+			return nil, nil
+		case snowplow.SELF_DESCRIBING_EVENT:
+			valid := true
+			envelope.IsValid = &valid
+		default:
+			valid := true
+			envelope.IsValid = &valid
+		}
+	case protocol.CLOUDEVENTS_PROTOCOL:
+		return
+	case protocol.GENERIC_PROTOCOL:
+		return
+	}
 }
 
 func ValidatePayload(payload []byte, schema []byte) (isValid bool, validationError ValidationError) {
