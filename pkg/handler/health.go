@@ -1,4 +1,4 @@
-package health
+package handler
 
 import (
 	"net/http"

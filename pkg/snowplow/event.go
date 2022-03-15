@@ -9,6 +9,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/tidwall/gjson"
 )
 
@@ -31,7 +32,7 @@ const (
 	IGLU = "iglu"
 )
 
-type Event struct {
+type SnowplowEvent struct {
 	// Application parameters - https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/snowplow-tracker-protocol/#common-parameters-platform-and-event-independent
 	Name_tracker             string                              `json:"name_tracker"`
 	App_id                   string                              `json:"app_id"`
@@ -141,17 +142,46 @@ type Event struct {
 	Event_version            *string                             `json:"event_version"`
 }
 
-func (e *Event) toMap() map[string]interface{} {
-	var m map[string]interface{}
-	b, err := json.Marshal(e)
-	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not marshal event")
+func (e SnowplowEvent) Schema() *string {
+	switch e.Event {
+	case SELF_DESCRIBING_EVENT:
+		schemaName := e.Self_describing_event.Schema
+		if schemaName[:4] == IGLU {
+			schemaName = schemaName[5:]
+		}
+		return &schemaName
+	default:
+		return nil
 	}
-	json.Unmarshal(b, &m)
-	return m
 }
 
-type ShortenedEvent struct { //A struct used to quickly parse incoming json props or query params. Leverages Go type conversion to long-form props.
+func (e SnowplowEvent) Protocol() string {
+	return protocol.SNOWPLOW
+}
+
+func (e SnowplowEvent) AsByte() ([]byte, error) {
+	eventBytes, err := json.Marshal(e)
+	if err != nil {
+		log.Error().Stack().Err(err).Msg("could not marshal snowplow event")
+		return nil, err
+	}
+	return eventBytes, nil
+}
+
+func (e SnowplowEvent) AsMap() (map[string]interface{}, error) {
+	var m map[string]interface{}
+	b, err := e.AsByte()
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(b, &m)
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+type ShortenedSnowplowEvent struct { //A struct used to quickly parse incoming json props or query params. Leverages Go type conversion to long-form props.
 	Name_tracker             string                              `json:"tna"`
 	App_id                   string                              `json:"aid"`
 	Platform                 string                              `json:"p"`

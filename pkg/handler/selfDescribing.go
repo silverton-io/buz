@@ -1,4 +1,4 @@
-package generic
+package handler
 
 // import (
 // 	"context"

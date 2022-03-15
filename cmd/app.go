@@ -16,7 +16,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/cache"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/env"
-	"github.com/silverton-io/honeypot/pkg/health"
+	"github.com/silverton-io/honeypot/pkg/handler"
 	"github.com/silverton-io/honeypot/pkg/middleware"
 	"github.com/silverton-io/honeypot/pkg/sink"
 	"github.com/silverton-io/honeypot/pkg/snowplow"
@@ -124,7 +124,7 @@ func (a *App) initializeMiddleware() {
 
 func (a *App) initializeHealthcheckRoutes() {
 	log.Info().Msg("initializing health check route")
-	a.engine.GET(health.HEALTH_PATH, health.HealthcheckHandler)
+	a.engine.GET("/health", handler.HealthcheckHandler)
 }
 
 func (a *App) initializeStatsRoutes() {
@@ -136,7 +136,7 @@ func (a *App) initializeStatsRoutes() {
 		} else {
 			statsPath = a.config.App.Stats.Path
 		}
-		a.engine.GET(statsPath, stats.StatsHandler(a.meta))
+		a.engine.GET(statsPath, handler.StatsHandler(a.meta))
 	}
 }
 
@@ -157,19 +157,19 @@ func (a *App) initializeSnowplowRoutes() {
 		log.Info().Msg("initializing snowplow routes")
 		if a.config.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("initializing standard routes")
-			a.engine.GET(snowplow.DEFAULT_GET_PATH, snowplow.DefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
-			a.engine.POST(snowplow.DEFAULT_POST_PATH, snowplow.DefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+			a.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowDefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+			a.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowDefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
 			if a.config.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("initializing standard open redirect route")
-				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, snowplow.RedirectHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowRedirectHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
 			}
 		}
 		log.Info().Msg("initializing custom routes")
-		a.engine.GET(a.config.Snowplow.GetPath, snowplow.DefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
-		a.engine.POST(a.config.Snowplow.PostPath, snowplow.DefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+		a.engine.GET(a.config.Snowplow.GetPath, handler.SnowplowDefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+		a.engine.POST(a.config.Snowplow.PostPath, handler.SnowplowDefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
 		if a.config.Snowplow.OpenRedirectsEnabled {
 			log.Info().Msg("initializing custom open redirect route")
-			a.engine.GET(a.config.Snowplow.RedirectPath, snowplow.RedirectHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+			a.engine.GET(a.config.Snowplow.RedirectPath, handler.SnowplowRedirectHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
 		}
 	}
 }
@@ -182,13 +182,13 @@ func (a *App) initializeSnowplowRoutes() {
 // 	}
 // }
 
-// func (a *App) initializeCloudeventsRoutes() {
-// 	if a.config.Cloudevents.Enabled {
-// 		log.Info().Msg("initializing cloudevents routes")
-// 		a.engine.POST(a.config.Cloudevents.PostPath, ce.PostHandler(&a.config.Cloudevents, a.meta, a.schemaCache, a.sink))
-// 		a.engine.POST(a.config.Cloudevents.BatchPostPath, ce.BatchPostHandler(&a.config.Cloudevents, a.meta, a.schemaCache, a.sink))
-// 	}
-// }
+func (a *App) initializeCloudeventsRoutes() {
+	if a.config.Cloudevents.Enabled {
+		log.Info().Msg("initializing cloudevents routes")
+		a.engine.POST(a.config.Cloudevents.PostPath, handler.CloudeventsPostHandler(&a.config.Cloudevents, a.meta, a.schemaCache, a.sink))
+		a.engine.POST(a.config.Cloudevents.BatchPostPath, handler.CloudeventsBatchPostHandler(&a.config.Cloudevents, a.meta, a.schemaCache, a.sink))
+	}
+}
 
 func (a *App) serveStaticIfDev() {
 	if a.config.App.Env == env.DEV_ENVIRONMENT {
@@ -212,7 +212,7 @@ func (a *App) Initialize() {
 	a.initializeSchemaCacheRoutes()
 	a.initializeSnowplowRoutes()
 	// a.initializeGenericRoutes()
-	// a.initializeCloudeventsRoutes()
+	a.initializeCloudeventsRoutes()
 	a.serveStaticIfDev()
 }
 

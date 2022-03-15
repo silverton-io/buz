@@ -9,7 +9,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/snowplow"
 )
 
-func validateSnowplowEvent(spEvent snowplow.Event, cache *cache.SchemaCache) (isValid bool, validationError event.ValidationError, schema []byte) {
+func validateSnowplowEvent(spEvent snowplow.SnowplowEvent, cache *cache.SchemaCache) (isValid bool, validationError event.ValidationError, schema []byte) {
 	switch spEvent.Event {
 	case snowplow.UNKNOWN_EVENT:
 		validationError := event.ValidationError{

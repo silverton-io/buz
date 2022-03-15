@@ -17,11 +17,12 @@ type ValidationError struct {
 }
 
 type Envelope struct {
-	EventProtocol   string                 `json:"eventProtocol"`
-	EventSchema     *string                `json:"eventSchema"`
-	Tstamp          time.Time              `json:"tstamp"`
-	Ip              string                 `json:"ip"`
-	IsValid         *bool                  `json:"isValid"`
-	ValidationError *ValidationError       `json:"validationErrors"`
-	Event           map[string]interface{} `json:"event"`
+	EventProtocol   string           `json:"eventProtocol"`
+	EventSchema     *string          `json:"eventSchema"`
+	Source          string           `json:"source"`
+	Tstamp          time.Time        `json:"tstamp"`
+	Ip              string           `json:"ip"`
+	IsValid         *bool            `json:"isValid"`
+	ValidationError *ValidationError `json:"validationErrors"`
+	Payload         Event            `json:"payload"`
 }

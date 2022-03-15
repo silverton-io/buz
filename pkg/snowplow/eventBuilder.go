@@ -30,7 +30,7 @@ func parseWidthHeight(dimensionString string) (Dimension, error) {
 	}, nil
 }
 
-func setEventMetadataFields(e *Event, schema []byte) {
+func setEventMetadataFields(e *SnowplowEvent, schema []byte) {
 	schemaContents := gjson.ParseBytes(schema)
 	vendor := schemaContents.Get("self.vendor").String()
 	name := schemaContents.Get("self.name").String()
@@ -50,7 +50,7 @@ func setEventMetadataFields(e *Event, schema []byte) {
 	}
 }
 
-func setEventFieldsFromRequest(c *gin.Context, e *Event, t *tele.Meta) {
+func setEventFieldsFromRequest(c *gin.Context, e *SnowplowEvent, t *tele.Meta) {
 	nuid := c.GetString("identity")
 	ip, _ := c.RemoteIP()
 	sIp := ip.String() // FIXME! Should incorporate other IP sources
@@ -66,7 +66,7 @@ func setEventFieldsFromRequest(c *gin.Context, e *Event, t *tele.Meta) {
 	e.Etl_version = &t.Version
 }
 
-func setEventWidthHeightFields(e *Event) {
+func setEventWidthHeightFields(e *SnowplowEvent) {
 	if e.Doc_size != nil {
 		docDimension, _ := parseWidthHeight(*e.Doc_size)
 		e.Doc_width, e.Doc_height = &docDimension.width, &docDimension.height
@@ -122,7 +122,7 @@ func getPageFieldsFromUrl(rawUrl string) (PageFields, error) {
 	return pageFields, nil
 }
 
-func setPageFields(e *Event) {
+func setPageFields(e *SnowplowEvent) {
 	if e.Page_url != nil {
 		pageFields, err := getPageFieldsFromUrl(*e.Page_url)
 		if err != nil {
@@ -141,7 +141,7 @@ func setPageFields(e *Event) {
 	}
 }
 
-func setReferrerFields(e *Event) {
+func setReferrerFields(e *SnowplowEvent) {
 	if e.Page_referrer != nil {
 		pageFields, err := getPageFieldsFromUrl(*e.Page_referrer)
 		if err != nil {
@@ -160,7 +160,7 @@ func setReferrerFields(e *Event) {
 	}
 }
 
-func anonymizeFields(e *Event, conf config.Snowplow) {
+func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
 	if conf.Anonymize.Ip && e.User_ipaddress != nil {
 		hashedIp := util.Md5(*e.User_ipaddress)
 		e.User_ipaddress = &hashedIp
@@ -171,17 +171,17 @@ func anonymizeFields(e *Event, conf config.Snowplow) {
 	}
 }
 
-func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, s config.Snowplow, t *tele.Meta) Event {
+func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, s config.Snowplow, t *tele.Meta) SnowplowEvent {
 	body, err := json.Marshal(params)
 	if err != nil {
 		fmt.Println(err)
 	}
-	shortenedEvent := ShortenedEvent{}
+	shortenedEvent := ShortenedSnowplowEvent{}
 	err = json.Unmarshal(body, &shortenedEvent)
 	if err != nil {
 		fmt.Printf("error unmarshalling to shortened event %s", err)
 	}
-	event := Event(shortenedEvent)
+	event := SnowplowEvent(shortenedEvent)
 	setEventFieldsFromRequest(c, &event, t)
 	setEventWidthHeightFields(&event)
 	setPageFields(&event)

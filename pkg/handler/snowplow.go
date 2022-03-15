@@ -1,4 +1,4 @@
-package snowplow
+package handler
 
 import (
 	"io/ioutil"
@@ -13,50 +13,53 @@ import (
 	"github.com/silverton-io/honeypot/pkg/request"
 	"github.com/silverton-io/honeypot/pkg/response"
 	"github.com/silverton-io/honeypot/pkg/sink"
+	"github.com/silverton-io/honeypot/pkg/snowplow"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/silverton-io/honeypot/pkg/util"
-	"github.com/silverton-io/honeypot/pkg/validator"
 	"github.com/tidwall/gjson"
 )
 
 func buildEventsFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.Meta) []e.Envelope {
 	var events []e.Envelope
 	if c.Request.Method == "POST" {
-		body, err := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs here
+		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not read request body")
 		}
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
-			spEvent := BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf, meta)
+			spEvent := snowplow.BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf, meta)
+			schema := spEvent.Schema()
 			envelope := e.Envelope{
 				EventProtocol: protocol.SNOWPLOW,
-				// EventSchema:   &spEvent.Self_describing_event.Schema,
-				Tstamp: time.Now(),
-				Ip:     *spEvent.User_ipaddress,
-				Event:  spEvent.toMap(),
+				EventSchema:   schema,
+				Tstamp:        time.Now(),
+				Ip:            *spEvent.User_ipaddress,
+				Payload:       spEvent,
 			}
 			events = append(events, envelope)
 		}
 	} else {
 		params := request.MapParams(c)
-		spEvent := BuildEventFromMappedParams(c, params, conf, meta)
+		spEvent := snowplow.BuildEventFromMappedParams(c, params, conf, meta)
+		schema := spEvent.Schema()
 		envelope := e.Envelope{
 			EventProtocol: protocol.SNOWPLOW,
-			// EventSchema:   &spEvent.Self_describing_event.Schema,
-			Tstamp: time.Now(),
-			Ip:     *spEvent.User_ipaddress,
-			Event:  spEvent.toMap(),
+			EventSchema:   schema,
+			Tstamp:        time.Now(),
+			Ip:            *spEvent.User_ipaddress,
+			Payload:       spEvent,
 		}
 		events = append(events, envelope)
 	}
 	return events
 }
 
-func RedirectHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
+func SnowplowRedirectHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		// ctx := context.Background()
-		// events := buildEventsFromRequest(c, conf, meta)
+		events := buildEventsFromRequest(c, conf, meta)
+		util.Pprint(events)
 		// validEvents, invalidEvents := bifurcateEvents(events, cache)
 		// sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEvents, invalidEvents, meta)
 		redirectUrl, _ := c.GetQuery("u")
@@ -65,13 +68,11 @@ func RedirectHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaC
 	return gin.HandlerFunc(fn)
 }
 
-func DefaultHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
+func SnowplowDefaultHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		v := validator.Validator{}
 		// ctx := context.Background()
 		eventEnvelopes := buildEventsFromRequest(c, conf, meta)
 		for _, envelope := range eventEnvelopes {
-			v.ValidateEnvelope(&envelope)
 			util.Pprint(envelope)
 		}
 		// validEvents, invalidEvents := bifurcateEvents(events, cache)
