@@ -15,7 +15,7 @@ const (
 	JSON_CONTENT_TYPE string = "application/json"
 )
 
-func PostEnvelope(url url.URL, payload event.SelfDescribingEnvelope) {
+func PostEvent(url url.URL, payload event.SelfDescribingEvent) {
 	data, _ := json.Marshal(payload)
 	buff := bytes.NewBuffer(data)
 	_, err := http.Post(url.String(), JSON_CONTENT_TYPE, buff)

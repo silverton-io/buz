@@ -21,9 +21,9 @@ func TestConst(t *testing.T) {
 	}
 }
 
-func TestPostEnvelope(t *testing.T) {
+func TestPostEvent(t *testing.T) {
 	u := "/somewhere"
-	payload := event.SelfDescribingEnvelope{}
+	payload := event.SelfDescribingEvent{}
 	marshaledPayload, _ := json.Marshal(payload)
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +43,7 @@ func TestPostEnvelope(t *testing.T) {
 
 	dest, _ := url.Parse(ts.URL + u)
 
-	PostEnvelope(*dest, payload)
+	PostEvent(*dest, payload)
 
 }
 

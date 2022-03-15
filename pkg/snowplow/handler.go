@@ -3,8 +3,10 @@ package snowplow
 import (
 	"context"
 	"io/ioutil"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/cache"
 	"github.com/silverton-io/honeypot/pkg/config"
 	e "github.com/silverton-io/honeypot/pkg/event"
@@ -35,18 +37,30 @@ func bifurcateEvents(events []Event, cache *cache.SchemaCache) (validEvents []in
 	return vEvents, invEvents
 }
 
-func buildEventsFromRequest(c *gin.Context, s config.Snowplow, t *tele.Meta) []Event {
-	var events []Event
+func buildEventsFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.Meta) []Event {
+	var events []e.Envelope
 	if c.Request.Method == "POST" {
-		body, _ := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs here
+		body, err := ioutil.ReadAll(c.Request.Body) // FIXME! Handle errs here
+		if err != nil {
+			log.Error().Stack().Err(err).Msg("could not read request body")
+		}
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
-			event := BuildEventFromMappedParams(c, event.Value().(map[string]string), s, t)
-			events = append(events, event)
+			event := BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf, meta)
+			env := e.Envelope{
+				Protocol:     input.SNOWPLOW_INPUT,
+				EventVendor:  *event.Event_vendor,
+				EventName:    *event.Event_name,
+				EventVersion: *event.Event_version,
+				Tstamp:       time.Now(),
+				Ip:           *event.User_ipaddress,
+				Event:        event,
+			}
+			wrappedEvents = append(events, event)
 		}
 	} else {
 		params := request.MapParams(c)
-		event := BuildEventFromMappedParams(c, params, s, t)
+		event := BuildEventFromMappedParams(c, params, conf, meta)
 		events = append(events, event)
 	}
 	return events
