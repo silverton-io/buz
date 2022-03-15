@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/input"
+	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -126,9 +126,9 @@ func TestIncrementStats(t *testing.T) {
 		InvalidCloudEventsProcessed:    0,
 	}
 
-	incrementStats(input.CLOUDEVENTS_INPUT, 1, 1, &m)
-	incrementStats(input.SNOWPLOW_INPUT, 1, 1, &m)
-	incrementStats(input.GENERIC_INPUT, 1, 1, &m)
+	incrementStats(protocol.CLOUDEVENTS, 1, 1, &m)
+	incrementStats(protocol.SNOWPLOW, 1, 1, &m)
+	incrementStats(protocol.GENERIC, 1, 1, &m)
 	incrementStats("other", 1, 1, &m)
 
 	assert.Equal(t, int64(1), m.ValidCloudEventsProcessed)

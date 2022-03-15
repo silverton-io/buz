@@ -6,7 +6,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/input"
+	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"golang.org/x/net/context"
 )
@@ -54,14 +54,14 @@ func InitializeSink(conf config.Sink, s Sink) {
 	log.Info().Msg(conf.Type + " sink initialized")
 }
 
-func incrementStats(inputType string, validCount int, invalidCount int, meta *tele.Meta) {
+func incrementStats(protocolName string, validCount int, invalidCount int, meta *tele.Meta) {
 	var validCounter *int64
 	var invalidCounter *int64
-	switch inputType {
-	case input.GENERIC_INPUT:
+	switch protocolName {
+	case protocol.GENERIC:
 		validCounter = &meta.ValidGenericEventsProcessed
 		invalidCounter = &meta.InvalidGenericEventsProcessed
-	case input.CLOUDEVENTS_INPUT:
+	case protocol.CLOUDEVENTS:
 		validCounter = &meta.ValidCloudEventsProcessed
 		invalidCounter = &meta.InvalidCloudEventsProcessed
 	default:

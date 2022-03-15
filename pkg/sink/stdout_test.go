@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/input"
+	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/stretchr/testify/assert"
 )
@@ -51,7 +51,7 @@ func TestStdoutSink(t *testing.T) {
 	sink := StdoutSink{}
 
 	sink.Initialize(c)
-	sink.BatchPublishValidAndInvalid(ctx, input.SNOWPLOW_INPUT, []interface{}{"good"}, []interface{}{"bad"}, &m)
+	sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, []interface{}{"good"}, []interface{}{"bad"}, &m)
 	sink.Close()
 
 	assert.Equal(t, int64(1), m.ValidSnowplowEventsProcessed)
