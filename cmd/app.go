@@ -14,10 +14,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/cache"
-	ce "github.com/silverton-io/honeypot/pkg/cloudevents"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/env"
-	"github.com/silverton-io/honeypot/pkg/generic"
 	"github.com/silverton-io/honeypot/pkg/health"
 	"github.com/silverton-io/honeypot/pkg/middleware"
 	"github.com/silverton-io/honeypot/pkg/sink"
@@ -176,21 +174,21 @@ func (a *App) initializeSnowplowRoutes() {
 	}
 }
 
-func (a *App) initializeGenericRoutes() {
-	if a.config.Generic.Enabled {
-		log.Info().Msg("initializing generic routes")
-		a.engine.POST(a.config.Generic.PostPath, generic.PostHandler(&a.config.Generic, a.meta, a.schemaCache, a.sink))
-		a.engine.POST(a.config.Generic.BatchPostPath, generic.BatchPostHandler(&a.config.Generic, a.meta, a.schemaCache, a.sink))
-	}
-}
+// func (a *App) initializeGenericRoutes() {
+// 	if a.config.Generic.Enabled {
+// 		log.Info().Msg("initializing generic routes")
+// 		a.engine.POST(a.config.Generic.PostPath, generic.PostHandler(&a.config.Generic, a.meta, a.schemaCache, a.sink))
+// 		a.engine.POST(a.config.Generic.BatchPostPath, generic.BatchPostHandler(&a.config.Generic, a.meta, a.schemaCache, a.sink))
+// 	}
+// }
 
-func (a *App) initializeCloudeventsRoutes() {
-	if a.config.Cloudevents.Enabled {
-		log.Info().Msg("initializing cloudevents routes")
-		a.engine.POST(a.config.Cloudevents.PostPath, ce.PostHandler(&a.config.Cloudevents, a.meta, a.schemaCache, a.sink))
-		a.engine.POST(a.config.Cloudevents.BatchPostPath, ce.BatchPostHandler(&a.config.Cloudevents, a.meta, a.schemaCache, a.sink))
-	}
-}
+// func (a *App) initializeCloudeventsRoutes() {
+// 	if a.config.Cloudevents.Enabled {
+// 		log.Info().Msg("initializing cloudevents routes")
+// 		a.engine.POST(a.config.Cloudevents.PostPath, ce.PostHandler(&a.config.Cloudevents, a.meta, a.schemaCache, a.sink))
+// 		a.engine.POST(a.config.Cloudevents.BatchPostPath, ce.BatchPostHandler(&a.config.Cloudevents, a.meta, a.schemaCache, a.sink))
+// 	}
+// }
 
 func (a *App) serveStaticIfDev() {
 	if a.config.App.Env == env.DEV_ENVIRONMENT {
@@ -213,8 +211,8 @@ func (a *App) Initialize() {
 	a.initializeStatsRoutes()
 	a.initializeSchemaCacheRoutes()
 	a.initializeSnowplowRoutes()
-	a.initializeGenericRoutes()
-	a.initializeCloudeventsRoutes()
+	// a.initializeGenericRoutes()
+	// a.initializeCloudeventsRoutes()
 	a.serveStaticIfDev()
 }
 

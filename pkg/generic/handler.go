@@ -17,26 +17,6 @@ package generic
 // 	"github.com/tidwall/gjson"
 // )
 
-// func bifurcateEvents(events []gjson.Result, cache *cache.SchemaCache, conf *config.Generic) (validEvents []interface{}, invalidEvents []interface{}) {
-// 	var vEvents []interface{}
-// 	var invEvents []interface{}
-// 	for _, event := range events {
-// 		payloadSchemaName := event.Get(conf.Payload.RootKey + "." + conf.Payload.SchemaKey).String()
-// 		payloadData := event.Get(conf.Payload.RootKey + "." + conf.Payload.DataKey)
-// 		isValid, validationError, _ := validateEvent(payloadData, payloadSchemaName, cache, conf)
-// 		if isValid {
-// 			vEvents = append(vEvents, event.Value())
-// 		} else {
-// 			invalidEvent := e.InvalidEvent{
-// 				ValidationError: &validationError,
-// 				Event:           event.Value(),
-// 			}
-// 			invEvents = append(invEvents, invalidEvent)
-// 		}
-// 	}
-// 	return vEvents, invEvents
-// }
-
 // func PostHandler(conf *config.Generic, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 // 	fn := func(c *gin.Context) {
 // 		ctx := context.Background()

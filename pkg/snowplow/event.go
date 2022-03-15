@@ -25,6 +25,12 @@ const (
 	UNKNOWN_EVENT         = "unknown"
 )
 
+// Other
+
+const (
+	IGLU = "iglu"
+)
+
 type Event struct {
 	// Application parameters - https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/snowplow-tracker-protocol/#common-parameters-platform-and-event-independent
 	Name_tracker             string                              `json:"name_tracker"`

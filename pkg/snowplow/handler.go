@@ -15,27 +15,9 @@ import (
 	"github.com/silverton-io/honeypot/pkg/sink"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/silverton-io/honeypot/pkg/util"
+	"github.com/silverton-io/honeypot/pkg/validator"
 	"github.com/tidwall/gjson"
 )
-
-// func bifurcateEvents(events []e.Envelope, cache *cache.SchemaCache) (validEvents []interface{}, invalidEvents []interface{}) {
-// 	var vEvents []e.Envelope
-// 	var invEvents []e.Envelope
-// 	for _, envelope := range events {
-// 		isValid, validationError, schema := validateEvent(envelope.Event, cache)
-// 		setEventMetadataFields(&event, schema)
-// 		if isValid {
-// 			vEvents = append(vEvents, event)
-// 		} else {
-// 			invalidEvent := e.InvalidEvent{
-// 				ValidationError: &validationError,
-// 				Event:           &event,
-// 			}
-// 			invEvents = append(invEvents, invalidEvent)
-// 		}
-// 	}
-// 	return vEvents, invEvents
-// }
 
 func buildEventsFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.Meta) []e.Envelope {
 	var events []e.Envelope
@@ -49,9 +31,10 @@ func buildEventsFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.Met
 			spEvent := BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf, meta)
 			envelope := e.Envelope{
 				EventProtocol: protocol.SNOWPLOW,
-				Tstamp:        time.Now(),
-				Ip:            *spEvent.User_ipaddress,
-				Event:         spEvent.toMap(),
+				// EventSchema:   &spEvent.Self_describing_event.Schema,
+				Tstamp: time.Now(),
+				Ip:     *spEvent.User_ipaddress,
+				Event:  spEvent.toMap(),
 			}
 			events = append(events, envelope)
 		}
@@ -60,9 +43,10 @@ func buildEventsFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.Met
 		spEvent := BuildEventFromMappedParams(c, params, conf, meta)
 		envelope := e.Envelope{
 			EventProtocol: protocol.SNOWPLOW,
-			Tstamp:        time.Now(),
-			Ip:            *spEvent.User_ipaddress,
-			Event:         spEvent.toMap(),
+			// EventSchema:   &spEvent.Self_describing_event.Schema,
+			Tstamp: time.Now(),
+			Ip:     *spEvent.User_ipaddress,
+			Event:  spEvent.toMap(),
 		}
 		events = append(events, envelope)
 	}
@@ -83,9 +67,13 @@ func RedirectHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaC
 
 func DefaultHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
+		v := validator.Validator{}
 		// ctx := context.Background()
-		events := buildEventsFromRequest(c, conf, meta)
-		util.Pprint(events)
+		eventEnvelopes := buildEventsFromRequest(c, conf, meta)
+		for _, envelope := range eventEnvelopes {
+			v.ValidateEnvelope(&envelope)
+			util.Pprint(envelope)
+		}
 		// validEvents, invalidEvents := bifurcateEvents(events, cache)
 		// sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)

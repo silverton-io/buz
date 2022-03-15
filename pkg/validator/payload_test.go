@@ -7,22 +7,23 @@ import (
 	"testing"
 
 	"github.com/qri-io/jsonschema"
+	"github.com/silverton-io/honeypot/pkg/event"
 )
 
 type output struct {
 	isValid         bool
-	validationError ValidationError
+	validationError event.ValidationError
 }
 
-func generatePayloadValidationErrs(payload []byte, schema []byte) []PayloadValidationError {
+func generatePayloadValidationErrs(payload []byte, schema []byte) []event.PayloadValidationError {
 	ctx := context.Background()
 	s := &jsonschema.Schema{}
 	json.Unmarshal(schema, s)
 	validationErrs, _ := s.ValidateBytes(ctx, payload)
 
-	var payloadValidationErrors []PayloadValidationError
+	var payloadValidationErrors []event.PayloadValidationError
 	for _, validationErr := range validationErrs {
-		payloadValidationError := PayloadValidationError{
+		payloadValidationError := event.PayloadValidationError{
 			Field:       validationErr.PropertyPath,
 			Description: validationErr.Message,
 			ErrorType:   validationErr.Error(),
@@ -64,15 +65,15 @@ func TestValidatePayload(t *testing.T) {
 		schema  []byte
 		want    output
 	}{
-		{"valid payload valid schema", validPayload, validSchema, output{true, ValidationError{}}},
-		{"valid payload invalid schema", validPayload, invalidSchema, output{false, ValidationError{ErrorType: "invalid schema", ErrorResolution: "ensure schema is properly formatted", Errors: nil}}},
-		{"invalid payload valid schema", invalidPayload, validSchema, output{false, ValidationError{ErrorType: "invalid payload", ErrorResolution: "correct payload format", Errors: invalidPayloadValidationErrs}}},
+		{"valid payload valid schema", validPayload, validSchema, output{true, event.ValidationError{}}},
+		{"valid payload invalid schema", validPayload, invalidSchema, output{false, event.ValidationError{ErrorType: "invalid schema", ErrorResolution: "ensure schema is properly formatted", Errors: nil}}},
+		{"invalid payload valid schema", invalidPayload, validSchema, output{false, event.ValidationError{ErrorType: "invalid payload", ErrorResolution: "correct payload format", Errors: invalidPayloadValidationErrs}}},
 	}
 
 	for _, tc := range testCases {
 
 		t.Run(tc.name, func(t *testing.T) {
-			isValid, vErr := ValidatePayload(tc.payload, tc.schema)
+			isValid, vErr := validatePayload(tc.payload, tc.schema)
 			if isValid != tc.want.isValid {
 				t.Fatalf(`got %v, want %v`, isValid, tc.want.isValid)
 			}
