@@ -94,6 +94,12 @@ sink:
   validEventTopic: hpt-valid
   produceTimeout: 3
 
+squawkbox:
+  enabled: true
+  cloudeventsPath: /sqwk/ce
+  snowplowPath: /sqwk/sp
+  genericPath: /sqwk/gen
+
 tele:
   enabled: true
   heartbeatMs: 30000
