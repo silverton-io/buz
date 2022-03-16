@@ -63,7 +63,7 @@ generic:
   contexts:
     rootKey: contexts
     schemaKey: schema
-    dataKey: payload
+    dataKey: data
   payload:
     rootKey: payload
     schemaKey: schema

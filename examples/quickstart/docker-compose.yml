@@ -20,7 +20,7 @@ services:
       - 8080:8080
     deploy:
       restart_policy:
-        condition: always
+        condition: on-failure
     healthcheck:
       test: curl -f localhost:8080/health
       interval: 15s
