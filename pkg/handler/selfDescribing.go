@@ -12,6 +12,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/generic"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/response"
+	"github.com/silverton-io/honeypot/pkg/util"
 	"github.com/silverton-io/honeypot/pkg/validator"
 	"github.com/tidwall/gjson"
 )
@@ -24,6 +25,7 @@ func buildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []even
 	}
 	// Handles case of single-event
 	e := gjson.ParseBytes(reqBody)
+	util.Pprint(e.Value())
 	genEvent := generic.BuildEvent(e, conf.Generic)
 	envelope := event.Envelope{
 		EventProtocol: protocol.GENERIC,
@@ -48,30 +50,32 @@ func GenericPostHandler(p EventHandlerParams) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-// func GenericBatchPostHandler(p EventHandlerParams) gin.HandlerFunc {
-// 	fn := func(c *gin.Context) {
-// 		ctx := context.Background()
+func GenericBatchPostHandler(p EventHandlerParams) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		// ctx := context.Background()
 
-// 		var rawEvents []interface{}
+		// var rawEvents []interface{}
 
-// 		err := json.Unmarshal(reqBody, &rawEvents)
-// 		if err != nil {
-// 			log.Error().Stack().Err(err).Msg("error when unmarshaling request body")
-// 			// TODO! Decide whether or not to return something bad here
-// 		}
-// 		for _, rawEvent := range rawEvents {
-// 			marshaledEvent, err := json.Marshal(rawEvent)
-// 			if err != nil {
-// 				log.Error().Stack().Err(err).Msg("error when marshaling event")
-// 				// TODO! Decide whether or not to return something bad here
-// 			} else {
-// 				event := gjson.ParseBytes(marshaledEvent)
-// 				events = append(events, event)
-// 			}
-// 		}
-// 		validEvents, invalidEvents := validator.BifurcateAndAnnotate(events, p.Cache)
-// 		p.Sink.BatchPublishValidAndInvalid(ctx, protocol.GENERIC, validEvents, invalidEvents, p.Meta)
-// 		c.JSON(200, response.Ok)
-// 	}
-// 	return gin.HandlerFunc(fn)
-// }
+		// err := json.Unmarshal(reqBody, &rawEvents)
+		// if err != nil {
+		// 	log.Error().Stack().Err(err).Msg("error when unmarshaling request body")
+		// 	// TODO! Decide whether or not to return something bad here
+		// }
+		buildGenericEnvelopesFromRequest(c, *p.Config)
+
+		// for _, rawEvent := range rawEvents {
+		// 	marshaledEvent, err := json.Marshal(rawEvent)
+		// 	if err != nil {
+		// 		log.Error().Stack().Err(err).Msg("error when marshaling event")
+		// 		// TODO! Decide whether or not to return something bad here
+		// 	} else {
+		// 		event := gjson.ParseBytes(marshaledEvent)
+		// 		events = append(events, event)
+		// 	}
+		// }
+		// validEvents, invalidEvents := validator.BifurcateAndAnnotate(events, p.Cache)
+		// p.Sink.BatchPublishValidAndInvalid(ctx, protocol.GENERIC, validEvents, invalidEvents, p.Meta)
+		c.JSON(200, response.Ok)
+	}
+	return gin.HandlerFunc(fn)
+}
