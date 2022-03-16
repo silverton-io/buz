@@ -1,42 +1,59 @@
 package handler
 
-// import (
-// 	"context"
-// 	"encoding/json"
-// 	"io/ioutil"
+import (
+	"context"
+	"io/ioutil"
+	"time"
 
-// 	"github.com/gin-gonic/gin"
-// 	"github.com/rs/zerolog/log"
-// 	"github.com/silverton-io/honeypot/pkg/cache"
-// 	"github.com/silverton-io/honeypot/pkg/config"
-// 	e "github.com/silverton-io/honeypot/pkg/event"
-// 	"github.com/silverton-io/honeypot/pkg/protocol"
-// 	"github.com/silverton-io/honeypot/pkg/response"
-// 	"github.com/silverton-io/honeypot/pkg/sink"
-// 	"github.com/silverton-io/honeypot/pkg/tele"
-// 	"github.com/tidwall/gjson"
-// )
+	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/generic"
+	"github.com/silverton-io/honeypot/pkg/protocol"
+	"github.com/silverton-io/honeypot/pkg/response"
+	"github.com/silverton-io/honeypot/pkg/validator"
+	"github.com/tidwall/gjson"
+)
 
-// func PostHandler(conf *config.Generic, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
+func buildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []event.Envelope {
+	var envelopes []event.Envelope
+	reqBody, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Error().Stack().Err(err).Msg("could not read request body")
+	}
+	// Handles case of single-event
+	e := gjson.ParseBytes(reqBody)
+	genEvent := generic.BuildEvent(e, conf.Generic)
+	envelope := event.Envelope{
+		EventProtocol: protocol.GENERIC,
+		EventSchema:   &genEvent.Payload.Schema,
+		Tstamp:        time.Now(),
+		Ip:            c.ClientIP(),
+		Payload:       genEvent,
+	}
+	// TODO - handle case of batched events
+	envelopes = append(envelopes, envelope)
+	return envelopes
+}
+
+func GenericPostHandler(p EventHandlerParams) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		ctx := context.Background()
+		envelopes := buildGenericEnvelopesFromRequest(c, *p.Config)
+		validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, p.Cache)
+		p.Sink.BatchPublishValidAndInvalid(ctx, protocol.GENERIC, validEvents, invalidEvents, p.Meta)
+		c.JSON(200, response.Ok)
+	}
+	return gin.HandlerFunc(fn)
+}
+
+// func GenericBatchPostHandler(p EventHandlerParams) gin.HandlerFunc {
 // 	fn := func(c *gin.Context) {
 // 		ctx := context.Background()
-// 		reqBody, _ := ioutil.ReadAll(c.Request.Body)
-// 		var events []gjson.Result
-// 		event := gjson.ParseBytes(reqBody)
-// 		events = append(events, event)
-// 		validEvents, invalidEvents := bifurcateEvents(events, cache, conf)
-// 		sink.BatchPublishValidAndInvalid(ctx, protocol.GENERIC, validEvents, invalidEvents, meta)
-// 		c.JSON(200, response.Ok)
-// 	}
-// 	return gin.HandlerFunc(fn)
-// }
 
-// func BatchPostHandler(conf *config.Generic, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
-// 	fn := func(c *gin.Context) {
-// 		ctx := context.Background()
-// 		reqBody, _ := ioutil.ReadAll(c.Request.Body)
 // 		var rawEvents []interface{}
-// 		var events []gjson.Result
+
 // 		err := json.Unmarshal(reqBody, &rawEvents)
 // 		if err != nil {
 // 			log.Error().Stack().Err(err).Msg("error when unmarshaling request body")
@@ -52,8 +69,8 @@ package handler
 // 				events = append(events, event)
 // 			}
 // 		}
-// 		validEvents, invalidEvents := bifurcateEvents(events, cache, conf)
-// 		sink.BatchPublishValidAndInvalid(ctx, protocol.GENERIC, validEvents, invalidEvents, meta)
+// 		validEvents, invalidEvents := validator.BifurcateAndAnnotate(events, p.Cache)
+// 		p.Sink.BatchPublishValidAndInvalid(ctx, protocol.GENERIC, validEvents, invalidEvents, p.Meta)
 // 		c.JSON(200, response.Ok)
 // 	}
 // 	return gin.HandlerFunc(fn)

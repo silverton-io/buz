@@ -4,23 +4,20 @@ import (
 	"context"
 	"encoding/json"
 	"io/ioutil"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/honeypot/pkg/cache"
 	"github.com/silverton-io/honeypot/pkg/cloudevents"
-	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/response"
-	"github.com/silverton-io/honeypot/pkg/sink"
-	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/silverton-io/honeypot/pkg/validator"
 	"github.com/tidwall/gjson"
 )
 
-func CloudeventsPostHandler(conf *config.Cloudevents, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
+func CloudeventsPostHandler(handlerParams EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		var envelopes []event.Envelope
 		if c.ContentType() == "application/cloudevents+json" { // Only accept request if content type is set appropriately
@@ -35,8 +32,8 @@ func CloudeventsPostHandler(conf *config.Cloudevents, meta *tele.Meta, cache *ca
 				Payload:       cloudevent,
 			}
 			envelopes = append(envelopes, envelope)
-			validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, cache)
-			sink.BatchPublishValidAndInvalid(ctx, protocol.CLOUDEVENTS, validEvents, invalidEvents, meta)
+			validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, handlerParams.Cache)
+			handlerParams.Sink.BatchPublishValidAndInvalid(ctx, protocol.CLOUDEVENTS, validEvents, invalidEvents, handlerParams.Meta)
 			c.JSON(200, response.Ok)
 		} else {
 			c.JSON(400, response.InvalidContentType)
@@ -46,7 +43,7 @@ func CloudeventsPostHandler(conf *config.Cloudevents, meta *tele.Meta, cache *ca
 	return gin.HandlerFunc(fn)
 }
 
-func CloudeventsBatchPostHandler(conf *config.Cloudevents, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
+func CloudeventsBatchPostHandler(handlerParams EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		var envelopes []event.Envelope
@@ -77,11 +74,11 @@ func CloudeventsBatchPostHandler(conf *config.Cloudevents, meta *tele.Meta, cach
 					envelopes = append(envelopes, envelope)
 				}
 			}
-			validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, cache)
-			sink.BatchPublishValidAndInvalid(ctx, protocol.CLOUDEVENTS, validEvents, invalidEvents, meta)
-			c.JSON(200, response.Ok)
+			validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, handlerParams.Cache)
+			handlerParams.Sink.BatchPublishValidAndInvalid(ctx, protocol.CLOUDEVENTS, validEvents, invalidEvents, handlerParams.Meta)
+			c.JSON(http.StatusOK, response.Ok)
 		} else {
-			c.JSON(400, response.InvalidContentType)
+			c.JSON(http.StatusBadRequest, response.InvalidContentType)
 		}
 	}
 	return gin.HandlerFunc(fn)

@@ -11,7 +11,7 @@ import (
 func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, validationError event.ValidationError, schema []byte) {
 	schemaName := e.Schema()
 	eventProtocol := e.Protocol()
-	// Short-circuit if the event is an unknown snowplow event or if it is not self-describing
+	// Short-circuit if the event is an unknown snowplow event or if it is a snowplow event but not self-describing
 	if eventProtocol == protocol.SNOWPLOW {
 		if e.(snowplow.SnowplowEvent).Event == snowplow.UNKNOWN_EVENT {
 			validationError := event.ValidationError{

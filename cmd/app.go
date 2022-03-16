@@ -24,15 +24,25 @@ import (
 	"github.com/spf13/viper"
 )
 
+var VERSION string
+
 type App struct {
 	config      *config.Config
 	engine      *gin.Engine
-	sink        sink.Sink
 	schemaCache *cache.SchemaCache
+	sink        sink.Sink
 	meta        *tele.Meta
 }
 
-var VERSION string
+func (a *App) handlerParams() handler.EventHandlerParams {
+	params := handler.EventHandlerParams{
+		Config: a.config,
+		Cache:  a.schemaCache,
+		Sink:   a.sink,
+		Meta:   a.meta,
+	}
+	return params
+}
 
 func (a *App) configure() {
 	// Set up app logger
@@ -161,39 +171,42 @@ func (a *App) initializeSchemaCacheRoutes() {
 
 func (a *App) initializeSnowplowRoutes() {
 	if a.config.Snowplow.Enabled {
+		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing snowplow routes")
 		if a.config.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("initializing standard routes")
-			a.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowDefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
-			a.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowDefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+			a.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowDefaultHandler(handlerParams))
+			a.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowDefaultHandler(handlerParams))
 			if a.config.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("initializing standard open redirect route")
-				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowRedirectHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowRedirectHandler(handlerParams))
 			}
 		}
 		log.Info().Msg("initializing custom routes")
-		a.engine.GET(a.config.Snowplow.GetPath, handler.SnowplowDefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
-		a.engine.POST(a.config.Snowplow.PostPath, handler.SnowplowDefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+		a.engine.GET(a.config.Snowplow.GetPath, handler.SnowplowDefaultHandler(handlerParams))
+		a.engine.POST(a.config.Snowplow.PostPath, handler.SnowplowDefaultHandler(handlerParams))
 		if a.config.Snowplow.OpenRedirectsEnabled {
 			log.Info().Msg("initializing custom open redirect route")
-			a.engine.GET(a.config.Snowplow.RedirectPath, handler.SnowplowRedirectHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+			a.engine.GET(a.config.Snowplow.RedirectPath, handler.SnowplowRedirectHandler(handlerParams))
 		}
 	}
 }
 
-// func (a *App) initializeGenericRoutes() {
-// 	if a.config.Generic.Enabled {
-// 		log.Info().Msg("initializing generic routes")
-// 		a.engine.POST(a.config.Generic.PostPath, generic.PostHandler(&a.config.Generic, a.meta, a.schemaCache, a.sink))
-// 		a.engine.POST(a.config.Generic.BatchPostPath, generic.BatchPostHandler(&a.config.Generic, a.meta, a.schemaCache, a.sink))
-// 	}
-// }
+func (a *App) initializeGenericRoutes() {
+	if a.config.Generic.Enabled {
+		handlerParams := a.handlerParams()
+		log.Info().Msg("initializing generic routes")
+		a.engine.POST(a.config.Generic.PostPath, handler.GenericPostHandler(handlerParams))
+		// a.engine.POST(a.config.Generic.BatchPostPath, handler.GenericBatchPostHandler(handlerParams))
+	}
+}
 
 func (a *App) initializeCloudeventsRoutes() {
 	if a.config.Cloudevents.Enabled {
+		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing cloudevents routes")
-		a.engine.POST(a.config.Cloudevents.PostPath, handler.CloudeventsPostHandler(&a.config.Cloudevents, a.meta, a.schemaCache, a.sink))
-		a.engine.POST(a.config.Cloudevents.BatchPostPath, handler.CloudeventsBatchPostHandler(&a.config.Cloudevents, a.meta, a.schemaCache, a.sink))
+		a.engine.POST(a.config.Cloudevents.PostPath, handler.CloudeventsPostHandler(handlerParams))
+		a.engine.POST(a.config.Cloudevents.BatchPostPath, handler.CloudeventsBatchPostHandler(handlerParams))
 	}
 }
 
@@ -218,7 +231,7 @@ func (a *App) Initialize() {
 	a.initializeStatsRoutes()
 	a.initializeSchemaCacheRoutes()
 	a.initializeSnowplowRoutes()
-	// a.initializeGenericRoutes()
+	a.initializeGenericRoutes()
 	a.initializeCloudeventsRoutes()
 	a.serveStaticIfDev()
 }
