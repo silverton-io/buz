@@ -12,6 +12,7 @@ func BifurcateAndAnnotate(envelopedEvents []event.Envelope, cache *cache.SchemaC
 		isValid, validationError, _ := ValidateEvent(envelopedEvent.Payload, cache)
 		envelopedEvent.IsValid = &isValid
 		envelopedEvent.ValidationError = &validationError
+		// FIXME - Annotate envelope root with schema information.
 		if isValid {
 			vEvents = append(vEvents, envelopedEvent)
 		} else {

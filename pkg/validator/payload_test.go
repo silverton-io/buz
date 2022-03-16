@@ -66,8 +66,8 @@ func TestValidatePayload(t *testing.T) {
 		want    output
 	}{
 		{"valid payload valid schema", validPayload, validSchema, output{true, event.ValidationError{}}},
-		{"valid payload invalid schema", validPayload, invalidSchema, output{false, event.ValidationError{ErrorType: "invalid schema", ErrorResolution: "ensure schema is properly formatted", Errors: nil}}},
-		{"invalid payload valid schema", invalidPayload, validSchema, output{false, event.ValidationError{ErrorType: "invalid payload", ErrorResolution: "correct payload format", Errors: invalidPayloadValidationErrs}}},
+		{"valid payload invalid schema", validPayload, invalidSchema, output{false, event.ValidationError{ErrorType: &InvalidSchema.Type, ErrorResolution: &InvalidSchema.Resolution, Errors: nil}}},
+		{"invalid payload valid schema", invalidPayload, validSchema, output{false, event.ValidationError{ErrorType: &InvalidPayload.Type, ErrorResolution: &InvalidPayload.Resolution, Errors: invalidPayloadValidationErrs}}},
 	}
 
 	for _, tc := range testCases {

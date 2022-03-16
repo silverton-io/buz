@@ -20,7 +20,6 @@ import (
 	"github.com/silverton-io/honeypot/pkg/middleware"
 	"github.com/silverton-io/honeypot/pkg/sink"
 	"github.com/silverton-io/honeypot/pkg/snowplow"
-	"github.com/silverton-io/honeypot/pkg/stats"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/spf13/viper"
 )
@@ -123,8 +122,16 @@ func (a *App) initializeMiddleware() {
 }
 
 func (a *App) initializeHealthcheckRoutes() {
-	log.Info().Msg("initializing health check route")
-	a.engine.GET("/health", handler.HealthcheckHandler)
+	if a.config.App.Health.Enabled {
+		log.Info().Msg("initializing health check route")
+		var healthPath string
+		if a.config.App.Health.Path == "" {
+			healthPath = "/health"
+		} else {
+			healthPath = a.config.App.Health.Path
+		}
+		a.engine.GET(healthPath, handler.HealthcheckHandler)
+	}
 }
 
 func (a *App) initializeStatsRoutes() {
@@ -132,7 +139,7 @@ func (a *App) initializeStatsRoutes() {
 		log.Info().Msg("intializing stats route")
 		var statsPath string
 		if a.config.App.Stats.Path == "" {
-			statsPath = stats.STATS_PATH
+			statsPath = "/stats"
 		} else {
 			statsPath = a.config.App.Stats.Path
 		}
