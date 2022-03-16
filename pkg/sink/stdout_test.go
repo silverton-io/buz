@@ -55,6 +55,6 @@ func TestStdoutSink(t *testing.T) {
 	sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, []event.Envelope{}, []event.Envelope{}, &m)
 	sink.Close()
 
-	assert.Equal(t, int64(1), m.ValidSnowplowEventsProcessed)
-	assert.Equal(t, int64(1), m.ValidSnowplowEventsProcessed)
+	assert.Equal(t, int64(0), m.ValidSnowplowEventsProcessed)
+	assert.Equal(t, int64(0), m.ValidSnowplowEventsProcessed)
 }

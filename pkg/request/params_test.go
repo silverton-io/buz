@@ -3,15 +3,15 @@ package request
 import (
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMapParams(t *testing.T) {
 	url := "something/else?p1=v1&p2=v2&p2=v3"
-	want := map[string]string{
+	want := map[string]interface{}{
 		"p1": "v1",
 		"p2": "v2",
 	}
@@ -22,9 +22,5 @@ func TestMapParams(t *testing.T) {
 	c.Request = req
 
 	params := MapParams(c)
-
-	equiv := reflect.DeepEqual(params, want)
-	if !equiv {
-		t.Fatalf(`got %v, want %v`, params, want)
-	}
+	assert.Equal(t, params, want)
 }

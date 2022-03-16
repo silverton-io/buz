@@ -2,9 +2,12 @@ version: 1.1
 
 app:
   env: development
-  mode: debug
+  mode: release
   port: 8080
   trackerDomain: localhost
+  health:
+    enabled: true
+    path: /health
   stats:
     enabled: true
     path: /stats
