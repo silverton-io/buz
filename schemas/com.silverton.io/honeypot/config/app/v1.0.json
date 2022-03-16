@@ -46,7 +46,7 @@
                         },
                         "path": {
                             "type": "string",
-                            "default": "/stats",
+                            "default": "/health",
                             "description": "The path by which to expose health endpoint"
                         }
                     },
@@ -73,7 +73,7 @@
                 }
             },
             "additionalProperties": false,
-            "required": ["env", "mode", "port", "trackerDomain", "stats"]
+            "required": ["env", "mode", "port", "trackerDomain", "health", "stats"]
         },
         "middleware": {
             "type": "object",
