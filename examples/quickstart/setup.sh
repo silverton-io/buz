@@ -28,5 +28,3 @@ sleep 2;
 open http://localhost:8080/schemas;
 sleep 2;
 open http://localhost:8081/topics;
-sleep 2;
-open http://localhost:3030;
