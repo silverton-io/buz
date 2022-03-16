@@ -15,8 +15,8 @@ func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, valid
 	if eventProtocol == protocol.SNOWPLOW {
 		if e.(snowplow.SnowplowEvent).Event == snowplow.UNKNOWN_EVENT {
 			validationError := event.ValidationError{
-				ErrorType:       "unknown event type",
-				ErrorResolution: "event type needs to adhere to the snowplow tracker protocol",
+				ErrorType:       &UnknownSnowplowEventType.Type,
+				ErrorResolution: &UnknownSnowplowEventType.Resolution,
 				Errors:          nil,
 			}
 			return false, validationError, nil
@@ -27,8 +27,8 @@ func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, valid
 	}
 	if *schemaName == "" {
 		validationError := event.ValidationError{
-			ErrorType:       "no associated schema",
-			ErrorResolution: "associated a schema with the event",
+			ErrorType:       &NoSchemaAssociated.Type,
+			ErrorResolution: &NoSchemaAssociated.Resolution,
 			Errors:          nil,
 		}
 		return false, validationError, nil
@@ -36,8 +36,8 @@ func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, valid
 	schemaExists, schemaContents := cache.Get(*schemaName)
 	if !schemaExists {
 		validationError := event.ValidationError{
-			ErrorType:       "nonexistent schema",
-			ErrorResolution: "publish schema to the cache backend",
+			ErrorType:       &NoSchemaInBackend.Type,
+			ErrorResolution: &NoSchemaInBackend.Resolution,
 			Errors:          nil,
 		}
 		return false, validationError, nil
@@ -46,16 +46,16 @@ func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, valid
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not marshal payload")
 			validationError := event.ValidationError{
-				ErrorType:       "invalid payload",
-				ErrorResolution: "publish the event a valid payload",
+				ErrorType:       &InvalidPayload.Type,
+				ErrorResolution: &InvalidPayload.Resolution,
 				Errors:          nil,
 			}
 			return false, validationError, nil
 		}
 		if payload == nil {
 			validationError := event.ValidationError{
-				ErrorType:       "payload not present",
-				ErrorResolution: "publish the event with a payload",
+				ErrorType:       &PayloadNotPresent.Type,
+				ErrorResolution: &PayloadNotPresent.Resolution,
 				Errors:          nil,
 			}
 			return false, validationError, nil

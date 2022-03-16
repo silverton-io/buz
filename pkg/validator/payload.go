@@ -23,8 +23,8 @@ func validatePayload(payload []byte, schema []byte) (isValid bool, validationErr
 	if unmarshalErr != nil || vErr != nil {
 		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())
 		validationError := event.ValidationError{
-			ErrorType:       "invalid schema",
-			ErrorResolution: "ensure schema is properly formatted",
+			ErrorType:       &InvalidSchema.Type,
+			ErrorResolution: &InvalidSchema.Resolution,
 			Errors:          nil,
 		}
 		return false, validationError
@@ -43,8 +43,8 @@ func validatePayload(payload []byte, schema []byte) (isValid bool, validationErr
 			payloadValidationErrors = append(payloadValidationErrors, payloadValidationError)
 		}
 		validationError := event.ValidationError{
-			ErrorType:       "invalid payload",
-			ErrorResolution: "correct payload format",
+			ErrorType:       &InvalidPayload.Type,
+			ErrorResolution: &InvalidPayload.Resolution,
 			Errors:          payloadValidationErrors,
 		}
 		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())

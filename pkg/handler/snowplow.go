@@ -58,11 +58,10 @@ func buildEnvelopesFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.
 
 func SnowplowRedirectHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		// ctx := context.Background()
-		// events := buildEventsFromRequest(c, conf, meta)
-		// util.Pprint(events)
-		// // validEvents, invalidEvents := bifurcateEvents(events, cache)
-		// // sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEvents, invalidEvents, meta)
+		ctx := context.Background()
+		envelopes := buildEnvelopesFromRequest(c, conf, meta)
+		validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, cache)
+		sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEvents, invalidEvents, meta)
 		redirectUrl, _ := c.GetQuery("u")
 		c.Redirect(302, redirectUrl)
 	}

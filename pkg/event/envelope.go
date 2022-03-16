@@ -11,8 +11,8 @@ type PayloadValidationError struct {
 }
 
 type ValidationError struct {
-	ErrorType       string                   `json:"errorType"`
-	ErrorResolution string                   `json:"errorResolution"`
+	ErrorType       *string                  `json:"errorType"`
+	ErrorResolution *string                  `json:"errorResolution"`
 	Errors          []PayloadValidationError `json:"payloadValidationErrors"`
 }
 
