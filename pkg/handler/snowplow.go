@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"io/ioutil"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -53,25 +54,20 @@ func buildEnvelopesFromRequest(c *gin.Context, conf config.Config) []e.Envelope 
 	return events
 }
 
-func SnowplowRedirectHandler(p EventHandlerParams) gin.HandlerFunc {
+func SnowplowHandler(p EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		envelopes := buildEnvelopesFromRequest(c, *p.Config)
 		validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, p.Cache)
 		p.Sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEvents, invalidEvents, p.Meta)
-		redirectUrl, _ := c.GetQuery("u")
-		c.Redirect(302, redirectUrl)
-	}
-	return gin.HandlerFunc(fn)
-}
-
-func SnowplowDefaultHandler(p EventHandlerParams) gin.HandlerFunc {
-	fn := func(c *gin.Context) {
-		ctx := context.Background()
-		envelopes := buildEnvelopesFromRequest(c, *p.Config)
-		validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, p.Cache)
-		p.Sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEvents, invalidEvents, p.Meta)
-		c.JSON(200, response.Ok)
+		if c.Request.Method == http.MethodGet {
+			redirectUrl, _ := c.GetQuery("u")
+			if redirectUrl != "" && p.Config.Snowplow.OpenRedirectsEnabled {
+				log.Info().Msg("redirecting to " + redirectUrl)
+				c.Redirect(http.StatusFound, redirectUrl)
+			}
+		}
+		c.JSON(http.StatusOK, response.Ok)
 	}
 	return gin.HandlerFunc(fn)
 }

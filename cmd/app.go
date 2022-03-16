@@ -175,19 +175,19 @@ func (a *App) initializeSnowplowRoutes() {
 		log.Info().Msg("initializing snowplow routes")
 		if a.config.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("initializing standard routes")
-			a.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowDefaultHandler(handlerParams))
-			a.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowDefaultHandler(handlerParams))
+			a.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowHandler(handlerParams))
+			a.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowHandler(handlerParams))
 			if a.config.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("initializing standard open redirect route")
-				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowRedirectHandler(handlerParams))
+				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowHandler(handlerParams))
 			}
 		}
 		log.Info().Msg("initializing custom routes")
-		a.engine.GET(a.config.Snowplow.GetPath, handler.SnowplowDefaultHandler(handlerParams))
-		a.engine.POST(a.config.Snowplow.PostPath, handler.SnowplowDefaultHandler(handlerParams))
+		a.engine.GET(a.config.Snowplow.GetPath, handler.SnowplowHandler(handlerParams))
+		a.engine.POST(a.config.Snowplow.PostPath, handler.SnowplowHandler(handlerParams))
 		if a.config.Snowplow.OpenRedirectsEnabled {
 			log.Info().Msg("initializing custom open redirect route")
-			a.engine.GET(a.config.Snowplow.RedirectPath, handler.SnowplowRedirectHandler(handlerParams))
+			a.engine.GET(a.config.Snowplow.RedirectPath, handler.SnowplowHandler(handlerParams))
 		}
 	}
 }
