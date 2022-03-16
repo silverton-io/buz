@@ -538,7 +538,7 @@
                 }
             ]
         },
-        "squawkbox": {
+        "squawkBox": {
             "type": "object",
             "description": "Squawkbox configuration",
             "properties": {
@@ -585,5 +585,5 @@
         }
     },
     "additionalProperties": false,
-    "required": [ "version", "app", "middleware", "snowplow", "generic", "cloudevents", "schemaCache", "sink", "squawkbox", "tele"]
+    "required": [ "version", "app", "middleware", "snowplow", "generic", "cloudevents", "schemaCache", "sink", "squawkBox", "tele"]
 }

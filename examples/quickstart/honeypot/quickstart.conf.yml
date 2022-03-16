@@ -94,7 +94,7 @@ sink:
   validEventTopic: hpt-valid
   produceTimeout: 3
 
-squawkbox:
+squawkBox:
   enabled: true
   cloudeventsPath: /sqwk/ce
   snowplowPath: /sqwk/sp
