@@ -196,8 +196,8 @@ func (a *App) initializeGenericRoutes() {
 	if a.config.Generic.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing generic routes")
-		a.engine.POST(a.config.Generic.PostPath, handler.GenericPostHandler(handlerParams))
-		a.engine.POST(a.config.Generic.BatchPostPath, handler.GenericBatchPostHandler(handlerParams))
+		a.engine.POST(a.config.Generic.PostPath, handler.GenericHandler(handlerParams))
+		a.engine.POST(a.config.Generic.BatchPostPath, handler.GenericHandler(handlerParams))
 	}
 }
 
