@@ -33,10 +33,6 @@ type Meta struct {
 	InvalidCloudEventsProcessed    int64     `json:"invalidCloudEventsProcessed"`
 }
 
-func (m *Meta) elapsed() float64 {
-	return time.Since(m.StartTime).Seconds()
-}
-
 type startup struct {
 	Meta   *Meta         `json:"meta"`
 	Time   time.Time     `json:"time"`
@@ -55,6 +51,10 @@ type shutdown struct {
 	ElapsedSeconds float64   `json:"elapsedSeconds"`
 }
 
+func (m *Meta) elapsed() float64 {
+	return time.Since(m.StartTime).Seconds()
+}
+
 func heartbeat(t time.Ticker, m *Meta) {
 	for _ = range t.C {
 		log.Trace().Msg("sending heartbeat telemetry")
@@ -64,7 +64,7 @@ func heartbeat(t time.Ticker, m *Meta) {
 			ElapsedSeconds: m.elapsed(),
 		}
 		data := util.StructToMap(b)
-		heartbeatPayload := event.SelfDescribingEnvelope{
+		heartbeatPayload := event.SelfDescribingEvent{
 			Contexts: nil,
 			Payload: event.SelfDescribingPayload{
 				Schema: HEARTBEAT_1_0,
@@ -72,7 +72,7 @@ func heartbeat(t time.Ticker, m *Meta) {
 			},
 		}
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-		request.PostEnvelope(*endpoint, heartbeatPayload)
+		request.PostEvent(*endpoint, heartbeatPayload)
 	}
 }
 
@@ -84,7 +84,7 @@ func Sis(m *Meta) {
 		ElapsedSeconds: m.elapsed(),
 	}
 	data := util.StructToMap(shutdown)
-	shutdownPayload := event.SelfDescribingEnvelope{
+	shutdownPayload := event.SelfDescribingEvent{
 		Contexts: nil,
 		Payload: event.SelfDescribingPayload{
 			Schema: SHUTDOWN_1_0,
@@ -92,7 +92,7 @@ func Sis(m *Meta) {
 		},
 	}
 	endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-	request.PostEnvelope(*endpoint, shutdownPayload)
+	request.PostEvent(*endpoint, shutdownPayload)
 }
 
 func Metry(c *config.Config, m *Meta) {
@@ -104,7 +104,7 @@ func Metry(c *config.Config, m *Meta) {
 			Config: *c,
 		}
 		data := util.StructToMap(startup)
-		startupPayload := event.SelfDescribingEnvelope{
+		startupPayload := event.SelfDescribingEvent{
 			Contexts: nil,
 			Payload: event.SelfDescribingPayload{
 				Schema: STARTUP_1_0,
@@ -112,7 +112,7 @@ func Metry(c *config.Config, m *Meta) {
 			},
 		}
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-		request.PostEnvelope(*endpoint, startupPayload)
+		request.PostEvent(*endpoint, startupPayload)
 		ticker := time.NewTicker(time.Duration(c.Tele.HeartbeatMs) * time.Millisecond)
 		go heartbeat(*ticker, m)
 	}

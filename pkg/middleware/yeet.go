@@ -8,7 +8,8 @@ type yeet struct {
 
 func Yeet() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// If msg or source doesn't conform... :wave:
+		// TODO
+		// If msg or source doesn't conform to something... :wave:
 		// y := yeet{
 		// 	Msg: "yeeted!",
 		// }

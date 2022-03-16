@@ -6,7 +6,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/input"
+	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"golang.org/x/net/context"
 )
@@ -21,7 +22,7 @@ const (
 
 type Sink interface {
 	Initialize(conf config.Sink)
-	BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta)
+	BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []event.Envelope, invalidEvents []event.Envelope, meta *tele.Meta)
 	Close()
 }
 
@@ -29,44 +30,39 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	switch conf.Type {
 	case PUBSUB:
 		sink := PubsubSink{}
-		sink.Initialize(conf)
-		log.Info().Msg("pubsub sink initialized")
 		return &sink, nil
 	case KAFKA:
 		sink := KafkaSink{}
-		sink.Initialize(conf)
-		log.Info().Msg("kafka sink initialized")
 		return &sink, nil
 	case KINESIS:
 		sink := KinesisSink{}
-		sink.Initialize(conf)
-		log.Info().Msg("kinesis sink initialized")
 		return &sink, nil
 	case KINESIS_FIREHOSE:
 		sink := KinesisFirehoseSink{}
-		sink.Initialize(conf)
-		log.Info().Msg("kinesis firehose sink initialized")
 		return &sink, nil
 	case STDOUT:
 		sink := StdoutSink{}
-		sink.Initialize(conf)
-		log.Info().Msg("stdout sink initialized")
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
-		log.Fatal().Stack().Err(e).Msg("unsupported sink")
+		log.Error().Stack().Err(e).Msg("unsupported sink")
 		return nil, e
 	}
 }
 
-func incrementStats(inputType string, validCount int, invalidCount int, meta *tele.Meta) {
+func InitializeSink(conf config.Sink, s Sink) {
+	s.Initialize(conf)
+	log.Info().Msg(conf.Type + " sink initialized")
+}
+
+func incrementStats(protocolName string, validCount int, invalidCount int, meta *tele.Meta) {
 	var validCounter *int64
 	var invalidCounter *int64
-	switch inputType {
-	case input.GENERIC_INPUT:
+	switch protocolName {
+	case protocol.GENERIC:
 		validCounter = &meta.ValidGenericEventsProcessed
 		invalidCounter = &meta.InvalidGenericEventsProcessed
-	case input.CLOUDEVENTS_INPUT:
+	case protocol.CLOUDEVENTS:
 		validCounter = &meta.ValidCloudEventsProcessed
 		invalidCounter = &meta.InvalidCloudEventsProcessed
 	default:

@@ -14,28 +14,35 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/cache"
-	ce "github.com/silverton-io/honeypot/pkg/cloudevents"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/env"
-	"github.com/silverton-io/honeypot/pkg/generic"
-	"github.com/silverton-io/honeypot/pkg/health"
+	"github.com/silverton-io/honeypot/pkg/handler"
 	"github.com/silverton-io/honeypot/pkg/middleware"
 	"github.com/silverton-io/honeypot/pkg/sink"
 	"github.com/silverton-io/honeypot/pkg/snowplow"
-	"github.com/silverton-io/honeypot/pkg/stats"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/spf13/viper"
 )
 
+var VERSION string
+
 type App struct {
 	config      *config.Config
 	engine      *gin.Engine
-	sink        sink.Sink
 	schemaCache *cache.SchemaCache
+	sink        sink.Sink
 	meta        *tele.Meta
 }
 
-var VERSION string
+func (a *App) handlerParams() handler.EventHandlerParams {
+	params := handler.EventHandlerParams{
+		Config: a.config,
+		Cache:  a.schemaCache,
+		Sink:   a.sink,
+		Meta:   a.meta,
+	}
+	return params
+}
 
 func (a *App) configure() {
 	// Set up app logger
@@ -75,6 +82,7 @@ func (a *App) configure() {
 func (a *App) initializeSink() {
 	log.Info().Msg("initializing sink")
 	s, _ := sink.BuildSink(a.config.Sink)
+	sink.InitializeSink(a.config.Sink, s)
 	a.sink = s
 }
 
@@ -124,8 +132,16 @@ func (a *App) initializeMiddleware() {
 }
 
 func (a *App) initializeHealthcheckRoutes() {
-	log.Info().Msg("initializing health check route")
-	a.engine.GET(health.HEALTH_PATH, health.HealthcheckHandler)
+	if a.config.App.Health.Enabled {
+		log.Info().Msg("initializing health check route")
+		var healthPath string
+		if a.config.App.Health.Path == "" {
+			healthPath = "/health"
+		} else {
+			healthPath = a.config.App.Health.Path
+		}
+		a.engine.GET(healthPath, handler.HealthcheckHandler)
+	}
 }
 
 func (a *App) initializeStatsRoutes() {
@@ -133,11 +149,11 @@ func (a *App) initializeStatsRoutes() {
 		log.Info().Msg("intializing stats route")
 		var statsPath string
 		if a.config.App.Stats.Path == "" {
-			statsPath = stats.STATS_PATH
+			statsPath = "/stats"
 		} else {
 			statsPath = a.config.App.Stats.Path
 		}
-		a.engine.GET(statsPath, stats.StatsHandler(a.meta))
+		a.engine.GET(statsPath, handler.StatsHandler(a.meta))
 	}
 }
 
@@ -155,39 +171,42 @@ func (a *App) initializeSchemaCacheRoutes() {
 
 func (a *App) initializeSnowplowRoutes() {
 	if a.config.Snowplow.Enabled {
+		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing snowplow routes")
 		if a.config.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("initializing standard routes")
-			a.engine.GET(snowplow.DEFAULT_GET_PATH, snowplow.DefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
-			a.engine.POST(snowplow.DEFAULT_POST_PATH, snowplow.DefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+			a.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowHandler(handlerParams))
+			a.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowHandler(handlerParams))
 			if a.config.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("initializing standard open redirect route")
-				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, snowplow.RedirectHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowHandler(handlerParams))
 			}
 		}
 		log.Info().Msg("initializing custom routes")
-		a.engine.GET(a.config.Snowplow.GetPath, snowplow.DefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
-		a.engine.POST(a.config.Snowplow.PostPath, snowplow.DefaultHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+		a.engine.GET(a.config.Snowplow.GetPath, handler.SnowplowHandler(handlerParams))
+		a.engine.POST(a.config.Snowplow.PostPath, handler.SnowplowHandler(handlerParams))
 		if a.config.Snowplow.OpenRedirectsEnabled {
 			log.Info().Msg("initializing custom open redirect route")
-			a.engine.GET(a.config.Snowplow.RedirectPath, snowplow.RedirectHandler(a.config.Snowplow, a.meta, a.schemaCache, a.sink))
+			a.engine.GET(a.config.Snowplow.RedirectPath, handler.SnowplowHandler(handlerParams))
 		}
 	}
 }
 
 func (a *App) initializeGenericRoutes() {
 	if a.config.Generic.Enabled {
+		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing generic routes")
-		a.engine.POST(a.config.Generic.PostPath, generic.PostHandler(&a.config.Generic, a.meta, a.schemaCache, a.sink))
-		a.engine.POST(a.config.Generic.BatchPostPath, generic.BatchPostHandler(&a.config.Generic, a.meta, a.schemaCache, a.sink))
+		a.engine.POST(a.config.Generic.PostPath, handler.GenericHandler(handlerParams))
+		a.engine.POST(a.config.Generic.BatchPostPath, handler.GenericHandler(handlerParams))
 	}
 }
 
 func (a *App) initializeCloudeventsRoutes() {
 	if a.config.Cloudevents.Enabled {
+		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing cloudevents routes")
-		a.engine.POST(a.config.Cloudevents.PostPath, ce.PostHandler(&a.config.Cloudevents, a.meta, a.schemaCache, a.sink))
-		a.engine.POST(a.config.Cloudevents.BatchPostPath, ce.BatchPostHandler(&a.config.Cloudevents, a.meta, a.schemaCache, a.sink))
+		a.engine.POST(a.config.Cloudevents.PostPath, handler.CloudeventsPostHandler(handlerParams))
+		a.engine.POST(a.config.Cloudevents.BatchPostPath, handler.CloudeventsBatchPostHandler(handlerParams))
 	}
 }
 

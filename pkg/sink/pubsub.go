@@ -9,6 +9,7 @@ import (
 	"cloud.google.com/go/pubsub"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"golang.org/x/net/context"
 )
@@ -46,7 +47,7 @@ func (s *PubsubSink) Initialize(conf config.Sink) {
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, validTopic, invalidTopic
 }
 
-func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, events []interface{}) {
+func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, events []event.Envelope) {
 	var wg sync.WaitGroup
 	for _, event := range events {
 		payload, _ := json.Marshal(event)
@@ -68,19 +69,19 @@ func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, even
 	wg.Wait()
 }
 
-func (s *PubsubSink) batchPublishValid(ctx context.Context, events []interface{}) {
+func (s *PubsubSink) batchPublishValid(ctx context.Context, events []event.Envelope) {
 
 	s.batchPublish(ctx, s.validEventsTopic, events)
 }
 
-func (s *PubsubSink) batchPublishInvalid(ctx context.Context, events []interface{}) {
+func (s *PubsubSink) batchPublishInvalid(ctx context.Context, events []event.Envelope) {
 	s.batchPublish(ctx, s.invalidEventsTopic, events)
 }
 
-func (s *PubsubSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta) {
+func (s *PubsubSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []event.Envelope, invalidEvents []event.Envelope, meta *tele.Meta) {
 	// Publish
-	s.batchPublishValid(ctx, validEvents)
-	s.batchPublishInvalid(ctx, invalidEvents)
+	go s.batchPublishValid(ctx, validEvents)
+	go s.batchPublishInvalid(ctx, invalidEvents)
 	// Increment stats counters
 	incrementStats(inputType, len(validEvents), len(invalidEvents), meta)
 }

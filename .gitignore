@@ -3,3 +3,4 @@ config.yml
 scratch/*
 site/site/*
 static/*
+testprofile.out

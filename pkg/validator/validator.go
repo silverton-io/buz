@@ -1,62 +1,66 @@
 package validator
 
 import (
-	"context"
-	"encoding/json"
-	"time"
-
-	"github.com/qri-io/jsonschema"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/honeypot/pkg/cache"
+	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/protocol"
+	"github.com/silverton-io/honeypot/pkg/snowplow"
 )
 
-type PayloadValidationError struct {
-	Field       string `json:"field"`
-	Description string `json:"description"`
-	ErrorType   string `json:"errorType"`
-}
-
-type ValidationError struct {
-	ErrorType       string                    `json:"errorType"`
-	ErrorResolution string                    `json:"errorResolution"`
-	Errors          *[]PayloadValidationError `json:"payloadValidationErrors"`
-}
-
-func ValidatePayload(payload map[string]interface{}, schema []byte) (isValid bool, validationError ValidationError) {
-	ctx := context.Background()
-	startTime := time.Now()
-	s := &jsonschema.Schema{}
-	json.Unmarshal(schema, s)
-	data, _ := json.Marshal(payload)
-	validationErrs, err := s.ValidateBytes(ctx, data)
-
-	if err != nil {
-		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())
-		validationError := ValidationError{
-			ErrorType:       "invalid schema",
-			ErrorResolution: "ensure schema is properly-formatted",
+func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, validationError event.ValidationError, schema []byte) {
+	schemaName := e.Schema()
+	eventProtocol := e.Protocol()
+	// Short-circuit if the event is an unknown snowplow event or if it is a snowplow event but not self-describing
+	if eventProtocol == protocol.SNOWPLOW {
+		if e.(snowplow.SnowplowEvent).Event == snowplow.UNKNOWN_EVENT {
+			validationError := event.ValidationError{
+				ErrorType:       &UnknownSnowplowEventType.Type,
+				ErrorResolution: &UnknownSnowplowEventType.Resolution,
+				Errors:          nil,
+			}
+			return false, validationError, nil
+		}
+		if e.(snowplow.SnowplowEvent).Event != snowplow.SELF_DESCRIBING_EVENT {
+			return true, event.ValidationError{}, nil
+		}
+	}
+	if *schemaName == "" {
+		validationError := event.ValidationError{
+			ErrorType:       &NoSchemaAssociated.Type,
+			ErrorResolution: &NoSchemaAssociated.Resolution,
 			Errors:          nil,
 		}
-		return false, validationError
+		return false, validationError, nil
 	}
-	if len(validationErrs) == 0 {
-		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())
-		return true, ValidationError{}
+	schemaExists, schemaContents := cache.Get(*schemaName)
+	if !schemaExists {
+		validationError := event.ValidationError{
+			ErrorType:       &NoSchemaInBackend.Type,
+			ErrorResolution: &NoSchemaInBackend.Resolution,
+			Errors:          nil,
+		}
+		return false, validationError, nil
 	} else {
-		var payloadValidationErrors []PayloadValidationError
-		for _, validationErr := range validationErrs {
-			payloadValidationError := PayloadValidationError{
-				Field:       validationErr.PropertyPath,
-				Description: validationErr.Message,
-				ErrorType:   validationErr.Error(),
+		payload, err := e.PayloadAsByte()
+		if err != nil {
+			log.Error().Stack().Err(err).Msg("could not marshal payload")
+			validationError := event.ValidationError{
+				ErrorType:       &InvalidPayload.Type,
+				ErrorResolution: &InvalidPayload.Resolution,
+				Errors:          nil,
 			}
-			payloadValidationErrors = append(payloadValidationErrors, payloadValidationError)
+			return false, validationError, nil
 		}
-		validationError := ValidationError{
-			ErrorType:       "invalid payload",
-			ErrorResolution: "correct payload format",
-			Errors:          &payloadValidationErrors,
+		if payload == nil {
+			validationError := event.ValidationError{
+				ErrorType:       &PayloadNotPresent.Type,
+				ErrorResolution: &PayloadNotPresent.Resolution,
+				Errors:          nil,
+			}
+			return false, validationError, nil
 		}
-		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())
-		return false, validationError
+		isValid, validationError := validatePayload(payload, schemaContents)
+		return isValid, validationError, schemaContents
 	}
 }

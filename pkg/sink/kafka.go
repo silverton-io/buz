@@ -7,6 +7,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/twmb/franz-go/pkg/kadm"
 	"github.com/twmb/franz-go/pkg/kgo"
@@ -52,7 +53,7 @@ func (s *KafkaSink) Initialize(conf config.Sink) {
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, conf.ValidEventTopic, conf.InvalidEventTopic
 }
 
-func (s *KafkaSink) batchPublish(ctx context.Context, topic string, events []interface{}) {
+func (s *KafkaSink) batchPublish(ctx context.Context, topic string, events []event.Envelope) {
 	var wg sync.WaitGroup
 	for _, event := range events {
 		payload, _ := json.Marshal(event)
@@ -72,18 +73,18 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, events []int
 	wg.Wait()
 }
 
-func (s *KafkaSink) batchPublishValid(ctx context.Context, events []interface{}) {
+func (s *KafkaSink) batchPublishValid(ctx context.Context, events []event.Envelope) {
 	s.batchPublish(ctx, s.validEventsTopic, events)
 }
 
-func (s *KafkaSink) batchPublishInvalid(ctx context.Context, events []interface{}) {
+func (s *KafkaSink) batchPublishInvalid(ctx context.Context, events []event.Envelope) {
 	s.batchPublish(ctx, s.invalidEventsTopic, events)
 }
 
-func (s *KafkaSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta) {
+func (s *KafkaSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []event.Envelope, invalidEvents []event.Envelope, meta *tele.Meta) {
 	// Publish
-	s.batchPublishValid(ctx, validEvents)
-	s.batchPublishInvalid(ctx, invalidEvents)
+	go s.batchPublishValid(ctx, validEvents)
+	go s.batchPublishInvalid(ctx, invalidEvents)
 	// Increment stats counters
 	incrementStats(inputType, len(validEvents), len(invalidEvents), meta)
 }

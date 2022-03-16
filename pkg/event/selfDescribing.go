@@ -1,6 +1,6 @@
 package event
 
-type SelfDescribingEnvelope struct {
+type SelfDescribingEvent struct {
 	Contexts []SelfDescribingContext `json:"contexts"`
 	Payload  SelfDescribingPayload   `json:"payload"`
 }

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/tidwall/gjson"
 )
 
@@ -24,7 +25,13 @@ const (
 	UNKNOWN_EVENT         = "unknown"
 )
 
-type Event struct {
+// Other
+
+const (
+	IGLU = "iglu"
+)
+
+type SnowplowEvent struct {
 	// Application parameters - https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/snowplow-tracker-protocol/#common-parameters-platform-and-event-independent
 	Name_tracker             string                              `json:"name_tracker"`
 	App_id                   string                              `json:"app_id"`
@@ -134,7 +141,53 @@ type Event struct {
 	Event_version            *string                             `json:"event_version"`
 }
 
-type ShortenedEvent struct { //A struct used to quickly parse incoming json props or query params. Leverages Go type conversion to long-form props.
+func (e SnowplowEvent) Schema() *string {
+	switch e.Event {
+	case SELF_DESCRIBING_EVENT:
+		schemaName := e.Self_describing_event.Schema
+		if schemaName[:4] == IGLU {
+			schemaName = schemaName[5:]
+		}
+		return &schemaName
+	default:
+		return nil
+	}
+}
+
+func (e SnowplowEvent) Protocol() string {
+	return protocol.SNOWPLOW
+}
+
+func (e SnowplowEvent) PayloadAsByte() ([]byte, error) {
+	payloadBytes, err := json.Marshal(e.Self_describing_event.Data)
+	if err != nil {
+		return nil, err
+	}
+	return payloadBytes, nil
+}
+
+func (e SnowplowEvent) AsByte() ([]byte, error) {
+	eventBytes, err := json.Marshal(e)
+	if err != nil {
+		return nil, err
+	}
+	return eventBytes, nil
+}
+
+func (e SnowplowEvent) AsMap() (map[string]interface{}, error) {
+	var m map[string]interface{}
+	b, err := e.AsByte()
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(b, &m)
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+type ShortenedSnowplowEvent struct { //A struct used to quickly parse incoming json props or query params. Leverages Go type conversion to long-form props.
 	Name_tracker             string                              `json:"tna"`
 	App_id                   string                              `json:"aid"`
 	Platform                 string                              `json:"p"`
@@ -358,13 +411,12 @@ type Dimension struct {
 type PageFields struct {
 	scheme   string
 	host     string
-	port     int
 	path     string
-	query    string
-	fragment string
-	medium   string
-	source   string
-	term     string
-	content  string
-	campaign string
+	query    *string
+	fragment *string
+	medium   *string
+	source   *string
+	term     *string
+	content  *string
+	campaign *string
 }

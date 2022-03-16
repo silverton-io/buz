@@ -35,6 +35,24 @@
                     "default": "test.silverton.io",
                     "description": "The collector domain"
                 },
+                "health": {
+                    "type": "object",
+                    "description": "Health configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Switch to enable or disable health endpoints"
+                        },
+                        "path": {
+                            "type": "string",
+                            "default": "/health",
+                            "description": "The path by which to expose health endpoint"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["enabled", "path"]
+                },
                 "stats": {
                     "type": "object",
                     "description": "Stats configuration",
@@ -55,7 +73,7 @@
                 }
             },
             "additionalProperties": false,
-            "required": ["env", "mode", "port", "trackerDomain", "stats"]
+            "required": ["env", "mode", "port", "trackerDomain", "health", "stats"]
         },
         "middleware": {
             "type": "object",
