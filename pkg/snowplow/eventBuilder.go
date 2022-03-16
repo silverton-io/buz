@@ -11,7 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/silverton-io/honeypot/pkg/util"
 	"github.com/tidwall/gjson"
 )
@@ -50,7 +49,7 @@ func setEventMetadataFields(e *SnowplowEvent, schema []byte) {
 	}
 }
 
-func setEventFieldsFromRequest(c *gin.Context, e *SnowplowEvent, t *tele.Meta) {
+func setEventFieldsFromRequest(c *gin.Context, e *SnowplowEvent, conf *config.App) {
 	nuid := c.GetString("identity")
 	ip, _ := c.RemoteIP()
 	sIp := ip.String() // FIXME! Should incorporate other IP sources
@@ -62,8 +61,8 @@ func setEventFieldsFromRequest(c *gin.Context, e *SnowplowEvent, t *tele.Meta) {
 	e.Etl_tstamp = time.Now()
 	timeOnDevice := e.Dvce_sent_tstamp.Time.Sub(e.Dvce_created_tstamp.Time)
 	e.Derived_tstamp = e.Collector_tstamp.Add(-timeOnDevice)
-	e.Collector_version = &t.Version
-	e.Etl_version = &t.Version
+	e.Collector_version = &conf.Version
+	e.Etl_version = &conf.Version
 }
 
 func setEventWidthHeightFields(e *SnowplowEvent) {
@@ -98,7 +97,7 @@ func getPageFieldsFromUrl(rawUrl string) (PageFields, error) {
 		host:   parsedUrl.Host,
 		path:   parsedUrl.Path,
 	}
-	if unescapedQry != "" {
+	if unescapedQry != "" { // FIXME! Has to be a better way
 		pageFields.query = &unescapedQry
 	}
 	if medium != "" {
@@ -128,7 +127,7 @@ func setPageFields(e *SnowplowEvent) {
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("error getting page fields from url")
 		}
-		e.Page_urlscheme = &pageFields.scheme
+		e.Page_urlscheme = &pageFields.scheme // FIXME! Has to be a better way
 		e.Page_urlhost = &pageFields.host
 		e.Page_urlpath = &pageFields.path
 		e.Page_urlquery = pageFields.query
@@ -147,7 +146,7 @@ func setReferrerFields(e *SnowplowEvent) {
 		if err != nil {
 			fmt.Printf("error setting page fields %s\n", err)
 		}
-		e.Refr_urlscheme = &pageFields.scheme
+		e.Refr_urlscheme = &pageFields.scheme // FIXME! Has to be a better way
 		e.Refr_urlhost = &pageFields.host
 		e.Refr_urlpath = &pageFields.path
 		e.Refr_urlquery = pageFields.query
@@ -171,7 +170,7 @@ func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
 	}
 }
 
-func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, s config.Snowplow, t *tele.Meta) SnowplowEvent {
+func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Config) SnowplowEvent {
 	body, err := json.Marshal(params)
 	if err != nil {
 		fmt.Println(err)
@@ -182,10 +181,10 @@ func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, s
 		fmt.Printf("error unmarshalling to shortened event %s", err)
 	}
 	event := SnowplowEvent(shortenedEvent)
-	setEventFieldsFromRequest(c, &event, t)
+	setEventFieldsFromRequest(c, &event, &conf.App)
 	setEventWidthHeightFields(&event)
 	setPageFields(&event)
 	setReferrerFields(&event)
-	anonymizeFields(&event, s)
+	anonymizeFields(&event, conf.Snowplow)
 	return event
 }

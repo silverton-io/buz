@@ -20,7 +20,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func buildEnvelopesFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.Meta) []e.Envelope {
+func buildEnvelopesFromRequest(c *gin.Context, conf config.Config, meta *tele.Meta) []e.Envelope {
 	var events []e.Envelope
 	if c.Request.Method == "POST" {
 		body, err := ioutil.ReadAll(c.Request.Body)
@@ -42,7 +42,7 @@ func buildEnvelopesFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.
 		}
 	} else {
 		params := request.MapParams(c)
-		spEvent := snowplow.BuildEventFromMappedParams(c, params, conf, meta)
+		spEvent := snowplow.BuildEventFromMappedParams(c, params, conf)
 		schema := spEvent.Schema()
 		envelope := e.Envelope{
 			EventProtocol: protocol.SNOWPLOW,
