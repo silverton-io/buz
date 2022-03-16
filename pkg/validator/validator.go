@@ -8,7 +8,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/snowplow"
 )
 
-func validateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, validationError event.ValidationError, schema []byte) {
+func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, validationError event.ValidationError, schema []byte) {
 	schemaName := e.Schema()
 	eventProtocol := e.Protocol()
 	// Short-circuit if the event is an unknown snowplow event or if it is not self-describing

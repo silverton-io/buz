@@ -19,24 +19,6 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// func bifurcateEvents(e []event.CloudEvent, cache *cache.SchemaCache) (validEvents []interface{}, invalidEvents []interface{}) {
-// 	var vEvents []interface{}
-// 	var invEvents []interface{}
-// 	for _, event := range events {
-// 		isValid, validationError := validateEvent(event, cache)
-// 		if isValid {
-// 			vEvents = append(vEvents, event)
-// 		} else {
-// 			invalidEvent := e.InvalidEvent{
-// 				ValidationError: &validationError,
-// 				Event:           event,
-// 			}
-// 			invEvents = append(invEvents, invalidEvent)
-// 		}
-// 	}
-// 	return vEvents, invEvents
-// }
-
 func CloudeventsPostHandler(conf *config.Cloudevents, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		var events []event.Envelope

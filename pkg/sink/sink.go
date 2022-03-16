@@ -6,6 +6,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"golang.org/x/net/context"
@@ -21,7 +22,7 @@ const (
 
 type Sink interface {
 	Initialize(conf config.Sink)
-	BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta)
+	BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []event.Envelope, invalidEvents []event.Envelope, meta *tele.Meta)
 	Close()
 }
 

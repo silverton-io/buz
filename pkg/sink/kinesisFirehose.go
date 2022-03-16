@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/firehose/types"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
@@ -26,7 +27,7 @@ func (s *KinesisFirehoseSink) Initialize(conf config.Sink) {
 	s.client, s.validEventsStream, s.invalidEventsStream = client, conf.ValidEventTopic, conf.InvalidEventTopic
 }
 
-func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, events []interface{}) {
+func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, events []event.Envelope) {
 	var wg sync.WaitGroup
 	for _, event := range events {
 		payload, _ := json.Marshal(event)
@@ -53,15 +54,15 @@ func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, e
 	wg.Wait()
 }
 
-func (s *KinesisFirehoseSink) batchPublishValid(ctx context.Context, events []interface{}) {
+func (s *KinesisFirehoseSink) batchPublishValid(ctx context.Context, events []event.Envelope) {
 	s.batchPublish(ctx, s.validEventsStream, events)
 }
 
-func (s *KinesisFirehoseSink) batchPublishInvalid(ctx context.Context, events []interface{}) {
+func (s *KinesisFirehoseSink) batchPublishInvalid(ctx context.Context, events []event.Envelope) {
 	s.batchPublish(ctx, s.invalidEventsStream, events)
 }
 
-func (s *KinesisFirehoseSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta) {
+func (s *KinesisFirehoseSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []event.Envelope, invalidEvents []event.Envelope, meta *tele.Meta) {
 	// Publish
 	go s.batchPublishValid(ctx, validEvents)
 	go s.batchPublishInvalid(ctx, invalidEvents)

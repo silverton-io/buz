@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"io/ioutil"
 	"time"
 
@@ -15,11 +16,11 @@ import (
 	"github.com/silverton-io/honeypot/pkg/sink"
 	"github.com/silverton-io/honeypot/pkg/snowplow"
 	"github.com/silverton-io/honeypot/pkg/tele"
-	"github.com/silverton-io/honeypot/pkg/util"
+	"github.com/silverton-io/honeypot/pkg/validator"
 	"github.com/tidwall/gjson"
 )
 
-func buildEventsFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.Meta) []e.Envelope {
+func buildEnvelopesFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.Meta) []e.Envelope {
 	var events []e.Envelope
 	if c.Request.Method == "POST" {
 		body, err := ioutil.ReadAll(c.Request.Body)
@@ -58,10 +59,10 @@ func buildEventsFromRequest(c *gin.Context, conf config.Snowplow, meta *tele.Met
 func SnowplowRedirectHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		// ctx := context.Background()
-		events := buildEventsFromRequest(c, conf, meta)
-		util.Pprint(events)
-		// validEvents, invalidEvents := bifurcateEvents(events, cache)
-		// sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEvents, invalidEvents, meta)
+		// events := buildEventsFromRequest(c, conf, meta)
+		// util.Pprint(events)
+		// // validEvents, invalidEvents := bifurcateEvents(events, cache)
+		// // sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEvents, invalidEvents, meta)
 		redirectUrl, _ := c.GetQuery("u")
 		c.Redirect(302, redirectUrl)
 	}
@@ -70,13 +71,10 @@ func SnowplowRedirectHandler(conf config.Snowplow, meta *tele.Meta, cache *cache
 
 func SnowplowDefaultHandler(conf config.Snowplow, meta *tele.Meta, cache *cache.SchemaCache, sink sink.Sink) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		// ctx := context.Background()
-		eventEnvelopes := buildEventsFromRequest(c, conf, meta)
-		for _, envelope := range eventEnvelopes {
-			util.Pprint(envelope)
-		}
-		// validEvents, invalidEvents := bifurcateEvents(events, cache)
-		// sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEvents, invalidEvents, meta)
+		ctx := context.Background()
+		envelopes := buildEnvelopesFromRequest(c, conf, meta)
+		validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, cache)
+		sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEvents, invalidEvents, meta)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)

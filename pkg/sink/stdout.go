@@ -6,6 +6,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/silverton-io/honeypot/pkg/util"
 )
@@ -41,7 +42,7 @@ func (s *StdoutSink) Initialize(conf config.Sink) {
 	log.Debug().Msg("initializing stdout sink")
 }
 
-func (s *StdoutSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []interface{}, invalidEvents []interface{}, meta *tele.Meta) {
+func (s *StdoutSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []event.Envelope, invalidEvents []event.Envelope, meta *tele.Meta) {
 	if len(validEvents) > 0 {
 		validEvents := util.Stringify(validEvents)
 		fmt.Println(Green(validEvents))
