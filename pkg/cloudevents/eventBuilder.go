@@ -3,19 +3,22 @@ package cloudevents
 import (
 	"encoding/json"
 
-	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
+	"github.com/tidwall/gjson"
 )
 
-func BuildEvent(c *gin.Context, payload map[string]interface{}) CloudEvent {
+func BuildEvent(payload gjson.Result) (CloudEvent, error) {
 	event := CloudEvent{}
-	pBytes, err := json.Marshal(payload)
+
+	pBytes, err := json.Marshal(payload.Value().(map[string]interface{}))
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not marshal cloudevent payload")
+		return CloudEvent{}, nil
 	}
 	err = json.Unmarshal(pBytes, &event)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not unmarshal payload to CloudEvent")
+		return CloudEvent{}, err
 	}
-	return event
+	return event, nil
 }

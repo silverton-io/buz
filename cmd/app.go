@@ -18,6 +18,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/env"
 	"github.com/silverton-io/honeypot/pkg/handler"
 	"github.com/silverton-io/honeypot/pkg/middleware"
+	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/sink"
 	"github.com/silverton-io/honeypot/pkg/snowplow"
 	"github.com/silverton-io/honeypot/pkg/tele"
@@ -205,8 +206,19 @@ func (a *App) initializeCloudeventsRoutes() {
 	if a.config.Cloudevents.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing cloudevents routes")
-		a.engine.POST(a.config.Cloudevents.PostPath, handler.CloudeventsPostHandler(handlerParams))
-		a.engine.POST(a.config.Cloudevents.BatchPostPath, handler.CloudeventsBatchPostHandler(handlerParams))
+		a.engine.POST(a.config.Cloudevents.PostPath, handler.CloudeventsHandler(handlerParams))
+		a.engine.POST(a.config.Cloudevents.BatchPostPath, handler.CloudeventsHandler(handlerParams))
+	}
+}
+
+func (a *App) initializeSquawkboxRoutes() {
+	if a.config.Squawkbox.Enabled {
+		handlerParams := a.handlerParams()
+		log.Info().Msg("initializing squawkbox routes")
+		a.engine.POST(a.config.Squawkbox.CloudeventsPath, handler.SquawkboxHandler(handlerParams, protocol.CLOUDEVENTS))
+		a.engine.POST(a.config.Squawkbox.GenericPath, handler.SquawkboxHandler(handlerParams, protocol.GENERIC))
+		a.engine.POST(a.config.Squawkbox.SnowplowPath, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
+		a.engine.GET(a.config.Squawkbox.SnowplowPath, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
 	}
 }
 
@@ -233,6 +245,7 @@ func (a *App) Initialize() {
 	a.initializeSnowplowRoutes()
 	a.initializeGenericRoutes()
 	a.initializeCloudeventsRoutes()
+	a.initializeSquawkboxRoutes()
 	a.serveStaticIfDev()
 }
 

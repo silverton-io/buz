@@ -538,13 +538,39 @@
                 }
             ]
         },
+        "squawkBox": {
+            "type": "object",
+            "description": "Squawkbox configuration",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether or not to enable the squawkbox",
+                    "default": "true"
+                },
+                "cloudeventsPath": {
+                    "type": "string",
+                    "description": "Path for the cloudevents squawkbox",
+                    "default": "/sqwk/ce"
+                },
+                "snowplowPath": {
+                    "type": "string",
+                    "description": "Path for the snowplow squawkbox",
+                    "default": "/sqwk/sp"
+                },
+                "genericPath": {
+                    "type": "string",
+                    "description": "Path for the generic self-describing events squawkbox",
+                    "default": "/sqwk/gen"
+                }
+            }
+        },
         "tele": {
             "type": "object",
             "description": "Tele configuration",
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "description": "Whether or not to allow telemetry",
+                    "description": "Whether or not to enable telemetry",
                     "default": "true"
                 },
                 "heartbeatMs": {
@@ -559,5 +585,5 @@
         }
     },
     "additionalProperties": false,
-    "required": [ "version", "app", "middleware", "snowplow", "generic", "cloudevents", "schemaCache", "sink", "tele"]
+    "required": [ "version", "app", "middleware", "snowplow", "generic", "cloudevents", "schemaCache", "sink", "squawkBox", "tele"]
 }

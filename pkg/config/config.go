@@ -8,5 +8,6 @@ type Config struct {
 	Cloudevents `json:"cloudevents"`
 	Sink        `json:"sink"`
 	SchemaCache `json:"schemaCache"`
+	Squawkbox   `json:"squawkBox"`
 	Tele        `json:"tele"`
 }
