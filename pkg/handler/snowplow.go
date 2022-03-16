@@ -18,7 +18,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func buildEnvelopesFromRequest(c *gin.Context, conf config.Config) []e.Envelope {
+func buildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []e.Envelope {
 	var events []e.Envelope
 	if c.Request.Method == "POST" {
 		body, err := ioutil.ReadAll(c.Request.Body)
@@ -57,7 +57,7 @@ func buildEnvelopesFromRequest(c *gin.Context, conf config.Config) []e.Envelope 
 func SnowplowHandler(p EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
-		envelopes := buildEnvelopesFromRequest(c, *p.Config)
+		envelopes := buildSnowplowEnvelopesFromRequest(c, *p.Config)
 		validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, p.Cache)
 		p.Sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEvents, invalidEvents, p.Meta)
 		if c.Request.Method == http.MethodGet {
