@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/tidwall/gjson"
@@ -159,10 +158,17 @@ func (e SnowplowEvent) Protocol() string {
 	return protocol.SNOWPLOW
 }
 
+func (e SnowplowEvent) PayloadAsByte() ([]byte, error) {
+	payloadBytes, err := json.Marshal(e.Self_describing_event.Data)
+	if err != nil {
+		return nil, err
+	}
+	return payloadBytes, nil
+}
+
 func (e SnowplowEvent) AsByte() ([]byte, error) {
 	eventBytes, err := json.Marshal(e)
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not marshal snowplow event")
 		return nil, err
 	}
 	return eventBytes, nil

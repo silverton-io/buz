@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 )
 
@@ -29,10 +28,17 @@ func (e CloudEvent) Protocol() string {
 	return protocol.CLOUDEVENTS
 }
 
+func (e CloudEvent) PayloadAsByte() ([]byte, error) {
+	eBytes, err := json.Marshal(e.Data)
+	if err != nil {
+		return nil, err
+	}
+	return eBytes, nil
+}
+
 func (e CloudEvent) AsByte() ([]byte, error) {
 	eBytes, err := json.Marshal(e)
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not marshal cloudevent")
 		return nil, err
 	}
 	return eBytes, nil
