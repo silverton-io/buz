@@ -205,8 +205,8 @@ func (a *App) initializeCloudeventsRoutes() {
 	if a.config.Cloudevents.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing cloudevents routes")
-		a.engine.POST(a.config.Cloudevents.PostPath, handler.CloudeventsPostHandler(handlerParams))
-		a.engine.POST(a.config.Cloudevents.BatchPostPath, handler.CloudeventsBatchPostHandler(handlerParams))
+		a.engine.POST(a.config.Cloudevents.PostPath, handler.CloudeventsHandler(handlerParams))
+		a.engine.POST(a.config.Cloudevents.BatchPostPath, handler.CloudeventsHandler(handlerParams))
 	}
 }
 
