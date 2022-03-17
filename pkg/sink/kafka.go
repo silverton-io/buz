@@ -53,9 +53,9 @@ func (s *KafkaSink) Initialize(conf config.Sink) {
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, conf.ValidEventTopic, conf.InvalidEventTopic
 }
 
-func (s *KafkaSink) batchPublish(ctx context.Context, topic string, events []event.Envelope) {
+func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []event.Envelope) {
 	var wg sync.WaitGroup
-	for _, event := range events {
+	for _, event := range envelopes {
 		payload, _ := json.Marshal(event)
 		record := &kgo.Record{Topic: topic, Value: payload}
 		wg.Add(1)
@@ -73,20 +73,20 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, events []eve
 	wg.Wait()
 }
 
-func (s *KafkaSink) batchPublishValid(ctx context.Context, events []event.Envelope) {
-	s.batchPublish(ctx, s.validEventsTopic, events)
+func (s *KafkaSink) batchPublishValid(ctx context.Context, envelopes []event.Envelope) {
+	s.batchPublish(ctx, s.validEventsTopic, envelopes)
 }
 
-func (s *KafkaSink) batchPublishInvalid(ctx context.Context, events []event.Envelope) {
-	s.batchPublish(ctx, s.invalidEventsTopic, events)
+func (s *KafkaSink) batchPublishInvalid(ctx context.Context, envelopes []event.Envelope) {
+	s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
 }
 
-func (s *KafkaSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []event.Envelope, invalidEvents []event.Envelope, meta *tele.Meta) {
+func (s *KafkaSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []event.Envelope, invalidEnvelopes []event.Envelope, meta *tele.Meta) {
 	// Publish
-	go s.batchPublishValid(ctx, validEvents)
-	go s.batchPublishInvalid(ctx, invalidEvents)
+	go s.batchPublishValid(ctx, validEnvelopes)
+	go s.batchPublishInvalid(ctx, invalidEnvelopes)
 	// Increment stats counters
-	incrementStats(inputType, len(validEvents), len(invalidEvents), meta)
+	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
 
 func (s *KafkaSink) Close() {

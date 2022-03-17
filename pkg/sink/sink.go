@@ -22,7 +22,7 @@ const (
 
 type Sink interface {
 	Initialize(conf config.Sink)
-	BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []event.Envelope, invalidEvents []event.Envelope, meta *tele.Meta)
+	BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []event.Envelope, invalidEnvelopes []event.Envelope, meta *tele.Meta)
 	Close()
 }
 
@@ -65,9 +65,12 @@ func incrementStats(protocolName string, validCount int, invalidCount int, meta 
 	case protocol.CLOUDEVENTS:
 		validCounter = &meta.ValidCloudEventsProcessed
 		invalidCounter = &meta.InvalidCloudEventsProcessed
-	default:
+	case protocol.SNOWPLOW:
 		validCounter = &meta.ValidSnowplowEventsProcessed
 		invalidCounter = &meta.InvalidSnowplowEventsProcessed
+	default:
+		validCounter = &meta.ValidRelayEventsProcessed
+		invalidCounter = &meta.InvalidRelayEventsProcessed
 	}
 	atomic.AddInt64(validCounter, int64(validCount))
 	atomic.AddInt64(invalidCounter, int64(invalidCount))

@@ -26,9 +26,9 @@ func (s *KinesisSink) Initialize(conf config.Sink) {
 	s.client, s.validEventsStream, s.invalidEventsStream = client, conf.ValidEventTopic, conf.InvalidEventTopic
 }
 
-func (s *KinesisSink) batchPublish(ctx context.Context, stream string, events []event.Envelope) {
+func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes []event.Envelope) {
 	var wg sync.WaitGroup
-	for _, event := range events {
+	for _, event := range envelopes {
 		partitionKey := "blah"
 		payload, _ := json.Marshal(event)
 		input := &kinesis.PutRecordInput{
@@ -50,20 +50,20 @@ func (s *KinesisSink) batchPublish(ctx context.Context, stream string, events []
 	wg.Wait()
 }
 
-func (s *KinesisSink) batchPublishValid(ctx context.Context, events []event.Envelope) {
-	s.batchPublish(ctx, s.validEventsStream, events)
+func (s *KinesisSink) batchPublishValid(ctx context.Context, envelopes []event.Envelope) {
+	s.batchPublish(ctx, s.validEventsStream, envelopes)
 }
 
-func (s *KinesisSink) batchPublishInvalid(ctx context.Context, events []event.Envelope) {
-	s.batchPublish(ctx, s.invalidEventsStream, events)
+func (s *KinesisSink) batchPublishInvalid(ctx context.Context, envelopes []event.Envelope) {
+	s.batchPublish(ctx, s.invalidEventsStream, envelopes)
 }
 
-func (s *KinesisSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []event.Envelope, invalidEvents []event.Envelope, meta *tele.Meta) {
+func (s *KinesisSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []event.Envelope, invalidEnvelopes []event.Envelope, meta *tele.Meta) {
 	// Publish
-	go s.batchPublishValid(ctx, validEvents)
-	go s.batchPublishInvalid(ctx, invalidEvents)
+	go s.batchPublishValid(ctx, validEnvelopes)
+	go s.batchPublishInvalid(ctx, invalidEnvelopes)
 	// Increment stats counters
-	incrementStats(inputType, len(validEvents), len(invalidEvents), meta)
+	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
 
 func (s *KinesisSink) Close() {

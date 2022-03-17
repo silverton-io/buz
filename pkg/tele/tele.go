@@ -31,6 +31,8 @@ type Meta struct {
 	InvalidGenericEventsProcessed  int64     `json:"invalidGenericEventsProcessed"`
 	ValidCloudEventsProcessed      int64     `json:"validCloudEventsProcessed"`
 	InvalidCloudEventsProcessed    int64     `json:"invalidCloudEventsProcessed"`
+	ValidRelayEventsProcessed      int64     `json:"validRelayEventsProcessed"`
+	InvalidRelayEventsProcessed    int64     `json:"invalidRelayEventsProcessed"`
 }
 
 type startup struct {

@@ -222,6 +222,14 @@ func (a *App) initializeSquawkboxRoutes() {
 	}
 }
 
+func (a *App) initializeRelayRoute() {
+	if a.config.Relay.Enabled {
+		handlerParams := a.handlerParams()
+		log.Info().Msg("initializing relay route")
+		a.engine.POST(a.config.Relay.Path, handler.RelayHandler(handlerParams))
+	}
+}
+
 func (a *App) serveStaticIfDev() {
 	if a.config.App.Env == env.DEV_ENVIRONMENT {
 		log.Info().Msg("serving static files")
@@ -246,6 +254,7 @@ func (a *App) Initialize() {
 	a.initializeGenericRoutes()
 	a.initializeCloudeventsRoutes()
 	a.initializeSquawkboxRoutes()
+	a.initializeRelayRoute()
 	a.serveStaticIfDev()
 }
 

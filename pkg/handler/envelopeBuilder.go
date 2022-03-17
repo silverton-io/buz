@@ -18,7 +18,7 @@ import (
 )
 
 func buildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []e.Envelope {
-	var events []e.Envelope
+	var envelopes []e.Envelope
 	if c.Request.Method == "POST" {
 		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
@@ -35,7 +35,7 @@ func buildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []e.E
 				Ip:            *spEvent.User_ipaddress,
 				Payload:       spEvent,
 			}
-			events = append(events, envelope)
+			envelopes = append(envelopes, envelope)
 		}
 	} else {
 		params := request.MapParams(c)
@@ -48,9 +48,9 @@ func buildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []e.E
 			Ip:            *spEvent.User_ipaddress,
 			Payload:       spEvent,
 		}
-		events = append(events, envelope)
+		envelopes = append(envelopes, envelope)
 	}
-	return events
+	return envelopes
 }
 
 func buildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []e.Envelope {
