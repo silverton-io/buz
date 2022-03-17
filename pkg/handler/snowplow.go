@@ -15,8 +15,8 @@ func SnowplowHandler(p EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		envelopes := buildSnowplowEnvelopesFromRequest(c, *p.Config)
-		validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, p.Cache)
-		p.Sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEvents, invalidEvents, p.Meta)
+		validEnvelopes, invalidEnvelopes := validator.BifurcateAndAnnotate(envelopes, p.Cache)
+		p.Sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEnvelopes, invalidEnvelopes, p.Meta)
 		if c.Request.Method == http.MethodGet {
 			redirectUrl, _ := c.GetQuery("u")
 			if redirectUrl != "" && p.Config.Snowplow.OpenRedirectsEnabled {

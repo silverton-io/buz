@@ -9,5 +9,6 @@ type Config struct {
 	Sink        `json:"sink"`
 	SchemaCache `json:"schemaCache"`
 	Squawkbox   `json:"squawkBox"`
+	Relay       `json:"relay"`
 	Tele        `json:"tele"`
 }

@@ -5,19 +5,32 @@ import (
 	"github.com/silverton-io/honeypot/pkg/event"
 )
 
-func BifurcateAndAnnotate(envelopedEvents []event.Envelope, cache *cache.SchemaCache) (validEvents []event.Envelope, invalidEvents []event.Envelope) {
-	var vEvents []event.Envelope
-	var invEvents []event.Envelope
-	for _, envelopedEvent := range envelopedEvents {
+func BifurcateAndAnnotate(envelopes []event.Envelope, cache *cache.SchemaCache) (validEvents []event.Envelope, invalidEvents []event.Envelope) {
+	var vEnvelopes []event.Envelope
+	var invEnvelopes []event.Envelope
+	for _, envelopedEvent := range envelopes {
 		isValid, validationError, _ := ValidateEvent(envelopedEvent.Payload, cache)
 		envelopedEvent.IsValid = &isValid
 		envelopedEvent.ValidationError = &validationError
 		// FIXME - Annotate envelope root with schema information.
 		if isValid {
-			vEvents = append(vEvents, envelopedEvent)
+			vEnvelopes = append(vEnvelopes, envelopedEvent)
 		} else {
-			invEvents = append(invEvents, envelopedEvent)
+			invEnvelopes = append(invEnvelopes, envelopedEvent)
 		}
 	}
-	return vEvents, invEvents
+	return vEnvelopes, invEnvelopes
+}
+
+func Bifurcate(envelopes []event.Envelope) (validEvents []event.Envelope, invalidEvents []event.Envelope) {
+	var vEnvelopes []event.Envelope
+	var invEnvelopes []event.Envelope
+	for _, envelope := range envelopes {
+		if *envelope.IsValid {
+			vEnvelopes = append(vEnvelopes, envelope)
+		} else {
+			invEnvelopes = append(invEnvelopes, envelope)
+		}
+	}
+	return vEnvelopes, invEnvelopes
 }

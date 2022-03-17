@@ -100,6 +100,10 @@ squawkBox:
   snowplowPath: /sqwk/sp
   genericPath: /sqwk/gen
 
+relay:
+  enabled: true
+  path: /relay
+
 tele:
   enabled: true
   heartbeatMs: 30000
