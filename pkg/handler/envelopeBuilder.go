@@ -85,6 +85,8 @@ func buildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []e
 			EventProtocol: protocol.CLOUDEVENTS,
 			EventSchema:   &cEvent.DataSchema,
 			Tstamp:        time.Now(),
+			Source:        cEvent.Source,
+			Ip:            c.ClientIP(),
 			Payload:       cEvent,
 		}
 		envelopes = append(envelopes, envelope)

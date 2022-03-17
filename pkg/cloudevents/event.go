@@ -17,7 +17,7 @@ type CloudEvent struct { // https://github.com/cloudevents/spec/blob/v1.0.2/clou
 	Subject         *string                `json:"subject"`
 	Time            time.Time              `json:"time"`
 	Data            map[string]interface{} `json:"data"`
-	DataBase64      string                 `json:"dataBase64"`
+	DataBase64      string                 `json:"dataBase64,omitempty"`
 }
 
 func (e CloudEvent) Schema() *string {

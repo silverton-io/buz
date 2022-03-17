@@ -9,6 +9,7 @@ import (
 
 func BuildEvent(payload gjson.Result) (CloudEvent, error) {
 	event := CloudEvent{}
+	event.DataContentType = "application/json" // Always
 
 	pBytes, err := json.Marshal(payload.Value().(map[string]interface{}))
 	if err != nil {
