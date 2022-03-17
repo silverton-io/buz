@@ -23,6 +23,7 @@ type Envelope struct {
 	Tstamp          time.Time        `json:"tstamp"`
 	Ip              string           `json:"ip"`
 	IsValid         *bool            `json:"isValid"`
+	IsRelayed       *bool            `json:"isRelayed"`
 	ValidationError *ValidationError `json:"validationErrors"`
 	Payload         Event            `json:"payload"`
 }
