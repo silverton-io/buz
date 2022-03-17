@@ -42,16 +42,16 @@ func (s *StdoutSink) Initialize(conf config.Sink) {
 	log.Debug().Msg("initializing stdout sink")
 }
 
-func (s *StdoutSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []event.Envelope, invalidEvents []event.Envelope, meta *tele.Meta) {
-	if len(validEvents) > 0 {
-		validEvents := util.Stringify(validEvents)
-		fmt.Println(Green(validEvents))
+func (s *StdoutSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []event.Envelope, invalidEnvelopes []event.Envelope, meta *tele.Meta) {
+	if len(validEnvelopes) > 0 {
+		validEnvelopes := util.Stringify(validEnvelopes)
+		fmt.Println(Green(validEnvelopes))
 	}
-	if len(invalidEvents) > 0 {
-		invalidEvents := util.Stringify(invalidEvents)
-		fmt.Println(Red(invalidEvents))
+	if len(invalidEnvelopes) > 0 {
+		invalidEnvelopes := util.Stringify(invalidEnvelopes)
+		fmt.Println(Red(invalidEnvelopes))
 	}
-	incrementStats(inputType, len(validEvents), len(invalidEvents), meta)
+	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
 
 func (s *StdoutSink) Close() {
