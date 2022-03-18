@@ -57,14 +57,8 @@ func (s *StdoutSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes [
 }
 
 func (s *StdoutSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
-	if len(validEnvelopes) > 0 {
-		validEnvelopes := util.Stringify(validEnvelopes)
-		fmt.Println(Green(validEnvelopes))
-	}
-	if len(invalidEnvelopes) > 0 {
-		invalidEnvelopes := util.Stringify(invalidEnvelopes)
-		fmt.Println(Red(invalidEnvelopes))
-	}
+	s.BatchPublishValid(ctx, validEnvelopes)
+	s.BatchPublishInvalid(ctx, validEnvelopes)
 	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
 
