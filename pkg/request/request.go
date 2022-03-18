@@ -41,6 +41,7 @@ func PostEnvelopes(url url.URL, envelopes []envelope.Envelope) error {
 	_, err = http.Post(url.String(), JSON_CONTENT_TYPE, buff)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not post envelopes")
+		return err
 	}
 	return nil
 }
