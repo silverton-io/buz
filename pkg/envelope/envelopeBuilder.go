@@ -160,10 +160,11 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context) []Envelope {
 		return envelopes
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
-		whEvent, err := webhook.BuildEvent(e)
+		whEvent, err := webhook.BuildEvent(c, e)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not build WebhookEvent")
 		}
+		isValid := true
 		isRelayed := false
 		envelope := Envelope{
 			EventProtocol: protocol.WEBHOOK,
@@ -171,6 +172,7 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context) []Envelope {
 			Tstamp:        time.Now(),
 			Ip:            c.ClientIP(),
 			Payload:       whEvent,
+			IsValid:       &isValid,
 			IsRelayed:     &isRelayed,
 		}
 		envelopes = append(envelopes, envelope)

@@ -7,6 +7,7 @@ import (
 )
 
 type WebhookEvent struct {
+	Id      string                 `json:"id"`
 	Payload map[string]interface{} `json:"payload"`
 }
 

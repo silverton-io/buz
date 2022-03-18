@@ -380,6 +380,24 @@
             "additionalProperties": false,
             "required": ["enabled", "postPath", "batchPostPath", "contexts", "payload"]
         },
+        "webhook": {
+            "type": "object",
+            "description": "Arbitrary webhook configuration",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether or not to enable arbitrary webhooks",
+                    "default": "true"
+                },
+                "path": {
+                    "type": "string",
+                    "description": "The arbitrary webhook route",
+                    "default": "/wb/hk"
+                }
+            },
+            "additionalProperties": false,
+            "required": ["enabled", "path"]
+        },
         "schemaCache": {
             "type": "object",
             "description": "Schema cache configuration",
@@ -605,5 +623,5 @@
         }
     },
     "additionalProperties": false,
-    "required": [ "version", "app", "middleware", "snowplow", "generic", "cloudevents", "schemaCache", "sink", "squawkBox", "relay", "tele"]
+    "required": [ "version", "app", "middleware", "snowplow", "generic", "cloudevents", "webhook", "schemaCache", "sink", "squawkBox", "relay", "tele"]
 }

@@ -6,6 +6,7 @@ type Config struct {
 	Snowplow    `json:"snowplow"`
 	Generic     `json:"generic"`
 	Cloudevents `json:"cloudevents"`
+	Webhook     `json:"webhook"`
 	Sink        `json:"sink"`
 	SchemaCache `json:"schemaCache"`
 	Squawkbox   `json:"squawkBox"`
