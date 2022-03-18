@@ -29,7 +29,7 @@ func (s *KinesisSink) Initialize(conf config.Sink) {
 func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) {
 	var wg sync.WaitGroup
 	for _, event := range envelopes {
-		partitionKey := "blah"
+		partitionKey := "blah" // FIXME!
 		payload, _ := json.Marshal(event)
 		input := &kinesis.PutRecordInput{
 			Data:         payload,

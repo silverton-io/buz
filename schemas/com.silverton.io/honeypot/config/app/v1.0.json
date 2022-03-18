@@ -234,169 +234,195 @@
             },
             "required": ["timeout", "rateLimiter", "cookie", "cors", "requestLogger", "yeet"]
         },
-        "snowplow": {
+        "inputs": {
             "type": "object",
-            "description": "Snowplow collector configuration",
+            "description": "Input configuration",
             "properties": {
-                "enabled": {
-                    "type": "boolean",
-                    "default": "true",
-                    "description": "Whether or not to activate snowplow tracking"
-                },
-                "standardRoutesEnabled": {
-                    "type": "boolean",
-                    "default": "true",
-                    "description": "Whether to not to activate the standard snowplow routes"
-                },
-                "openRedirectsEnabled": {
-                    "type": "boolean",
-                    "default": "true",
-                    "description": "Whether or not to activate redirect-based tracking"
-                },
-                "getPath": {
-                    "type": "string",
-                    "default": "/plw/g",
-                    "description": "The path by which to process get-based events"
-                },
-                "postPath": {
-                    "type": "string",
-                    "default": "/plw/p",
-                    "description": "The path by which to process post-based events"
-                },
-                "redirectPath": {
-                    "type": "string",
-                    "default": "/plw/r",
-                    "description": "The path by which to process redirect-based events"
-                },
-                "anonymize": {
+                "snowplow": {
                     "type": "object",
-                    "description": "Snowplow anonymization config",
+                    "description": "Snowplow collector configuration",
                     "properties": {
-                        "ip": {
+                        "enabled": {
                             "type": "boolean",
-                            "default": "false",
-                            "description": "Whether or not to hash the ip address of incoming snowplow events"
+                            "default": "true",
+                            "description": "Whether or not to activate snowplow tracking"
                         },
-                        "userId": {
+                        "standardRoutesEnabled": {
                             "type": "boolean",
-                            "default": "false",
-                            "description": "Whether or not to hash the userId of incoming snowplow events"
-                        }
-                    }
-                }
-            },
-            "additionalProperties": false,
-            "required": ["enabled", "standardRoutesEnabled", "openRedirectsEnabled", "getPath", "postPath", "redirectPath", "anonymize"]
-        },
-        "cloudevents": {
-            "type": "object",
-            "description": "CloudEvents collector configuration",
-            "properties": {
-                "enabled": {
-                    "type": "boolean",
-                    "default": "true",
-                    "description": "Whether or not to activate cloudevents tracking"
-                },
-                "postPath": {
-                    "type": "string",
-                    "default": "/ce/p",
-                    "description": "The path by which to process incoming single-message cloudevents payloads"
-                },
-                "batchPostPath": {
-                    "type": "string",
-                    "default": "/ce/bp",
-                    "description": "The path by which to process incoming batch cloudevents payloads"
-                }
-            },
-            "additionalProperties": false,
-            "required": ["enabled", "postPath", "batchPostPath"]
-        },
-        "generic": {
-            "type": "object",
-            "description": "Generic self-describing events collector configuration",
-            "properties": {
-                "enabled": {
-                    "type": "boolean",
-                    "default": "true",
-                    "description": "Whether or not to activate generic self-describing event tracking"
-                },
-                "postPath": {
-                    "type": "string",
-                    "default": "/gen/p",
-                    "description": "The path by which to process incoming single-message self describing payloads"
-                },
-                "batchPostPath": {
-                    "type": "string",
-                    "default": "/gen/bp",
-                    "description": "The path by which to process incoming batch self describing payloads"
-                },
-                "contexts": {
-                    "type": "object",
-                    "description": "Self describing events context config",
-                    "properties": {
-                        "rootKey": {
-                            "type": "string",
-                            "default": "contexts",
-                            "description": "The root json key that defines event contexts"
+                            "default": "true",
+                            "description": "Whether to not to activate the standard snowplow routes"
                         },
-                        "schemaKey": {
-                            "type": "string",
-                            "default": "schema",
-                            "description": "The key that defines the context schema. (root.CONTEXTKEY.SCHEMAKEY)"
+                        "openRedirectsEnabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to activate redirect-based tracking"
                         },
-                        "dataKey": {
+                        "getPath": {
                             "type": "string",
-                            "default": "data",
-                            "description": "The key that defines the context data. (root.CONTEXTKEY.DATAKEY)"
+                            "default": "/plw/g",
+                            "description": "The path by which to process get-based events"
+                        },
+                        "postPath": {
+                            "type": "string",
+                            "default": "/plw/p",
+                            "description": "The path by which to process post-based events"
+                        },
+                        "redirectPath": {
+                            "type": "string",
+                            "default": "/plw/r",
+                            "description": "The path by which to process redirect-based events"
+                        },
+                        "anonymize": {
+                            "type": "object",
+                            "description": "Snowplow anonymization config",
+                            "properties": {
+                                "ip": {
+                                    "type": "boolean",
+                                    "default": "false",
+                                    "description": "Whether or not to hash the ip address of incoming snowplow events"
+                                },
+                                "userId": {
+                                    "type": "boolean",
+                                    "default": "false",
+                                    "description": "Whether or not to hash the userId of incoming snowplow events"
+                                }
+                            }
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["rootKey", "schemaKey", "dataKey"]
+                    "required": ["enabled", "standardRoutesEnabled", "openRedirectsEnabled", "getPath", "postPath", "redirectPath", "anonymize"]
                 },
-                "payload": {
+                "cloudevents": {
                     "type": "object",
-                    "description": "Self describing events payload data config",
+                    "description": "CloudEvents collector configuration",
                     "properties": {
-                        "rootKey": {
-                            "type": "string",
-                            "default": "data",
-                            "description": "The root json key that defines payload data. (root.PAYLOADKEY)"
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to activate cloudevents tracking"
                         },
-                        "schemaKey": {
+                        "postPath": {
                             "type": "string",
-                            "default": "schema",
-                            "description": "The key that defines the payload schema. (root.PAYLOADKEY.SCHEMAKEY)"
+                            "default": "/ce/p",
+                            "description": "The path by which to process incoming single-message cloudevents payloads"
                         },
-                        "dataKey": {
+                        "batchPostPath": {
                             "type": "string",
-                            "default": "data",
-                            "description": "The key that defines the payload data. (root.PAYLOADKEY.DATAKEY)"
+                            "default": "/ce/bp",
+                            "description": "The path by which to process incoming batch cloudevents payloads"
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["rootKey", "schemaKey", "dataKey"]
-                }
-            },
-            "additionalProperties": false,
-            "required": ["enabled", "postPath", "batchPostPath", "contexts", "payload"]
-        },
-        "webhook": {
-            "type": "object",
-            "description": "Arbitrary webhook configuration",
-            "properties": {
-                "enabled": {
-                    "type": "boolean",
-                    "description": "Whether or not to enable arbitrary webhooks",
-                    "default": "true"
+                    "required": ["enabled", "postPath", "batchPostPath"]
                 },
-                "path": {
-                    "type": "string",
-                    "description": "The arbitrary webhook route",
-                    "default": "/wb/hk"
+                "generic": {
+                    "type": "object",
+                    "description": "Generic self-describing events collector configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to activate generic self-describing event tracking"
+                        },
+                        "postPath": {
+                            "type": "string",
+                            "default": "/gen/p",
+                            "description": "The path by which to process incoming single-message self describing payloads"
+                        },
+                        "batchPostPath": {
+                            "type": "string",
+                            "default": "/gen/bp",
+                            "description": "The path by which to process incoming batch self describing payloads"
+                        },
+                        "contexts": {
+                            "type": "object",
+                            "description": "Self describing events context config",
+                            "properties": {
+                                "rootKey": {
+                                    "type": "string",
+                                    "default": "contexts",
+                                    "description": "The root json key that defines event contexts"
+                                },
+                                "schemaKey": {
+                                    "type": "string",
+                                    "default": "schema",
+                                    "description": "The key that defines the context schema. (root.CONTEXTKEY.SCHEMAKEY)"
+                                },
+                                "dataKey": {
+                                    "type": "string",
+                                    "default": "data",
+                                    "description": "The key that defines the context data. (root.CONTEXTKEY.DATAKEY)"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required": ["rootKey", "schemaKey", "dataKey"]
+                        },
+                        "payload": {
+                            "type": "object",
+                            "description": "Self describing events payload data config",
+                            "properties": {
+                                "rootKey": {
+                                    "type": "string",
+                                    "default": "data",
+                                    "description": "The root json key that defines payload data. (root.PAYLOADKEY)"
+                                },
+                                "schemaKey": {
+                                    "type": "string",
+                                    "default": "schema",
+                                    "description": "The key that defines the payload schema. (root.PAYLOADKEY.SCHEMAKEY)"
+                                },
+                                "dataKey": {
+                                    "type": "string",
+                                    "default": "data",
+                                    "description": "The key that defines the payload data. (root.PAYLOADKEY.DATAKEY)"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required": ["rootKey", "schemaKey", "dataKey"]
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["enabled", "postPath", "batchPostPath", "contexts", "payload"]
+                },
+                "webhook": {
+                    "type": "object",
+                    "description": "Arbitrary webhook configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "Whether or not to enable arbitrary webhooks",
+                            "default": "true"
+                        },
+                        "path": {
+                            "type": "string",
+                            "description": "The arbitrary webhook route",
+                            "default": "/wb/hk"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["enabled", "path"]
+                },
+                "relay": {
+                    "type": "object",
+                    "description": "Relay configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "Whether or not to enable the relay",
+                            "default": "true"
+                        },
+                        "path": {
+                            "type": "string",
+                            "description": "The relay route",
+                            "default": "/relay"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["enabled", "path"]
                 }
             },
             "additionalProperties": false,
-            "required": ["enabled", "path"]
+            "required": ["snowplow", "cloudevents", "generic", "webhook", "relay"]
         },
         "schemaCache": {
             "type": "object",
@@ -623,24 +649,6 @@
             "additionalProperties": false,
             "required": ["enabled", "cloudeventsPath", "snowplowPath", "genericPath"]
         },
-        "relay": {
-            "type": "object",
-            "description": "Relay configuration",
-            "properties": {
-                "enabled": {
-                    "type": "boolean",
-                    "description": "Whether or not to enable the relay",
-                    "default": "true"
-                },
-                "path": {
-                    "type": "string",
-                    "description": "The relay route",
-                    "default": "/relay"
-                }
-            },
-            "additionalProperties": false,
-            "required": ["enabled", "path"]
-        },
         "tele": {
             "type": "object",
             "description": "Tele configuration",
@@ -662,5 +670,5 @@
         }
     },
     "additionalProperties": false,
-    "required": [ "version", "app", "middleware", "snowplow", "generic", "cloudevents", "webhook", "schemaCache", "sink", "squawkBox", "relay", "tele"]
+    "required": [ "version", "app", "middleware", "inputs", "schemaCache", "sink", "squawkBox","tele"]
 }

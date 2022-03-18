@@ -43,34 +43,39 @@ middleware:
   yeet:
     enabled: false
 
-snowplow:
-  enabled: true
-  standardRoutesEnabled: true
-  openRedirectsEnabled: true
-  getPath: /plw/g
-  postPath: /plw/p
-  redirectPath: /plw/r
-  anonymize:
-    ip: true
-    userId: true
-
-cloudevents:
-  enabled: true
-  postPath: /ce/p
-  batchPostPath: /ce/bp
-
-generic:
-  enabled: true
-  postPath: /gen/p
-  batchPostPath: /gen/bp
-  contexts:
-    rootKey: contexts
-    schemaKey: schema
-    dataKey: data
-  payload:
-    rootKey: payload
-    schemaKey: schema
-    dataKey: data
+inputs:
+  snowplow:
+    enabled: true
+    standardRoutesEnabled: true
+    openRedirectsEnabled: true
+    getPath: /plw/g
+    postPath: /plw/p
+    redirectPath: /plw/r
+    anonymize:
+      ip: false
+      userId: false
+  cloudevents:
+    enabled: true
+    postPath: /ce/p
+    batchPostPath: /ce/bp
+  generic:
+    enabled: true
+    postPath: /gen/p
+    batchPostPath: /gen/bp
+    contexts:
+      rootKey: contexts
+      schemaKey: schema
+      dataKey: data
+    payload:
+      rootKey: data
+      schemaKey: schema
+      dataKey: data
+  webhook:
+    enabled: true
+    path: /wb/hk
+  relay:
+    enabled: true
+    path: /relay
 
 schemaCache:
   schemaCacheBackend:
@@ -99,10 +104,6 @@ squawkBox:
   cloudeventsPath: /sqwk/ce
   snowplowPath: /sqwk/sp
   genericPath: /sqwk/gen
-
-relay:
-  enabled: true
-  path: /relay
 
 tele:
   enabled: true

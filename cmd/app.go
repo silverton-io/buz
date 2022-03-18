@@ -81,8 +81,8 @@ func (a *App) configure() {
 	a.meta = &m
 }
 
-func (a *App) initializeSink() {
-	log.Info().Msg("initializing sink")
+func (a *App) initializeSinks() {
+	log.Info().Msg("initializing sinks")
 	s, _ := sink.BuildSink(a.config.Sink)
 	sink.InitializeSink(a.config.Sink, s)
 	a.sink = s
@@ -172,52 +172,60 @@ func (a *App) initializeSchemaCacheRoutes() {
 }
 
 func (a *App) initializeSnowplowRoutes() {
-	if a.config.Snowplow.Enabled {
+	if a.config.Inputs.Snowplow.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing snowplow routes")
-		if a.config.Snowplow.StandardRoutesEnabled {
+		if a.config.Inputs.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("initializing standard routes")
 			a.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowHandler(handlerParams))
 			a.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowHandler(handlerParams))
-			if a.config.Snowplow.OpenRedirectsEnabled {
+			if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("initializing standard open redirect route")
 				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowHandler(handlerParams))
 			}
 		}
 		log.Info().Msg("initializing custom routes")
-		a.engine.GET(a.config.Snowplow.GetPath, handler.SnowplowHandler(handlerParams))
-		a.engine.POST(a.config.Snowplow.PostPath, handler.SnowplowHandler(handlerParams))
-		if a.config.Snowplow.OpenRedirectsEnabled {
+		a.engine.GET(a.config.Inputs.Snowplow.GetPath, handler.SnowplowHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Snowplow.PostPath, handler.SnowplowHandler(handlerParams))
+		if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
 			log.Info().Msg("initializing custom open redirect route")
-			a.engine.GET(a.config.Snowplow.RedirectPath, handler.SnowplowHandler(handlerParams))
+			a.engine.GET(a.config.Inputs.Snowplow.RedirectPath, handler.SnowplowHandler(handlerParams))
 		}
 	}
 }
 
 func (a *App) initializeGenericRoutes() {
-	if a.config.Generic.Enabled {
+	if a.config.Inputs.Generic.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing generic routes")
-		a.engine.POST(a.config.Generic.PostPath, handler.GenericHandler(handlerParams))
-		a.engine.POST(a.config.Generic.BatchPostPath, handler.GenericHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Generic.PostPath, handler.GenericHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Generic.BatchPostPath, handler.GenericHandler(handlerParams))
 	}
 }
 
 func (a *App) initializeCloudeventsRoutes() {
-	if a.config.Cloudevents.Enabled {
+	if a.config.Inputs.Cloudevents.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing cloudevents routes")
-		a.engine.POST(a.config.Cloudevents.PostPath, handler.CloudeventsHandler(handlerParams))
-		a.engine.POST(a.config.Cloudevents.BatchPostPath, handler.CloudeventsHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Cloudevents.PostPath, handler.CloudeventsHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Cloudevents.BatchPostPath, handler.CloudeventsHandler(handlerParams))
 	}
 }
 
 func (a *App) initializeWebhookRoutes() {
-	if a.config.Webhook.Enabled {
+	if a.config.Inputs.Webhook.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing webhook routes")
-		a.engine.POST(a.config.Webhook.Path, handler.WebhookHandler(handlerParams))
-		a.engine.POST(a.config.Webhook.Path+"/*"+webhook.WEBHOOK_ID_PARAM, handler.WebhookHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Webhook.Path, handler.WebhookHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+webhook.WEBHOOK_ID_PARAM, handler.WebhookHandler(handlerParams))
+	}
+}
+
+func (a *App) initializeRelayRoute() {
+	if a.config.Inputs.Relay.Enabled {
+		handlerParams := a.handlerParams()
+		log.Info().Msg("initializing relay route")
+		a.engine.POST(a.config.Inputs.Relay.Path, handler.RelayHandler(handlerParams))
 	}
 }
 
@@ -229,14 +237,6 @@ func (a *App) initializeSquawkboxRoutes() {
 		a.engine.POST(a.config.Squawkbox.GenericPath, handler.SquawkboxHandler(handlerParams, protocol.GENERIC))
 		a.engine.POST(a.config.Squawkbox.SnowplowPath, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
 		a.engine.GET(a.config.Squawkbox.SnowplowPath, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
-	}
-}
-
-func (a *App) initializeRelayRoute() {
-	if a.config.Relay.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("initializing relay route")
-		a.engine.POST(a.config.Relay.Path, handler.RelayHandler(handlerParams))
 	}
 }
 
@@ -253,7 +253,7 @@ func (a *App) serveStaticIfDev() {
 func (a *App) Initialize() {
 	log.Info().Msg("initializing app")
 	a.configure()
-	a.initializeSink()
+	a.initializeSinks()
 	a.initializeSchemaCache()
 	a.initializeRouter()
 	a.initializeMiddleware()
