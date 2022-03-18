@@ -7,23 +7,23 @@ import (
 	"testing"
 
 	"github.com/qri-io/jsonschema"
-	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/envelope"
 )
 
 type output struct {
 	isValid         bool
-	validationError event.ValidationError
+	validationError envelope.ValidationError
 }
 
-func generatePayloadValidationErrs(payload []byte, schema []byte) []event.PayloadValidationError {
+func generatePayloadValidationErrs(payload []byte, schema []byte) []envelope.PayloadValidationError {
 	ctx := context.Background()
 	s := &jsonschema.Schema{}
 	json.Unmarshal(schema, s)
 	validationErrs, _ := s.ValidateBytes(ctx, payload)
 
-	var payloadValidationErrors []event.PayloadValidationError
+	var payloadValidationErrors []envelope.PayloadValidationError
 	for _, validationErr := range validationErrs {
-		payloadValidationError := event.PayloadValidationError{
+		payloadValidationError := envelope.PayloadValidationError{
 			Field:       validationErr.PropertyPath,
 			Description: validationErr.Message,
 			ErrorType:   validationErr.Error(),
@@ -65,9 +65,9 @@ func TestValidatePayload(t *testing.T) {
 		schema  []byte
 		want    output
 	}{
-		{"valid payload valid schema", validPayload, validSchema, output{true, event.ValidationError{}}},
-		{"valid payload invalid schema", validPayload, invalidSchema, output{false, event.ValidationError{ErrorType: &InvalidSchema.Type, ErrorResolution: &InvalidSchema.Resolution, Errors: nil}}},
-		{"invalid payload valid schema", invalidPayload, validSchema, output{false, event.ValidationError{ErrorType: &InvalidPayload.Type, ErrorResolution: &InvalidPayload.Resolution, Errors: invalidPayloadValidationErrs}}},
+		{"valid payload valid schema", validPayload, validSchema, output{true, envelope.ValidationError{}}},
+		{"valid payload invalid schema", validPayload, invalidSchema, output{false, envelope.ValidationError{ErrorType: &InvalidSchema.Type, ErrorResolution: &InvalidSchema.Resolution, Errors: nil}}},
+		{"invalid payload valid schema", invalidPayload, validSchema, output{false, envelope.ValidationError{ErrorType: &InvalidPayload.Type, ErrorResolution: &InvalidPayload.Resolution, Errors: invalidPayloadValidationErrs}}},
 	}
 
 	for _, tc := range testCases {

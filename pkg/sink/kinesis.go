@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/kinesis"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
@@ -26,7 +26,7 @@ func (s *KinesisSink) Initialize(conf config.Sink) {
 	s.client, s.validEventsStream, s.invalidEventsStream = client, conf.ValidEventTopic, conf.InvalidEventTopic
 }
 
-func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes []event.Envelope) {
+func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) {
 	var wg sync.WaitGroup
 	for _, event := range envelopes {
 		partitionKey := "blah"
@@ -50,18 +50,18 @@ func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes
 	wg.Wait()
 }
 
-func (s *KinesisSink) batchPublishValid(ctx context.Context, envelopes []event.Envelope) {
+func (s *KinesisSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
 	s.batchPublish(ctx, s.validEventsStream, envelopes)
 }
 
-func (s *KinesisSink) batchPublishInvalid(ctx context.Context, envelopes []event.Envelope) {
+func (s *KinesisSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
 	s.batchPublish(ctx, s.invalidEventsStream, envelopes)
 }
 
-func (s *KinesisSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []event.Envelope, invalidEnvelopes []event.Envelope, meta *tele.Meta) {
+func (s *KinesisSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
 	// Publish
-	go s.batchPublishValid(ctx, validEnvelopes)
-	go s.batchPublishInvalid(ctx, invalidEnvelopes)
+	go s.BatchPublishValid(ctx, validEnvelopes)
+	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
 	// Increment stats counters
 	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }

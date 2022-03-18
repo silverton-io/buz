@@ -6,7 +6,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/silverton-io/honeypot/pkg/util"
 )
@@ -42,15 +42,23 @@ func (s *StdoutSink) Initialize(conf config.Sink) {
 	log.Debug().Msg("initializing stdout sink")
 }
 
-func (s *StdoutSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []event.Envelope, invalidEnvelopes []event.Envelope, meta *tele.Meta) {
+func (s *StdoutSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
 	if len(validEnvelopes) > 0 {
 		validEnvelopes := util.Stringify(validEnvelopes)
 		fmt.Println(Green(validEnvelopes))
 	}
+}
+
+func (s *StdoutSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
 	if len(invalidEnvelopes) > 0 {
 		invalidEnvelopes := util.Stringify(invalidEnvelopes)
 		fmt.Println(Red(invalidEnvelopes))
 	}
+}
+
+func (s *StdoutSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
+	s.BatchPublishValid(ctx, validEnvelopes)
+	s.BatchPublishInvalid(ctx, validEnvelopes)
 	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
 

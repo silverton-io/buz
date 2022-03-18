@@ -7,10 +7,10 @@ import (
 
 	"github.com/qri-io/jsonschema"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/envelope"
 )
 
-func validatePayload(payload []byte, schema []byte) (isValid bool, validationError event.ValidationError) {
+func validatePayload(payload []byte, schema []byte) (isValid bool, validationError envelope.ValidationError) {
 	ctx := context.Background()
 	startTime := time.Now()
 	s := &jsonschema.Schema{}
@@ -22,7 +22,7 @@ func validatePayload(payload []byte, schema []byte) (isValid bool, validationErr
 
 	if unmarshalErr != nil || vErr != nil {
 		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())
-		validationError := event.ValidationError{
+		validationError := envelope.ValidationError{
 			ErrorType:       &InvalidSchema.Type,
 			ErrorResolution: &InvalidSchema.Resolution,
 			Errors:          nil,
@@ -31,18 +31,18 @@ func validatePayload(payload []byte, schema []byte) (isValid bool, validationErr
 	}
 	if len(validationErrs) == 0 {
 		log.Debug().Msg("event validated in " + time.Now().Sub(startTime).String())
-		return true, event.ValidationError{}
+		return true, envelope.ValidationError{}
 	} else {
-		var payloadValidationErrors []event.PayloadValidationError
+		var payloadValidationErrors []envelope.PayloadValidationError
 		for _, validationErr := range validationErrs {
-			payloadValidationError := event.PayloadValidationError{
+			payloadValidationError := envelope.PayloadValidationError{
 				Field:       validationErr.PropertyPath,
 				Description: validationErr.Message,
 				ErrorType:   validationErr.Error(),
 			}
 			payloadValidationErrors = append(payloadValidationErrors, payloadValidationError)
 		}
-		validationError := event.ValidationError{
+		validationError := envelope.ValidationError{
 			ErrorType:       &InvalidPayload.Type,
 			ErrorResolution: &InvalidPayload.Resolution,
 			Errors:          payloadValidationErrors,

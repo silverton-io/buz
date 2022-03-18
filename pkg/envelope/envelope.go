@@ -1,7 +1,9 @@
-package event
+package envelope
 
 import (
 	"time"
+
+	"github.com/silverton-io/honeypot/pkg/event"
 )
 
 type PayloadValidationError struct {
@@ -25,5 +27,5 @@ type Envelope struct {
 	IsValid         *bool            `json:"isValid"`
 	IsRelayed       *bool            `json:"isRelayed"`
 	ValidationError *ValidationError `json:"validationErrors"`
-	Payload         Event            `json:"payload"`
+	Payload         event.Event      `json:"payload"`
 }

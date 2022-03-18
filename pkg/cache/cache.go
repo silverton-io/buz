@@ -7,7 +7,7 @@ import (
 )
 
 type SchemaCache struct {
-	cache        *freecache.Cache
+	Cache        *freecache.Cache
 	Backend      SchemaCacheBackend
 	maxSizeBytes int
 	ttlSeconds   int
@@ -16,7 +16,7 @@ type SchemaCache struct {
 func (s *SchemaCache) Initialize(conf config.SchemaCache) {
 	cacheBackend, _ := BuildSchemaCacheBackend(conf.SchemaCacheBackend)
 	s.Backend = cacheBackend
-	s.cache = freecache.NewCache(conf.MaxSizeBytes)
+	s.Cache = freecache.NewCache(conf.MaxSizeBytes)
 	s.maxSizeBytes = conf.MaxSizeBytes
 	s.ttlSeconds = conf.TtlSeconds
 	log.Info().Msg("schema cache with " + conf.Type + " backend initialized")
@@ -24,7 +24,7 @@ func (s *SchemaCache) Initialize(conf config.SchemaCache) {
 
 func (s *SchemaCache) Get(key string) (exists bool, data []byte) {
 	k := []byte(key)
-	schemaContents, _ := s.cache.Get(k)
+	schemaContents, _ := s.Cache.Get(k)
 	if schemaContents != nil { // Schema already cached locally
 		log.Debug().Msg("found cache key " + key)
 		return true, schemaContents
@@ -35,7 +35,7 @@ func (s *SchemaCache) Get(key string) (exists bool, data []byte) {
 			return false, nil
 		}
 		log.Debug().Msg("caching " + key)
-		err = s.cache.Set(k, schemaContents, s.ttlSeconds)
+		err = s.Cache.Set(k, schemaContents, s.ttlSeconds)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("error when setting key " + key)
 		}

@@ -22,6 +22,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/sink"
 	"github.com/silverton-io/honeypot/pkg/snowplow"
 	"github.com/silverton-io/honeypot/pkg/tele"
+	"github.com/silverton-io/honeypot/pkg/webhook"
 	"github.com/spf13/viper"
 )
 
@@ -161,12 +162,12 @@ func (a *App) initializeStatsRoutes() {
 func (a *App) initializeSchemaCacheRoutes() {
 	if a.config.SchemaCache.Purge.Enabled {
 		log.Info().Msg("initializing schema cache purge route")
-		a.engine.GET(a.config.SchemaCache.Purge.Path, cache.CachePurgeHandler(a.schemaCache))
+		a.engine.GET(a.config.SchemaCache.Purge.Path, handler.CachePurgeHandler(a.schemaCache))
 	}
 	if a.config.SchemaCache.SchemaEndpoints.Enabled {
 		log.Info().Msg("initializing schema cache index and getter routes")
-		a.engine.GET(cache.SCHEMA_CACHE_ROOT_ROUTE, cache.CacheIndexHandler(a.schemaCache))
-		a.engine.GET(cache.SCHEMA_CACHE_ROOT_ROUTE+"/*"+cache.SCHEMA_ROUTE_PARAM, cache.CacheGetHandler(a.schemaCache))
+		a.engine.GET(cache.SCHEMA_CACHE_ROOT_ROUTE, handler.CacheIndexHandler(a.schemaCache))
+		a.engine.GET(cache.SCHEMA_CACHE_ROOT_ROUTE+"/*"+cache.SCHEMA_ROUTE_PARAM, handler.CacheGetHandler(a.schemaCache))
 	}
 }
 
@@ -208,6 +209,15 @@ func (a *App) initializeCloudeventsRoutes() {
 		log.Info().Msg("initializing cloudevents routes")
 		a.engine.POST(a.config.Cloudevents.PostPath, handler.CloudeventsHandler(handlerParams))
 		a.engine.POST(a.config.Cloudevents.BatchPostPath, handler.CloudeventsHandler(handlerParams))
+	}
+}
+
+func (a *App) initializeWebhookRoutes() {
+	if a.config.Webhook.Enabled {
+		handlerParams := a.handlerParams()
+		log.Info().Msg("initializing webhook routes")
+		a.engine.POST(a.config.Webhook.Path, handler.WebhookHandler(handlerParams))
+		a.engine.POST(a.config.Webhook.Path+"/*"+webhook.WEBHOOK_ID_PARAM, handler.WebhookHandler(handlerParams))
 	}
 }
 
@@ -253,6 +263,7 @@ func (a *App) Initialize() {
 	a.initializeSnowplowRoutes()
 	a.initializeGenericRoutes()
 	a.initializeCloudeventsRoutes()
+	a.initializeWebhookRoutes()
 	a.initializeSquawkboxRoutes()
 	a.initializeRelayRoute()
 	a.serveStaticIfDev()

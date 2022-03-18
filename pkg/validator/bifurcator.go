@@ -2,12 +2,12 @@ package validator
 
 import (
 	"github.com/silverton-io/honeypot/pkg/cache"
-	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/envelope"
 )
 
-func BifurcateAndAnnotate(envelopes []event.Envelope, cache *cache.SchemaCache) (validEvents []event.Envelope, invalidEvents []event.Envelope) {
-	var vEnvelopes []event.Envelope
-	var invEnvelopes []event.Envelope
+func BifurcateAndAnnotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) (validEvents []envelope.Envelope, invalidEvents []envelope.Envelope) {
+	var vEnvelopes []envelope.Envelope
+	var invEnvelopes []envelope.Envelope
 	for _, envelopedEvent := range envelopes {
 		isValid, validationError, _ := ValidateEvent(envelopedEvent.Payload, cache)
 		envelopedEvent.IsValid = &isValid
@@ -22,9 +22,9 @@ func BifurcateAndAnnotate(envelopes []event.Envelope, cache *cache.SchemaCache) 
 	return vEnvelopes, invEnvelopes
 }
 
-func Bifurcate(envelopes []event.Envelope) (validEvents []event.Envelope, invalidEvents []event.Envelope) {
-	var vEnvelopes []event.Envelope
-	var invEnvelopes []event.Envelope
+func Bifurcate(envelopes []envelope.Envelope) (validEvents []envelope.Envelope, invalidEvents []envelope.Envelope) {
+	var vEnvelopes []envelope.Envelope
+	var invEnvelopes []envelope.Envelope
 	for _, envelope := range envelopes {
 		if *envelope.IsValid {
 			vEnvelopes = append(vEnvelopes, envelope)
