@@ -3,7 +3,6 @@ package validator
 import (
 	"github.com/silverton-io/honeypot/pkg/cache"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/util"
 )
 
 func BifurcateAndAnnotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) (validEvents []envelope.Envelope, invalidEvents []envelope.Envelope) {
@@ -28,8 +27,7 @@ func Bifurcate(envelopes []envelope.Envelope) (validEvents []envelope.Envelope, 
 	var invEnvelopes []envelope.Envelope
 	for _, envelope := range envelopes {
 		isValid := *envelope.IsValid
-		util.Pprint(isValid)
-		if *envelope.IsValid {
+		if isValid {
 			vEnvelopes = append(vEnvelopes, envelope)
 		} else {
 			invEnvelopes = append(invEnvelopes, envelope)
