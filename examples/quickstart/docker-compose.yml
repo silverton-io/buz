@@ -152,7 +152,3 @@ services:
   mzcli:
     container_name: mzcli
     image: materialize/cli
-
-volumes:
-  esdata:
-    driver: local
