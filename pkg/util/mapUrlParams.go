@@ -1,8 +1,8 @@
-package request
+package util
 
 import "github.com/gin-gonic/gin"
 
-func MapParams(c *gin.Context) map[string]interface{} {
+func MapUrlParams(c *gin.Context) map[string]interface{} {
 	// Coerce query params to a map[string]interface{}.
 	// Only use the first val of each key.
 	mappedParams := make(map[string]interface{})

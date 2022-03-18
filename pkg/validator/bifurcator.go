@@ -26,7 +26,8 @@ func Bifurcate(envelopes []envelope.Envelope) (validEvents []envelope.Envelope, 
 	var vEnvelopes []envelope.Envelope
 	var invEnvelopes []envelope.Envelope
 	for _, envelope := range envelopes {
-		if *envelope.IsValid {
+		isValid := *envelope.IsValid
+		if isValid {
 			vEnvelopes = append(vEnvelopes, envelope)
 		} else {
 			invEnvelopes = append(invEnvelopes, envelope)

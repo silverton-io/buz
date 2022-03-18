@@ -11,8 +11,8 @@ import (
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/generic"
 	"github.com/silverton-io/honeypot/pkg/protocol"
-	"github.com/silverton-io/honeypot/pkg/request"
 	"github.com/silverton-io/honeypot/pkg/snowplow"
+	"github.com/silverton-io/honeypot/pkg/util"
 	"github.com/silverton-io/honeypot/pkg/webhook"
 	"github.com/tidwall/gjson"
 )
@@ -43,7 +43,7 @@ func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []Env
 			envelopes = append(envelopes, envelope)
 		}
 	} else {
-		params := request.MapParams(c)
+		params := util.MapUrlParams(c)
 		spEvent := snowplow.BuildEventFromMappedParams(c, params, conf)
 		schema := spEvent.Schema()
 		e := Envelope{
