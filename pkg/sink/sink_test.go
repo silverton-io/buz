@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/stretchr/testify/assert"
@@ -23,7 +23,15 @@ func (ms *MockSink) Initialize(conf config.Sink) {
 	ms.Called(conf)
 }
 
-func (ms *MockSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []event.Envelope, invalidEvents []event.Envelope, meta *tele.Meta) {
+func (ms *MockSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
+	ms.Called()
+}
+
+func (ms *MockSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
+	ms.Called()
+}
+
+func (ms *MockSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []envelope.Envelope, invalidEvents []envelope.Envelope, meta *tele.Meta) {
 	ms.Called(ctx, inputType, validEvents, invalidEvents, meta)
 }
 

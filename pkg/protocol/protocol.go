@@ -5,4 +5,5 @@ const (
 	GENERIC     string = "generic"
 	CLOUDEVENTS string = "cloudevents"
 	RELAY       string = "relay"
+	WEBHOOK     string = "webhook"
 )

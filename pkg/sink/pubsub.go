@@ -9,7 +9,7 @@ import (
 	"cloud.google.com/go/pubsub"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"golang.org/x/net/context"
 )
@@ -47,7 +47,7 @@ func (s *PubsubSink) Initialize(conf config.Sink) {
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, validTopic, invalidTopic
 }
 
-func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, envelopes []event.Envelope) {
+func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, envelopes []envelope.Envelope) {
 	var wg sync.WaitGroup
 	for _, event := range envelopes {
 		payload, _ := json.Marshal(event)
@@ -69,18 +69,18 @@ func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, enve
 	wg.Wait()
 }
 
-func (s *PubsubSink) batchPublishValid(ctx context.Context, envelopes []event.Envelope) {
+func (s *PubsubSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
 	s.batchPublish(ctx, s.validEventsTopic, envelopes)
 }
 
-func (s *PubsubSink) batchPublishInvalid(ctx context.Context, envelopes []event.Envelope) {
+func (s *PubsubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
 	s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
 }
 
-func (s *PubsubSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []event.Envelope, invalidEnvelopes []event.Envelope, meta *tele.Meta) {
+func (s *PubsubSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
 	// Publish
-	go s.batchPublishValid(ctx, validEnvelopes)
-	go s.batchPublishInvalid(ctx, invalidEnvelopes)
+	go s.BatchPublishValid(ctx, validEnvelopes)
+	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
 	// Increment stats counters
 	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
