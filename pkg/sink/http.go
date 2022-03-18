@@ -20,8 +20,10 @@ func (s *HttpSink) Initialize(conf config.Sink) {
 	log.Debug().Msg("initializing http sink")
 	vUrl, vErr := url.Parse(conf.ValidUrl)
 	invUrl, invErr := url.Parse(conf.InvalidUrl)
-	if vErr != nil || invErr != nil {
+	if vErr != nil {
 		log.Fatal().Stack().Err(vErr).Msg("validUrl is not a valid url")
+	}
+	if invErr != nil {
 		log.Fatal().Stack().Err(invErr).Msg("invalidUrl is not a valid url")
 	}
 	s.validUrl = *vUrl
