@@ -1,4 +1,4 @@
-package request
+package util
 
 import (
 	"net/http"
@@ -21,6 +21,6 @@ func TestMapParams(t *testing.T) {
 
 	c.Request = req
 
-	params := MapParams(c)
+	params := MapUrlParams(c)
 	assert.Equal(t, params, want)
 }

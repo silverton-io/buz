@@ -483,7 +483,7 @@
                     "type": "string",
                     "default": "pubsub",
                     "description": "The sink configuration",
-                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https"]
+                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay"]
                 },
                 "validEventTopic": {
                     "type": "string",
@@ -519,6 +519,11 @@
                     "type": "string",
                     "description": "The url to sink invalid envelopes to if sink type is http or https",
                     "default": "https://your-endpoint.net/invalid-events-here"
+                },
+                "relayUrl": {
+                    "type": "string",
+                    "description": "The url to relay envelopes to, if sink type is relay",
+                    "default": "https://another-honeypot.net/your-relay-url"
                 }
             },
             "additionalProperties": false,
@@ -579,6 +584,14 @@
                         }
                     },
                     "required": ["validUrl", "invalidUrl"]
+                },
+                {
+                    "properties": {
+                        "type": {
+                            "const": "relay"
+                        }
+                    },
+                    "required": ["relayUrl"]
                 }
             ]
         },

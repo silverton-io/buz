@@ -20,6 +20,7 @@ const (
 	STDOUT           string = "stdout"
 	HTTP             string = "http"
 	HTTPS            string = "https"
+	RELAY            string = "relay"
 )
 
 type Sink interface {
@@ -52,6 +53,9 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		return &sink, nil
 	case HTTPS:
 		sink := HttpSink{}
+		return &sink, nil
+	case RELAY:
+		sink := RelaySink{}
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
