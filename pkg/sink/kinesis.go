@@ -36,8 +36,8 @@ func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes
 			PartitionKey: &partitionKey,
 			StreamName:   &stream,
 		}
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
 			output, err := s.client.PutRecord(ctx, input) // Will want to use `PutRecordBatch`
 			defer wg.Done()
 			if err != nil {

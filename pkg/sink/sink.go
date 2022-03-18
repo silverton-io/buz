@@ -18,6 +18,8 @@ const (
 	KINESIS          string = "kinesis"
 	KINESIS_FIREHOSE string = "kinesis-firehose"
 	STDOUT           string = "stdout"
+	HTTP             string = "http"
+	HTTPS            string = "https"
 )
 
 type Sink interface {
@@ -44,6 +46,12 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		return &sink, nil
 	case STDOUT:
 		sink := StdoutSink{}
+		return &sink, nil
+	case HTTP:
+		sink := HttpSink{}
+		return &sink, nil
+	case HTTPS:
+		sink := HttpSink{}
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
