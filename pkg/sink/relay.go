@@ -33,12 +33,11 @@ func (s *RelaySink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []
 }
 
 func (s *RelaySink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
-	var envelopes []envelope.Envelope
-	envelopes = append(validEnvelopes, invalidEnvelopes...)
+	envelopes := append(validEnvelopes, invalidEnvelopes...)
 	go request.PostEnvelopes(s.relayUrl, envelopes)
 	// FIXME! Increment stats. Not including this yet because want to go event protocol/name/etc route.
 }
 
 func (s *RelaySink) Close() {
-	log.Debug().Msg("closing http sink") // no-op
+	log.Debug().Msg("closing relay sink") // no-op
 }
