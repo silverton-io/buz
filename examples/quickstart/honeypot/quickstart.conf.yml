@@ -72,6 +72,14 @@ generic:
     schemaKey: schema
     dataKey: data
 
+webhook:
+  enabled: true
+  path: /wb/hk
+
+relay:
+  enabled: true
+  path: /relay
+
 schemaCache:
   schemaCacheBackend:
     type: fs
@@ -99,10 +107,6 @@ squawkBox:
   cloudeventsPath: /sqwk/ce
   snowplowPath: /sqwk/sp
   genericPath: /sqwk/gen
-
-relay:
-  enabled: true
-  path: /relay
 
 tele:
   enabled: true
