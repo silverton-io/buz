@@ -571,6 +571,14 @@
                         }
                     },
                     "required": ["validUrl", "invalidUrl"]
+                },
+                {
+                    "properties": {
+                        "type": {
+                            "const": "https"
+                        }
+                    },
+                    "required": ["validUrl", "invalidUrl"]
                 }
             ]
         },
