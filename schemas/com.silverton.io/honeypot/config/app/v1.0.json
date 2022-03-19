@@ -509,17 +509,57 @@
                     "type": "string",
                     "default": "pubsub",
                     "description": "The sink configuration",
-                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay"]
+                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch"]
+                },
+                "kafkaBrokers": {
+                    "type": "array",
+                    "description": "A list of kafka brokers (HOST:PORT), if sink type is kafka",
+                    "default": ["BROKER1:9092", "BROKER2:9092", "BROKER3:9092"]
+                },
+                "elasticsearchHosts": {
+                    "type": "array",
+                    "description": "A list of elasticsearch hosts, if sink type is elasticsearch",
+                    "default": ["http://es1:9092", "http://es2:9092", "http://es3:9092"]
+                },
+                "elasticsearchUsername": {
+                    "type": "string",
+                    "description": "The elasticsearch username, if sink type is elasticsearch",
+                    "default": "elastic"
+                },
+                "elasticsearchPassword": {
+                    "type": "string",
+                    "description": "The elasticsearch password, if sink type is elasticsearch",
+                    "default": "elastic"
                 },
                 "validEventTopic": {
                     "type": "string",
                     "default": "honeypot-valid-topic",
                     "description": "The name of the valid event topic (or 'stream', if kinesis)"
                 },
+                "validUrl": {
+                    "type": "string",
+                    "description": "The url to sink valid envelopes to if sink type is http or https",
+                    "default": "https://your-endpoint.net/valid-events-here"
+                },
+                "validIndex": {
+                    "type": "string",
+                    "description": "The index to sink valid envelopes to if sink type is elasticsearch",
+                    "default": "https://elasticsearch:9092/honeypot-valid"
+                },
                 "invalidEventTopic": {
                     "type": "string",
                     "default": "honeypot-invalid-topic",
                     "description": "The name of the invalid event topic (or 'stream', if kinesis)"
+                },
+                "invalidUrl": {
+                    "type": "string",
+                    "description": "The url to sink invalid envelopes if sink type is http or https",
+                    "default": "https://your-endpoint.net/invalid-events-here"
+                },
+                "invalidIndex": {
+                    "type": "string",
+                    "description": "The index to sink invalid envelopes to if sink type is elasticsearch",
+                    "default": "https://elasticsearch:9092/honeypot-invalid"
                 },
                 "produceTimeout": {
                     "type": "integer",
@@ -530,21 +570,6 @@
                     "type": "string",
                     "default": "honeypot-gcp-project",
                     "description": "The name of the GCP project, if sink type is pubsub"
-                },
-                "brokers": {
-                    "type": "array",
-                    "default": ["BROKER1:9092", "BROKER2:9092", "BROKER3:9092"],
-                    "description": "A list of brokers (HOST:PORT), if sink type is kafka"
-                },
-                "validUrl": {
-                    "type": "string",
-                    "description": "The url to sink valid envelopes to if sink type is http or https",
-                    "default": "https://your-endpoint.net/valid-events-here"
-                },
-                "invalidUrl": {
-                    "type": "string",
-                    "description": "The url to sink invalid envelopes to if sink type is http or https",
-                    "default": "https://your-endpoint.net/invalid-events-here"
                 },
                 "relayUrl": {
                     "type": "string",
@@ -569,7 +594,7 @@
                             "const": "kafka"
                         }
                     },
-                    "required": ["brokers", "validEventTopic", "invalidEventTopic"]
+                    "required": ["kafkaBrokers", "validEventTopic", "invalidEventTopic"]
                 },
                 {
                     "properties": {
@@ -618,6 +643,14 @@
                         }
                     },
                     "required": ["relayUrl"]
+                },
+                {
+                    "properties": {
+                        "type": {
+                            "const": "elasticsearch"
+                        }
+                    },
+                    "required": ["elasticsearchHosts", "elasticsearchUsername", "elasticsearchPassword"]
                 }
             ]
         },

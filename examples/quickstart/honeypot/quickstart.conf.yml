@@ -77,14 +77,6 @@ inputs:
     enabled: true
     path: /relay
 
-webhook:
-  enabled: true
-  path: /wb/hk
-
-relay:
-  enabled: true
-  path: /relay
-
 schemaCache:
   schemaCacheBackend:
     type: fs
