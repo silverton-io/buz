@@ -1,160 +1,203 @@
+<!doctype html>
 <html>
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.tailwindcss.com"></script>
         <script>
             ;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[]; p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments) };p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1; n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://cdn.jsdelivr.net/npm/@snowplow/javascript-tracker@3.2.3/dist/sp.js","spget")); 
             ;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[]; p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments) };p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1; n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://cdn.jsdelivr.net/npm/@snowplow/javascript-tracker@3.2.3/dist/sp.js","sppost")); 
         </script>
-    </head>
-    <script>
-        // GET-based tracker
-        window.spget('newTracker', 'sp', 'localhost:8080', {
-            appId: 'site',
-            eventMethod: 'get',
-            cookieName: "sp-nuid",
-            cookieSameSite: 'Lax',
-            forceSecureTracker: false,
-            withCredentials: false,
-        })
-
-
-        window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-link-click-tracking@latest/dist/index.umd.min.js",["snowplowLinkClickTracking", "LinkClickTrackingPlugin"]);
-        window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-ecommerce@latest/dist/index.umd.min.js",["snowplowEcommerce", "EcommercePlugin"]);
-        window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-performance-timing@latest/dist/index.umd.min.js",["snowplowPerformanceTiming", "PerformanceTimingPlugin"]);
-        window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-client-hints@latest/dist/index.umd.min.js",["snowplowClientHints", "ClientHintsPlugin"]);
-        window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-geolocation@latest/dist/index.umd.min.js",["snowplowGeolocation", "GeolocationtPlugin"],[false]);
-
-        window.spget('setUserId', 'jake@slvrtn.io');
-        window.spget('enableFormTracking');
-        window.spget('trackPageView');
-        window.spget('enableActivityTracking', {
-            minimumVisitLength: 10,
-            heartbeatDelay: 10
-        });
-
-        // POST-based tracker
-
-        window.sppost('newTracker', 'sp', 'localhost:8080', {
-            appId: 'site',
-            eventMethod: 'post',
-            bufferSize: 10,
-            cookieName: "sp-nuid",
-            cookieSameSite: 'Lax',
-            forceSecureTracker: false,
-            withCredentials: false,
-        })
-
-        window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-link-click-tracking@latest/dist/index.umd.min.js",["snowplowLinkClickTracking", "LinkClickTrackingPlugin"]);
-        window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-ecommerce@latest/dist/index.umd.min.js",["snowplowEcommerce", "EcommercePlugin"]);
-        window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-performance-timing@latest/dist/index.umd.min.js",["snowplowPerformanceTiming", "PerformanceTimingPlugin"]);
-        window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-client-hints@latest/dist/index.umd.min.js",["snowplowClientHints", "ClientHintsPlugin"]);
-        window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-geolocation@latest/dist/index.umd.min.js",["snowplowGeolocation", "GeolocationtPlugin"],[false]);
-
-        window.sppost('enableActivityTracking', {
-            minimumVisitLength: 1,
-            heartbeatDelay: 1
-        });
-        window.sppost('trackPageView');
-        window.sppost('setUserId', 'jake@slvrtn.io');
-        window.sppost('enableFormTracking');
-    </script>
-    <body>
-        <h1>Honeypot</h1>
-        <div style="margin-top: 2em; margin-bottom: 2em"></div>
-        <a href="/">Home</a>
-        <div style="margin-top: 2em; margin-bottom: 2em"></div>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-get">Press Me For Valid Self Describing Event</button><br>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-get-invalid">Press Me For Invalid Self Describing Event</button><br>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="struct-get">Press Me For Struct Event</button><br>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="transaction-get">Press Me For Transaction Event With One Item</button><br>
-        <a href="http://localhost:8080/r/tp2?u=http://localhost:8080/test/there&tna=web&env=vendor-name&aid=site-testing&p=web&dtm=1642904307707&vid=10&cx=eyJzY2hlbWEiOiJpZ2x1OmNvbS5zbm93cGxvd2FuYWx5dGljcy5zbm93cGxvdy9jb250ZXh0cy9qc29uc2NoZW1hLzEtMC0wIiwiZGF0YSI6W3sic2NoZW1hIjoiaWdsdTpjb20uc25vd3Bsb3dhbmFseXRpY3Muc25vd3Bsb3cvd2ViX3BhZ2UvanNvbnNjaGVtYS8xLTAtMCIsImRhdGEiOnsiaWQiOiI3YmNmN2Q4YS0wODdiLTRjOTctYmMwMy1lMWI5NGIzZWYzMDYifX1dfQ&ue_px=eyJzY2hlbWEiOiJpZ2x1OmNvbS5zbm93cGxvd2FuYWx5dGljcy5zbm93cGxvdy91bnN0cnVjdF9ldmVudC9qc29uc2NoZW1hLzEtMC0wIiwiZGF0YSI6eyJzY2hlbWEiOiJjb20uc2l4cml2ZXIvdWkvY2xpY2tlZC1idXR0b24vMS0wLTAiLCJkYXRhIjp7ImJ1dHRvbklkIjoic2VsZi1kZXNjcmliaW5nLWdldCIsInZhbHVlIjoibm93In19fQ&ip=notrealip&ua=nodtrealuseragent&pp_miy=1&pp_may=600&pp_mix=10&pp_max=48&e=pp" target="_blank">Redirect With Tracking</a><br>
-        <div style="margin-top: 2em; margin-bottom: 2em"></div>
-        <a href="http://localhost:8080/r/tp2?u=https://reddit.com&tna=web&env=vendor-name&aid=site-testing&p=web&dtm=1642904307707&vid=10&cx=eyJzY2hlbWEiOiJpZ2x1OmNvbS5zbm93cGxvd2FuYWx5dGljcy5zbm93cGxvdy9jb250ZXh0cy9qc29uc2NoZW1hLzEtMC0wIiwiZGF0YSI6W3sic2NoZW1hIjoiaWdsdTpjb20uc25vd3Bsb3dhbmFseXRpY3Muc25vd3Bsb3cvd2ViX3BhZ2UvanNvbnNjaGVtYS8xLTAtMCIsImRhdGEiOnsiaWQiOiI3YmNmN2Q4YS0wODdiLTRjOTctYmMwMy1lMWI5NGIzZWYzMDYifX1dfQ&ue_px=eyJzY2hlbWEiOiJpZ2x1OmNvbS5zbm93cGxvd2FuYWx5dGljcy5zbm93cGxvdy91bnN0cnVjdF9ldmVudC9qc29uc2NoZW1hLzEtMC0wIiwiZGF0YSI6eyJzY2hlbWEiOiJjb20uc2l4cml2ZXIvdWkvY2xpY2tlZC1idXR0b24vMS0wLTAiLCJkYXRhIjp7ImJ1dHRvbklkIjoic2VsZi1kZXNjcmliaW5nLWdldCIsInZhbHVlIjoibm93In19fQ&ip=notrealip&ua=nodtrealuseragent&pp_miy=1&pp_may=600&pp_mix=10&pp_max=48&e=na" target="_blank">Invalid Redirect With Tracking</a><br>
-        <div style="margin-top: 2em; margin-bottom: 2em"></div>
-        <form>
-            <label for="fname">First name:</label><br>
-            <input type="text" id="fname" name="fname"><br>
-            <label for="lname">Last name:</label><br>
-            <input type="text" id="lname" name="lname">
-            <input type="submit" value="Submit">
-        </form>
-        <div style="margin-top: 3em; margin-bottom: 3em"></div>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-post">Press Me For Valid Post-Based Self Describing Event</button><br>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="self-describing-post-invalid">Press Me For Invalid Post-Based Self Describing Event</button><br>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="struct-post">Press Me For Post-Based Struct Event</button><br>
-        <button style="margin-top: 2em; margin-bottom: 2em" id="transaction-post">Press Me For Post-Based Transaction Event With One Item</button><br>
-    </body>
-
-
-
-    <footer>
         <script>
-            document.getElementById('self-describing-get').addEventListener("click", function() {
-                window.spget('trackSelfDescribingEvent', {
-                    event: {
-                        schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
-                        data: {
-                            productId: 'ASO01043',
-                            category: 'Dresses',
-                            brand: 'ACME',
-                            returning: true,
-                            price: 49.95,
-                            sizes: ['xs', 's', 'l', 'xl', 'xxl'],
-                            availableSince: new Date(2013,3,7)
+            // GET tracker
+            window.spget('newTracker', 'sp', 'localhost:8080', {
+                appId: 'site',
+                eventMethod: 'get',
+                cookieName: "sp-nuid",
+                cookieSameSite: 'Lax',
+                forceSecureTracker: false,
+                withCredentials: false,
+            });
+            window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-link-click-tracking@latest/dist/index.umd.min.js",["snowplowLinkClickTracking", "LinkClickTrackingPlugin"]);
+            window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-ecommerce@latest/dist/index.umd.min.js",["snowplowEcommerce", "EcommercePlugin"]);
+            window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-performance-timing@latest/dist/index.umd.min.js",["snowplowPerformanceTiming", "PerformanceTimingPlugin"]);
+            window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-client-hints@latest/dist/index.umd.min.js",["snowplowClientHints", "ClientHintsPlugin"]);
+            window.spget('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-geolocation@latest/dist/index.umd.min.js",["snowplowGeolocation", "GeolocationtPlugin"],[false]);
+
+            window.spget('setUserId', 'jake@slvrtn.io');
+            window.spget('enableFormTracking');
+            window.spget('trackPageView');
+            window.spget('enableActivityTracking', {
+                minimumVisitLength: 10,
+                heartbeatDelay: 10
+            });
+            // POST tracker
+            window.sppost('newTracker', 'sp', 'localhost:8080', {
+                appId: 'site',
+                eventMethod: 'post',
+                bufferSize: 10,
+                cookieName: "sp-nuid",
+                cookieSameSite: 'Lax',
+                forceSecureTracker: false,
+                withCredentials: false,
+            })
+            window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-link-click-tracking@latest/dist/index.umd.min.js",["snowplowLinkClickTracking", "LinkClickTrackingPlugin"]);
+            window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-ecommerce@latest/dist/index.umd.min.js",["snowplowEcommerce", "EcommercePlugin"]);
+            window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-performance-timing@latest/dist/index.umd.min.js",["snowplowPerformanceTiming", "PerformanceTimingPlugin"]);
+            window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-client-hints@latest/dist/index.umd.min.js",["snowplowClientHints", "ClientHintsPlugin"]);
+            window.sppost('addPlugin', "https://cdn.jsdelivr.net/npm/@snowplow/browser-plugin-geolocation@latest/dist/index.umd.min.js",["snowplowGeolocation", "GeolocationtPlugin"],[false]);
+
+            window.sppost('enableActivityTracking', {
+                minimumVisitLength: 1,
+                heartbeatDelay: 1
+            });
+            window.sppost('trackPageView');
+            window.sppost('setUserId', 'jake@slvrtn.io');
+            window.sppost('enableFormTracking');
+        </script>
+    </head>
+    <body>
+        <nav class="flex items-center justify-between flex-wrap bg-amber-500 p-6">
+            <div class="flex items-center flex-shrink-0 text-white mr-8">
+              <span class="font-semibold text-xl tracking-tight">Honeypot</span>
+            </div>
+            <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
+              <div class="text-md lg:flex-grow">
+                <a href="https://silverton-io.github.io/honeypot/" target="_blank" class="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-white mr-4">
+                  Documentation
+                </a>
+                <a href="https://github.com/silverton-io/honeypot" target="_blank" class="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-white mr-4">
+                    Github
+                  </a>
+              </div>
+            </div>
+          </nav>
+          <div class="container mx-auto px-16 pt-4 snowplow-get">
+              <h1 class="font-semibold text-xl">GET-based Snowplow Events</h1>
+          </div>
+          <div class="container mx-auto px-16 py-8 snowplow-get">
+            <div class="grid grid-cols-4 gap-4">
+                <button class="bg-transparent hover:bg-green-600 text-green-800 font-semibold hover:text-white py-2 px-4 border border-green-600 hover:border-transparent rounded" id="self-describing-get">Valid Self-Describing Event</button>
+                <button class="bg-transparent hover:bg-red-600 text-red-800 font-semibold hover:text-white py-2 px-4 border border-red-600 hover:border-transparent rounded" id="self-describing-get-invalid">Invalid Self-Describing Event</button>
+                <button class="bg-transparent hover:bg-violet-600 text-violet-800 font-semibold hover:text-white py-2 px-4 border border-violet-600 hover:border-transparent rounded" id="struct-get">Struct Event</button>
+                <button class="bg-transparent hover:bg-sky-600 text-sky-800 font-semibold hover:text-white py-2 px-4 border border-sky-600 hover:border-transparent rounded" id="transaction-get">Transaction Event</button>
+              </div>
+          </div>
+        <div class="container mx-auto px-16 pt-4 snowplow-post">
+            <h1 class="font-semibold text-xl">POST-based Snowplow Events</h1>
+        </div>
+        <div class="container mx-auto px-16 py-8 snowplow-post">
+          <div class="grid grid-cols-4 gap-4">
+              <button class="bg-transparent hover:bg-green-800 text-green-800 font-semibold hover:text-white py-2 px-4 border border-green-600 hover:border-transparent rounded" id="self-describing-post">Valid Self-Describing Event</button>
+              <button class="bg-transparent hover:bg-red-800 text-red-800 font-semibold hover:text-white py-2 px-4 border border-red-600 hover:border-transparent rounded" id="self-describing-post-invalid">Invalid Self-Describing Event</button>
+              <button class="bg-transparent hover:bg-violet-800 text-violet-800 font-semibold hover:text-white py-2 px-4 border border-violet-600 hover:border-transparent rounded" id="struct-post">Struct Event</button>
+              <button class="bg-transparent hover:bg-sky-800 text-sky-800 font-semibold hover:text-white py-2 px-4 border border-sky-600 hover:border-transparent rounded" id="transaction-post">Transaction Event</button>
+          </div>
+        </div>
+        <div class="container mx-auto px-16 pt-4 snowplow-post">
+            <h1 class="font-semibold text-xl">POST-based Cloud Events</h1>
+        </div>
+        <div class="container mx-auto px-16 py-8 cloudevents-post">
+          <div class="grid grid-cols-4 gap-4">
+              <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Valid Cloudevent</button>
+              <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Invalid Cloudevent</button>
+          </div>
+        </div>
+        <div class="container mx-auto px-16 pt-4 snowplow-post">
+            <h1 class="font-semibold text-xl">POST-based Generic Self-Describing addEventListener</h1>
+        </div>
+        <div class="container mx-auto px-16 py-8">
+          <div class="grid grid-cols-4 gap-4">
+              <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Valid Self Describing Event</button>
+              <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Invalid Self Describing Event</button>
+          </div>
+        </div>
+        <div class="container mx-auto px-16 pt-4">
+            <h1 class="font-semibold text-xl">Webhook</h1>
+        </div>
+        <div class="container mx-auto px-16 py-8">
+          <div class="grid grid-cols-4 gap-4">
+              <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Webhook with ID</button>
+              <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Webhook without ID</button>
+          </div>
+        </div>
+        <div class="container mx-auto px-16 pt-4 snowplow-post">
+            <h1 class="font-semibold text-xl">Honeypot Relay Event</h1>
+        </div>
+        <div class="container mx-auto px-16 py-8 cloudevents-post">
+          <div class="grid grid-cols-4 gap-4">
+              <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Invalid Relay Envelope</button>
+              <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Valid Relay Envelope</button>
+          </div>
+        </div>
+        <footer>
+            <script>
+                // GET-based snowplow
+                document.getElementById('self-describing-get').addEventListener("click", function() {
+                    window.spget('trackSelfDescribingEvent', {
+                        event: {
+                            schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
+                            data: {
+                                productId: 'ASO01043',
+                                category: 'Dresses',
+                                brand: 'ACME',
+                                returning: true,
+                                price: 49.95,
+                                sizes: ['xs', 's', 'l', 'xl', 'xxl'],
+                                availableSince: new Date(2013,3,7)
+                            }
                         }
-                    }
+                    });
                 });
-            });
-            document.getElementById('self-describing-get-invalid').addEventListener("click", function() {
-                window.spget('trackSelfDescribingEvent', {
-                    event: {
-                        schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
-                        data: {
-                            productId: 'ASO01043',
-                            category: 'Dresses',
-                            brand: 'ACME',
-                            returning: null,
-                            sizes: ['xs', 's', 'l', 'xl', 'xxl'],
-                            anotherProp: "whatevers"
+                document.getElementById('self-describing-get-invalid').addEventListener("click", function() {
+                    window.spget('trackSelfDescribingEvent', {
+                        event: {
+                            schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
+                            data: {
+                                productId: 'ASO01043',
+                                category: 'Dresses',
+                                brand: 'ACME',
+                                returning: null,
+                                sizes: ['xs', 's', 'l', 'xl', 'xxl'],
+                                anotherProp: "whatevers"
+                            }
                         }
-                    }
+                    });
                 });
-            });
-
-            document.getElementById('struct-get').addEventListener("click", function() {
-                window.spget('trackStructEvent', {
-                    category: "ui",
-                    action: "clicked-button",
-                    label: "struct-event",
-                    property: "someprop",
-                    value: 118.99
-                })
-            });
-
-            document.getElementById('transaction-get').addEventListener("click", function() {
-                window.spget('addTrans', {
-                    orderId: '1234',  // required
-                    total: 11.99,   // required
-                    affiliation: 'Acme Clothing', 
-                    tax: 1.29,
-                    shipping: 5,
-                    city: 'San Jose',
-                    state: 'California',
-                    country: 'USA',
-                    currency: 'USD'
-                })
-                window.spget('addItem', {
-                    orderId: '1234', // required
-                    sku: 'DD44',     // required
-                    name: 'T-Shirt',      
-                    category: 'Green Medium',
-                    price: 11.99,
-                    quantity: 1,
-                    currency: 'USD'
+                document.getElementById('struct-get').addEventListener("click", function() {
+                    window.spget('trackStructEvent', {
+                        category: "ui",
+                        action: "clicked-button",
+                        label: "struct-event",
+                        property: "someprop",
+                        value: 118.99
+                    })
                 });
-                window.spget('trackTrans');
-            });
-
-            document.getElementById('self-describing-post').addEventListener("click", function() {
+                document.getElementById('transaction-get').addEventListener("click", function() {
+                    window.spget('addTrans', {
+                        orderId: '1234',  // required
+                        total: 11.99,   // required
+                        affiliation: 'Acme Clothing', 
+                        tax: 1.29,
+                        shipping: 5,
+                        city: 'San Jose',
+                        state: 'California',
+                        country: 'USA',
+                        currency: 'USD'
+                    })
+                    window.spget('addItem', {
+                        orderId: '1234', // required
+                        sku: 'DD44',     // required
+                        name: 'T-Shirt',      
+                        category: 'Green Medium',
+                        price: 11.99,
+                        quantity: 1,
+                        currency: 'USD'
+                    });
+                    window.spget('trackTrans');
+                });
+                // POST-based snowplow
+                document.getElementById('self-describing-post').addEventListener("click", function() {
                 window.sppost('trackSelfDescribingEvent', {
                     event: {
                         schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
@@ -170,7 +213,6 @@
                     }
                 });
             });
-
             document.getElementById('self-describing-post-invalid').addEventListener("click", function() {
                 window.sppost('trackSelfDescribingEvent', {
                     event: {
@@ -181,12 +223,11 @@
                             brand: 'ACME',
                             returning: null,
                             sizes: ['xs', 's', 'l', 'xl', 'xxl'],
-                            anotherProp: "whatevers"
+                            anotherProp: "whatevers" // Additional properties not allowed
                         }
                     }
                 });
             });
-
             document.getElementById('struct-post').addEventListener("click", function() {
                 window.sppost('trackStructEvent', {
                     category: "ui",
@@ -220,7 +261,7 @@
                 });
                 window.sppost('trackTrans');
             });
-
-        </script>
-    </footer>
+            </script>
+        </footer>
+    </body>
 </html>
