@@ -2,7 +2,7 @@
 tags:
   - collector
   - input protocol
-  - relay
+  - opc ua
 ---
 
-# 🟢 Honeypot Envelope
+# 🟡 MQTT

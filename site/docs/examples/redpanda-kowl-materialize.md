@@ -6,4 +6,4 @@ tags:
   - materialize
 ---
 
-# 🟢 Redpanda, Kowl, and Materialize
+# Redpanda, Kowl, and Materialize

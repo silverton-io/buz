@@ -5,4 +5,4 @@ tags:
   - kibana
 ---
 
-# 🟢 Elasticsearch and Kibana
+# Elasticsearch and Kibana

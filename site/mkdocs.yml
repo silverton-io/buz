@@ -38,6 +38,9 @@ nav:
     - inputs/self-describing.md
     - inputs/webhook.md
     - inputs/relay.md
+    - inputs/opcua.md
+    - inputs/ros.md
+    - inputs/mqtt.md
   - Schema Caches:
     - schema-cache/onboard.md
     - schema-cache/redis.md
