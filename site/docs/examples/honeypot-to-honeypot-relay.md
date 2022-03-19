@@ -4,4 +4,4 @@ tags:
   - relay
 ---
 
-# 🟢 Honeypot-to-Honeypot Relay
+# Honeypot-to-Honeypot Relay
