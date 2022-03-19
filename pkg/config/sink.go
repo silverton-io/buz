@@ -7,8 +7,8 @@ type Sink struct {
 	Project               string        `json:"project,omitempty"`
 	KafkaBrokers          []string      `json:"kakfaBrokers,omitempty"`
 	ElasticsearchHosts    []string      `json:"elasticsearchHosts,omitempty"`
-	ElasticsearchUsername string        `json:"elasticsearchUsername,omitempty"`
-	ElasticsearchPassword string        `json:"elasticsearchPassword,omitempty"`
+	ElasticsearchUsername string        `json:"-"`
+	ElasticsearchPassword string        `json:"-"`
 	ValidEventTopic       string        `json:"validEventTopic,omitempty"`
 	InvalidEventTopic     string        `json:"invalidEventTopic,omitempty"`
 	ValidUrl              string        `json:"validUrl,omitempty"`

@@ -91,7 +91,7 @@ schemaCache:
 
 sink:
   type: kafka
-  brokers:
+  kafkaBrokers:
     - redpanda-1:29092 # internally advertised
     - redpanda-2:29093 # internally advertised
     - redpanda-3:29094 # internally advertised
