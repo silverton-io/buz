@@ -32,10 +32,12 @@ nav:
   #   - deployment/gcp.md
   #   - deployment/aws.md
   #   - deployment/azure.md
-  - Event Protocols:
-    - event-protocols/snowplow.md
-    - event-protocols/cloudevents.md
-    - event-protocols/self-describing.md
+  - Input Protocols:
+    - inputs/snowplow.md
+    - inputs/cloudevents.md
+    - inputs/self-describing.md
+    - inputs/webhook.md
+    - inputs/relay.md
   - Schema Caches:
     - schema-cache/onboard.md
     - schema-cache/redis.md
@@ -50,9 +52,11 @@ nav:
     - sinks/pubsub.md
     - sinks/kinesis.md
     - sinks/kinesis-firehose.md
-    - sinks/stdout.md
-    - sinks/file.md
+    - sinks/relay.md
     - sinks/http.md
+    - sinks/stdout.md
+    - sinks/elasticsearch.md
+    - sinks/file.md
     - sinks/pubnub.md
     - sinks/postgres.md
     - sinks/snowflake.md
@@ -63,6 +67,8 @@ nav:
   - Serialization Protocols:
     - serialization-protocols/json.md
     - serialization-protocols/avro.md
+  - Tools:
+    - tools/squawkbox.md
   - Middleware:
     - middleware/timeout.md
     - middleware/rate-limiter.md
@@ -70,11 +76,9 @@ nav:
     - middleware/cors.md
     - middleware/request-logger.md
     - middleware/yeet.md
+  - Examples:
+    - examples/redpanda-kowl-materialize.md
+    - examples/honeypot-to-honeypot-relay.md
+    - examples/elasticsearch-kibana.md
   - Configuration:
-    - configuration/snowplow.md
-    - configuration/cloudevents.md
-    - configuration/self-describing.md
-    - configuration/cors.md
-    - configuration/cookie.md
-    - configuration/stats.md
-    - configuration/telemetry.md
+    - configuration/sample.md
