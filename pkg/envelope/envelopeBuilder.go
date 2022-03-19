@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/cloudevents"
 	"github.com/silverton-io/honeypot/pkg/config"
@@ -32,7 +33,9 @@ func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []Env
 		for _, event := range payloadData.Array() {
 			spEvent := snowplow.BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf)
 			schema := spEvent.Schema()
+			uid := uuid.New()
 			envelope := Envelope{
+				Id:            uid,
 				EventProtocol: protocol.SNOWPLOW,
 				EventSchema:   schema,
 				Tstamp:        time.Now(),
@@ -46,7 +49,9 @@ func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []Env
 		params := util.MapUrlParams(c)
 		spEvent := snowplow.BuildEventFromMappedParams(c, params, conf)
 		schema := spEvent.Schema()
+		uid := uuid.New()
 		e := Envelope{
+			Id:            uid,
 			EventProtocol: protocol.SNOWPLOW,
 			EventSchema:   schema,
 			Tstamp:        time.Now(),
@@ -69,9 +74,11 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 		return envelopes
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
+		uid := uuid.New()
 		genEvent := generic.BuildEvent(e, conf.Generic)
 		isRelayed := false
 		envelope := Envelope{
+			Id:            uid,
 			EventProtocol: protocol.GENERIC,
 			EventSchema:   &genEvent.Payload.Schema,
 			Tstamp:        time.Now(),
@@ -95,8 +102,10 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []E
 	}
 	for _, ce := range gjson.ParseBytes(reqBody).Array() {
 		cEvent, _ := cloudevents.BuildEvent(ce)
+		uid := uuid.New()
 		isRelayed := false
 		envelope := Envelope{
+			Id:            uid,
 			EventProtocol: protocol.CLOUDEVENTS,
 			EventSchema:   &cEvent.DataSchema,
 			Tstamp:        time.Now(),

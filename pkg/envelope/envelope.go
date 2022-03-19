@@ -3,6 +3,7 @@ package envelope
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/silverton-io/honeypot/pkg/event"
 )
 
@@ -19,6 +20,7 @@ type ValidationError struct {
 }
 
 type Envelope struct {
+	Id              uuid.UUID        `json:"id"`
 	EventProtocol   string           `json:"eventProtocol"`
 	EventSchema     *string          `json:"eventSchema"`
 	Source          string           `json:"source"`

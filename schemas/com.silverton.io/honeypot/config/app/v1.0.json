@@ -544,12 +544,12 @@
                 "validIndex": {
                     "type": "string",
                     "description": "The index to sink valid envelopes to if sink type is elasticsearch",
-                    "default": "https://elasticsearch:9092/honeypot-valid"
+                    "default": "honeypot-valid"
                 },
                 "invalidEventTopic": {
                     "type": "string",
-                    "default": "honeypot-invalid-topic",
-                    "description": "The name of the invalid event topic (or 'stream', if kinesis)"
+                    "description": "The name of the invalid event topic (or 'stream', if kinesis)",
+                    "default": "honeypot-invalid-topic"
                 },
                 "invalidUrl": {
                     "type": "string",
@@ -559,7 +559,7 @@
                 "invalidIndex": {
                     "type": "string",
                     "description": "The index to sink invalid envelopes to if sink type is elasticsearch",
-                    "default": "https://elasticsearch:9092/honeypot-invalid"
+                    "default": "honeypot-invalid"
                 },
                 "produceTimeout": {
                     "type": "integer",
@@ -650,7 +650,7 @@
                             "const": "elasticsearch"
                         }
                     },
-                    "required": ["elasticsearchHosts", "elasticsearchUsername", "elasticsearchPassword"]
+                    "required": ["elasticsearchHosts", "elasticsearchUsername", "elasticsearchPassword", "validIndex", "invalidIndex"]
                 }
             ]
         },
