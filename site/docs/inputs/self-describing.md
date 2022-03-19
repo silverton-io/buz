@@ -1,7 +1,7 @@
 ---
 tags:
   - collector
-  - event protocol
+  - input protocol
   - self describing
 ---
 
