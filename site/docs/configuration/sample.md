@@ -1,3 +1,12 @@
+---
+tags:
+  - configuration
+  - sample
+---
+
+# Sample Configuration
+
+```
 version: 1.1
 
 app:
@@ -11,37 +20,6 @@ app:
   stats:
     enabled: true
     path: /stats
-
-middleware:
-  timeout:
-    enabled: false
-    ms: 2000
-  rateLimiter:
-    enabled: false
-    period: S
-    limit: 10
-  cookie:
-    enabled: true
-    name: sp-nuid
-    secure: false
-    ttlDays: 365
-    domain: localhost
-    path: /
-    sameSite: Lax
-  cors:
-    enabled: true
-    allowOrigin:
-      - "*"
-    allowCredentials: true
-    allowMethods:
-      - POST
-      - OPTIONS
-      - GET
-    maxAge: 86400
-  requestLogger:
-    enabled: false
-  yeet:
-    enabled: false
 
 inputs:
   snowplow:
@@ -77,18 +55,10 @@ inputs:
     enabled: true
     path: /relay
 
-webhook:
-  enabled: true
-  path: /wb/hk
-
-relay:
-  enabled: true
-  path: /relay
-
 schemaCache:
   schemaCacheBackend:
     type: fs
-    path: /schemas
+    path: ./schemas
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
   purge:
@@ -98,14 +68,39 @@ schemaCache:
     enabled: true
 
 sink:
-  type: kafka
-  brokers:
-    - redpanda-1:29092 # internally advertised
-    - redpanda-2:29093 # internally advertised
-    - redpanda-3:29094 # internally advertised
-  invalidEventTopic: hpt-invalid
-  validEventTopic: hpt-valid
+  type: stdout
   produceTimeout: 3
+
+middleware:
+  timeout:
+    enabled: false
+    ms: 2
+  rateLimiter:
+    enabled: false
+    period: H
+    limit: 1
+  cookie:
+    enabled: true
+    name: sp-nuid
+    secure: false
+    ttlDays: 365
+    domain: localhost
+    path: /
+    sameSite: Lax
+  cors:
+    enabled: true
+    allowOrigin:
+      - "*"
+    allowCredentials: true
+    allowMethods:
+      - POST
+      - OPTIONS
+      - GET
+    maxAge: 86400
+  requestLogger:
+    enabled: true
+  yeet:
+    enabled: false
 
 squawkBox:
   enabled: true
@@ -116,3 +111,5 @@ squawkBox:
 tele:
   enabled: true
   heartbeatMs: 30000
+
+```

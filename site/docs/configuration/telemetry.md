@@ -1,7 +1,0 @@
----
-tags:
-  - configuration
-  - telemetry
----
-
-# Telemetry
