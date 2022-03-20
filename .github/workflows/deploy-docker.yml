@@ -34,7 +34,7 @@ jobs:
 
       - name: Login to Google Artifact Registry
         run: |
-          ${{steps.auth.outputs.access_token}} | docker login -u oauth2accesstoken --password-stdin https://us-east1-docker.pkg.dev
+          ${{ steps.auth-gcloud.outputs.access_token }} | docker login -u oauth2accesstoken --password-stdin https://us-east1-docker.pkg.dev
         shell: bash
 
       - name: Log in to the Container registry
