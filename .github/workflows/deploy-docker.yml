@@ -33,11 +33,9 @@ jobs:
           credentials_json: ${{ secrets.HONEYPOT_CI_CREDENTIALS }}
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@v1
-        with:
-          registry: us-east1-docker.pkg.dev
-          username: oauth2accesstoken
-          password: ${{ steps.auth-gcloud.outputs.access_token }}
+        run: |
+          gcloud auth configure-docker us-east1-docker.pkg.dev
+        shell: bash
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
