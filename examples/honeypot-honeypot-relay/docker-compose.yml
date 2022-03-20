@@ -24,9 +24,9 @@ services:
     healthcheck:
       test: curl -f localhost:8080/health
       interval: 15s
-    # depends_on:
-    #   relay:
-    #     condition: service_healthy
+    depends_on:
+      relay:
+        condition: service_started
 
   relay:
     container_name: relay
