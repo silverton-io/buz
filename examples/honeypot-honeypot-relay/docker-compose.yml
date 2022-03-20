@@ -35,12 +35,6 @@ services:
       - type: bind
         source: ./honeypot/honeypot2.conf.yml
         target: /etc/honeypot/config.yml
-      - type: bind
-        source: ../../schemas
-        target: /schemas/
-      - type: bind
-        source: ../../site/index.html
-        target: /app/site/index.html
     environment:
       - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
     ports:
