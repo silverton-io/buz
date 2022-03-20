@@ -1,29 +1,29 @@
 version: "3.9"
 
 services:
-  # honeypot:
-  #   container_name: honeypot
-  #   image: ghcr.io/silverton-io/honeypot:v0.1.24 # Note! Use the latest version :)
-  #   volumes:
-  #     - type: bind
-  #       source: ./honeypot/quickstart.conf.yml
-  #       target: /etc/honeypot/config.yml
-  #     - type: bind
-  #       source: ../../schemas
-  #       target: /schemas/
-  #     - type: bind
-  #       source: ../../site/index.html
-  #       target: /app/site/index.html
-  #   environment:
-  #     - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
-  #   ports:
-  #     - 8080:8080
-  #   deploy:
-  #     restart_policy:
-  #       condition: on-failure
-  #   healthcheck:
-  #     test: curl -f localhost:8080/health
-  #     interval: 15s
+  honeypot:
+    container_name: honeypot
+    image: ghcr.io/silverton-io/honeypot:v0.1.28
+    volumes:
+      - type: bind
+        source: ./honeypot/elastic-kibana.conf.yml
+        target: /etc/honeypot/config.yml
+      - type: bind
+        source: ../../schemas
+        target: /schemas/
+      - type: bind
+        source: ../../site/index.html
+        target: /app/site/index.html
+    environment:
+      - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
+    ports:
+      - 8080:8080
+    deploy:
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: curl -f localhost:8080/health
+      interval: 15s
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.1.0
@@ -40,7 +40,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - esdata:/usr/share/elasticsearch/data
+      - esdata1:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -62,5 +62,5 @@ services:
           condition: service_healthy
 
 volumes:
-  esdata:
+  esdata1:
     driver: local

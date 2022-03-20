@@ -519,7 +519,7 @@
                 "elasticsearchHosts": {
                     "type": "array",
                     "description": "A list of elasticsearch hosts, if sink type is elasticsearch",
-                    "default": ["http://es1:9092", "http://es2:9092", "http://es3:9092"]
+                    "default": ["http://es1:9200"]
                 },
                 "elasticsearchUsername": {
                     "type": "string",

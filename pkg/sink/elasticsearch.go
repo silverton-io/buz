@@ -43,7 +43,7 @@ func (s *ElasticsearchSink) batchPublish(ctx context.Context, index string, enve
 			if err != nil {
 				log.Error().Stack().Err(err).Msg("could not publish envelope to elasticsearch: " + envId)
 			} else {
-				log.Debug().Msg("published envelope to elasticsearch: " + envId)
+				log.Debug().Msg("published envelope to " + index + " index: " + envId)
 			}
 			defer wg.Done()
 		}
