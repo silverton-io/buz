@@ -2,10 +2,11 @@ name: Publish Honeypot image to ghcr.io
 
 on:
   push:
-    branches: ['main']
+    branches: ['gcp-img']
 
 env:
-  REGISTRY: ghcr.io
+  GH_REGISTRY: ghcr.io
+  GCP_REGISTRY: us-east1-docker.pkg.dev/silverton-io/docker
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
@@ -54,5 +55,7 @@ jobs:
           push: true
           cache-from: type=local,src=/tmp/.build-cache
           cache-to: type=local,dest=/tmp/.build-cache
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
+          tags:
+            - ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
+            - ${{ env.GCP_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
           labels: ${{ steps.meta.outputs.labels }}
