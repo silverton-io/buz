@@ -29,7 +29,7 @@ func (s *KafkaSink) Initialize(conf config.Sink) {
 	ctx := context.Background()
 	log.Debug().Msg("initializing kafka client")
 	client, err := kgo.NewClient(
-		kgo.SeedBrokers(conf.Brokers...),
+		kgo.SeedBrokers(conf.KafkaBrokers...),
 	)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not create kafka sink client")

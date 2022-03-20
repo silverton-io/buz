@@ -43,7 +43,7 @@ func TestBuildSink(t *testing.T) {
 	c := config.Sink{
 		Type:                  PUBSUB,
 		Project:               "myproject",
-		Brokers:               []string{"broker1"},
+		KafkaBrokers:          []string{"broker1"},
 		ValidEventTopic:       "valid-topic",
 		InvalidEventTopic:     "invalid-topic",
 		BufferByteThreshold:   1,
@@ -103,7 +103,7 @@ func TestInitializeSink(t *testing.T) {
 	c := config.Sink{
 		Type:                  PUBSUB,
 		Project:               "myproject",
-		Brokers:               []string{"broker1"},
+		KafkaBrokers:          []string{"broker1"},
 		ValidEventTopic:       "valid-topic",
 		InvalidEventTopic:     "invalid-topic",
 		BufferByteThreshold:   1,

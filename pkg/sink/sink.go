@@ -21,6 +21,7 @@ const (
 	HTTP             string = "http"
 	HTTPS            string = "https"
 	RELAY            string = "relay"
+	ELASTICSEARCH    string = "elasticsearch"
 )
 
 type Sink interface {
@@ -56,6 +57,9 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		return &sink, nil
 	case RELAY:
 		sink := RelaySink{}
+		return &sink, nil
+	case ELASTICSEARCH:
+		sink := ElasticsearchSink{}
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)

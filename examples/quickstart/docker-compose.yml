@@ -149,14 +149,6 @@ services:
       redpanda-3:
         condition: service_healthy
 
-  metabase:
-    image: metabase/metabase
-    depends_on:
-      materialized:
-        condition: service_started
-    ports:
-      - 3030:3000
-
   mzcli:
     container_name: mzcli
     image: materialize/cli
