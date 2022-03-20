@@ -519,7 +519,7 @@
                 "elasticsearchHosts": {
                     "type": "array",
                     "description": "A list of elasticsearch hosts, if sink type is elasticsearch",
-                    "default": ["http://es1:9092", "http://es2:9092", "http://es3:9092"]
+                    "default": ["http://es1:9200"]
                 },
                 "elasticsearchUsername": {
                     "type": "string",
@@ -574,7 +574,7 @@
                 "relayUrl": {
                     "type": "string",
                     "description": "The url to relay envelopes to, if sink type is relay",
-                    "default": "https://another-honeypot.net/your-relay-url"
+                    "default": "https://another-honeypot.net/relay"
                 }
             },
             "additionalProperties": false,
