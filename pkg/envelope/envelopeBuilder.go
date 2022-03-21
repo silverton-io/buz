@@ -18,9 +18,27 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+func buildSnowplowEnvelope(spEvent snowplow.SnowplowEvent) Envelope {
+	isRelayed := false
+	schema := spEvent.Schema()
+	uid := uuid.New()
+	if schema == nil {
+		schema = spEvent.Event_name // Is this the right approach?
+	}
+	envelope := Envelope{
+		Id:            uid,
+		EventProtocol: protocol.SNOWPLOW,
+		EventSchema:   schema,
+		Tstamp:        time.Now(),
+		Ip:            *spEvent.User_ipaddress,
+		Payload:       spEvent,
+		IsRelayed:     &isRelayed,
+	}
+	return envelope
+}
+
 func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelope {
 	var envelopes []Envelope
-	isRelayed := false
 	if c.Request.Method == "POST" {
 		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
@@ -32,33 +50,13 @@ func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []Env
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
 			spEvent := snowplow.BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf)
-			schema := spEvent.Schema()
-			uid := uuid.New()
-			envelope := Envelope{
-				Id:            uid,
-				EventProtocol: protocol.SNOWPLOW,
-				EventSchema:   schema,
-				Tstamp:        time.Now(),
-				Ip:            *spEvent.User_ipaddress,
-				Payload:       spEvent,
-				IsRelayed:     &isRelayed,
-			}
-			envelopes = append(envelopes, envelope)
+			e := buildSnowplowEnvelope(spEvent)
+			envelopes = append(envelopes, e)
 		}
 	} else {
 		params := util.MapUrlParams(c)
 		spEvent := snowplow.BuildEventFromMappedParams(c, params, conf)
-		schema := spEvent.Schema()
-		uid := uuid.New()
-		e := Envelope{
-			Id:            uid,
-			EventProtocol: protocol.SNOWPLOW,
-			EventSchema:   schema,
-			Tstamp:        time.Now(),
-			Ip:            *spEvent.User_ipaddress,
-			Payload:       spEvent,
-			IsRelayed:     &isRelayed,
-		}
+		e := buildSnowplowEnvelope(spEvent)
 		envelopes = append(envelopes, e)
 	}
 	return envelopes
@@ -147,6 +145,9 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 			payload := generic.GenericEvent{}
 			json.Unmarshal([]byte(eventPayload), &payload)
 			envelope.Payload = payload
+		case protocol.WEBHOOK:
+			payload := webhook.WebhookEvent{}
+			json.Unmarshal([]byte(eventPayload), &payload)
 		default:
 			payload := snowplow.SnowplowEvent{}
 			json.Unmarshal([]byte(eventPayload), &payload)

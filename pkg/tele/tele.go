@@ -1,12 +1,14 @@
 package tele
 
 import (
+	"fmt"
 	"net/url"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/request"
@@ -72,7 +74,6 @@ func heartbeat(t time.Ticker, m *Meta) {
 				Data:   data,
 			},
 		}
-		util.Pprint(heartbeatPayload)
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
 		request.PostEvent(*endpoint, heartbeatPayload)
 	}
@@ -140,6 +141,43 @@ func BuildMeta(version string, conf *config.Config) *Meta {
 		m.Invalid[p] = invalidEventStats
 	}
 	return &m
+}
+
+// Return protocol stats from an arbitrary slice of envelopes.
+// These envelopes should be assumed multi-protocol, multi-event-type, and both valid/invalid.
+func ProtocolStatsFromEnvelopes(envelopes []envelope.Envelope) ProtocolStats {
+	var vStat = make(map[string]map[string]int64)
+	var iStat = make(map[string]map[string]int64)
+	pStat := ProtocolStats{
+		Valid:   vStat,
+		Invalid: iStat,
+	}
+	for _, e := range envelopes { // NOTE - this adds another loop. Might be worth rethinking long term.
+		isValid := *e.IsValid
+		if isValid {
+			eStat := pStat.Valid[e.EventProtocol]
+			if eStat == nil {
+				fmt.Println("pStat.Valid is nil")
+				var s = make(map[string]int64)
+				pStat.Valid[e.EventProtocol] = s
+				// pStat.Valid[e.EventProtocol][*e.EventSchema] = 1
+			} else {
+				// pStat.Valid[e.EventProtocol][*e.EventSchema] += 1
+			}
+		} else {
+			eStat := pStat.Invalid[e.EventProtocol]
+			if eStat == nil {
+				fmt.Println("pStat.Invalid is nil")
+				var s = make(map[string]int64)
+				pStat.Invalid[e.EventProtocol] = s
+				// pStat.Invalid[e.EventProtocol][*e.EventSchema] = 1
+			} else {
+				// pStat.Invalid[e.EventProtocol][*e.EventSchema] += 1
+			}
+		}
+		util.Pprint(pStat)
+	}
+	return pStat
 }
 
 func IncrementProtocolEventStat(m *Meta, protocol string, valid bool, eventName string, count int) {

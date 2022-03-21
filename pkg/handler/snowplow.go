@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/response"
+	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/silverton-io/honeypot/pkg/validator"
 )
 
@@ -16,6 +17,7 @@ func SnowplowHandler(p EventHandlerParams) gin.HandlerFunc {
 		ctx := context.Background()
 		envelopes := envelope.BuildSnowplowEnvelopesFromRequest(c, *p.Config)
 		validEnvelopes, invalidEnvelopes := validator.BifurcateAndAnnotate(envelopes, p.Cache)
+		tele.ProtocolStatsFromEnvelopes(validEnvelopes)
 		p.Sink.BatchPublishValidAndInvalid(ctx, validEnvelopes, invalidEnvelopes, p.Meta)
 		if c.Request.Method == http.MethodGet {
 			redirectUrl, _ := c.GetQuery("u")

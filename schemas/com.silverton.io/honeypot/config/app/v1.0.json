@@ -509,7 +509,7 @@
                     "type": "string",
                     "default": "pubsub",
                     "description": "The sink configuration",
-                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch"]
+                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch", "blackhole"]
                 },
                 "kafkaBrokers": {
                     "type": "array",
@@ -651,6 +651,14 @@
                         }
                     },
                     "required": ["elasticsearchHosts", "elasticsearchUsername", "elasticsearchPassword", "validIndex", "invalidIndex"]
+                },
+                {
+                    "properties": {
+                        "type": {
+                            "const": "blackhole"
+                        }
+                    },
+                    "required": []
                 }
             ]
         },
