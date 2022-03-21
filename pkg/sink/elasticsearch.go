@@ -59,7 +59,7 @@ func (s *ElasticsearchSink) BatchPublishInvalid(ctx context.Context, invalidEnve
 	s.batchPublish(ctx, s.invalidIndex, invalidEnvelopes)
 }
 
-func (s *ElasticsearchSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
+func (s *ElasticsearchSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
 	go s.BatchPublishValid(ctx, validEnvelopes)
 	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
 	// FIXME!! Write envelope publish stats

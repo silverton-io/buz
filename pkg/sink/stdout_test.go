@@ -6,7 +6,6 @@ import (
 
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/stretchr/testify/assert"
 )
@@ -52,9 +51,6 @@ func TestStdoutSink(t *testing.T) {
 	sink := StdoutSink{}
 
 	sink.Initialize(c)
-	sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, []envelope.Envelope{}, []envelope.Envelope{}, &m)
+	sink.BatchPublishValidAndInvalid(ctx, []envelope.Envelope{}, []envelope.Envelope{}, &m)
 	sink.Close()
-
-	assert.Equal(t, int64(0), m.ValidSnowplowEventsProcessed)
-	assert.Equal(t, int64(0), m.ValidSnowplowEventsProcessed)
 }

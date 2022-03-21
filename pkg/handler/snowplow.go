@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/response"
 	"github.com/silverton-io/honeypot/pkg/validator"
 )
@@ -17,7 +16,7 @@ func SnowplowHandler(p EventHandlerParams) gin.HandlerFunc {
 		ctx := context.Background()
 		envelopes := envelope.BuildSnowplowEnvelopesFromRequest(c, *p.Config)
 		validEnvelopes, invalidEnvelopes := validator.BifurcateAndAnnotate(envelopes, p.Cache)
-		p.Sink.BatchPublishValidAndInvalid(ctx, protocol.SNOWPLOW, validEnvelopes, invalidEnvelopes, p.Meta)
+		p.Sink.BatchPublishValidAndInvalid(ctx, validEnvelopes, invalidEnvelopes, p.Meta)
 		if c.Request.Method == http.MethodGet {
 			redirectUrl, _ := c.GetQuery("u")
 			if redirectUrl != "" && p.Config.Snowplow.OpenRedirectsEnabled {

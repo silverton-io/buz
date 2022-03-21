@@ -62,12 +62,11 @@ func (s *KinesisFirehoseSink) BatchPublishInvalid(ctx context.Context, envelopes
 	s.batchPublish(ctx, s.invalidEventsStream, envelopes)
 }
 
-func (s *KinesisFirehoseSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
+func (s *KinesisFirehoseSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
 	// Publish
 	go s.BatchPublishValid(ctx, validEnvelopes)
 	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
 	// Increment stats counters
-	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
 
 func (s *KinesisFirehoseSink) Close() {

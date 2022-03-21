@@ -4,12 +4,9 @@ import (
 	"context"
 	"errors"
 	"testing"
-	"time"
 
-	"github.com/google/uuid"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -31,8 +28,8 @@ func (ms *MockSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []
 	ms.Called()
 }
 
-func (ms *MockSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEvents []envelope.Envelope, invalidEvents []envelope.Envelope, meta *tele.Meta) {
-	ms.Called(ctx, inputType, validEvents, invalidEvents, meta)
+func (ms *MockSink) BatchPublishValidAndInvalid(ctx context.Context, validEvents []envelope.Envelope, invalidEvents []envelope.Envelope, meta *tele.Meta) {
+	ms.Called(ctx, validEvents, invalidEvents, meta)
 }
 
 func (ms *MockSink) Close() {
@@ -116,34 +113,4 @@ func TestInitializeSink(t *testing.T) {
 	InitializeSink(c, &mSink)
 
 	mSink.AssertCalled(t, "Initialize", c)
-}
-
-func TestIncrementStats(t *testing.T) {
-	id := uuid.New()
-	n := time.Now()
-	m := tele.Meta{
-		Version:                        "1.x.x",
-		InstanceId:                     id,
-		StartTime:                      n,
-		TrackerDomain:                  "somewhere.something",
-		CookieDomain:                   "elsewhere.somewhere.something",
-		ValidSnowplowEventsProcessed:   0,
-		InvalidSnowplowEventsProcessed: 0,
-		ValidGenericEventsProcessed:    0,
-		InvalidGenericEventsProcessed:  0,
-		ValidCloudEventsProcessed:      0,
-		InvalidCloudEventsProcessed:    0,
-	}
-
-	incrementStats(protocol.CLOUDEVENTS, 1, 1, &m)
-	incrementStats(protocol.SNOWPLOW, 1, 1, &m)
-	incrementStats(protocol.GENERIC, 1, 1, &m)
-	incrementStats("other", 1, 1, &m)
-
-	assert.Equal(t, int64(1), m.ValidCloudEventsProcessed)
-	assert.Equal(t, int64(1), m.InvalidCloudEventsProcessed)
-	assert.Equal(t, int64(1), m.ValidGenericEventsProcessed)
-	assert.Equal(t, int64(1), m.InvalidGenericEventsProcessed)
-	assert.Equal(t, int64(2), m.ValidSnowplowEventsProcessed)
-	assert.Equal(t, int64(2), m.InvalidSnowplowEventsProcessed)
 }

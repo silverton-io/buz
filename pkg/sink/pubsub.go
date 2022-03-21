@@ -77,12 +77,11 @@ func (s *PubsubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelo
 	s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
 }
 
-func (s *PubsubSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
+func (s *PubsubSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
 	// Publish
 	go s.BatchPublishValid(ctx, validEnvelopes)
 	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
 	// Increment stats counters
-	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
 
 func (s *PubsubSink) Close() {

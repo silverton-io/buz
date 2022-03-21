@@ -7,3 +7,7 @@ const (
 	RELAY       string = "relay"
 	WEBHOOK     string = "webhook"
 )
+
+func GetIntputProtocols() []string {
+	return []string{SNOWPLOW, GENERIC, CLOUDEVENTS, RELAY, WEBHOOK}
+}

@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/request"
 	"github.com/silverton-io/honeypot/pkg/util"
 )
@@ -19,20 +20,18 @@ const (
 	SHUTDOWN_1_0     string = "com.silverton.io/honeypot/tele/shutdown/v1.0.json"
 )
 
+type ProtocolStats struct {
+	Invalid map[string]map[string]int64 `json:"invalid"`
+	Valid   map[string]map[string]int64 `json:"valid"`
+}
+
 type Meta struct {
-	Version                        string    `json:"version"`
-	InstanceId                     uuid.UUID `json:"instanceId"`
-	StartTime                      time.Time `json:"startTime"`
-	TrackerDomain                  string    `json:"trackerDomain"`
-	CookieDomain                   string    `json:"cookieDomain"`
-	ValidSnowplowEventsProcessed   int64     `json:"validSnowplowEventsProcessed"`
-	InvalidSnowplowEventsProcessed int64     `json:"invalidSnowplowEventsProcessed"`
-	ValidGenericEventsProcessed    int64     `json:"validGenericEventsProcessed"`
-	InvalidGenericEventsProcessed  int64     `json:"invalidGenericEventsProcessed"`
-	ValidCloudEventsProcessed      int64     `json:"validCloudEventsProcessed"`
-	InvalidCloudEventsProcessed    int64     `json:"invalidCloudEventsProcessed"`
-	ValidRelayEventsProcessed      int64     `json:"validRelayEventsProcessed"`
-	InvalidRelayEventsProcessed    int64     `json:"invalidRelayEventsProcessed"`
+	Version       string    `json:"version"`
+	InstanceId    uuid.UUID `json:"instanceId"`
+	StartTime     time.Time `json:"startTime"`
+	TrackerDomain string    `json:"trackerDomain"`
+	CookieDomain  string    `json:"cookieDomain"`
+	ProtocolStats `json:"protocolStats"`
 }
 
 type startup struct {
@@ -73,6 +72,7 @@ func heartbeat(t time.Ticker, m *Meta) {
 				Data:   data,
 			},
 		}
+		util.Pprint(heartbeatPayload)
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
 		request.PostEvent(*endpoint, heartbeatPayload)
 	}
@@ -118,4 +118,30 @@ func Metry(c *config.Config, m *Meta) {
 		ticker := time.NewTicker(time.Duration(c.Tele.HeartbeatMs) * time.Millisecond)
 		go heartbeat(*ticker, m)
 	}
+}
+
+func BuildMeta(version string, conf *config.Config) *Meta {
+	instanceId := uuid.New()
+	var validStats = make(map[string]map[string]int64)
+	var invalidStats = make(map[string]map[string]int64)
+	m := Meta{
+		Version:       version,
+		InstanceId:    instanceId,
+		StartTime:     time.Now(),
+		TrackerDomain: conf.App.TrackerDomain,
+		CookieDomain:  conf.Cookie.Domain,
+	}
+	m.Valid = validStats
+	m.Invalid = invalidStats
+	for _, p := range protocol.GetIntputProtocols() {
+		var validEventStats = make(map[string]int64)
+		var invalidEventStats = make(map[string]int64)
+		m.Valid[p] = validEventStats
+		m.Invalid[p] = invalidEventStats
+	}
+	return &m
+}
+
+func IncrementProtocolEventStat(m *Meta, protocol string, valid bool, eventName string, count int) {
+
 }

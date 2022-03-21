@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/cache"
@@ -70,15 +69,8 @@ func (a *App) configure() {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
 	a.config.App.Version = VERSION
-	instanceId := uuid.New()
-	m := tele.Meta{
-		Version:       VERSION,
-		InstanceId:    instanceId,
-		StartTime:     time.Now(),
-		TrackerDomain: a.config.App.TrackerDomain,
-		CookieDomain:  a.config.Cookie.Domain,
-	}
-	a.meta = &m
+	meta := tele.BuildMeta(VERSION, a.config)
+	a.meta = meta
 }
 
 func (a *App) initializeSinks() {

@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/response"
 	"github.com/silverton-io/honeypot/pkg/validator"
 )
@@ -15,7 +14,7 @@ func GenericHandler(p EventHandlerParams) gin.HandlerFunc {
 		ctx := context.Background()
 		envelopes := envelope.BuildGenericEnvelopesFromRequest(c, *p.Config)
 		validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, p.Cache)
-		p.Sink.BatchPublishValidAndInvalid(ctx, protocol.GENERIC, validEvents, invalidEvents, p.Meta)
+		p.Sink.BatchPublishValidAndInvalid(ctx, validEvents, invalidEvents, p.Meta)
 		c.JSON(200, response.Ok)
 	}
 	return gin.HandlerFunc(fn)

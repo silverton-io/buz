@@ -32,7 +32,7 @@ func (s *RelaySink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []
 	log.Error().Msg("BatchPublishInvalid is disabled for relay sink")
 }
 
-func (s *RelaySink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
+func (s *RelaySink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
 	envelopes := append(validEnvelopes, invalidEnvelopes...)
 	go request.PostEnvelopes(s.relayUrl, envelopes)
 	// FIXME! Increment stats. Not including this yet because want to go event protocol/name/etc route.

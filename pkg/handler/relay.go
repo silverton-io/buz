@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/validator"
 )
 
@@ -16,7 +15,7 @@ func RelayHandler(p EventHandlerParams) gin.HandlerFunc {
 		ctx := context.Background()
 		envelopes := envelope.BuildRelayEnvelopesFromRequest(c)
 		validEnvelopes, invalidEnvelopes := validator.Bifurcate(envelopes)
-		p.Sink.BatchPublishValidAndInvalid(ctx, protocol.RELAY, validEnvelopes, invalidEnvelopes, p.Meta)
+		p.Sink.BatchPublishValidAndInvalid(ctx, validEnvelopes, invalidEnvelopes, p.Meta)
 	}
 	return gin.HandlerFunc(fn)
 }
