@@ -10,7 +10,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
 type ElasticsearchSink struct {
@@ -59,7 +58,7 @@ func (s *ElasticsearchSink) BatchPublishInvalid(ctx context.Context, invalidEnve
 	s.batchPublish(ctx, s.invalidIndex, invalidEnvelopes)
 }
 
-func (s *ElasticsearchSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
+func (s *ElasticsearchSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope) {
 	go s.BatchPublishValid(ctx, validEnvelopes)
 	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
 	// FIXME!! Write envelope publish stats

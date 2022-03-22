@@ -8,7 +8,6 @@ import (
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/request"
-	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
 type RelaySink struct {
@@ -32,7 +31,7 @@ func (s *RelaySink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []
 	log.Error().Msg("BatchPublishInvalid is disabled for relay sink")
 }
 
-func (s *RelaySink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
+func (s *RelaySink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope) {
 	envelopes := append(validEnvelopes, invalidEnvelopes...)
 	go request.PostEnvelopes(s.relayUrl, envelopes)
 	// FIXME! Increment stats. Not including this yet because want to go event protocol/name/etc route.

@@ -10,7 +10,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
 type KinesisSink struct {
@@ -58,7 +57,7 @@ func (s *KinesisSink) BatchPublishInvalid(ctx context.Context, envelopes []envel
 	s.batchPublish(ctx, s.invalidEventsStream, envelopes)
 }
 
-func (s *KinesisSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
+func (s *KinesisSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope) {
 	// Publish
 	go s.BatchPublishValid(ctx, validEnvelopes)
 	go s.BatchPublishInvalid(ctx, invalidEnvelopes)

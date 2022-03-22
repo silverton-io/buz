@@ -7,7 +7,6 @@ import (
 
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -28,8 +27,8 @@ func (ms *MockSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []
 	ms.Called()
 }
 
-func (ms *MockSink) BatchPublishValidAndInvalid(ctx context.Context, validEvents []envelope.Envelope, invalidEvents []envelope.Envelope, meta *tele.Meta) {
-	ms.Called(ctx, validEvents, invalidEvents, meta)
+func (ms *MockSink) BatchPublishValidAndInvalid(ctx context.Context, validEvents []envelope.Envelope, invalidEvents []envelope.Envelope) {
+	ms.Called(ctx, validEvents, invalidEvents)
 }
 
 func (ms *MockSink) Close() {

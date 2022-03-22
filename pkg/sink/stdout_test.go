@@ -6,7 +6,6 @@ import (
 
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -46,11 +45,10 @@ func TestStdoutSink(t *testing.T) {
 	c := config.Sink{
 		Type: STDOUT,
 	}
-	m := tele.Meta{}
 	ctx := context.Background()
 	sink := StdoutSink{}
 
 	sink.Initialize(c)
-	sink.BatchPublishValidAndInvalid(ctx, []envelope.Envelope{}, []envelope.Envelope{}, &m)
+	sink.BatchPublishValidAndInvalid(ctx, []envelope.Envelope{}, []envelope.Envelope{})
 	sink.Close()
 }

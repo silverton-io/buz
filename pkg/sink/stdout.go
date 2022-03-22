@@ -7,7 +7,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/silverton-io/honeypot/pkg/util"
 )
 
@@ -56,7 +55,7 @@ func (s *StdoutSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes [
 	}
 }
 
-func (s *StdoutSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
+func (s *StdoutSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope) {
 	s.BatchPublishValid(ctx, validEnvelopes)
 	s.BatchPublishInvalid(ctx, invalidEnvelopes)
 }
