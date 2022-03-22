@@ -25,4 +25,10 @@ type Sink struct {
 	// File
 	ValidFile   string `json:"validFile,omitempty"`
 	InvalidFile string `json:"invalidFile,omitempty"`
+	// Database
+	DbHost string `json:"-"`
+	DbPort string `json:"-"`
+	DbName string `json:"-"`
+	DbUser string `json:"-"`
+	DbPass string `json:"-"`
 }
