@@ -4,7 +4,6 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/event"
@@ -18,19 +17,6 @@ const (
 	HEARTBEAT_1_0    string = "com.silverton.io/honeypot/tele/beat/v1.0.json"
 	SHUTDOWN_1_0     string = "com.silverton.io/honeypot/tele/shutdown/v1.0.json"
 )
-
-type Meta struct {
-	Version       string         `json:"version"`
-	InstanceId    uuid.UUID      `json:"instanceId"`
-	StartTime     time.Time      `json:"startTime"`
-	TrackerDomain string         `json:"trackerDomain"`
-	CookieDomain  string         `json:"cookieDomain"`
-	ProtocolStats *ProtocolStats `json:"protocolStats"`
-}
-
-func (m *Meta) elapsed() float64 {
-	return time.Since(m.StartTime).Seconds()
-}
 
 type startup struct {
 	Meta   *Meta         `json:"meta"`
@@ -111,19 +97,4 @@ func Metry(c *config.Config, m *Meta) {
 		ticker := time.NewTicker(time.Duration(c.Tele.HeartbeatMs) * time.Millisecond)
 		go heartbeat(*ticker, m)
 	}
-}
-
-func BuildMeta(version string, conf *config.Config) *Meta {
-	instanceId := uuid.New()
-	ps := ProtocolStats{}
-	ps.Build()
-	m := Meta{
-		Version:       version,
-		InstanceId:    instanceId,
-		StartTime:     time.Now(),
-		TrackerDomain: conf.App.TrackerDomain,
-		CookieDomain:  conf.Cookie.Domain,
-		ProtocolStats: &ps,
-	}
-	return &m
 }

@@ -62,6 +62,7 @@ func Run(manifold *Manifold, meta *tele.Meta) {
 				log.Debug().Msg("purging envelope buffers")
 				sink.BatchPublishValid(ctx, validEnvelopes)
 				sink.BatchPublishInvalid(ctx, invalidEnvelopes)
+				meta.BufferPurgeStats.Increment()
 				manifold.lastPurged = time.Now()
 				invalidEnvelopes = nil
 				validEnvelopes = nil

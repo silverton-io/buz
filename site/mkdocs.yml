@@ -49,6 +49,7 @@ nav:
     - schema-cache-backends/gcs.md
     - schema-cache-backends/filesystem.md
     - schema-cache-backends/http.md
+    - schema-cache-backends/iglu.md
     - schema-cache-backends/kafka-registry.md
   - Sinks:
     - sinks/kafka.md

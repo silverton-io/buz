@@ -38,26 +38,6 @@ func (ps *ProtocolStats) IncrementInvalid(protocol string, event string, count i
 	ps.imu.Lock()
 	defer ps.imu.Unlock()
 	ps.Invalid[protocol][event] = i + count
-
-}
-
-func (ps *ProtocolStats) Merge(stats *ProtocolStats) {
-	for protocol, pStat := range stats.Valid {
-		for event, eStat := range pStat {
-			ps.vmu.Lock()
-			defer ps.vmu.Unlock()
-			i := ps.Valid[protocol][event]
-			ps.Valid[protocol][event] = i + eStat
-		}
-	}
-	for protocol, pStat := range stats.Invalid {
-		for event, eStat := range pStat {
-			ps.imu.Lock()
-			defer ps.imu.Unlock()
-			i := ps.Invalid[protocol][event]
-			ps.Invalid[protocol][event] = i + eStat
-		}
-	}
 }
 
 func BuildProtocolStats() *ProtocolStats {
