@@ -23,7 +23,7 @@ func buildSnowplowEnvelope(spEvent snowplow.SnowplowEvent) Envelope {
 	schema := spEvent.Schema()
 	uid := uuid.New()
 	if schema == nil {
-		schema = spEvent.Event_name // Is this the right approach?
+		schema = spEvent.Event_name // FIXME? Is this the right approach?
 	}
 	envelope := Envelope{
 		Id:            uid,
