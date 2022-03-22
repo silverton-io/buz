@@ -1,0 +1,7 @@
+---
+tags:
+  - sink
+  - blackhole
+---
+
+# 🟢 Blackhole

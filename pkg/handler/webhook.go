@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,9 +11,8 @@ import (
 func WebhookHandler(handlerParams EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/json" {
-			ctx := context.Background()
 			envelopes := envelope.BuildWebhookEnvelopesFromRequest(c)
-			handlerParams.Sink.BatchPublishValid(ctx, envelopes) // All dogs go to heaven.
+			handlerParams.Manifold.Enqueue(envelopes)
 			c.JSON(http.StatusOK, response.Ok)
 		} else {
 			c.JSON(http.StatusBadRequest, response.InvalidContentType)

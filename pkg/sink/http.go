@@ -8,7 +8,6 @@ import (
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/request"
-	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
 type HttpSink struct {
@@ -36,12 +35,6 @@ func (s *HttpSink) BatchPublishValid(ctx context.Context, validEnvelopes []envel
 
 func (s *HttpSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
 	request.PostEnvelopes(s.invalidUrl, invalidEnvelopes)
-}
-
-func (s *HttpSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
-	go s.BatchPublishValid(ctx, validEnvelopes)
-	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
-	// FIXME! Increment stats. Not including this yet because want to go event protocol/name/etc route.
 }
 
 func (s *HttpSink) Close() {

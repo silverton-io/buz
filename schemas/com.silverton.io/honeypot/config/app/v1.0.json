@@ -501,6 +501,29 @@
             "additionalProperties": false,
             "required": ["schemaCacheBackend", "ttlSeconds", "maxSizeBytes", "purge", "schemaEndpoints"]
         },
+        "manifold": {
+            "type": "object",
+            "description": "Manifold configuration",
+            "properties": {
+                "bufferRecordThreshold": {
+                    "type": "number",
+                    "description": "The record threshold at which point the manifold buffer is purged",
+                    "default": "1"
+                },
+                "bufferByteThreshold": {
+                    "type": "number",
+                    "description": "The byte threshold at which point the manifold buffer is purged",
+                    "default": "1024"
+                },
+                "bufferTimeThreshold": {
+                    "type": "number",
+                    "description": "The time threshold (in seconds) at which point the manifold buffer is purged",
+                    "default": "60"
+                }
+            },
+            "additionalProperties": false,
+            "required": ["bufferRecordThreshold", "bufferByteThreshold", "bufferTimeThreshold"]
+        },
         "sink": {
             "type": "object",
             "description": "Sink configuration",
@@ -509,7 +532,7 @@
                     "type": "string",
                     "default": "pubsub",
                     "description": "The sink configuration",
-                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch"]
+                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch", "blackhole"]
                 },
                 "kafkaBrokers": {
                     "type": "array",
@@ -651,6 +674,14 @@
                         }
                     },
                     "required": ["elasticsearchHosts", "elasticsearchUsername", "elasticsearchPassword", "validIndex", "invalidIndex"]
+                },
+                {
+                    "properties": {
+                        "type": {
+                            "const": "blackhole"
+                        }
+                    },
+                    "required": []
                 }
             ]
         },
@@ -703,5 +734,5 @@
         }
     },
     "additionalProperties": false,
-    "required": [ "version", "app", "middleware", "inputs", "schemaCache", "sink", "squawkBox","tele"]
+    "required": [ "version", "app", "middleware", "inputs", "schemaCache", "manifold", "sink", "squawkBox","tele"]
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/silverton-io/honeypot/pkg/util"
 )
 
@@ -54,12 +53,6 @@ func (s *StdoutSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes [
 		invalidEnvelopes := util.Stringify(invalidEnvelopes)
 		fmt.Println(Red(invalidEnvelopes))
 	}
-}
-
-func (s *StdoutSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
-	s.BatchPublishValid(ctx, validEnvelopes)
-	s.BatchPublishInvalid(ctx, invalidEnvelopes)
-	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
 
 func (s *StdoutSink) Close() {

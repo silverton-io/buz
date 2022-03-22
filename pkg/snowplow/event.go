@@ -3,10 +3,10 @@ package snowplow
 import (
 	b64 "encoding/base64"
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"time"
 
+	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/tidwall/gjson"
@@ -22,7 +22,8 @@ const (
 	TRANSACTION           = "transaction"
 	TRANSACTION_ITEM      = "transaction_item"
 	AD_IMPRESSION         = "ad_impression"
-	UNKNOWN_EVENT         = "unknown"
+	UNKNOWN_EVENT         = "unknown_event"
+	UNKNOWN_SCHEMA        = "unknown_schema"
 )
 
 // Other
@@ -150,7 +151,8 @@ func (e SnowplowEvent) Schema() *string {
 		}
 		return &schemaName
 	default:
-		return nil
+		schemaName := string(e.Event)
+		return &schemaName
 	}
 }
 
@@ -311,7 +313,7 @@ func (c *Base64EncodedContexts) UnmarshalJSON(bytes []byte) error {
 	err := json.Unmarshal(bytes, &encodedPayload)
 	decodedPayload, err := b64.RawStdEncoding.DecodeString(encodedPayload)
 	if err != nil {
-		fmt.Printf("error decoding b64 encoded contexts %s\n", err)
+		log.Error().Err(err).Msg("error decoding b64 encoded contexts")
 	}
 	contextPayload := gjson.Parse(string(decodedPayload))
 	for _, pl := range contextPayload.Get("data").Array() {
@@ -332,7 +334,7 @@ func (f *Base64EncodedSelfDescribingPayload) UnmarshalJSON(bytes []byte) error {
 	err := json.Unmarshal(bytes, &encodedPayload)
 	decodedPayload, err := b64.RawStdEncoding.DecodeString(encodedPayload)
 	if err != nil {
-		fmt.Printf("error decoding b64 encoded self describing payload %s\n", err)
+		log.Error().Err(err).Msg("error decoding b64 encoded self describing payload")
 	}
 	schema := gjson.GetBytes(decodedPayload, "data.schema").String()
 	data := gjson.GetBytes(decodedPayload, "data.data").Value().(map[string]interface{})
@@ -347,7 +349,7 @@ func (b *FlexibleBoolField) UnmarshalJSON(bytes []byte) error {
 	var payload string
 	err := json.Unmarshal(bytes, &payload)
 	if err != nil {
-		fmt.Printf("error decoding FlexibleBoolField %s\n", err)
+		log.Error().Err(err).Msg("error decoding flexible bool field")
 	}
 	val, err := strconv.ParseBool(payload)
 	*b = FlexibleBoolField(val)
@@ -363,7 +365,7 @@ func (t *MillisecondTimestampField) UnmarshalJSON(bytes []byte) error {
 	err := json.Unmarshal(bytes, &msString)
 	msInt, err := strconv.ParseInt(msString, 10, 64)
 	if err != nil {
-		fmt.Printf("error decoding timestamp: %s\n", err)
+		log.Error().Err(err).Msg("error decoding timestamp")
 		return err
 	}
 	t.Time = time.Unix(0, msInt*int64(time.Millisecond))
@@ -376,7 +378,7 @@ func (f *EventTypeField) UnmarshalJSON(bytes []byte) error {
 	var payload string
 	err := json.Unmarshal(bytes, &payload)
 	if err != nil {
-		fmt.Printf("error unmarshaling EventTypeField %s\n", err)
+		log.Error().Err(err).Msg("error unmarshaling event type field")
 	}
 	eventType := getEventType(payload)
 	*f = EventTypeField(eventType)
