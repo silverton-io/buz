@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -91,8 +90,7 @@ func (a *App) initializeSinks() {
 
 func (a *App) initializeManifold() {
 	log.Info().Msg("initializing manifold")
-	m, err := manifold.BuildManifold(a.config.Manifold, &a.sink) // FIXME! What happens if the manifold creation throws an err?
-	fmt.Printf("%+v", m)
+	m, err := manifold.BuildManifold(a.config.Manifold, &a.sink)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not build manifold")
 	}

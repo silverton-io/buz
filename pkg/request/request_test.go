@@ -2,7 +2,6 @@ package request
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -28,7 +27,6 @@ func TestPostEvent(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("made it"))
-		fmt.Println(r.URL.EscapedPath())
 		d := r.URL.EscapedPath()
 		if d != u {
 			t.Fatalf(`posted payload to url %v, want %v`, d, u)

@@ -2,7 +2,6 @@ package snowplow
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -144,7 +143,7 @@ func setReferrerFields(e *SnowplowEvent) {
 	if e.Page_referrer != nil {
 		pageFields, err := getPageFieldsFromUrl(*e.Page_referrer)
 		if err != nil {
-			fmt.Printf("error setting page fields %s\n", err)
+			log.Error().Err(err).Msg("error setting page fields")
 		}
 		e.Refr_urlscheme = &pageFields.scheme // FIXME! Has to be a better way
 		e.Refr_urlhost = &pageFields.host
@@ -173,12 +172,12 @@ func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
 func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Config) SnowplowEvent {
 	body, err := json.Marshal(params)
 	if err != nil {
-		fmt.Println(err)
+		log.Error().Err(err).Msg("error when marshaling params")
 	}
 	shortenedEvent := ShortenedSnowplowEvent{}
 	err = json.Unmarshal(body, &shortenedEvent)
 	if err != nil {
-		fmt.Printf("error unmarshalling to shortened event %s", err)
+		log.Error().Err(err).Msg("error when unmarshaling to shortened event")
 	}
 	event := SnowplowEvent(shortenedEvent)
 	setEventFieldsFromRequest(c, &event, &conf.App)
