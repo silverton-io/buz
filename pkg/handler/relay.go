@@ -15,7 +15,7 @@ func RelayHandler(h EventHandlerParams) gin.HandlerFunc {
 		ctx := context.Background()
 		envelopes := envelope.BuildRelayEnvelopesFromRequest(c)
 		validEnvelopes, invalidEnvelopes, stats := validator.Bifurcate(envelopes)
-		h.Sink.BatchPublishValidAndInvalid(ctx, validEnvelopes, invalidEnvelopes, h.Meta)
+		h.Sink.BatchPublishValidAndInvalid(ctx, validEnvelopes, invalidEnvelopes)
 		h.Meta.ProtocolStats.Merge(&stats)
 	}
 	return gin.HandlerFunc(fn)

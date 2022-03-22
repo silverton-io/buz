@@ -14,7 +14,7 @@ func GenericHandler(h EventHandlerParams) gin.HandlerFunc {
 		ctx := context.Background()
 		envelopes := envelope.BuildGenericEnvelopesFromRequest(c, *h.Config)
 		validEvents, invalidEvents, stats := validator.BifurcateAndAnnotate(envelopes, h.Cache)
-		h.Sink.BatchPublishValidAndInvalid(ctx, validEvents, invalidEvents, h.Meta)
+		h.Sink.BatchPublishValidAndInvalid(ctx, validEvents, invalidEvents)
 		h.Meta.ProtocolStats.Merge(&stats)
 		c.JSON(200, response.Ok)
 	}
