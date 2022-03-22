@@ -5,7 +5,6 @@ import (
 	"sync/atomic"
 
 	"github.com/silverton-io/honeypot/pkg/protocol"
-	"github.com/silverton-io/honeypot/pkg/util"
 )
 
 type ProtocolStats struct {
@@ -62,7 +61,6 @@ func (ps *ProtocolStats) Merge(stats *ProtocolStats) {
 			ps.Invalid[protocol][event] = i + eStat
 		}
 	}
-	util.Pprint(ps)
 }
 
 func BuildProtocolStats() *ProtocolStats {

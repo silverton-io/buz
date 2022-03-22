@@ -106,7 +106,6 @@ func Metry(c *config.Config, m *Meta) {
 				Data:   data,
 			},
 		}
-		util.Pprint(startupPayload)
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
 		request.PostEvent(*endpoint, startupPayload)
 		ticker := time.NewTicker(time.Duration(c.Tele.HeartbeatMs) * time.Millisecond)
