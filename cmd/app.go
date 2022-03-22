@@ -284,7 +284,7 @@ func (a *App) Run() {
 			log.Info().Msgf("server shut down")
 		}
 	}()
-	manifold.Run(a.manifold)
+	manifold.Run(a.manifold, a.meta)
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit

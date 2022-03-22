@@ -8,6 +8,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/sink"
+	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
 type Manifold struct {
@@ -39,27 +40,29 @@ func BuildManifold(conf config.Manifold, sink *sink.Sink) (manifold *Manifold, e
 	return &m, nil
 }
 
-func Run(m *Manifold) {
+func Run(manifold *Manifold, meta *tele.Meta) {
 	log.Debug().Msg("running manifold")
 	go func() {
 		ctx := context.Background()
 		var invalidEnvelopes []envelope.Envelope
 		var validEnvelopes []envelope.Envelope
-		sink := *m.sink
+		sink := *manifold.sink
 		for {
-			e := <-*m.envelopeChan
+			e := <-*manifold.envelopeChan
 			if *e.IsValid {
 				log.Debug().Msg("appending valid envelope to buffer...")
 				validEnvelopes = append(validEnvelopes, e)
+				meta.ProtocolStats.IncrementValid(e.EventProtocol, e.EventSchema, 1)
 			} else {
 				log.Debug().Msg("appending invalid envelope to buffer...")
 				invalidEnvelopes = append(invalidEnvelopes, e)
+				meta.ProtocolStats.IncrementInvalid(e.EventProtocol, e.EventSchema, 1)
 			}
-			if len(validEnvelopes) >= m.bufferRecordCount || len(invalidEnvelopes) >= m.bufferRecordCount {
+			if len(validEnvelopes) >= manifold.bufferRecordCount || len(invalidEnvelopes) >= manifold.bufferRecordCount {
 				log.Debug().Msg("purging envelope buffers")
 				sink.BatchPublishValid(ctx, validEnvelopes)
 				sink.BatchPublishInvalid(ctx, invalidEnvelopes)
-				m.lastPurged = time.Now()
+				manifold.lastPurged = time.Now()
 				invalidEnvelopes = nil
 				validEnvelopes = nil
 			}
