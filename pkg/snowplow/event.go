@@ -22,7 +22,8 @@ const (
 	TRANSACTION           = "transaction"
 	TRANSACTION_ITEM      = "transaction_item"
 	AD_IMPRESSION         = "ad_impression"
-	UNKNOWN_EVENT         = "unknown"
+	UNKNOWN_EVENT         = "unknown_event"
+	UNKNOWN_SCHEMA        = "unknown_schema"
 )
 
 // Other
@@ -150,7 +151,8 @@ func (e SnowplowEvent) Schema() *string {
 		}
 		return &schemaName
 	default:
-		return nil
+		schemaName := string(e.Event)
+		return &schemaName
 	}
 }
 

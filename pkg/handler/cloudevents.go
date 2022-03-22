@@ -10,13 +10,14 @@ import (
 	"github.com/silverton-io/honeypot/pkg/validator"
 )
 
-func CloudeventsHandler(handlerParams EventHandlerParams) gin.HandlerFunc {
+func CloudeventsHandler(h EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/cloudevents+json" || c.ContentType() == "application/cloudevents-batch+json" {
 			ctx := context.Background()
-			envelopes := envelope.BuildCloudeventEnvelopesFromRequest(c, *handlerParams.Config)
-			validEvents, invalidEvents := validator.BifurcateAndAnnotate(envelopes, handlerParams.Cache)
-			handlerParams.Sink.BatchPublishValidAndInvalid(ctx, validEvents, invalidEvents, handlerParams.Meta)
+			envelopes := envelope.BuildCloudeventEnvelopesFromRequest(c, *h.Config)
+			validEvents, invalidEvents, stats := validator.BifurcateAndAnnotate(envelopes, h.Cache)
+			h.Sink.BatchPublishValidAndInvalid(ctx, validEvents, invalidEvents, h.Meta)
+			h.Meta.ProtocolStats.Merge(&stats)
 			c.JSON(http.StatusOK, response.Ok)
 		} else {
 			c.JSON(http.StatusBadRequest, response.InvalidContentType)

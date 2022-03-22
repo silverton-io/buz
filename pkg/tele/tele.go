@@ -1,16 +1,13 @@
 package tele
 
 import (
-	"fmt"
 	"net/url"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/event"
-	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/request"
 	"github.com/silverton-io/honeypot/pkg/util"
 )
@@ -22,18 +19,17 @@ const (
 	SHUTDOWN_1_0     string = "com.silverton.io/honeypot/tele/shutdown/v1.0.json"
 )
 
-type ProtocolStats struct {
-	Invalid map[string]map[string]int64 `json:"invalid"`
-	Valid   map[string]map[string]int64 `json:"valid"`
+type Meta struct {
+	Version       string         `json:"version"`
+	InstanceId    uuid.UUID      `json:"instanceId"`
+	StartTime     time.Time      `json:"startTime"`
+	TrackerDomain string         `json:"trackerDomain"`
+	CookieDomain  string         `json:"cookieDomain"`
+	ProtocolStats *ProtocolStats `json:"protocolStats"`
 }
 
-type Meta struct {
-	Version       string    `json:"version"`
-	InstanceId    uuid.UUID `json:"instanceId"`
-	StartTime     time.Time `json:"startTime"`
-	TrackerDomain string    `json:"trackerDomain"`
-	CookieDomain  string    `json:"cookieDomain"`
-	ProtocolStats `json:"protocolStats"`
+func (m *Meta) elapsed() float64 {
+	return time.Since(m.StartTime).Seconds()
 }
 
 type startup struct {
@@ -52,10 +48,6 @@ type shutdown struct {
 	Meta           *Meta     `json:"meta"`
 	Time           time.Time `json:"time"`
 	ElapsedSeconds float64   `json:"elapsedSeconds"`
-}
-
-func (m *Meta) elapsed() float64 {
-	return time.Since(m.StartTime).Seconds()
 }
 
 func heartbeat(t time.Ticker, m *Meta) {
@@ -114,6 +106,7 @@ func Metry(c *config.Config, m *Meta) {
 				Data:   data,
 			},
 		}
+		util.Pprint(startupPayload)
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
 		request.PostEvent(*endpoint, startupPayload)
 		ticker := time.NewTicker(time.Duration(c.Tele.HeartbeatMs) * time.Millisecond)
@@ -123,63 +116,15 @@ func Metry(c *config.Config, m *Meta) {
 
 func BuildMeta(version string, conf *config.Config) *Meta {
 	instanceId := uuid.New()
-	var validStats = make(map[string]map[string]int64)
-	var invalidStats = make(map[string]map[string]int64)
+	ps := ProtocolStats{}
+	ps.Build()
 	m := Meta{
 		Version:       version,
 		InstanceId:    instanceId,
 		StartTime:     time.Now(),
 		TrackerDomain: conf.App.TrackerDomain,
 		CookieDomain:  conf.Cookie.Domain,
-	}
-	m.Valid = validStats
-	m.Invalid = invalidStats
-	for _, p := range protocol.GetIntputProtocols() {
-		var validEventStats = make(map[string]int64)
-		var invalidEventStats = make(map[string]int64)
-		m.Valid[p] = validEventStats
-		m.Invalid[p] = invalidEventStats
+		ProtocolStats: &ps,
 	}
 	return &m
-}
-
-// Return protocol stats from an arbitrary slice of envelopes.
-// These envelopes should be assumed multi-protocol, multi-event-type, and both valid/invalid.
-func ProtocolStatsFromEnvelopes(envelopes []envelope.Envelope) ProtocolStats {
-	var vStat = make(map[string]map[string]int64)
-	var iStat = make(map[string]map[string]int64)
-	pStat := ProtocolStats{
-		Valid:   vStat,
-		Invalid: iStat,
-	}
-	for _, e := range envelopes { // NOTE - this adds another loop. Might be worth rethinking long term.
-		isValid := *e.IsValid
-		if isValid {
-			eStat := pStat.Valid[e.EventProtocol]
-			if eStat == nil {
-				fmt.Println("pStat.Valid is nil")
-				var s = make(map[string]int64)
-				pStat.Valid[e.EventProtocol] = s
-				// pStat.Valid[e.EventProtocol][*e.EventSchema] = 1
-			} else {
-				// pStat.Valid[e.EventProtocol][*e.EventSchema] += 1
-			}
-		} else {
-			eStat := pStat.Invalid[e.EventProtocol]
-			if eStat == nil {
-				fmt.Println("pStat.Invalid is nil")
-				var s = make(map[string]int64)
-				pStat.Invalid[e.EventProtocol] = s
-				// pStat.Invalid[e.EventProtocol][*e.EventSchema] = 1
-			} else {
-				// pStat.Invalid[e.EventProtocol][*e.EventSchema] += 1
-			}
-		}
-		util.Pprint(pStat)
-	}
-	return pStat
-}
-
-func IncrementProtocolEventStat(m *Meta, protocol string, valid bool, eventName string, count int) {
-
 }

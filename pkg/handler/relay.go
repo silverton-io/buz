@@ -10,12 +10,13 @@ import (
 
 // RelayHandler processes incoming envelopes, splits them in half,
 // and sends them to the configured sink. It relies on upstream validation.
-func RelayHandler(p EventHandlerParams) gin.HandlerFunc {
+func RelayHandler(h EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		ctx := context.Background()
 		envelopes := envelope.BuildRelayEnvelopesFromRequest(c)
-		validEnvelopes, invalidEnvelopes := validator.Bifurcate(envelopes)
-		p.Sink.BatchPublishValidAndInvalid(ctx, validEnvelopes, invalidEnvelopes, p.Meta)
+		validEnvelopes, invalidEnvelopes, stats := validator.Bifurcate(envelopes)
+		h.Sink.BatchPublishValidAndInvalid(ctx, validEnvelopes, invalidEnvelopes, h.Meta)
+		h.Meta.ProtocolStats.Merge(&stats)
 	}
 	return gin.HandlerFunc(fn)
 }

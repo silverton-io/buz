@@ -20,7 +20,7 @@ func SquawkboxHandler(p EventHandlerParams, eventProtocol string) gin.HandlerFun
 		case protocol.GENERIC:
 			envelopes = envelope.BuildGenericEnvelopesFromRequest(c, *p.Config)
 		}
-		validEnvelopes, invalidEnvelopes := validator.BifurcateAndAnnotate(envelopes, p.Cache)
+		validEnvelopes, invalidEnvelopes, _ := validator.BifurcateAndAnnotate(envelopes, p.Cache)
 		envelopes = append(validEnvelopes, invalidEnvelopes...)
 		c.JSON(http.StatusOK, envelopes)
 	}
