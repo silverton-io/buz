@@ -5,4 +5,4 @@ tags:
   - opc ua
 ---
 
-# 🟡 OPC UA
+# 🟡 OPC-UA

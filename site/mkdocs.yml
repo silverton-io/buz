@@ -38,6 +38,7 @@ nav:
     - inputs/self-describing.md
     - inputs/webhook.md
     - inputs/relay.md
+    - inputs/cdc.md
     - inputs/opcua.md
     - inputs/ros.md
     - inputs/mqtt.md
@@ -60,13 +61,14 @@ nav:
     - sinks/http.md
     - sinks/stdout.md
     - sinks/elasticsearch.md
-    - sinks/blackhole.md
     - sinks/file.md
+    - sinks/logdna.md
     - sinks/pubnub.md
     - sinks/postgres.md
     - sinks/snowflake.md
     - sinks/firebolt.md
     - sinks/clickhouse.md
+    - sinks/blackhole.md
   - Validation Protocols:
     - validation-protocols/jsonschema.md
   - Serialization Protocols:
