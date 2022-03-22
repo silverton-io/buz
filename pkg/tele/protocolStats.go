@@ -2,13 +2,13 @@ package tele
 
 import (
 	"sync"
-	"sync/atomic"
 
 	"github.com/silverton-io/honeypot/pkg/protocol"
 )
 
 type ProtocolStats struct {
-	mu      sync.Mutex
+	vmu     sync.Mutex
+	imu     sync.Mutex
 	Invalid map[string]map[string]int64 `json:"invalid"`
 	Valid   map[string]map[string]int64 `json:"valid"`
 }
@@ -28,35 +28,32 @@ func (ps *ProtocolStats) Build() {
 
 func (ps *ProtocolStats) IncrementValid(protocol string, event string, count int64) {
 	i := ps.Valid[protocol][event]
-	if i == 0 {
-		ps.Valid[protocol][event] = count
-	} else {
-		atomic.AddInt64(&i, count)
-	}
+	ps.vmu.Lock()
+	defer ps.vmu.Unlock()
+	ps.Valid[protocol][event] = i + count
 }
 
 func (ps *ProtocolStats) IncrementInvalid(protocol string, event string, count int64) {
 	i := ps.Invalid[protocol][event]
-	if i == 0 {
-		ps.Invalid[protocol][event] = count
-	} else {
-		atomic.AddInt64(&i, count)
-	}
+	ps.imu.Lock()
+	defer ps.imu.Unlock()
+	ps.Invalid[protocol][event] = i + count
+
 }
 
 func (ps *ProtocolStats) Merge(stats *ProtocolStats) {
 	for protocol, pStat := range stats.Valid {
 		for event, eStat := range pStat {
-			ps.mu.Lock()
-			defer ps.mu.Unlock()
+			ps.vmu.Lock()
+			defer ps.vmu.Unlock()
 			i := ps.Valid[protocol][event]
 			ps.Valid[protocol][event] = i + eStat
 		}
 	}
 	for protocol, pStat := range stats.Invalid {
 		for event, eStat := range pStat {
-			ps.mu.Lock()
-			defer ps.mu.Unlock()
+			ps.imu.Lock()
+			defer ps.imu.Unlock()
 			i := ps.Invalid[protocol][event]
 			ps.Invalid[protocol][event] = i + eStat
 		}
