@@ -57,13 +57,6 @@ func (s *KinesisSink) BatchPublishInvalid(ctx context.Context, envelopes []envel
 	s.batchPublish(ctx, s.invalidEventsStream, envelopes)
 }
 
-func (s *KinesisSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope) {
-	// Publish
-	go s.BatchPublishValid(ctx, validEnvelopes)
-	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
-	// Increment stats counters
-}
-
 func (s *KinesisSink) Close() {
 	log.Debug().Msg("closing kinesis sink client")
 

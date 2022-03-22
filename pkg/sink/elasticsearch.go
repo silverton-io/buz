@@ -58,12 +58,6 @@ func (s *ElasticsearchSink) BatchPublishInvalid(ctx context.Context, invalidEnve
 	s.batchPublish(ctx, s.invalidIndex, invalidEnvelopes)
 }
 
-func (s *ElasticsearchSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope) {
-	go s.BatchPublishValid(ctx, validEnvelopes)
-	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
-	// FIXME!! Write envelope publish stats
-}
-
 func (s *ElasticsearchSink) Close() {
 	log.Debug().Msg("closing elasticsearch sink client")
 }

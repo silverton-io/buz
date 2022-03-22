@@ -76,13 +76,6 @@ func (s *PubsubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelo
 	s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
 }
 
-func (s *PubsubSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope) {
-	// Publish
-	go s.BatchPublishValid(ctx, validEnvelopes)
-	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
-	// Increment stats counters
-}
-
 func (s *PubsubSink) Close() {
 	log.Debug().Msg("closing pubsub sink client")
 	s.client.Close() // Technically does not need to be called since it's available for lifetime

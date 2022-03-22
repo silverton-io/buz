@@ -61,13 +61,6 @@ func (s *KinesisFirehoseSink) BatchPublishInvalid(ctx context.Context, envelopes
 	s.batchPublish(ctx, s.invalidEventsStream, envelopes)
 }
 
-func (s *KinesisFirehoseSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope) {
-	// Publish
-	go s.BatchPublishValid(ctx, validEnvelopes)
-	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
-	// Increment stats counters
-}
-
 func (s *KinesisFirehoseSink) Close() {
 	log.Debug().Msg("closing kinesis firehose sink client")
 }

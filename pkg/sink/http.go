@@ -37,12 +37,6 @@ func (s *HttpSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []e
 	request.PostEnvelopes(s.invalidUrl, invalidEnvelopes)
 }
 
-func (s *HttpSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope) {
-	go s.BatchPublishValid(ctx, validEnvelopes)
-	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
-	// FIXME! Increment stats. Not including this yet because want to go event protocol/name/etc route.
-}
-
 func (s *HttpSink) Close() {
 	log.Debug().Msg("closing http sink") // no-op
 }

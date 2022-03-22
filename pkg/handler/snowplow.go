@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,11 +12,9 @@ import (
 
 func SnowplowHandler(h EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		ctx := context.Background()
 		envelopes := envelope.BuildSnowplowEnvelopesFromRequest(c, *h.Config)
-		validEnvelopes, invalidEnvelopes, stats := validator.BifurcateAndAnnotate(envelopes, h.Cache)
-		h.Sink.BatchPublishValidAndInvalid(ctx, validEnvelopes, invalidEnvelopes)
-		h.Meta.ProtocolStats.Merge(&stats)
+		annotatedEnvelopes := validator.Annotate(envelopes, h.Cache)
+		h.Manifold.Enqueue(annotatedEnvelopes)
 		if c.Request.Method == http.MethodGet {
 			redirectUrl, _ := c.GetQuery("u")
 			if redirectUrl != "" && h.Config.Snowplow.OpenRedirectsEnabled {

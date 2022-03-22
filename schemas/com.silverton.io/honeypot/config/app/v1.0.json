@@ -501,6 +501,17 @@
             "additionalProperties": false,
             "required": ["schemaCacheBackend", "ttlSeconds", "maxSizeBytes", "purge", "schemaEndpoints"]
         },
+        "manifold": {
+            "type": "object",
+            "description": "Manifold configuration",
+            "properties": {
+                "bufferRecordThreshold": {
+                    "type": "number",
+                    "description": "The record threshold at which point the manifold is purged",
+                    "default": "1"
+                }
+            }
+        },
         "sink": {
             "type": "object",
             "description": "Sink configuration",
@@ -711,5 +722,5 @@
         }
     },
     "additionalProperties": false,
-    "required": [ "version", "app", "middleware", "inputs", "schemaCache", "sink", "squawkBox","tele"]
+    "required": [ "version", "app", "middleware", "inputs", "schemaCache", "manifold", "sink", "squawkBox","tele"]
 }

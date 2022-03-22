@@ -16,8 +16,5 @@ func (s *BlackholeSink) BatchPublishValid(ctx context.Context, validEnvelopes []
 func (s *BlackholeSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
 }
 
-func (s *BlackholeSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope) {
-}
-
 func (s *BlackholeSink) Close() {
 }

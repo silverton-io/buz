@@ -24,9 +24,8 @@ const (
 
 type Sink interface {
 	Initialize(conf config.Sink)
-	BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope)
-	BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope)
-	BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope)
+	BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope)
+	BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope)
 	Close()
 }
 

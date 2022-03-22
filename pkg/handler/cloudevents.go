@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,11 +12,9 @@ import (
 func CloudeventsHandler(h EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/cloudevents+json" || c.ContentType() == "application/cloudevents-batch+json" {
-			ctx := context.Background()
 			envelopes := envelope.BuildCloudeventEnvelopesFromRequest(c, *h.Config)
-			validEvents, invalidEvents, stats := validator.BifurcateAndAnnotate(envelopes, h.Cache)
-			h.Sink.BatchPublishValidAndInvalid(ctx, validEvents, invalidEvents)
-			h.Meta.ProtocolStats.Merge(&stats)
+			annotatedEnvelopes := validator.Annotate(envelopes, h.Cache)
+			h.Manifold.Enqueue(annotatedEnvelopes)
 			c.JSON(http.StatusOK, response.Ok)
 		} else {
 			c.JSON(http.StatusBadRequest, response.InvalidContentType)

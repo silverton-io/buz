@@ -1,11 +1,9 @@
 package sink
 
 import (
-	"context"
 	"testing"
 
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -45,10 +43,8 @@ func TestStdoutSink(t *testing.T) {
 	c := config.Sink{
 		Type: STDOUT,
 	}
-	ctx := context.Background()
 	sink := StdoutSink{}
 
 	sink.Initialize(c)
-	sink.BatchPublishValidAndInvalid(ctx, []envelope.Envelope{}, []envelope.Envelope{})
 	sink.Close()
 }

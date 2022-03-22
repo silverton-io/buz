@@ -80,13 +80,6 @@ func (s *KafkaSink) BatchPublishInvalid(ctx context.Context, envelopes []envelop
 	s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
 }
 
-func (s *KafkaSink) BatchPublishValidAndInvalid(ctx context.Context, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope) {
-	// Publish
-	go s.BatchPublishValid(ctx, validEnvelopes)
-	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
-	// Increment stats counters
-}
-
 func (s *KafkaSink) Close() {
 	log.Debug().Msg("closing kafka sink client")
 	s.client.Close()

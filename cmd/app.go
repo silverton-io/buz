@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,6 +17,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/env"
 	"github.com/silverton-io/honeypot/pkg/handler"
+	"github.com/silverton-io/honeypot/pkg/manifold"
 	"github.com/silverton-io/honeypot/pkg/middleware"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/sink"
@@ -31,16 +33,16 @@ type App struct {
 	config      *config.Config
 	engine      *gin.Engine
 	schemaCache *cache.SchemaCache
+	manifold    *manifold.Manifold
 	sink        sink.Sink
 	meta        *tele.Meta
 }
 
 func (a *App) handlerParams() handler.EventHandlerParams {
 	params := handler.EventHandlerParams{
-		Config: a.config,
-		Cache:  a.schemaCache,
-		Sink:   a.sink,
-		Meta:   a.meta,
+		Config:   a.config,
+		Cache:    a.schemaCache,
+		Manifold: a.manifold,
 	}
 	return params
 }
@@ -73,18 +75,28 @@ func (a *App) configure() {
 	a.meta = meta
 }
 
-func (a *App) initializeSinks() {
-	log.Info().Msg("initializing sinks")
-	s, _ := sink.BuildSink(a.config.Sink)
-	sink.InitializeSink(a.config.Sink, s)
-	a.sink = s
-}
-
 func (a *App) initializeSchemaCache() {
 	log.Info().Msg("initializing schema cache")
 	cache := cache.SchemaCache{}
 	cache.Initialize(a.config.SchemaCache)
 	a.schemaCache = &cache
+}
+
+func (a *App) initializeSinks() {
+	log.Info().Msg("initializing sinks")
+	s, _ := sink.BuildSink(a.config.Sink) // FIXME! What happens if the sink creation throws an err?
+	sink.InitializeSink(a.config.Sink, s)
+	a.sink = s
+}
+
+func (a *App) initializeManifold() {
+	log.Info().Msg("initializing manifold")
+	m, err := manifold.BuildManifold(a.config.Manifold, &a.sink) // FIXME! What happens if the manifold creation throws an err?
+	fmt.Printf("%+v", m)
+	if err != nil {
+		log.Fatal().Stack().Err(err).Msg("could not build manifold")
+	}
+	a.manifold = m
 }
 
 func (a *App) initializeRouter() {
@@ -246,6 +258,7 @@ func (a *App) Initialize() {
 	log.Info().Msg("initializing app")
 	a.configure()
 	a.initializeSinks()
+	a.initializeManifold()
 	a.initializeSchemaCache()
 	a.initializeRouter()
 	a.initializeMiddleware()
@@ -273,6 +286,7 @@ func (a *App) Run() {
 			log.Info().Msgf("server shut down")
 		}
 	}()
+	manifold.Run(a.manifold)
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
