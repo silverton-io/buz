@@ -2,47 +2,88 @@ package sink
 
 import (
 	"context"
-	"database/sql"
+	"strconv"
 
-	"entgo.io/ent"
+	"github.com/jackc/pgx"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 )
 
-type ValidEnvelope struct {
-	ent.Schema
-}
-
-func (ValidEnvelope) Fields() []ent.Field {
-	return nil
-}
-
-type InvalidEnvelope struct {
-	ent.Schema
-}
-
-func (InvalidEnvelope) Fields() []ent.Field {
-	return nil
+func generateCreateTableSql(tableName string) string {
+	return "create table if not exists " + tableName + "(id uuid, \"eventProtocol\" text, \"eventSchema\" text, source text, tstamp timestamp with time zone, ip text, \"isValid\" boolean, \"isRelayed\" boolean, \"validationError\" jsonb, payload jsonb);"
 }
 
 type PostgresSink struct {
-	db *sql.DB
+	conn         *pgx.Conn
+	validTable   string
+	invalidTable string
 }
 
 func (s *PostgresSink) Initialize(conf config.Sink) {
 	log.Debug().Msg("initializing postgres sink")
-	dbUrl := "postgresql://" + conf.DbUser + ":" + conf.DbPass + "@" + conf.DbHost + ":" + conf.DbPort + "/" + conf.DbName
-	db, err := sql.Open("pgx", dbUrl)
-	// drv := entsql.OpenDB(dialect.Postgres, db)
-	// return ent.NewClient(ent.Driver(drv))
+	connectionConf := pgx.ConnConfig{
+		Host:     conf.DbHost,
+		Port:     conf.DbPort,
+		Database: conf.DbName,
+		User:     conf.DbUser,
+		Password: conf.DbPass,
+	}
+	conn, err := pgx.Connect(connectionConf)
+	if err != nil {
+		log.Fatal().Err(err).Msg("could not open db connection")
+	}
+	s.conn = conn
+	s.validTable = conf.ValidTable
+	s.invalidTable = conf.InvalidTable
+	createValidSql := generateCreateTableSql(s.validTable)
+	createInvalidSql := generateCreateTableSql(s.invalidTable)
+	for _, sql := range []string{createValidSql, createInvalidSql} {
+		_, err := s.conn.Exec(sql)
+		if err != nil {
+			log.Fatal().Err(err).Msg("could not create table")
+		}
+	}
 }
 
-func (s *PostgresSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {}
+func (s *PostgresSink) batchPublish(ctx context.Context, tableName string, envelopes []envelope.Envelope) {
+	var rows [][]interface{}
+	for _, envelope := range envelopes {
+		row := []interface{}{
+			envelope.Id,
+			envelope.EventProtocol,
+			envelope.EventSchema,
+			envelope.Source,
+			envelope.Tstamp,
+			envelope.Ip,
+			envelope.IsValid,
+			envelope.IsRelayed,
+			envelope.ValidationError,
+			envelope.Payload,
+		}
+		rows = append(rows, row)
+	}
+	copyCount, err := s.conn.CopyFrom(
+		pgx.Identifier{tableName},
+		[]string{"id", "eventProtocol", "eventSchema", "source", "tstamp", "ip", "isValid", "isRelayed", "validationError", "payload"},
+		pgx.CopyFromRows(rows),
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("could not copy rows")
+	}
+	count := strconv.Itoa(copyCount)
+	log.Debug().Msg("copied " + count + " rows to " + tableName)
+}
+
+func (s *PostgresSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
+	s.batchPublish(ctx, s.validTable, envelopes)
+}
 
 func (s *PostgresSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
+	s.batchPublish(ctx, s.invalidTable, envelopes)
 }
 
 func (s *PostgresSink) Close() {
 	log.Debug().Msg("closing postgres sink")
+	s.conn.Close()
 }

@@ -574,6 +574,11 @@
                     "description": "The file to sink valid envelopes to if sink type is file",
                     "default": "honeypot-valid.json"
                 },
+                "validTable": {
+                    "type": "string",
+                    "description": "The table to sink valid envelopes to if sink type is postgres",
+                    "default": "honeypot_valid"
+                },
                 "invalidEventTopic": {
                     "type": "string",
                     "description": "The name of the invalid event topic (or 'stream', if kinesis)",
@@ -594,6 +599,11 @@
                     "description": "The file to sink invalid envelopes to if sink type is file",
                     "default": "honeypot-invalid.json"
                 },
+                "invalidTable": {
+                    "type": "string",
+                    "description": "The table to sink invalid envelopes to if sink type is postgres",
+                    "default": "honeypot_invalid"
+                },
                 "produceTimeout": {
                     "type": "integer",
                     "default": "5",
@@ -608,6 +618,31 @@
                     "type": "string",
                     "description": "The url to relay envelopes to, if sink type is relay",
                     "default": "https://another-honeypot.net/relay"
+                },
+                "dbHost": {
+                    "type": "string",
+                    "description": "The database hostname to write envelopes to if sink type is postgres",
+                    "default": "localhost"
+                },
+                "dbPort": {
+                    "type": "number",
+                    "description": "The database port to write envelopes to if sink type is postgres",
+                    "default": 5432
+                },
+                "dbName": {
+                    "type": "string",
+                    "description": "The database name if sink type is postgres",
+                    "default": "honeypot"
+                },
+                "dbUser": {
+                    "type": "string",
+                    "description": "The database connection user if sink type is postgres",
+                    "default": "honeypot"
+                },
+                "dbPass": {
+                    "type": "string",
+                    "description": "The database connection password if sink type is postgres",
+                    "default": "honeypot"
                 }
             },
             "additionalProperties": false,
@@ -700,6 +735,14 @@
                         }
                     },
                     "required": ["validFile", "invalidFile"]
+                },
+                {
+                    "properties": {
+                        "type": {
+                            "const": "postgres"
+                        }
+                    },
+                    "required": ["dbHost", "dbPort", "dbName", "dbUser", "dbPass", "validTable", "invalidTable"]
                 }
             ]
         },
