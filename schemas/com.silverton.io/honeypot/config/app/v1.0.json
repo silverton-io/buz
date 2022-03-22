@@ -507,10 +507,22 @@
             "properties": {
                 "bufferRecordThreshold": {
                     "type": "number",
-                    "description": "The record threshold at which point the manifold is purged",
+                    "description": "The record threshold at which point the manifold buffer is purged",
                     "default": "1"
+                },
+                "bufferByteThreshold": {
+                    "type": "number",
+                    "description": "The byte threshold at which point the manifold buffer is purged",
+                    "default": "1024"
+                },
+                "bufferTimeThreshold": {
+                    "type": "number",
+                    "description": "The time threshold (in seconds) at which point the manifold buffer is purged",
+                    "default": "60"
                 }
-            }
+            },
+            "additionalProperties": false,
+            "required": ["bufferRecordThreshold", "bufferByteThreshold", "bufferTimeThreshold"]
         },
         "sink": {
             "type": "object",

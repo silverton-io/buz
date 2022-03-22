@@ -2,6 +2,6 @@ package config
 
 type Manifold struct {
 	BufferRecordThreshold int `json:"bufferRecordThreshold"`
-	// bufferByteThreshold        int `json:"bufferByteThreshold"`
-	// bufferTimeThreshold int `json:"bufferTimeThreshold"`
+	BufferByteThreshold   int `json:"bufferByteThreshold"`
+	BufferTimeThreshold   int `json:"bufferTimeThreshold"`
 }

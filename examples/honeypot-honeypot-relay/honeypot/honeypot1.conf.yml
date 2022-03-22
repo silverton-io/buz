@@ -89,6 +89,11 @@ schemaCache:
   schemaEndpoints:
     enabled: true
 
+manifold:
+  bufferRecordThreshold: 1
+  bufferByteThreshold: 1024
+  bufferTimeThreshold: 60
+
 sink:
   type: relay
   relayUrl: http://relay:8081/relay
