@@ -532,7 +532,7 @@
                     "type": "string",
                     "default": "pubsub",
                     "description": "The sink configuration",
-                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch", "blackhole"]
+                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch", "blackhole", "file", "postgres", "pubnub"]
                 },
                 "kafkaBrokers": {
                     "type": "array",
@@ -569,6 +569,11 @@
                     "description": "The index to sink valid envelopes to if sink type is elasticsearch",
                     "default": "honeypot-valid"
                 },
+                "validFile": {
+                    "type": "string",
+                    "description": "The file to sink valid envelopes to if sink type is file",
+                    "default": "honeypot-valid.json"
+                },
                 "invalidEventTopic": {
                     "type": "string",
                     "description": "The name of the invalid event topic (or 'stream', if kinesis)",
@@ -583,6 +588,11 @@
                     "type": "string",
                     "description": "The index to sink invalid envelopes to if sink type is elasticsearch",
                     "default": "honeypot-invalid"
+                },
+                "invalidFile": {
+                    "type": "string",
+                    "description": "The file to sink invalid envelopes to if sink type is file",
+                    "default": "honeypot-invalid.json"
                 },
                 "produceTimeout": {
                     "type": "integer",
@@ -682,6 +692,14 @@
                         }
                     },
                     "required": []
+                },
+                {
+                    "properties": {
+                        "type": {
+                            "const": "file"
+                        }
+                    },
+                    "required": ["validFile", "invalidFile"]
                 }
             ]
         },

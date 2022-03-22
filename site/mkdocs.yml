@@ -62,13 +62,12 @@ nav:
     - sinks/stdout.md
     - sinks/elasticsearch.md
     - sinks/file.md
-    - sinks/logdna.md
     - sinks/pubnub.md
     - sinks/postgres.md
+    - sinks/blackhole.md
     - sinks/snowflake.md
     - sinks/firebolt.md
     - sinks/clickhouse.md
-    - sinks/blackhole.md
   - Validation Protocols:
     - validation-protocols/jsonschema.md
   - Serialization Protocols:

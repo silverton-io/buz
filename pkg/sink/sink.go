@@ -20,6 +20,9 @@ const (
 	RELAY            string = "relay"
 	ELASTICSEARCH    string = "elasticsearch"
 	BLACKHOLE        string = "blackhole"
+	FILE             string = "file"
+	POSTGRES         string = "postgres"
+	PUBNUB           string = "pubnub"
 )
 
 type Sink interface {
@@ -60,6 +63,15 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		return &sink, nil
 	case BLACKHOLE:
 		sink := BlackholeSink{}
+		return &sink, nil
+	case FILE:
+		sink := FileSink{}
+		return &sink, nil
+	case PUBNUB:
+		sink := PubnubSink{}
+		return &sink, nil
+	case POSTGRES:
+		sink := PostgresSink{}
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
