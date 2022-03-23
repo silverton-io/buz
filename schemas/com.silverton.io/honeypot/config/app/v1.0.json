@@ -579,6 +579,11 @@
                     "description": "The table to sink valid envelopes to if sink type is postgres",
                     "default": "honeypot_valid"
                 },
+                "validChannel": {
+                    "type": "string",
+                    "description": "The channel to sink valid envelopes to if sink type is pubnub",
+                    "default": "honeypot-valid"
+                },
                 "invalidEventTopic": {
                     "type": "string",
                     "description": "The name of the invalid event topic (or 'stream', if kinesis)",
@@ -603,6 +608,11 @@
                     "type": "string",
                     "description": "The table to sink invalid envelopes to if sink type is postgres",
                     "default": "honeypot_invalid"
+                },
+                "invalidChannel": {
+                    "type": "string",
+                    "description": "The channel to sink invalid envelopes to if sink type is pubnub",
+                    "default": "honeypot-invalid"
                 },
                 "produceTimeout": {
                     "type": "integer",
@@ -643,6 +653,16 @@
                     "type": "string",
                     "description": "The database connection password if sink type is postgres",
                     "default": "honeypot"
+                },
+                "pubnubPubKey": {
+                    "type": "string",
+                    "description": "The pubnub pub key",
+                    "default": "YOUR-PUB-KEY"
+                },
+                "pubnubSubKey": {
+                    "type": "string",
+                    "description": "The pubnub sub key",
+                    "default": "YOUR-SUB-KEY"
                 }
             },
             "additionalProperties": false,
@@ -743,6 +763,14 @@
                         }
                     },
                     "required": ["dbHost", "dbPort", "dbName", "dbUser", "dbPass", "validTable", "invalidTable"]
+                },
+                {
+                    "properties": {
+                        "type": {
+                            "const": "pubnub"
+                        }
+                    },
+                    "required": ["validChannel", "invalidChannel", "pubnubPubKey", "pubnubSubKey"]
                 }
             ]
         },

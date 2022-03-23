@@ -33,4 +33,9 @@ type Sink struct {
 	DbPass       string `json:"-"`
 	ValidTable   string `json:"validTable"`
 	InvalidTable string `json:"invalidTable"`
+	// Pubnub
+	ValidChannel   string `json:"validChannel"`
+	InvalidChannel string `json:"invalidChannel"`
+	PubnubPubKey   string `json:"pubnubPubKey"`
+	PubnubSubKey   string `json:"pubnubSubKey"`
 }
