@@ -1,17 +1,41 @@
 package config
 
+type Sinks struct {
+	Sinks []Sink `json:"sinks"`
+}
+
 type Sink struct {
-	Type                  string   `json:"type"`
-	Project               string   `json:"project,omitempty"`
-	KafkaBrokers          []string `json:"kakfaBrokers,omitempty"`
+	Type         string   `json:"type"`
+	Project      string   `json:"project,omitempty"`
+	KafkaBrokers []string `json:"kakfaBrokers,omitempty"`
+	// Kafka, Pubsub
+	ValidEventTopic   string `json:"validEventTopic,omitempty"`
+	InvalidEventTopic string `json:"invalidEventTopic,omitempty"`
+	// Relay, HTTP/S, etc
+	ValidUrl   string `json:"validUrl,omitempty"`
+	InvalidUrl string `json:"invalidUrl,omitempty"`
+	// Elasticsearch
+	ValidIndex            string   `json:"validIndex,omitempty"`
+	InvalidIndex          string   `json:"invalidIndex,omitempty"`
 	ElasticsearchHosts    []string `json:"elasticsearchHosts,omitempty"`
 	ElasticsearchUsername string   `json:"-"`
 	ElasticsearchPassword string   `json:"-"`
-	ValidEventTopic       string   `json:"validEventTopic,omitempty"`
-	InvalidEventTopic     string   `json:"invalidEventTopic,omitempty"`
-	ValidUrl              string   `json:"validUrl,omitempty"`
-	InvalidUrl            string   `json:"invalidUrl,omitempty"`
-	ValidIndex            string   `json:"validIndex,omitempty"`
-	InvalidIndex          string   `json:"invalidIndex,omitempty"`
-	RelayUrl              string   `json:"relayUrl,omitempty"`
+	// Honeypot relay
+	RelayUrl string `json:"relayUrl,omitempty"`
+	// File
+	ValidFile   string `json:"validFile,omitempty"`
+	InvalidFile string `json:"invalidFile,omitempty"`
+	// Database
+	DbHost       string `json:"-"`
+	DbPort       uint16 `json:"-"`
+	DbName       string `json:"-"`
+	DbUser       string `json:"-"`
+	DbPass       string `json:"-"`
+	ValidTable   string `json:"validTable"`
+	InvalidTable string `json:"invalidTable"`
+	// Pubnub
+	ValidChannel   string `json:"validChannel"`
+	InvalidChannel string `json:"invalidChannel"`
+	PubnubPubKey   string `json:"pubnubPubKey"`
+	PubnubSubKey   string `json:"pubnubSubKey"`
 }

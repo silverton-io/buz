@@ -13,6 +13,8 @@ const (
 	FS    string = "fs"
 	HTTP  string = "http"
 	HTTPS string = "https"
+	IGLU  string = "iglu"
+	KSR   string = "ksr" // Kafka schema registry
 )
 
 type SchemaCacheBackend interface {
@@ -43,6 +45,14 @@ func BuildSchemaCacheBackend(conf config.SchemaCacheBackend) (backend SchemaCach
 		cacheBackend := HttpSchemaCacheBackend{}
 		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
+	case IGLU:
+		e := errors.New("the iglu schema cache backend is not yet available")
+		log.Fatal().Stack().Err(e).Msg("iglu is unsupported")
+		return nil, e
+	case KSR:
+		e := errors.New("the kafka schema registry cache backend is not yet available")
+		log.Fatal().Stack().Err(e).Msg("kafka schema registry is unsupported")
+		return nil, e
 	default:
 		e := errors.New("unsupported schema cache backend: " + conf.Type)
 		log.Fatal().Stack().Err(e).Msg("unsupported backend")
