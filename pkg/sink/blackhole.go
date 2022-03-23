@@ -9,8 +9,8 @@ import (
 )
 
 type BlackholeSink struct {
-	name string
 	id   *uuid.UUID
+	name string
 }
 
 func (s *BlackholeSink) Id() *uuid.UUID {
