@@ -5,6 +5,7 @@ type Sinks struct {
 }
 
 type Sink struct {
+	Name         string   `json:"name"`
 	Type         string   `json:"type"`
 	Project      string   `json:"project,omitempty"`
 	KafkaBrokers []string `json:"kakfaBrokers,omitempty"`

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/stretchr/testify/assert"
@@ -13,6 +14,11 @@ import (
 
 type MockSink struct {
 	mock.Mock
+}
+
+func (ms *MockSink) Id() *uuid.UUID {
+	id := uuid.New()
+	return &id
 }
 
 func (ms *MockSink) Initialize(conf config.Sink) {

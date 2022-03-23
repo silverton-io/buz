@@ -528,6 +528,11 @@
             "type": "object",
             "description": "Sink configuration",
             "properties": {
+                "name": {
+                    "type": "string",
+                    "default": "SINK-NAME",
+                    "description": "The sink name"
+                },
                 "type": {
                     "type": "string",
                     "default": "pubsub",
@@ -614,11 +619,6 @@
                     "description": "The channel to sink invalid envelopes to if sink type is pubnub",
                     "default": "honeypot-invalid"
                 },
-                "produceTimeout": {
-                    "type": "integer",
-                    "default": "5",
-                    "description": "The sink producer timeout in seconds"
-                },
                 "project": {
                     "type": "string",
                     "default": "honeypot-gcp-project",
@@ -666,7 +666,7 @@
                 }
             },
             "additionalProperties": false,
-            "required": ["type", "produceTimeout"],
+            "required": ["name", "type"],
             "anyOf": [
                 {
                     "properties": {

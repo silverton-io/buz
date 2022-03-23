@@ -7,15 +7,22 @@ import (
 	"sync"
 
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 )
 
 type ElasticsearchSink struct {
+	id           *uuid.UUID
+	name         string
 	client       *elasticsearch.Client
 	validIndex   string
 	invalidIndex string
+}
+
+func (s *ElasticsearchSink) Id() *uuid.UUID {
+	return s.id
 }
 
 func (s *ElasticsearchSink) Initialize(conf config.Sink) {
@@ -25,6 +32,8 @@ func (s *ElasticsearchSink) Initialize(conf config.Sink) {
 		Password:  conf.ElasticsearchPassword,
 	}
 	es, _ := elasticsearch.NewClient(cfg)
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
 	s.client, s.validIndex, s.invalidIndex = es, conf.ValidIndex, conf.InvalidIndex
 }
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/url"
 
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
@@ -11,7 +12,13 @@ import (
 )
 
 type RelaySink struct {
+	id       *uuid.UUID
+	name     string
 	relayUrl url.URL
+}
+
+func (s *RelaySink) Id() *uuid.UUID {
+	return s.id
 }
 
 func (s *RelaySink) Initialize(conf config.Sink) {
@@ -20,6 +27,8 @@ func (s *RelaySink) Initialize(conf config.Sink) {
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("relayUrl is not a valid url")
 	}
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
 	s.relayUrl = *u
 }
 

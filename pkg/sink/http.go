@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/url"
 
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
@@ -11,8 +12,14 @@ import (
 )
 
 type HttpSink struct {
+	id         *uuid.UUID
+	name       string
 	validUrl   url.URL
 	invalidUrl url.URL
+}
+
+func (s *HttpSink) Id() *uuid.UUID {
+	return s.id
 }
 
 func (s *HttpSink) Initialize(conf config.Sink) {
@@ -25,8 +32,9 @@ func (s *HttpSink) Initialize(conf config.Sink) {
 	if invErr != nil {
 		log.Fatal().Stack().Err(invErr).Msg("invalidUrl is not a valid url")
 	}
-	s.validUrl = *vUrl
-	s.invalidUrl = *invUrl
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
+	s.validUrl, s.invalidUrl = *vUrl, *invUrl
 }
 
 func (s *HttpSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {

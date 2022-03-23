@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
@@ -19,9 +20,15 @@ const (
 )
 
 type KafkaSink struct {
+	id                 *uuid.UUID
+	name               string
 	client             *kgo.Client
 	validEventsTopic   string
 	invalidEventsTopic string
+}
+
+func (s *KafkaSink) Id() *uuid.UUID {
+	return s.id
 }
 
 func (s *KafkaSink) Initialize(conf config.Sink) {
@@ -49,6 +56,8 @@ func (s *KafkaSink) Initialize(conf config.Sink) {
 			log.Fatal().Stack().Err(d.Err).Msg("topic doesn't exist: " + d.Name)
 		}
 	}
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, conf.ValidEventTopic, conf.InvalidEventTopic
 }
 

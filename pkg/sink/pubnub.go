@@ -18,23 +18,26 @@ const (
 )
 
 type PubnubSink struct {
+	id             *uuid.UUID
+	name           string
 	validChannel   string
 	invalidChannel string
 	pubKey         string
 	subKey         string
 	store          int
 	callback       string
-	id             uuid.UUID
+}
+
+func (s *PubnubSink) Id() *uuid.UUID {
+	return s.id
 }
 
 func (s *PubnubSink) Initialize(conf config.Sink) {
 	log.Debug().Msg("initializing pubnub sink")
-	s.validChannel = conf.ValidChannel
-	s.invalidChannel = conf.InvalidChannel
-	s.pubKey = conf.PubnubPubKey
-	s.subKey = conf.PubnubSubKey
-	u := uuid.New()
-	s.id = u
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
+	s.validChannel, s.invalidChannel = conf.ValidChannel, conf.InvalidChannel
+	s.pubKey, s.subKey = conf.PubnubPubKey, conf.PubnubSubKey
 }
 
 func (s *PubnubSink) buildPublishUrl(channel string) *url.URL {
@@ -42,7 +45,7 @@ func (s *PubnubSink) buildPublishUrl(channel string) *url.URL {
 	p = "https://" + p + "?uuid=" + s.id.String()
 	u, err := url.Parse(p)
 	if err != nil {
-		log.Error().Err(err).Msg("could not parse url")
+		log.Error().Err(err).Msg("could not parse publish url")
 	}
 	return u
 }

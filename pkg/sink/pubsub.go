@@ -7,19 +7,26 @@ import (
 	"sync"
 
 	"cloud.google.com/go/pubsub"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"golang.org/x/net/context"
 )
 
+const INIT_TIMEOUT_SECONDS = 10
+
 type PubsubSink struct {
+	id                 *uuid.UUID
+	name               string
 	client             *pubsub.Client
 	validEventsTopic   *pubsub.Topic
 	invalidEventsTopic *pubsub.Topic
 }
 
-const INIT_TIMEOUT_SECONDS = 10
+func (s *PubsubSink) Id() *uuid.UUID {
+	return s.id
+}
 
 func (s *PubsubSink) Initialize(conf config.Sink) {
 	ctx, _ := context.WithTimeout(context.Background(), INIT_TIMEOUT_SECONDS*time.Second)
@@ -43,6 +50,8 @@ func (s *PubsubSink) Initialize(conf config.Sink) {
 	if !invTopicExists {
 		log.Fatal().Stack().Err(err).Msg("invalid event topic doesn't exist in project " + conf.Project)
 	}
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, validTopic, invalidTopic
 }
 

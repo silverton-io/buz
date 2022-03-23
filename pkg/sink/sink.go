@@ -3,6 +3,7 @@ package sink
 import (
 	"errors"
 
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
@@ -26,6 +27,7 @@ const (
 )
 
 type Sink interface {
+	Id() *uuid.UUID
 	Initialize(conf config.Sink)
 	BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope)
 	BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope)
