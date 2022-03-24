@@ -21,6 +21,11 @@ func (ms *MockSink) Id() *uuid.UUID {
 	return &id
 }
 
+func (ms *MockSink) Name() string {
+	id := "thing"
+	return id
+}
+
 func (ms *MockSink) Initialize(conf config.Sink) {
 	ms.Called(conf)
 }

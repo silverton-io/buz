@@ -22,6 +22,10 @@ func (s *HttpSink) Id() *uuid.UUID {
 	return s.id
 }
 
+func (s *HttpSink) Name() string {
+	return s.name
+}
+
 func (s *HttpSink) Initialize(conf config.Sink) {
 	log.Debug().Msg("initializing http sink")
 	vUrl, vErr := url.Parse(conf.ValidUrl)

@@ -28,6 +28,10 @@ func (s *PubsubSink) Id() *uuid.UUID {
 	return s.id
 }
 
+func (s *PubsubSink) Name() string {
+	return s.name
+}
+
 func (s *PubsubSink) Initialize(conf config.Sink) {
 	ctx, _ := context.WithTimeout(context.Background(), INIT_TIMEOUT_SECONDS*time.Second)
 	client, err := pubsub.NewClient(ctx, conf.Project)

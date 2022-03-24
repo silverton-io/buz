@@ -31,6 +31,10 @@ func (s *KafkaSink) Id() *uuid.UUID {
 	return s.id
 }
 
+func (s *KafkaSink) Name() string {
+	return s.name
+}
+
 func (s *KafkaSink) Initialize(conf config.Sink) {
 	ctx := context.Background()
 	log.Debug().Msg("initializing kafka client")

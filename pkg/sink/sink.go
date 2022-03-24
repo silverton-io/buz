@@ -28,6 +28,7 @@ const (
 
 type Sink interface {
 	Id() *uuid.UUID
+	Name() string
 	Initialize(conf config.Sink)
 	BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope)
 	BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope)

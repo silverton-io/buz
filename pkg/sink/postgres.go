@@ -27,6 +27,10 @@ func (s *PostgresSink) Id() *uuid.UUID {
 	return s.id
 }
 
+func (s *PostgresSink) Name() string {
+	return s.name
+}
+
 func (s *PostgresSink) Initialize(conf config.Sink) {
 	log.Debug().Msg("initializing postgres sink")
 	connectionConf := pgx.ConnConfig{

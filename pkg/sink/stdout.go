@@ -45,6 +45,10 @@ func (s *StdoutSink) Id() *uuid.UUID {
 	return s.id
 }
 
+func (s *StdoutSink) Name() string {
+	return s.name
+}
+
 func (s *StdoutSink) Initialize(conf config.Sink) {
 	log.Debug().Msg("initializing stdout sink")
 	id := uuid.New()

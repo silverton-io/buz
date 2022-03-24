@@ -1,6 +1,7 @@
 package manifold
 
 import (
+	"context"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -50,10 +51,10 @@ func BuildManifold(conf config.Manifold, sinks *[]sink.Sink) (manifold *Manifold
 func Run(manifold *Manifold, meta *tele.Meta) {
 	log.Debug().Msg("running manifold")
 	go func() {
-		// ctx := context.Background()
+		ctx := context.Background()
 		var invalidEnvelopes []envelope.Envelope
 		var validEnvelopes []envelope.Envelope
-		// sinks := *manifold.sinks
+		sinks := *manifold.sinks
 		for {
 			e := <-*manifold.envelopeChan
 			if *e.IsValid {
@@ -65,10 +66,16 @@ func Run(manifold *Manifold, meta *tele.Meta) {
 				invalidEnvelopes = append(invalidEnvelopes, e)
 				meta.ProtocolStats.IncrementInvalid(e.EventProtocol, e.EventSchema, 1)
 			}
-			if len(validEnvelopes) >= manifold.bufferRecordThreshold || len(invalidEnvelopes) >= manifold.bufferRecordThreshold { // FIXME! Break out buffer purge
+			vEnvelopeCount := len(validEnvelopes)
+			invEnvelopeCount := len(invalidEnvelopes)
+			if vEnvelopeCount >= manifold.bufferRecordThreshold || invEnvelopeCount >= manifold.bufferRecordThreshold { // FIXME! Break out buffer purge
 				log.Debug().Msg("purging envelope buffers")
-				// sink.BatchPublishValid(ctx, validEnvelopes)
-				// sink.BatchPublishInvalid(ctx, invalidEnvelopes)
+				for _, sink := range sinks {
+					log.Info().Interface("envelopeCount", vEnvelopeCount).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking valid envelopes")
+					sink.BatchPublishValid(ctx, validEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
+					log.Info().Interface("envelopeCount", invEnvelopeCount).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking invalid envelopes")
+					sink.BatchPublishInvalid(ctx, invalidEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
+				}
 				meta.BufferPurgeStats.Increment()
 				manifold.lastPurged = time.Now()
 				invalidEnvelopes = nil

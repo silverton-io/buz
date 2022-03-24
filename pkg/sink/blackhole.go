@@ -17,6 +17,10 @@ func (s *BlackholeSink) Id() *uuid.UUID {
 	return s.id
 }
 
+func (s *BlackholeSink) Name() string {
+	return s.name
+}
+
 func (s *BlackholeSink) Initialize(conf config.Sink) {
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name

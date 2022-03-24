@@ -22,6 +22,10 @@ func (s *FileSink) Id() *uuid.UUID {
 	return s.id
 }
 
+func (s *FileSink) Name() string {
+	return s.name
+}
+
 func (s *FileSink) Initialize(conf config.Sink) {
 	log.Debug().Msg("initializing file sink")
 	s.validFile = conf.ValidFile

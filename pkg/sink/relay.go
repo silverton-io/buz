@@ -21,6 +21,10 @@ func (s *RelaySink) Id() *uuid.UUID {
 	return s.id
 }
 
+func (s *RelaySink) Name() string {
+	return s.name
+}
+
 func (s *RelaySink) Initialize(conf config.Sink) {
 	log.Debug().Msg("initializing http sink")
 	u, err := url.Parse(conf.RelayUrl)

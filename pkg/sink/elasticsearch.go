@@ -25,6 +25,10 @@ func (s *ElasticsearchSink) Id() *uuid.UUID {
 	return s.id
 }
 
+func (s *ElasticsearchSink) Name() string {
+	return s.name
+}
+
 func (s *ElasticsearchSink) Initialize(conf config.Sink) {
 	cfg := elasticsearch.Config{
 		Addresses: conf.ElasticsearchHosts,

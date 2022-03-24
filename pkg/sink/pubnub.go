@@ -32,6 +32,10 @@ func (s *PubnubSink) Id() *uuid.UUID {
 	return s.id
 }
 
+func (s *PubnubSink) Name() string {
+	return s.name
+}
+
 func (s *PubnubSink) Initialize(conf config.Sink) {
 	log.Debug().Msg("initializing pubnub sink")
 	id := uuid.New()

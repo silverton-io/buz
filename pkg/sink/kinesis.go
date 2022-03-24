@@ -25,6 +25,10 @@ func (s *KinesisSink) Id() *uuid.UUID {
 	return s.id
 }
 
+func (s *KinesisSink) Name() string {
+	return s.name
+}
+
 func (s *KinesisSink) Initialize(conf config.Sink) {
 	ctx := context.Background()
 	cfg, _ := awsconf.LoadDefaultConfig(ctx)
