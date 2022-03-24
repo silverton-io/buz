@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/stretchr/testify/assert"
@@ -15,8 +16,19 @@ type MockSink struct {
 	mock.Mock
 }
 
-func (ms *MockSink) Initialize(conf config.Sink) {
+func (ms *MockSink) Id() *uuid.UUID {
+	id := uuid.New()
+	return &id
+}
+
+func (ms *MockSink) Name() string {
+	id := "thing"
+	return id
+}
+
+func (ms *MockSink) Initialize(conf config.Sink) error {
 	ms.Called(conf)
+	return nil
 }
 
 func (ms *MockSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {

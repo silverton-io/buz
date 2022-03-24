@@ -94,9 +94,9 @@ manifold:
   bufferByteThreshold: 1024
   bufferTimeThreshold: 60
 
-sink:
-  type: stdout
-  produceTimeout: 5
+sinks:
+  - name: console
+    type: stdout
 
 squawkBox:
   enabled: false

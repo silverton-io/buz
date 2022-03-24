@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
@@ -15,12 +16,22 @@ func generateCreateTableSql(tableName string) string {
 }
 
 type PostgresSink struct {
+	id           *uuid.UUID
+	name         string
 	conn         *pgx.Conn
 	validTable   string
 	invalidTable string
 }
 
-func (s *PostgresSink) Initialize(conf config.Sink) {
+func (s *PostgresSink) Id() *uuid.UUID {
+	return s.id
+}
+
+func (s *PostgresSink) Name() string {
+	return s.name
+}
+
+func (s *PostgresSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing postgres sink")
 	connectionConf := pgx.ConnConfig{
 		Host:     conf.DbHost,
@@ -31,19 +42,21 @@ func (s *PostgresSink) Initialize(conf config.Sink) {
 	}
 	conn, err := pgx.Connect(connectionConf)
 	if err != nil {
-		log.Fatal().Err(err).Msg("could not open db connection")
+		log.Debug().Err(err).Msg("could not open db connection")
+		return err
 	}
-	s.conn = conn
-	s.validTable = conf.ValidTable
-	s.invalidTable = conf.InvalidTable
-	createValidSql := generateCreateTableSql(s.validTable)
-	createInvalidSql := generateCreateTableSql(s.invalidTable)
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
+	s.conn, s.validTable, s.invalidTable = conn, conf.ValidTable, conf.InvalidTable
+	createValidSql, createInvalidSql := generateCreateTableSql(s.validTable), generateCreateTableSql(s.invalidTable)
 	for _, sql := range []string{createValidSql, createInvalidSql} {
 		_, err := s.conn.Exec(sql)
 		if err != nil {
-			log.Fatal().Err(err).Msg("could not create table")
+			log.Debug().Err(err).Msg("could not create table")
+			return err
 		}
 	}
+	return nil
 }
 
 func (s *PostgresSink) batchPublish(ctx context.Context, tableName string, envelopes []envelope.Envelope) {

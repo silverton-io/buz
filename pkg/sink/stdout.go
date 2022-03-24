@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
@@ -35,10 +36,24 @@ func Colorize(colorString string) func(...interface{}) string {
 	return sprint
 }
 
-type StdoutSink struct{}
+type StdoutSink struct {
+	id   *uuid.UUID
+	name string
+}
 
-func (s *StdoutSink) Initialize(conf config.Sink) {
+func (s *StdoutSink) Id() *uuid.UUID {
+	return s.id
+}
+
+func (s *StdoutSink) Name() string {
+	return s.name
+}
+
+func (s *StdoutSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing stdout sink")
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
+	return nil
 }
 
 func (s *StdoutSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {

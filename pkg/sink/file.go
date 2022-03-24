@@ -5,20 +5,34 @@ import (
 	"encoding/json"
 	"os"
 
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 )
 
 type FileSink struct {
+	id          *uuid.UUID
+	name        string
 	validFile   string
 	invalidFile string
 }
 
-func (s *FileSink) Initialize(conf config.Sink) {
+func (s *FileSink) Id() *uuid.UUID {
+	return s.id
+}
+
+func (s *FileSink) Name() string {
+	return s.name
+}
+
+func (s *FileSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing file sink")
 	s.validFile = conf.ValidFile
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
 	s.invalidFile = conf.InvalidFile
+	return nil
 }
 
 func (s *FileSink) batchPublish(ctx context.Context, filePath string, envelopes []envelope.Envelope) {

@@ -33,7 +33,7 @@ type App struct {
 	engine      *gin.Engine
 	schemaCache *cache.SchemaCache
 	manifold    *manifold.Manifold
-	sink        sink.Sink
+	sinks       []sink.Sink
 	meta        *tele.Meta
 }
 
@@ -83,14 +83,16 @@ func (a *App) initializeSchemaCache() {
 
 func (a *App) initializeSinks() {
 	log.Info().Msg("initializing sinks")
-	s, _ := sink.BuildSink(a.config.Sink) // FIXME! What happens if the sink creation throws an err?
-	sink.InitializeSink(a.config.Sink, s)
-	a.sink = s
+	sinks, err := sink.BuildAndInitializeSinks(a.config.Sinks)
+	if err != nil {
+		log.Fatal().Err(err).Msg("could not build and init sinks")
+	}
+	a.sinks = sinks
 }
 
 func (a *App) initializeManifold() {
 	log.Info().Msg("initializing manifold")
-	m, err := manifold.BuildManifold(a.config.Manifold, &a.sink)
+	m, err := manifold.BuildManifold(a.config.Manifold, &a.sinks)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not build manifold")
 	}

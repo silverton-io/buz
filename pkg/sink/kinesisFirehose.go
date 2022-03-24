@@ -8,22 +8,36 @@ import (
 	awsconf "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/firehose"
 	"github.com/aws/aws-sdk-go-v2/service/firehose/types"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 )
 
 type KinesisFirehoseSink struct {
+	id                  *uuid.UUID
+	name                string
 	client              *firehose.Client
 	validEventsStream   string
 	invalidEventsStream string
 }
 
-func (s *KinesisFirehoseSink) Initialize(conf config.Sink) {
+func (s *KinesisFirehoseSink) Id() *uuid.UUID {
+	return s.id
+}
+
+func (s *KinesisFirehoseSink) Name() string {
+	return s.name
+}
+
+func (s *KinesisFirehoseSink) Initialize(conf config.Sink) error {
 	ctx := context.Background()
-	cfg, _ := awsconf.LoadDefaultConfig(ctx)
+	cfg, err := awsconf.LoadDefaultConfig(ctx)
 	client := firehose.NewFromConfig(cfg)
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
 	s.client, s.validEventsStream, s.invalidEventsStream = client, conf.ValidEventTopic, conf.InvalidEventTopic
+	return err
 }
 
 func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) {
