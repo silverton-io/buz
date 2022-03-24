@@ -86,3 +86,13 @@ func InitializeSink(conf config.Sink, s Sink) {
 	s.Initialize(conf)
 	log.Info().Msg(conf.Type + " sink initialized")
 }
+
+func BuildAndInitializeSinks(conf []config.Sink) []Sink {
+	var sinks []Sink
+	for _, sConf := range conf {
+		sink, _ := BuildSink(sConf)
+		InitializeSink(sConf, sink)
+		sinks = append(sinks, sink)
+	}
+	return sinks
+}

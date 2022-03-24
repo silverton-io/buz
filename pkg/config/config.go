@@ -6,7 +6,7 @@ type Config struct {
 	Inputs      `json:"inputs"`
 	SchemaCache `json:"schemaCache"`
 	Manifold    `json:"manifold"`
-	Sink        `json:"sink"`
+	Sinks       []Sink `json:"sinks"`
 	Squawkbox   `json:"squawkBox"`
 	Tele        `json:"tele"`
 }

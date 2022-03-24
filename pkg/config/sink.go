@@ -1,9 +1,5 @@
 package config
 
-type Sinks struct {
-	Sinks []Sink `json:"sinks"`
-}
-
 type Sink struct {
 	Name         string   `json:"name"`
 	Type         string   `json:"type"`
@@ -32,11 +28,11 @@ type Sink struct {
 	DbName       string `json:"-"`
 	DbUser       string `json:"-"`
 	DbPass       string `json:"-"`
-	ValidTable   string `json:"validTable"`
-	InvalidTable string `json:"invalidTable"`
+	ValidTable   string `json:"validTable,omitempty"`
+	InvalidTable string `json:"invalidTable,omitempty"`
 	// Pubnub
-	ValidChannel   string `json:"validChannel"`
-	InvalidChannel string `json:"invalidChannel"`
-	PubnubPubKey   string `json:"pubnubPubKey"`
-	PubnubSubKey   string `json:"pubnubSubKey"`
+	ValidChannel   string `json:"validChannel,omitempty"`
+	InvalidChannel string `json:"invalidChannel,omitempty"`
+	PubnubPubKey   string `json:"pubnubPubKey,omitempty"`
+	PubnubSubKey   string `json:"pubnubSubKey,omitempty"`
 }

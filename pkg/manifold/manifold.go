@@ -1,7 +1,6 @@
 package manifold
 
 import (
-	"context"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -17,11 +16,11 @@ type Manifold struct {
 	bufferRecordThreshold int
 	bufferByteThreshold   int
 	bufferTimeThreshold   int
-	sink                  *sink.Sink
+	sinks                 *[]sink.Sink
 	lastPurged            time.Time
 }
 
-func (m *Manifold) initialize(conf config.Manifold, sink *sink.Sink) {
+func (m *Manifold) initialize(conf config.Manifold, sinks *[]sink.Sink) {
 	c := make(chan envelope.Envelope, 10000) // FIXME! Configurable buffer size
 	sDown := make(chan bool, 1)
 	m.ShutdownChan = &sDown
@@ -29,7 +28,7 @@ func (m *Manifold) initialize(conf config.Manifold, sink *sink.Sink) {
 	m.bufferRecordThreshold = conf.BufferRecordThreshold
 	m.bufferByteThreshold = conf.BufferByteThreshold
 	m.bufferTimeThreshold = conf.BufferTimeThreshold
-	m.sink = sink
+	m.sinks = sinks
 	m.lastPurged = time.Now()
 }
 
@@ -41,20 +40,20 @@ func (m Manifold) Enqueue(envelopes []envelope.Envelope) {
 	}
 }
 
-func BuildManifold(conf config.Manifold, sink *sink.Sink) (manifold *Manifold, err error) {
+func BuildManifold(conf config.Manifold, sinks *[]sink.Sink) (manifold *Manifold, err error) {
 	log.Debug().Msg("building manifold")
 	m := Manifold{}
-	m.initialize(conf, sink)
+	m.initialize(conf, sinks)
 	return &m, nil
 }
 
 func Run(manifold *Manifold, meta *tele.Meta) {
 	log.Debug().Msg("running manifold")
 	go func() {
-		ctx := context.Background()
+		// ctx := context.Background()
 		var invalidEnvelopes []envelope.Envelope
 		var validEnvelopes []envelope.Envelope
-		sink := *manifold.sink
+		// sinks := *manifold.sinks
 		for {
 			e := <-*manifold.envelopeChan
 			if *e.IsValid {
@@ -68,8 +67,8 @@ func Run(manifold *Manifold, meta *tele.Meta) {
 			}
 			if len(validEnvelopes) >= manifold.bufferRecordThreshold || len(invalidEnvelopes) >= manifold.bufferRecordThreshold { // FIXME! Break out buffer purge
 				log.Debug().Msg("purging envelope buffers")
-				sink.BatchPublishValid(ctx, validEnvelopes)
-				sink.BatchPublishInvalid(ctx, invalidEnvelopes)
+				// sink.BatchPublishValid(ctx, validEnvelopes)
+				// sink.BatchPublishInvalid(ctx, invalidEnvelopes)
 				meta.BufferPurgeStats.Increment()
 				manifold.lastPurged = time.Now()
 				invalidEnvelopes = nil
