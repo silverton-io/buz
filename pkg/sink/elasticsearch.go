@@ -29,16 +29,17 @@ func (s *ElasticsearchSink) Name() string {
 	return s.name
 }
 
-func (s *ElasticsearchSink) Initialize(conf config.Sink) {
+func (s *ElasticsearchSink) Initialize(conf config.Sink) error {
 	cfg := elasticsearch.Config{
 		Addresses: conf.ElasticsearchHosts,
 		Username:  conf.ElasticsearchUsername,
 		Password:  conf.ElasticsearchPassword,
 	}
-	es, _ := elasticsearch.NewClient(cfg)
+	es, err := elasticsearch.NewClient(cfg)
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name
 	s.client, s.validIndex, s.invalidIndex = es, conf.ValidIndex, conf.InvalidIndex
+	return err
 }
 
 func (s *ElasticsearchSink) batchPublish(ctx context.Context, index string, envelopes []envelope.Envelope) {

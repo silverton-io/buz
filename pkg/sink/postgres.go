@@ -31,7 +31,7 @@ func (s *PostgresSink) Name() string {
 	return s.name
 }
 
-func (s *PostgresSink) Initialize(conf config.Sink) {
+func (s *PostgresSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing postgres sink")
 	connectionConf := pgx.ConnConfig{
 		Host:     conf.DbHost,
@@ -42,7 +42,8 @@ func (s *PostgresSink) Initialize(conf config.Sink) {
 	}
 	conn, err := pgx.Connect(connectionConf)
 	if err != nil {
-		log.Fatal().Err(err).Msg("could not open db connection")
+		log.Debug().Err(err).Msg("could not open db connection")
+		return err
 	}
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name
@@ -51,9 +52,11 @@ func (s *PostgresSink) Initialize(conf config.Sink) {
 	for _, sql := range []string{createValidSql, createInvalidSql} {
 		_, err := s.conn.Exec(sql)
 		if err != nil {
-			log.Fatal().Err(err).Msg("could not create table")
+			log.Debug().Err(err).Msg("could not create table")
+			return err
 		}
 	}
+	return nil
 }
 
 func (s *PostgresSink) batchPublish(ctx context.Context, tableName string, envelopes []envelope.Envelope) {

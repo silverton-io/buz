@@ -21,9 +21,10 @@ func (s *BlackholeSink) Name() string {
 	return s.name
 }
 
-func (s *BlackholeSink) Initialize(conf config.Sink) {
+func (s *BlackholeSink) Initialize(conf config.Sink) error {
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name
+	return nil
 }
 
 func (s *BlackholeSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {}

@@ -83,7 +83,10 @@ func (a *App) initializeSchemaCache() {
 
 func (a *App) initializeSinks() {
 	log.Info().Msg("initializing sinks")
-	sinks := sink.BuildAndInitializeSinks(a.config.Sinks) // FIXME! What happens if the sink creation throws an err?
+	sinks, err := sink.BuildAndInitializeSinks(a.config.Sinks)
+	if err != nil {
+		log.Fatal().Err(err).Msg("could not build and init sinks")
+	}
 	a.sinks = sinks
 }
 

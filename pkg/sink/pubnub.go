@@ -36,12 +36,13 @@ func (s *PubnubSink) Name() string {
 	return s.name
 }
 
-func (s *PubnubSink) Initialize(conf config.Sink) {
+func (s *PubnubSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing pubnub sink")
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name
 	s.validChannel, s.invalidChannel = conf.ValidChannel, conf.InvalidChannel
 	s.pubKey, s.subKey = conf.PubnubPubKey, conf.PubnubSubKey
+	return nil
 }
 
 func (s *PubnubSink) buildPublishUrl(channel string) *url.URL {

@@ -26,12 +26,13 @@ func (s *FileSink) Name() string {
 	return s.name
 }
 
-func (s *FileSink) Initialize(conf config.Sink) {
+func (s *FileSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing file sink")
 	s.validFile = conf.ValidFile
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name
 	s.invalidFile = conf.InvalidFile
+	return nil
 }
 
 func (s *FileSink) batchPublish(ctx context.Context, filePath string, envelopes []envelope.Envelope) {

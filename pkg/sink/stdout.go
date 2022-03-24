@@ -49,10 +49,11 @@ func (s *StdoutSink) Name() string {
 	return s.name
 }
 
-func (s *StdoutSink) Initialize(conf config.Sink) {
+func (s *StdoutSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing stdout sink")
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name
+	return nil
 }
 
 func (s *StdoutSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {

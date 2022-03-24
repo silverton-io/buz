@@ -25,15 +25,17 @@ func (s *RelaySink) Name() string {
 	return s.name
 }
 
-func (s *RelaySink) Initialize(conf config.Sink) {
+func (s *RelaySink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing http sink")
 	u, err := url.Parse(conf.RelayUrl)
 	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("relayUrl is not a valid url")
+		log.Debug().Stack().Err(err).Msg("relayUrl is not a valid url")
+		return err
 	}
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name
 	s.relayUrl = *u
+	return err
 }
 
 func (s *RelaySink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
@@ -41,7 +43,7 @@ func (s *RelaySink) BatchPublishValid(ctx context.Context, validEnvelopes []enve
 }
 
 func (s *RelaySink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
-	log.Error().Msg("BatchPublishInvalid is disabled for relay sink")
+	go request.PostEnvelopes(s.relayUrl, invalidEnvelopes)
 }
 
 func (s *RelaySink) Close() {

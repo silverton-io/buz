@@ -26,8 +26,9 @@ func (ms *MockSink) Name() string {
 	return id
 }
 
-func (ms *MockSink) Initialize(conf config.Sink) {
+func (ms *MockSink) Initialize(conf config.Sink) error {
 	ms.Called(conf)
+	return nil
 }
 
 func (ms *MockSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
