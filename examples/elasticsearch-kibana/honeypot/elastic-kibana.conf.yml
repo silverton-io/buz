@@ -94,15 +94,15 @@ manifold:
   bufferByteThreshold: 1024
   bufferTimeThreshold: 60
 
-sink:
-  type: elasticsearch
-  elasticsearchHosts: 
-    - http://elasticsearch:9200
-  elasticsearchUsername: elastic
-  elasticsearchPassword: elastic
-  validIndex: honeypot-valid
-  invalidIndex: honeypot-invalid
-  produceTimeout: 5
+sinks:
+  - name: elk
+    type: elasticsearch
+    elasticsearchHosts:
+      - http://elasticsearch:9200
+    elasticsearchUsername: elastic
+    elasticsearchPassword: elastic
+    validIndex: honeypot-valid
+    invalidIndex: honeypot-invalid
 
 squawkBox:
   enabled: true

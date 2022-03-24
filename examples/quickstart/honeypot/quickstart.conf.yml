@@ -94,15 +94,15 @@ manifold:
   bufferByteThreshold: 1024
   bufferTimeThreshold: 60
 
-sink:
-  type: kafka
-  kafkaBrokers:
-    - redpanda-1:29092 # internally advertised
-    - redpanda-2:29093 # internally advertised
-    - redpanda-3:29094 # internally advertised
-  invalidEventTopic: hpt-invalid
-  validEventTopic: hpt-valid
-  produceTimeout: 3
+sinks:
+  - name: primary
+    type: kafka
+    kafkaBrokers:
+      - redpanda-1:29092 # internally advertised
+      - redpanda-2:29093 # internally advertised
+      - redpanda-3:29094 # internally advertised
+    invalidEventTopic: hpt-invalid
+    validEventTopic: hpt-valid
 
 squawkBox:
   enabled: true

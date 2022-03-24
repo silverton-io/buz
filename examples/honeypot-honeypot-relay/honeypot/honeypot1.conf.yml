@@ -94,10 +94,10 @@ manifold:
   bufferByteThreshold: 1024
   bufferTimeThreshold: 60
 
-sink:
-  type: relay
-  relayUrl: http://relay:8081/relay
-  produceTimeout: 5
+sinks:
+  - name: relay
+    type: relay
+    relayUrl: http://relay:8081/relay
 
 squawkBox:
   enabled: true
