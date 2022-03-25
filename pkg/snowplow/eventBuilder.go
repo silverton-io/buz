@@ -169,13 +169,15 @@ func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
 	}
 }
 
-func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Config) SnowplowEvent {
+func BuildEventFromShortParams(c *gin.Context, params map[string]interface{}, conf config.Config) SnowplowEvent {
 	body, err := json.Marshal(params)
 	if err != nil {
 		log.Error().Err(err).Msg("error when marshaling params")
 	}
+
 	shortenedEvent := ShortenedSnowplowEvent{}
 	err = json.Unmarshal(body, &shortenedEvent)
+
 	if err != nil {
 		log.Error().Err(err).Msg("error when unmarshaling to shortened event")
 	}
