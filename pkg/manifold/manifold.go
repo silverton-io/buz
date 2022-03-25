@@ -16,8 +16,10 @@ type Manifold struct {
 	bufferRecordThreshold int
 	bufferByteThreshold   int
 	bufferTimeThreshold   int
+	buffersLastPurged     time.Time
 	sinks                 *[]sink.Sink
-	lastPurged            time.Time
+	validEnvelopes        []envelope.Envelope
+	invalidEnvelopes      []envelope.Envelope
 }
 
 func (m *Manifold) initialize(conf config.Manifold, sinks *[]sink.Sink) {
@@ -27,7 +29,7 @@ func (m *Manifold) initialize(conf config.Manifold, sinks *[]sink.Sink) {
 	m.bufferByteThreshold = conf.BufferByteThreshold
 	m.bufferTimeThreshold = conf.BufferTimeThreshold
 	m.sinks = sinks
-	m.lastPurged = time.Now()
+	m.buffersLastPurged = time.Now()
 }
 
 func (m Manifold) Enqueue(envelopes []envelope.Envelope) {
@@ -36,6 +38,57 @@ func (m Manifold) Enqueue(envelopes []envelope.Envelope) {
 		*m.envelopeChan <- e
 		// FIXME! Add durability option
 	}
+}
+
+func (m Manifold) validCount() int {
+	return len(m.validEnvelopes)
+}
+
+func (m Manifold) invalidCount() int {
+	return len(m.invalidEnvelopes)
+}
+
+func (m Manifold) secondsSinceLastPurge() time.Duration {
+	return time.Now().Sub(m.buffersLastPurged)
+}
+
+func (m Manifold) shouldPurgeBuffers() bool {
+	if m.validCount() >= m.bufferRecordThreshold || m.invalidCount() >= m.bufferByteThreshold || m.secondsSinceLastPurge() >= time.Duration(m.bufferTimeThreshold) {
+		return true
+	}
+	return false
+}
+
+func (m Manifold) PurgeBuffersToSinks(ctx context.Context) {
+	// FIXME - what happens when one sink entirely succeeds and one fails (partially or entirely)? Will need better handling of this.
+	for _, sink := range *m.sinks {
+		m.purgeBuffersToSink(ctx, &sink)
+	}
+	m.invalidEnvelopes = nil
+	m.validEnvelopes = nil
+	m.buffersLastPurged = time.Now()
+}
+
+func (m Manifold) PurgeBuffersToSinksIfFull(ctx context.Context) {
+	if m.shouldPurgeBuffers() {
+		m.PurgeBuffersToSinks(ctx)
+	}
+}
+
+func (m Manifold) purgeBuffersToSink(ctx context.Context, s *sink.Sink) {
+	sink := *s
+	log.Info().Interface("envelopeCount", m.validCount()).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking valid envelopes")
+	sink.BatchPublishValid(ctx, m.validEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
+	log.Info().Interface("envelopeCount", m.invalidCount()).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking invalid envelopes")
+	sink.BatchPublishInvalid(ctx, m.invalidEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
+}
+
+func (m Manifold) appendValidEnvelope(e envelope.Envelope) {
+	m.validEnvelopes = append(m.validEnvelopes, e)
+}
+
+func (m Manifold) appendInvalidEnvelope(e envelope.Envelope) {
+	m.invalidEnvelopes = append(m.invalidEnvelopes, e)
 }
 
 func BuildManifold(conf config.Manifold, sinks *[]sink.Sink) (manifold *Manifold, err error) {
@@ -49,49 +102,26 @@ func Run(manifold *Manifold, meta *tele.Meta, shutdown *chan bool) {
 	log.Debug().Msg("running manifold")
 	go func() {
 		ctx := context.Background()
-		var invalidEnvelopes []envelope.Envelope
-		var validEnvelopes []envelope.Envelope
-		sinks := *manifold.sinks
 		for {
 			select {
 			case <-*shutdown:
 				log.Info().Msg("manifold is shutting down")
-				vEnvelopeCount := len(validEnvelopes)
-				invEnvelopeCount := len(invalidEnvelopes)
-				for _, sink := range sinks {
-					log.Info().Interface("envelopeCount", vEnvelopeCount).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking valid envelopes")
-					sink.BatchPublishValid(ctx, validEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
-					log.Info().Interface("envelopeCount", invEnvelopeCount).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking invalid envelopes")
-					sink.BatchPublishInvalid(ctx, invalidEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
-				}
+				manifold.PurgeBuffersToSinks(ctx)
 				meta.BufferPurgeStats.Increment()
-				manifold.lastPurged = time.Now()
 				return
 			case e := <-*manifold.envelopeChan:
 				if *e.IsValid {
 					log.Debug().Msg("appending valid envelope to buffer...")
-					validEnvelopes = append(validEnvelopes, e)
+					manifold.appendValidEnvelope(e)
 					meta.ProtocolStats.IncrementValid(e.EventProtocol, e.EventSchema, 1)
 				} else {
 					log.Debug().Msg("appending invalid envelope to buffer...")
-					invalidEnvelopes = append(invalidEnvelopes, e)
+					manifold.appendInvalidEnvelope(e)
 					meta.ProtocolStats.IncrementInvalid(e.EventProtocol, e.EventSchema, 1)
 				}
-				vEnvelopeCount := len(validEnvelopes)
-				invEnvelopeCount := len(invalidEnvelopes)
-				if vEnvelopeCount >= manifold.bufferRecordThreshold || invEnvelopeCount >= manifold.bufferRecordThreshold { // FIXME! Break out buffer purge
-					log.Debug().Msg("purging envelope buffers")
-					for _, sink := range sinks {
-						log.Info().Interface("envelopeCount", vEnvelopeCount).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking valid envelopes")
-						sink.BatchPublishValid(ctx, validEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
-						log.Info().Interface("envelopeCount", invEnvelopeCount).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking invalid envelopes")
-						sink.BatchPublishInvalid(ctx, invalidEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
-					}
-					meta.BufferPurgeStats.Increment()
-					manifold.lastPurged = time.Now()
-					invalidEnvelopes = nil
-					validEnvelopes = nil
-				}
+				log.Debug().Msg("purging envelope buffers")
+				meta.BufferPurgeStats.Increment()
+				manifold.PurgeBuffersToSinksIfFull(ctx)
 			}
 		}
 	}()
