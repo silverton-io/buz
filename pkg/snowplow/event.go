@@ -349,10 +349,23 @@ func (b *FlexibleBoolField) UnmarshalJSON(bytes []byte) error {
 	var payload string
 	err := json.Unmarshal(bytes, &payload)
 	if err != nil {
-		log.Error().Err(err).Msg("error decoding flexible bool field")
+		var payload bool
+		err := json.Unmarshal(bytes, &payload)
+		if err != nil {
+			log.Debug().Err(err).Msg("error unmarshaling flexible bool field")
+			return err
+		} else {
+			*b = FlexibleBoolField(payload)
+		}
+	} else {
+		val, err := strconv.ParseBool(payload)
+		if err != nil {
+			log.Debug().Err(err).Msg("error parsing bool in flexible bool field")
+			return err
+		} else {
+			*b = FlexibleBoolField(val)
+		}
 	}
-	val, err := strconv.ParseBool(payload)
-	*b = FlexibleBoolField(val)
 	return nil
 }
 
@@ -361,15 +374,23 @@ type MillisecondTimestampField struct {
 }
 
 func (t *MillisecondTimestampField) UnmarshalJSON(bytes []byte) error {
-	var msString string
-	err := json.Unmarshal(bytes, &msString)
-	msInt, err := strconv.ParseInt(msString, 10, 64)
+	var timeString string
+	err := json.Unmarshal(bytes, &timeString)
+	// First try to parse the value as RFC3339
+	timeVal, err := time.Parse(time.RFC3339, timeString)
 	if err != nil {
-		log.Error().Err(err).Msg("error decoding timestamp")
-		return err
+		// Then try to parse the value as an int
+		msInt, err := strconv.ParseInt(timeString, 10, 64)
+		if err != nil {
+			log.Error().Err(err).Msg("error decoding timestamp")
+			return err
+		}
+		t.Time = time.Unix(0, msInt*int64(time.Millisecond))
+		return nil
+	} else {
+		t.Time = timeVal
+		return nil
 	}
-	t.Time = time.Unix(0, msInt*int64(time.Millisecond))
-	return nil
 }
 
 type EventTypeField string

@@ -301,19 +301,14 @@
                             "default": "true",
                             "description": "Whether or not to activate cloudevents tracking"
                         },
-                        "postPath": {
+                        "path": {
                             "type": "string",
                             "default": "/ce/p",
                             "description": "The path by which to process incoming single-message cloudevents payloads"
-                        },
-                        "batchPostPath": {
-                            "type": "string",
-                            "default": "/ce/bp",
-                            "description": "The path by which to process incoming batch cloudevents payloads"
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["enabled", "postPath", "batchPostPath"]
+                    "required": ["enabled", "path"]
                 },
                 "generic": {
                     "type": "object",
@@ -324,15 +319,10 @@
                             "default": "true",
                             "description": "Whether or not to activate generic self-describing event tracking"
                         },
-                        "postPath": {
+                        "path": {
                             "type": "string",
                             "default": "/gen/p",
-                            "description": "The path by which to process incoming single-message self describing payloads"
-                        },
-                        "batchPostPath": {
-                            "type": "string",
-                            "default": "/gen/bp",
-                            "description": "The path by which to process incoming batch self describing payloads"
+                            "description": "The path by which to process incoming self describing payloads"
                         },
                         "contexts": {
                             "type": "object",
@@ -382,7 +372,7 @@
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["enabled", "postPath", "batchPostPath", "contexts", "payload"]
+                    "required": ["enabled", "path", "contexts", "payload"]
                 },
                 "webhook": {
                     "type": "object",

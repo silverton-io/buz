@@ -29,7 +29,7 @@ func BuildMeta(version string, conf *config.Config) *Meta {
 	m := Meta{
 		Version:          version,
 		InstanceId:       instanceId,
-		StartTime:        time.Now(),
+		StartTime:        time.Now().UTC(),
 		TrackerDomain:    conf.App.TrackerDomain,
 		CookieDomain:     conf.Cookie.Domain,
 		ProtocolStats:    &ps,

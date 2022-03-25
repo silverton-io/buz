@@ -29,7 +29,7 @@ func (m *Manifold) initialize(conf config.Manifold, sinks *[]sink.Sink) {
 	m.bufferByteThreshold = conf.BufferByteThreshold
 	m.bufferTimeThreshold = conf.BufferTimeThreshold
 	m.sinks = sinks
-	m.buffersLastPurged = time.Now()
+	m.buffersLastPurged = time.Now().UTC()
 }
 
 func (m Manifold) Enqueue(envelopes []envelope.Envelope) {
@@ -62,7 +62,7 @@ func (m *Manifold) PurgeBuffersToSinks(ctx context.Context) {
 	}
 	m.invalidEnvelopes = nil
 	m.validEnvelopes = nil
-	m.buffersLastPurged = time.Now()
+	m.buffersLastPurged = time.Now().UTC()
 }
 
 func (m *Manifold) PurgeBuffersToSinksIfFull(ctx context.Context) {

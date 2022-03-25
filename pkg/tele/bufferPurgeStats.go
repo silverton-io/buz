@@ -28,6 +28,6 @@ func (s *BufferPurgeStats) incrementInvalid() {
 func (s *BufferPurgeStats) Increment() {
 	s.incrementInvalid()
 	s.incrementValid()
-	n := time.Now()
+	n := time.Now().UTC()
 	s.LastPurged = &n
 }
