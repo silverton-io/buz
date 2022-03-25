@@ -286,9 +286,10 @@ func (a *App) Run() {
 			log.Info().Msgf("server shut down")
 		}
 	}()
-	manifold.Run(a.manifold, a.meta)
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	manifoldShutdown := make(chan bool, 1)
+	manifold.Run(a.manifold, a.meta, &manifoldShutdown)
 	<-quit
 	log.Info().Msg("shutting down server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -296,5 +297,6 @@ func (a *App) Run() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal().Stack().Err(err).Msg("server forced to shutdown")
 	}
+	manifoldShutdown <- true
 	tele.Sis(a.meta)
 }
