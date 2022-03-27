@@ -7,9 +7,8 @@ type SelfDescribingConfig struct {
 }
 
 type Generic struct {
-	Enabled       bool                 `json:"enabled"`
-	PostPath      string               `json:"postPath"`
-	BatchPostPath string               `json:"batchPostPath"`
-	Contexts      SelfDescribingConfig `json:"contexts"`
-	Payload       SelfDescribingConfig `json:"payload"`
+	Enabled  bool                 `json:"enabled"`
+	Path     string               `json:"path"`
+	Contexts SelfDescribingConfig `json:"contexts"`
+	Payload  SelfDescribingConfig `json:"payload"`
 }

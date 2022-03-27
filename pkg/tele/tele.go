@@ -41,7 +41,7 @@ func heartbeat(t time.Ticker, m *Meta) {
 		log.Trace().Msg("sending heartbeat telemetry")
 		b := beat{
 			Meta:           m,
-			Time:           time.Now(),
+			Time:           time.Now().UTC(),
 			ElapsedSeconds: m.elapsed(),
 		}
 		data := util.StructToMap(b)
@@ -61,7 +61,7 @@ func Sis(m *Meta) {
 	log.Trace().Msg("sending shutdown telemetry")
 	shutdown := shutdown{
 		Meta:           m,
-		Time:           time.Now(),
+		Time:           time.Now().UTC(),
 		ElapsedSeconds: m.elapsed(),
 	}
 	data := util.StructToMap(shutdown)
@@ -81,7 +81,7 @@ func Metry(c *config.Config, m *Meta) {
 		log.Trace().Msg("sending startup telemetry")
 		startup := startup{
 			Meta:   m,
-			Time:   time.Now(),
+			Time:   time.Now().UTC(),
 			Config: *c,
 		}
 		data := util.StructToMap(startup)

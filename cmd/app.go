@@ -202,8 +202,7 @@ func (a *App) initializeGenericRoutes() {
 	if a.config.Inputs.Generic.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing generic routes")
-		a.engine.POST(a.config.Inputs.Generic.PostPath, handler.GenericHandler(handlerParams))
-		a.engine.POST(a.config.Inputs.Generic.BatchPostPath, handler.GenericHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Generic.Path, handler.GenericHandler(handlerParams))
 	}
 }
 
@@ -211,8 +210,7 @@ func (a *App) initializeCloudeventsRoutes() {
 	if a.config.Inputs.Cloudevents.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing cloudevents routes")
-		a.engine.POST(a.config.Inputs.Cloudevents.PostPath, handler.CloudeventsHandler(handlerParams))
-		a.engine.POST(a.config.Inputs.Cloudevents.BatchPostPath, handler.CloudeventsHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Cloudevents.Path, handler.CloudeventsHandler(handlerParams))
 	}
 }
 
