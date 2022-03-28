@@ -29,7 +29,7 @@ func (m *Manifold) initialize(conf config.Manifold, sinks *[]sink.Sink) {
 	m.bufferByteThreshold = conf.BufferByteThreshold
 	m.bufferTimeThreshold = conf.BufferTimeThreshold
 	m.sinks = sinks
-	m.buffersLastPurged = time.Now()
+	m.buffersLastPurged = time.Now().UTC()
 }
 
 func (m Manifold) Enqueue(envelopes []envelope.Envelope) {
@@ -62,7 +62,7 @@ func (m *Manifold) PurgeBuffersToSinks(ctx context.Context) {
 	}
 	m.invalidEnvelopes = nil
 	m.validEnvelopes = nil
-	m.buffersLastPurged = time.Now()
+	m.buffersLastPurged = time.Now().UTC()
 }
 
 func (m *Manifold) PurgeBuffersToSinksIfFull(ctx context.Context) {
@@ -73,10 +73,14 @@ func (m *Manifold) PurgeBuffersToSinksIfFull(ctx context.Context) {
 
 func (m *Manifold) purgeBuffersToSink(ctx context.Context, s *sink.Sink) {
 	sink := *s
-	log.Info().Interface("envelopeCount", m.validCount()).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking valid envelopes")
-	sink.BatchPublishValid(ctx, m.validEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
-	log.Info().Interface("envelopeCount", m.invalidCount()).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking invalid envelopes")
-	sink.BatchPublishInvalid(ctx, m.invalidEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
+	if m.validCount() >= 1 {
+		log.Info().Interface("envelopeCount", m.validCount()).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking valid envelopes")
+		sink.BatchPublishValid(ctx, m.validEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
+	}
+	if m.invalidCount() >= 1 {
+		log.Info().Interface("envelopeCount", m.invalidCount()).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking invalid envelopes")
+		sink.BatchPublishInvalid(ctx, m.invalidEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
+	}
 }
 
 func (m *Manifold) AppendValidEnvelope(e envelope.Envelope) {

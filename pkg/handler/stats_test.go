@@ -16,7 +16,7 @@ import (
 
 func TestStatsHandler(t *testing.T) {
 	u := uuid.New()
-	now := time.Now()
+	now := time.Now().UTC()
 	m := tele.Meta{
 		Version:       "1.0.x",
 		InstanceId:    u,

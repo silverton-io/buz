@@ -56,8 +56,8 @@ func setEventFieldsFromRequest(c *gin.Context, e *SnowplowEvent, conf *config.Ap
 	e.Network_userid = &nuid
 	e.User_ipaddress = &sIp
 	e.Useragent = &useragent
-	e.Collector_tstamp = time.Now()
-	e.Etl_tstamp = time.Now()
+	e.Collector_tstamp = time.Now().UTC()
+	e.Etl_tstamp = time.Now().UTC()
 	timeOnDevice := e.Dvce_sent_tstamp.Time.Sub(e.Dvce_created_tstamp.Time)
 	e.Derived_tstamp = e.Collector_tstamp.Add(-timeOnDevice)
 	e.Collector_version = &conf.Version
