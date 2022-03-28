@@ -67,7 +67,10 @@ func getBoolParam(params map[string]interface{}, k string) *bool {
 		return nil
 	} else {
 		val := v.(string)
-		bVal, _ := strconv.ParseBool(val)
+		bVal, err := strconv.ParseBool(val)
+		if err != nil {
+			log.Error().Err(err).Msg("could not parse bool param")
+		}
 		return &bVal
 	}
 }
@@ -158,28 +161,28 @@ func getPageFieldsFromUrl(rawUrl string) (PageFields, error) {
 }
 
 func setTsFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.Dvce_created_tstamp = *getTimeParam(params, "dtm")
-	e.Dvce_sent_tstamp = *getTimeParam(params, "stm")
-	e.True_tstamp = getTimeParam(params, "ttm")
-	e.Collector_tstamp = time.Now().UTC()
-	e.Etl_tstamp = time.Now().UTC()
-	timeOnDevice := e.Dvce_sent_tstamp.Sub(e.Dvce_created_tstamp)
-	e.Derived_tstamp = e.Collector_tstamp.Add(-timeOnDevice)
+	e.DvceCreatedTstamp = *getTimeParam(params, "dtm")
+	e.DvceSentTstamp = *getTimeParam(params, "stm")
+	e.TrueTstamp = getTimeParam(params, "ttm")
+	e.CollectorTstamp = time.Now().UTC()
+	e.EtlTstamp = time.Now().UTC()
+	timeOnDevice := e.DvceSentTstamp.Sub(e.DvceCreatedTstamp)
+	e.DerivedTstamp = e.CollectorTstamp.Add(-timeOnDevice)
 }
 
 func setMetadataFields(e *SnowplowEvent, params map[string]interface{}, conf config.Config) {
 	fingerprint := uuid.New()
 	eName := getStringParam(params, "e")
-	e.Name_tracker = *getStringParam(params, "tna")
-	e.App_id = *getStringParam(params, "aid")
+	e.NameTracker = *getStringParam(params, "tna")
+	e.AppId = *getStringParam(params, "aid")
 	e.Platform = *getStringParam(params, "p")
-	e.Txn_id = getStringParam(params, "tid")
-	e.Event_id = getStringParam(params, "eid")
-	e.Event_fingerprint = fingerprint
-	e.Os_timezone = getStringParam(params, "tz")
-	e.Tracker_version = getStringParam(params, "tv")
-	e.Etl_version = &conf.Version
-	e.Collector_version = &conf.Version
+	e.TxnId = getStringParam(params, "tid")
+	e.EventId = getStringParam(params, "eid")
+	e.EventFingerprint = fingerprint
+	e.OsTimezone = getStringParam(params, "tz")
+	e.TrackerVersion = getStringParam(params, "tv")
+	e.EtlVersion = &conf.Version
+	e.CollectorVersion = &conf.Version
 	e.Event = getEventType(*eName)
 }
 
@@ -188,96 +191,96 @@ func setUserFields(c *gin.Context, e *SnowplowEvent, params map[string]interface
 	sIp := ip.String() // FIXME! Should incorporate other IP sources
 	useragent := c.Request.UserAgent()
 	nuid := c.GetString("identity")
-	e.Domain_userid = getStringParam(params, "duid")
+	e.DomainUserid = getStringParam(params, "duid")
 	fmt.Println(nuid)
-	e.Network_userid = &nuid
+	e.NetworkUserid = &nuid
 	e.Userid = getStringParam(params, "uid")
-	e.Domain_sessionidx = getInt64Param(params, "vid")
-	e.Domain_sessionid = getStringParam(params, "sid")
-	e.User_ipaddress = &sIp
+	e.DomainSessionIdx = getInt64Param(params, "vid")
+	e.DomainSessionId = getStringParam(params, "sid")
+	e.UserIpaddress = &sIp
 	e.Useragent = &useragent
-	e.Mac_address = getStringParam(params, "mac")
+	e.MacAddress = getStringParam(params, "mac")
 }
 
 func setBrowserFeatures(e *SnowplowEvent, params map[string]interface{}) {
-	e.Br_cookies = getBoolParam(params, "cookie")
-	e.Br_lang = getStringParam(params, "lang")
-	e.Br_features_pdf = getBoolParam(params, "f_pdf")
-	e.Br_features_quicktime = getBoolParam(params, "f_qt")
-	e.Br_features_realplayer = getBoolParam(params, "f_realp")
-	e.Br_features_windowsmedia = getBoolParam(params, "f_wma")
-	e.Br_features_director = getBoolParam(params, "f_dir")
-	e.Br_features_flash = getBoolParam(params, "f_fla")
-	e.Br_features_java = getBoolParam(params, "f_java")
-	e.Br_features_gears = getBoolParam(params, "f_gears")
-	e.Br_features_silverlight = getBoolParam(params, "f_ag")
-	e.Br_colordepth = getInt64Param(params, "cd")
-	e.Doc_charset = getStringParam(params, "cs")
+	e.BrCookies = getBoolParam(params, "cookie")
+	e.BrLang = getStringParam(params, "lang")
+	e.BrFeaturesPdf = getBoolParam(params, "f_pdf")
+	e.BrFeaturesQuicktime = getBoolParam(params, "f_qt")
+	e.BrFeaturesRealplayer = getBoolParam(params, "f_realp")
+	e.BrFeaturesWindowsmedia = getBoolParam(params, "f_wma")
+	e.BrFeaturesDirector = getBoolParam(params, "f_dir")
+	e.BrFeaturesFlash = getBoolParam(params, "f_fla")
+	e.BrFeaturesJava = getBoolParam(params, "f_java")
+	e.BrFeaturesGears = getBoolParam(params, "f_gears")
+	e.BrFeaturesSilverlight = getBoolParam(params, "f_ag")
+	e.BrColordepth = getInt64Param(params, "cd")
+	e.DocCharset = getStringParam(params, "cs")
 }
 
 func setDimensionFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.Doc_size = getStringParam(params, "ds")
-	e.Viewport_size = getStringParam(params, "vp")
-	e.Monitor_resolution = getStringParam(params, "res")
-	if e.Doc_size != nil {
-		docDimension, _ := getDimensions(*e.Doc_size)
-		e.Doc_width, e.Doc_height = &docDimension.width, &docDimension.height
+	e.DocSize = getStringParam(params, "ds")
+	e.ViewportSize = getStringParam(params, "vp")
+	e.MonitorResolution = getStringParam(params, "res")
+	if e.DocSize != nil {
+		docDimension, _ := getDimensions(*e.DocSize)
+		e.DocWidth, e.DocHeight = &docDimension.width, &docDimension.height
 	}
-	if e.Viewport_size != nil {
-		vpDimension, _ := getDimensions(*e.Viewport_size)
-		e.Br_viewwidth, e.Br_viewheight = &vpDimension.width, &vpDimension.height
+	if e.ViewportSize != nil {
+		vpDimension, _ := getDimensions(*e.ViewportSize)
+		e.BrViewWidth, e.BrViewHeight = &vpDimension.width, &vpDimension.height
 	}
-	if e.Monitor_resolution != nil {
-		monDimension, _ := getDimensions(*e.Monitor_resolution)
-		e.Dvce_screenwidth, e.Dvce_screenheight = &monDimension.width, &monDimension.height
+	if e.MonitorResolution != nil {
+		monDimension, _ := getDimensions(*e.MonitorResolution)
+		e.DvceScreenWidth, e.DvceScreenHeight = &monDimension.width, &monDimension.height
 	}
 }
 
 func setPageFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.Page_url = getStringParam(params, "url")
-	e.Page_title = getStringParam(params, "page")
-	if e.Page_url != nil {
-		pageFields, err := getPageFieldsFromUrl(*e.Page_url)
+	e.PageUrl = getStringParam(params, "url")
+	e.PageTitle = getStringParam(params, "page")
+	if e.PageUrl != nil {
+		pageFields, err := getPageFieldsFromUrl(*e.PageUrl)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("error getting page fields from url")
 		}
-		e.Page_urlscheme = &pageFields.scheme // FIXME! Has to be a better way
-		e.Page_urlhost = &pageFields.host
-		e.Page_urlpath = &pageFields.path
-		e.Page_urlquery = pageFields.query
-		e.Page_urlfragment = pageFields.fragment
-		e.Mkt_medium = pageFields.medium
-		e.Mkt_source = pageFields.source
-		e.Mkt_term = pageFields.term
-		e.Mkt_content = pageFields.content
-		e.Mkt_campaign = pageFields.campaign
+		e.PageUrlScheme = &pageFields.scheme // FIXME! Has to be a better way
+		e.PageUrlHost = &pageFields.host
+		e.PageUrlPath = &pageFields.path
+		e.PageUrlQuery = pageFields.query
+		e.PageUrlFragment = pageFields.fragment
+		e.MktMedium = pageFields.medium
+		e.MktSource = pageFields.source
+		e.MktTerm = pageFields.term
+		e.MktContent = pageFields.content
+		e.MktCampaign = pageFields.campaign
 	}
 }
 
 func setReferrerFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.Page_referrer = getStringParam(params, "refr")
-	if e.Page_referrer != nil {
-		pageFields, err := getPageFieldsFromUrl(*e.Page_referrer)
+	e.PageReferrer = getStringParam(params, "refr")
+	if e.PageReferrer != nil {
+		pageFields, err := getPageFieldsFromUrl(*e.PageReferrer)
 		if err != nil {
 			log.Error().Err(err).Msg("error setting page fields")
 		}
-		e.Refr_urlscheme = &pageFields.scheme // FIXME! Has to be a better way
-		e.Refr_urlhost = &pageFields.host
-		e.Refr_urlpath = &pageFields.path
-		e.Refr_urlquery = pageFields.query
-		e.Refr_urlfragment = pageFields.fragment
-		e.Refr_medium = pageFields.medium
-		e.Refr_source = pageFields.source
-		e.Refr_term = pageFields.term
-		e.Refr_content = pageFields.content
-		e.Refr_campaign = pageFields.campaign
+		e.RefrUrlScheme = &pageFields.scheme // FIXME! Has to be a better way
+		e.RefrUrlHost = &pageFields.host
+		e.RefrUrlPath = &pageFields.path
+		e.RefrUrlQuery = pageFields.query
+		e.RefrUrlFragment = pageFields.fragment
+		e.RefrMedium = pageFields.medium
+		e.RefrSource = pageFields.source
+		e.RefrTerm = pageFields.term
+		e.RefrContent = pageFields.content
+		e.RefrCampaign = pageFields.campaign
 	}
 }
 
 func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
-	if conf.Anonymize.Ip && e.User_ipaddress != nil {
-		hashedIp := util.Md5(*e.User_ipaddress)
-		e.User_ipaddress = &hashedIp
+	if conf.Anonymize.Ip && e.UserIpaddress != nil {
+		hashedIp := util.Md5(*e.UserIpaddress)
+		e.UserIpaddress = &hashedIp
 	}
 	if conf.Anonymize.UserId && e.Userid != nil {
 		hashedUserId := util.Md5(*e.Userid)
@@ -286,40 +289,40 @@ func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
 }
 
 func setPagePingFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.Pp_xoffset_min = getInt64Param(params, "pp_mix")
-	e.Pp_xoffset_max = getInt64Param(params, "pp_max")
-	e.Pp_yoffset_min = getInt64Param(params, "pp_miy")
-	e.Pp_yoffset_max = getInt64Param(params, "pp_may")
+	e.PpXOffsetMin = getInt64Param(params, "pp_mix")
+	e.PpXOffsetMax = getInt64Param(params, "pp_max")
+	e.PpYOffsetMin = getInt64Param(params, "pp_miy")
+	e.PpYOffsetMax = getInt64Param(params, "pp_may")
 }
 
 func setStructFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.Se_category = getStringParam(params, "se_ca")
-	e.Se_action = getStringParam(params, "se_ac")
-	e.Se_label = getStringParam(params, "se_la")
-	e.Se_property = getStringParam(params, "se_pr")
-	e.Se_value = getFloat64Param(params, "se_va")
+	e.SeCategory = getStringParam(params, "se_ca")
+	e.SeAction = getStringParam(params, "se_ac")
+	e.SeLabel = getStringParam(params, "se_la")
+	e.SeProperty = getStringParam(params, "se_pr")
+	e.SeValue = getFloat64Param(params, "se_va")
 }
 
 func setTransactionFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.Tr_orderid = getStringParam(params, "tr_id")
-	e.Tr_affiliation = getStringParam(params, "tr_af")
-	e.Tr_total = getFloat64Param(params, "tr_tt")
-	e.Tr_tax = getFloat64Param(params, "tr_tx")
-	e.Tr_shipping = getFloat64Param(params, "tr_sh")
-	e.Tr_city = getStringParam(params, "tr_ci")
-	e.Tr_state = getStringParam(params, "tr_st")
-	e.Tr_country = getStringParam(params, "tr_co")
-	e.Tr_currency = getStringParam(params, "tr_cu")
+	e.TrOrderId = getStringParam(params, "tr_id")
+	e.TrAffiliation = getStringParam(params, "tr_af")
+	e.TrTotal = getFloat64Param(params, "tr_tt")
+	e.TrTax = getFloat64Param(params, "tr_tx")
+	e.TrShipping = getFloat64Param(params, "tr_sh")
+	e.TrCity = getStringParam(params, "tr_ci")
+	e.TrState = getStringParam(params, "tr_st")
+	e.TrCountry = getStringParam(params, "tr_co")
+	e.TrCurrency = getStringParam(params, "tr_cu")
 }
 
 func setTransactionItemFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.Ti_orderid = getStringParam(params, "ti_id")
-	e.Ti_sku = getStringParam(params, "ti_sk")
-	e.Ti_name = getStringParam(params, "ti_nm")
-	e.Ti_category = getStringParam(params, "ti_ca")
-	e.Ti_price = getFloat64Param(params, "ti_pr")
-	e.Ti_quantity = getInt64Param(params, "ti_qu")
-	e.Ti_currency = getStringParam(params, "ti_cu")
+	e.TiOrderId = getStringParam(params, "ti_id")
+	e.TiSku = getStringParam(params, "ti_sk")
+	e.TiName = getStringParam(params, "ti_nm")
+	e.TiCategory = getStringParam(params, "ti_ca")
+	e.TiPrice = getFloat64Param(params, "ti_pr")
+	e.TiQuantity = getInt64Param(params, "ti_qu")
+	e.TiCurrency = getStringParam(params, "ti_cu")
 }
 
 func setContexts(e *SnowplowEvent, params map[string]interface{}) {
@@ -329,7 +332,7 @@ func setContexts(e *SnowplowEvent, params map[string]interface{}) {
 
 func setSelfDescribingFields(e *SnowplowEvent, params map[string]interface{}) {
 	b64encodedEvent := getStringParam(params, "ue_px")
-	e.Self_describing_event = getSdEvent(b64encodedEvent)
+	e.SelfDescribingEvent = getSdEvent(b64encodedEvent)
 }
 
 func setEventMetadataFields(e *SnowplowEvent, schema []byte) {
@@ -339,16 +342,16 @@ func setEventMetadataFields(e *SnowplowEvent, schema []byte) {
 	format := schemaContents.Get("self.format").String()
 	version := schemaContents.Get("self.version").String()
 	if vendor != "" {
-		e.Event_vendor = &vendor
+		e.EventVendor = &vendor
 	}
 	if name != "" {
-		e.Event_name = &name
+		e.EventName = &name
 	}
 	if format != "" {
-		e.Event_format = &format
+		e.EventFormat = &format
 	}
 	if version != "" {
-		e.Event_version = &version
+		e.EventVersion = &version
 	}
 }
 
@@ -378,6 +381,5 @@ func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, c
 	if event.Event == SELF_DESCRIBING_EVENT {
 		setSelfDescribingFields(&event, params)
 	}
-	util.Pprint(event)
 	return event
 }
