@@ -32,7 +32,6 @@ jobs:
         with:
           workload_identity_provider: 'projects/860234713891/locations/global/workloadIdentityPools/honeypot-github/providers/github'
           service_account: 'honeypot-ci@silverton-io.iam.gserviceaccount.com'
-          export_environment_variables: true
           create_credentials_file: true
 
       - name: Configure Docker
