@@ -56,12 +56,10 @@ inputs:
       userId: false
   cloudevents:
     enabled: true
-    postPath: /ce/p
-    batchPostPath: /ce/bp
+    path: /ce/p
   generic:
     enabled: true
-    postPath: /gen/p
-    batchPostPath: /gen/bp
+    path: /gen/p
     contexts:
       rootKey: contexts
       schemaKey: schema

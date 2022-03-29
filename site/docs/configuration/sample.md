@@ -13,7 +13,7 @@ app:
   env: development
   mode: debug
   port: 8080
-  trackerDomain: localhost
+  trackerDomain: trck.slvrtnio.com
   health:
     enabled: true
     path: /health
@@ -31,10 +31,10 @@ middleware:
     limit: 10
   cookie:
     enabled: true
-    name: sp-nuid
+    name: nuid
     secure: false
     ttlDays: 365
-    domain: localhost
+    domain: slvrtnio.com
     path: /
     sameSite: Lax
   cors:
@@ -48,7 +48,7 @@ middleware:
       - GET
     maxAge: 86400
   requestLogger:
-    enabled: false
+    enabled: true
   yeet:
     enabled: false
 
@@ -65,18 +65,16 @@ inputs:
       userId: false
   cloudevents:
     enabled: true
-    postPath: /ce/p
-    batchPostPath: /ce/bp
+    path: /ce/p
   generic:
     enabled: true
-    postPath: /gen/p
-    batchPostPath: /gen/bp
+    path: /gen/p
     contexts:
       rootKey: contexts
       schemaKey: schema
       dataKey: data
     payload:
-      rootKey: data
+      rootKey: payload
       schemaKey: schema
       dataKey: data
   webhook:
@@ -89,7 +87,7 @@ inputs:
 schemaCache:
   schemaCacheBackend:
     type: fs
-    path: /schemas
+    path: ./schemas
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
   purge:
@@ -107,13 +105,15 @@ sinks:
   - name: primary
     type: kafka
     kafkaBrokers:
-      - redpanda-1:29092 # internally advertised
-      - redpanda-2:29093 # internally advertised
-      - redpanda-3:29094 # internally advertised
+      - redpanda-1:29092
+      - redpanda-2:29093
+      - redpanda-3:29094
     invalidEventTopic: hpt-invalid
     validEventTopic: hpt-valid
   - name: console
     type: stdout
+  - name: adios
+    type: blackhole
 
 squawkBox:
   enabled: true
@@ -123,5 +123,6 @@ squawkBox:
 
 tele:
   enabled: true
-  heartbeatMs: 30000
+  heartbeatMs: 3000
+
 ```
