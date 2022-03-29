@@ -1,0 +1,40 @@
+name: Releaser
+
+on:
+  push:
+    # tags:
+    #   - 'v*'
+      branches:
+        - gorelease
+
+jobs:
+  releaser:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, windows, darwin]
+        goarch: ["386", amd64, arm64]
+        exclude:
+          - goarch: "386"
+            goos: darwin
+          - goarch: arm64
+            goos: windows
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18.x
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Release
+        uses: wangyoucao577/go-release-action@v1.25
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
+          goversion: 1.18
+          project_path: "./cmd/"
+          binary_name: "honeypot"
+          extra_files: LICENSE .VERSION
