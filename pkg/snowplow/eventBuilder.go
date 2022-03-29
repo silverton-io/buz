@@ -2,7 +2,6 @@ package snowplow
 
 import (
 	b64 "encoding/base64"
-	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -106,53 +105,45 @@ func getContexts(b64encodedContexts *string) *[]event.SelfDescribingContext {
 	return &contexts
 }
 
-func getSdEvent(b64SelfDescribingEvent *string) *event.SelfDescribingEvent {
-	event := event.SelfDescribingEvent{}
-	payload, err := b64.RawStdEncoding.DecodeString(*b64SelfDescribingEvent)
+func getSdPayload(b64EncodedPayload *string) *event.SelfDescribingPayload {
+	p := event.SelfDescribingPayload{}
+	payload, err := b64.RawStdEncoding.DecodeString(*b64EncodedPayload)
 	if err != nil {
-		log.Error().Err(err).Msg("could not decode b64 encoded self describing event")
+		log.Error().Err(err).Msg("could not decode b64 encoded self describing payload")
 	}
 	schema := gjson.GetBytes(payload, "data.schema").Value().(string)
 	data := gjson.GetBytes(payload, "data.data").Value().(map[string]interface{})
-	event.Payload.Schema = schema
-	event.Payload.Data = data
-	return &event
+	p.Schema = schema
+	p.Data = data
+	return &p
+}
+
+func getQueryParam(u url.URL, k string) *string {
+	param := u.Query()
+	val := param.Get(k)
+	if val == "" {
+		return nil
+	} else {
+		return &val
+	}
 }
 
 func getPageFieldsFromUrl(rawUrl string) (PageFields, error) {
 	parsedUrl, err := url.Parse(rawUrl)
-	queryParams := parsedUrl.Query()
 	unescapedQry, err := url.QueryUnescape(parsedUrl.RawQuery)
 	if err != nil {
 		return PageFields{}, err
 	}
-	medium := queryParams.Get("utm_medium")
-	source := queryParams.Get("utm_source")
-	term := queryParams.Get("utm_term")
-	content := queryParams.Get("utm_content")
-	campaign := queryParams.Get("utm_campaign")
 	pageFields := PageFields{
-		scheme: parsedUrl.Scheme,
-		host:   parsedUrl.Host,
-		path:   parsedUrl.Path,
-	}
-	if unescapedQry != "" { // FIXME! Has to be a better way
-		pageFields.query = &unescapedQry
-	}
-	if medium != "" {
-		pageFields.medium = &medium
-	}
-	if source != "" {
-		pageFields.source = &source
-	}
-	if term != "" {
-		pageFields.term = &term
-	}
-	if content != "" {
-		pageFields.content = &content
-	}
-	if campaign != "" {
-		pageFields.campaign = &campaign
+		scheme:   parsedUrl.Scheme,
+		host:     parsedUrl.Host,
+		path:     parsedUrl.Path,
+		query:    &unescapedQry,
+		medium:   getQueryParam(*parsedUrl, "utm_medium"),
+		source:   getQueryParam(*parsedUrl, "utm_source"),
+		term:     getQueryParam(*parsedUrl, "utm_term"),
+		content:  getQueryParam(*parsedUrl, "utm_content"),
+		campaign: getQueryParam(*parsedUrl, "utm_campaign"),
 	}
 	if parsedUrl.Fragment != "" {
 		pageFields.fragment = &parsedUrl.Fragment
@@ -192,7 +183,6 @@ func setUserFields(c *gin.Context, e *SnowplowEvent, params map[string]interface
 	useragent := c.Request.UserAgent()
 	nuid := c.GetString("identity")
 	e.DomainUserid = getStringParam(params, "duid")
-	fmt.Println(nuid)
 	e.NetworkUserid = &nuid
 	e.Userid = getStringParam(params, "uid")
 	e.DomainSessionIdx = getInt64Param(params, "vid")
@@ -264,7 +254,7 @@ func setReferrerFields(e *SnowplowEvent, params map[string]interface{}) {
 		if err != nil {
 			log.Error().Err(err).Msg("error setting page fields")
 		}
-		e.RefrUrlScheme = &pageFields.scheme // FIXME! Has to be a better way
+		e.RefrUrlScheme = &pageFields.scheme
 		e.RefrUrlHost = &pageFields.host
 		e.RefrUrlPath = &pageFields.path
 		e.RefrUrlQuery = pageFields.query
@@ -331,8 +321,8 @@ func setContexts(e *SnowplowEvent, params map[string]interface{}) {
 }
 
 func setSelfDescribingFields(e *SnowplowEvent, params map[string]interface{}) {
-	b64encodedEvent := getStringParam(params, "ue_px")
-	e.SelfDescribingEvent = getSdEvent(b64encodedEvent)
+	b64EncodedPayload := getStringParam(params, "ue_px")
+	e.SelfDescribingEvent = getSdPayload(b64EncodedPayload)
 }
 
 func setEventMetadataFields(e *SnowplowEvent, schema []byte) {

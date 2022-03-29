@@ -113,7 +113,7 @@ type SnowplowEvent struct {
 	DvceScreenHeight  *int    `json:"dvce_screenheight"`
 	// Payload/context fields
 	Contexts            *[]event.SelfDescribingContext `json:"contexts"`
-	SelfDescribingEvent *event.SelfDescribingEvent     `json:"self_describing_event"` // Self Describing Event
+	SelfDescribingEvent *event.SelfDescribingPayload   `json:"self_describing_event"` // Self Describing Event
 	// Page ping fields
 	PpXOffsetMin *int64 `json:"pp_xoffset_min"` // Page Ping Event
 	PpXOffsetMax *int64 `json:"pp_xoffset_max"` // Page Ping Event
@@ -153,7 +153,7 @@ type SnowplowEvent struct {
 func (e SnowplowEvent) Schema() *string {
 	switch e.Event {
 	case SELF_DESCRIBING_EVENT:
-		schemaName := e.SelfDescribingEvent.Payload.Schema
+		schemaName := e.SelfDescribingEvent.Schema
 		if schemaName[:4] == IGLU {
 			schemaName = schemaName[5:]
 		}
@@ -169,7 +169,7 @@ func (e SnowplowEvent) Protocol() string {
 }
 
 func (e SnowplowEvent) PayloadAsByte() ([]byte, error) {
-	payloadBytes, err := json.Marshal(e.SelfDescribingEvent.Payload)
+	payloadBytes, err := json.Marshal(e.SelfDescribingEvent.Data)
 	if err != nil {
 		return nil, err
 	}

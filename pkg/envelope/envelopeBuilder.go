@@ -43,8 +43,6 @@ func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []Env
 		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not read request body")
-			envelope := Envelope{}
-			envelopes = append(envelopes, envelope)
 			return envelopes
 		}
 		payloadData := gjson.GetBytes(body, "data")
@@ -67,8 +65,6 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not read request body")
-		envelope := Envelope{}
-		envelopes = append(envelopes, envelope)
 		return envelopes
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
@@ -94,8 +90,6 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []E
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not read request body")
-		envelope := Envelope{}
-		envelopes = append(envelopes, envelope)
 		return envelopes
 	}
 	for _, ce := range gjson.ParseBytes(reqBody).Array() {
@@ -128,6 +122,7 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 	}
 	relayedEvents := gjson.ParseBytes(reqBody)
 	for _, relayedEvent := range relayedEvents.Array() {
+		rid := uuid.New()
 		eventProtocol := relayedEvent.Get("eventProtocol").String()
 		eventPayload := relayedEvent.Get("payload").Raw
 		var envelope Envelope
@@ -148,6 +143,7 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 		case protocol.WEBHOOK:
 			payload := webhook.WebhookEvent{}
 			json.Unmarshal([]byte(eventPayload), &payload)
+			envelope.Payload = payload
 		default:
 			payload := snowplow.SnowplowEvent{}
 			json.Unmarshal([]byte(eventPayload), &payload)
@@ -155,6 +151,7 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 		}
 		isRelayed := true
 		envelope.IsRelayed = &isRelayed
+		envelope.RelayedId = &rid
 		envelopes = append(envelopes, envelope)
 	}
 	return envelopes
@@ -165,11 +162,10 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context) []Envelope {
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not read request body")
-		envelope := Envelope{}
-		envelopes = append(envelopes, envelope)
 		return envelopes
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
+		uid := uuid.New()
 		whEvent, err := webhook.BuildEvent(c, e)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not build WebhookEvent")
@@ -177,6 +173,7 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context) []Envelope {
 		isValid := true
 		isRelayed := false
 		envelope := Envelope{
+			Id:            uid,
 			EventProtocol: protocol.WEBHOOK,
 			EventSchema:   *whEvent.Schema(),
 			Tstamp:        time.Now().UTC(),
