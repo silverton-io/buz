@@ -40,5 +40,6 @@ jobs:
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
           build_command: make
+          release_tag: ${{ steps.get-version.outputs.content }}
           binary_name: honeypot
           extra_files: LICENSE .VERSION
