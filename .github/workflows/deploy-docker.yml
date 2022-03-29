@@ -6,7 +6,7 @@ on:
 
 env:
   GH_REGISTRY: ghcr.io
-  GCP_REGISTRY: us-east1-docker.pkg.dev/silverton-io/docker
+  GCP_REGISTRY: us-east1-docker.pkg.dev
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
@@ -38,7 +38,7 @@ jobs:
       - name: Configure Docker
         shell: bash
         run: |
-          gcloud auth configure-docker --quiet
+          gcloud auth configure-docker ${{ env.GCP_REGISTRY }} --quiet
           docker login
 
       - name: Set up build cache
@@ -78,5 +78,5 @@ jobs:
           #   ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
           #   ${{ env.GCP_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
           tags: |
-              ${{ env.GCP_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
+              ${{ env.GCP_REGISTRY }}/silverton-io/docker/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
           labels: ${{ steps.meta.outputs.labels }}
