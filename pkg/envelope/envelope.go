@@ -28,6 +28,7 @@ type Envelope struct {
 	Ip              string           `json:"ip"`
 	IsValid         *bool            `json:"isValid"`
 	IsRelayed       *bool            `json:"isRelayed"`
+	RelayedId       *uuid.UUID       `json:"relayedId"`
 	ValidationError *ValidationError `json:"validationErrors"`
 	Payload         event.Event      `json:"payload"`
 }
