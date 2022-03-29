@@ -5,7 +5,8 @@ on:
     branches: ['main']
 
 env:
-  REGISTRY: ghcr.io
+  GH_REGISTRY: ghcr.io
+  GCP_REGISTRY: us-east1-docker.pkg.dev
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
@@ -14,10 +15,11 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       
       - name: Get Version from file
         id: get-version
@@ -25,12 +27,19 @@ jobs:
         with:
           path: ./.VERSION
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      - name: Authenticate to Google Cloud
+        id: auth-gcloud
+        uses: 'google-github-actions/auth@v0'
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          workload_identity_provider: 'projects/860234713891/locations/global/workloadIdentityPools/honeypot/providers/github'
+          service_account: 'honeypot-ci@silverton-io.iam.gserviceaccount.com'
+          create_credentials_file: true
+
+      - name: Configure Docker
+        shell: bash
+        run: |
+          gcloud auth configure-docker ${{ env.GCP_REGISTRY }} --quiet
+          docker login
 
       - name: Set up build cache
         uses: actions/cache@v2
@@ -54,5 +63,7 @@ jobs:
           push: true
           cache-from: type=local,src=/tmp/.build-cache
           cache-to: type=local,dest=/tmp/.build-cache
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
+          tags: |
+            ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
+            ${{ env.GCP_REGISTRY }}/silverton-io/docker/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
           labels: ${{ steps.meta.outputs.labels }}
