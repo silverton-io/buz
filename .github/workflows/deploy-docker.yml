@@ -26,13 +26,13 @@ jobs:
         with:
           path: ./.VERSION
 
-      - name: 'Authenticate to Google Cloud'
+      - name: Authenticate to Google Cloud
         id: auth-gcloud
         uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: ${{ secrets.HONEYPOT_CI_CREDENTIALS }}
 
-      - name: Login to Google Artifact Registry
+      - name: Configure Docker Auth
         run: |
           gcloud auth configure-docker -q
         shell: bash
