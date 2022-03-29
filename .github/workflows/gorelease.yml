@@ -28,13 +28,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Get Version from file
+        id: get-version
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./.VERSION
+
       - name: Release
         uses: wangyoucao577/go-release-action@v1.25
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
-          goversion: 1.18
-          project_path: "./cmd/"
-          binary_name: "honeypot"
+          build_command: make
+          binary_name: honeypot
+          release_tag: ${{ steps.get-version.outputs.content }}
           extra_files: LICENSE .VERSION
