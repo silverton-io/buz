@@ -55,31 +55,33 @@ func (m Manifold) buffersFull() bool {
 	return false
 }
 
-func (m *Manifold) PurgeBuffersToSinks(ctx context.Context) {
+func (m *Manifold) PurgeBuffersToSinks(ctx context.Context, meta *tele.Meta) {
 	// FIXME - what happens when one sink entirely succeeds and one fails (partially or entirely)? Will need better handling of this.
 	for _, sink := range *m.sinks {
-		m.purgeBuffersToSink(ctx, &sink)
+		m.purgeBuffersToSink(ctx, &sink, meta)
 	}
 	m.invalidEnvelopes = nil
 	m.validEnvelopes = nil
 	m.buffersLastPurged = time.Now().UTC()
 }
 
-func (m *Manifold) PurgeBuffersToSinksIfFull(ctx context.Context) {
+func (m *Manifold) PurgeBuffersToSinksIfFull(ctx context.Context, meta *tele.Meta) {
 	if m.buffersFull() {
-		m.PurgeBuffersToSinks(ctx)
+		m.PurgeBuffersToSinks(ctx, meta)
 	}
 }
 
-func (m *Manifold) purgeBuffersToSink(ctx context.Context, s *sink.Sink) {
+func (m *Manifold) purgeBuffersToSink(ctx context.Context, s *sink.Sink, meta *tele.Meta) {
 	sink := *s
 	if m.validCount() >= 1 {
 		log.Info().Interface("envelopeCount", m.validCount()).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking valid envelopes")
 		sink.BatchPublishValid(ctx, m.validEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
+		meta.BufferPurgeStats.IncrementValid()
 	}
 	if m.invalidCount() >= 1 {
 		log.Info().Interface("envelopeCount", m.invalidCount()).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking invalid envelopes")
 		sink.BatchPublishInvalid(ctx, m.invalidEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
+		meta.BufferPurgeStats.IncrementInvalid()
 	}
 }
 
@@ -101,8 +103,7 @@ func (m *Manifold) Run(meta *tele.Meta, shutdown *chan bool) {
 			select {
 			case <-*shutdown:
 				log.Info().Msg("manifold is shutting down")
-				m.PurgeBuffersToSinks(ctx)
-				meta.BufferPurgeStats.Increment()
+				m.PurgeBuffersToSinks(ctx, meta)
 				return
 			case e := <-*m.envelopeChan:
 				if *e.IsValid {
@@ -114,8 +115,7 @@ func (m *Manifold) Run(meta *tele.Meta, shutdown *chan bool) {
 					m.AppendInvalidEnvelope(e)
 					meta.ProtocolStats.IncrementInvalid(e.EventProtocol, e.EventSchema, 1)
 				}
-				m.PurgeBuffersToSinksIfFull(ctx)
-				meta.BufferPurgeStats.Increment()
+				m.PurgeBuffersToSinksIfFull(ctx, meta)
 			}
 			// FIXME! Have a ticker on a bufferTimeThreshold and send to a channel
 		}

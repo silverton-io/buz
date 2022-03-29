@@ -1,0 +1,82 @@
+package sink
+
+import (
+	"context"
+
+	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/envelope"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+type MongodbSink struct {
+	id                *uuid.UUID
+	name              string
+	client            *mongo.Client
+	validCollection   *mongo.Collection
+	invalidCollection *mongo.Collection
+}
+
+func (s *MongodbSink) Id() *uuid.UUID {
+	return s.id
+}
+
+func (s *MongodbSink) Name() string {
+	return s.name
+}
+
+func (s *MongodbSink) Initialize(conf config.Sink) error {
+	ctx := context.Background()
+	opt := options.ClientOptions{
+		Hosts: conf.MongoHosts,
+	}
+	if conf.MongoDbUser != "" {
+		c := options.Credential{
+			Username: conf.MongoDbUser,
+			Password: conf.MongoDbPass,
+		}
+		opt.Auth = &c
+	}
+	client, err := mongo.Connect(ctx, &opt)
+	if err != nil {
+		log.Error().Err(err).Msg("could not connect to mongo")
+	}
+	s.client = client
+	vCollection := s.client.Database(conf.MongoDbName).Collection(conf.ValidCollection)
+	iCollection := s.client.Database(conf.MongoDbName).Collection(conf.InvalidCollection)
+	s.validCollection, s.invalidCollection = vCollection, iCollection
+	return nil
+}
+
+func (s *MongodbSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
+	for _, e := range envelopes {
+		payload, err := bson.Marshal(e)
+		if err != nil {
+			log.Error().Err(err).Msg("could not bson marshal valid envelope")
+		}
+		_, err = s.validCollection.InsertOne(ctx, payload) // FIXME - should batch these
+		if err != nil {
+			log.Error().Err(err).Msg("could not publish valid envelope")
+		}
+	}
+}
+
+func (s *MongodbSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
+	for _, e := range envelopes {
+		payload, err := bson.Marshal(e)
+		if err != nil {
+			log.Error().Err(err).Msg("could not bson marshal invalid envelope")
+		}
+		_, err = s.invalidCollection.InsertOne(ctx, payload) // FIXME - should batch these
+		if err != nil {
+			log.Error().Err(err).Msg("could not publish invalid envelope")
+		}
+	}
+}
+
+func (s *MongodbSink) Close() {
+	log.Debug().Msg("closing mongodb sink")
+}
