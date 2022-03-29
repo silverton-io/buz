@@ -39,6 +39,7 @@ jobs:
         shell: bash
         run: |
           gcloud auth configure-docker --quiet
+          docker login
 
       - name: Set up build cache
         uses: actions/cache@v2
@@ -47,6 +48,16 @@ jobs:
           key: ${{ runner.os }}-build-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-build-
+
+      - name: Test gcloud
+        shell: bash
+        run: |
+          gcloud artifacts repositories list
+
+      - name: Dump docker info
+        shell: bash
+        run: |
+          cat ~/.docker/config.json
 
       - name: Set up Buildx
         id: buildx
