@@ -587,7 +587,7 @@
                     "validCollection": {
                         "type": "string",
                         "description": "The collection to sink valid envelopes to if sink type is mongodb",
-                        "default": "honeypot-valid"
+                        "default": "honeypotValid"
                     },
                     "invalidEventTopic": {
                         "type": "string",
@@ -622,7 +622,7 @@
                     "invalidCollection": {
                         "type": "string",
                         "description": "The collection to sink invalid envelopes to if sink type is mongodb",
-                        "default": "honeypot-invalid"
+                        "default": "honeypotInvalid"
                     },
                     "project": {
                         "type": "string",
