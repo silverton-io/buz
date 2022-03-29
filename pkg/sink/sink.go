@@ -24,6 +24,7 @@ const (
 	FILE             string = "file"
 	POSTGRES         string = "postgres"
 	PUBNUB           string = "pubnub"
+	MONGODB          string = "mongodb"
 )
 
 type Sink interface {
@@ -75,6 +76,9 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		return &sink, nil
 	case POSTGRES:
 		sink := PostgresSink{}
+		return &sink, nil
+	case MONGODB:
+		sink := MongodbSink{}
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)

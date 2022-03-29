@@ -35,4 +35,12 @@ type Sink struct {
 	InvalidChannel string `json:"invalidChannel,omitempty"`
 	PubnubPubKey   string `json:"pubnubPubKey,omitempty"`
 	PubnubSubKey   string `json:"pubnubSubKey,omitempty"`
+	// Mongodb
+	MongoHosts        []string `json:"mongoHosts,omitempty"`
+	MongoDbPort       string   `json:"mongoDbPort,omitempty"`
+	MongoDbName       string   `json:"mongoDbName,omitempty"`
+	MongoDbUser       string   `json:"-"`
+	MongoDbPass       string   `json:"-"`
+	ValidCollection   string   `json:"validCollection,omitempty"`
+	InvalidCollection string   `json:"invalidCollection,omitempty"`
 }

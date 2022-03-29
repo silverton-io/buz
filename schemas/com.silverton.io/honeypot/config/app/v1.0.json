@@ -532,7 +532,7 @@
                         "type": "string",
                         "default": "pubsub",
                         "description": "The sink configuration",
-                        "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch", "blackhole", "file", "postgres", "pubnub"]
+                        "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch", "blackhole", "file", "postgres", "pubnub", "mongodb"]
                     },
                     "kafkaBrokers": {
                         "type": "array",
@@ -584,6 +584,11 @@
                         "description": "The channel to sink valid envelopes to if sink type is pubnub",
                         "default": "honeypot-valid"
                     },
+                    "validCollection": {
+                        "type": "string",
+                        "description": "The collection to sink valid envelopes to if sink type is mongodb",
+                        "default": "honeypotValid"
+                    },
                     "invalidEventTopic": {
                         "type": "string",
                         "description": "The name of the invalid event topic (or 'stream', if kinesis)",
@@ -613,6 +618,11 @@
                         "type": "string",
                         "description": "The channel to sink invalid envelopes to if sink type is pubnub",
                         "default": "honeypot-invalid"
+                    },
+                    "invalidCollection": {
+                        "type": "string",
+                        "description": "The collection to sink invalid envelopes to if sink type is mongodb",
+                        "default": "honeypotInvalid"
                     },
                     "project": {
                         "type": "string",
@@ -658,6 +668,31 @@
                         "type": "string",
                         "description": "The pubnub sub key",
                         "default": "YOUR-SUB-KEY"
+                    },
+                    "mongoHosts": {
+                        "type": "array",
+                        "description": "A list of mongodb hosts",
+                        "default": ["mongodb1", "mongodb2", "mongodb3"]
+                    },
+                    "mongoDbPort": {
+                        "type": "number",
+                        "description": "The mongo port if sink type is mongodb",
+                        "default": "27017"
+                    },
+                    "mongoDbName": {
+                        "type": "string",
+                        "description": "The mongo database name if sink type is mongodb",
+                        "default": "honeypot"
+                    },
+                    "mongoDbUser": {
+                        "type": "string",
+                        "description": "The mongo database user if sink type is mongodb",
+                        "default": ""
+                    },
+                    "mongoDbPass": {
+                        "type": "string",
+                        "description": "The mongo database password if sink type is mongodb",
+                        "default": ""
                     }
                 },
                 "additionalProperties": false,
@@ -766,6 +801,14 @@
                             }
                         },
                         "required": ["validChannel", "invalidChannel", "pubnubPubKey", "pubnubSubKey"]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "mongodb"
+                            }
+                        },
+                        "required": ["mongoHosts","mongoDbPort", "mongoDbName","validCollection", "invalidCollection"]
                     }
                 ]
             }
