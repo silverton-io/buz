@@ -2,7 +2,7 @@ name: Publish Honeypot image to ghcr.io
 
 on:
   push:
-    branches: ['gcp-img']
+    branches: ['main']
 
 env:
   GH_REGISTRY: ghcr.io
@@ -49,16 +49,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-
 
-      # - name: Test gcloud
-      #   shell: bash
-      #   run: |
-      #     gcloud artifacts repositories list
-
-      - name: Dump docker info
-        shell: bash
-        run: |
-          cat /home/runner/.docker/config.json
-
       - name: Set up Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
@@ -69,14 +59,11 @@ jobs:
           context: .
           file: ./deploy/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
-          # platforms: linux/amd64, linux/arm64
-          platforms: linux/amd64
+          platforms: linux/amd64, linux/arm64
           push: true
           cache-from: type=local,src=/tmp/.build-cache
           cache-to: type=local,dest=/tmp/.build-cache
-          # tags: |
-          #   ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
-          #   ${{ env.GCP_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
           tags: |
-              ${{ env.GCP_REGISTRY }}/silverton-io/docker/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
+            ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
+            ${{ env.GCP_REGISTRY }}/silverton-io/docker/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
           labels: ${{ steps.meta.outputs.labels }}
