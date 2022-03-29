@@ -10,15 +10,19 @@ on:
 jobs:
   releaser:
     runs-on: ubuntu-latest
-    # strategy:
-    #   matrix:
-    #     goos: [linux, windows, darwin]
-    #     goarch: ["386", amd64, arm64]
-    #     exclude:
-    #       - goarch: "386"
-    #         goos: darwin
-    #       - goarch: arm64
-    #         goos: windows
+    strategy:
+      # matrix:
+      #   goos: [linux, windows, darwin]
+      #   goarch: ["386", amd64, arm64]
+      #   exclude:
+      #     - goarch: "386"
+      #       goos: darwin
+      #     - goarch: arm64
+      #       goos: windows
+      matrix:
+        goos: [darwin]
+        goarch: [amd64]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -29,23 +33,12 @@ jobs:
         with:
           path: ./.VERSION
 
-      # - name: Release
-      #   uses: wangyoucao577/go-release-action@v1.25
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     goos: ${{ matrix.goos }}
-      #     goarch: ${{ matrix.goarch }}
-      #     build_command: make
-      #     binary_name: honeypot
-      #     release_tag: ${{ steps.get-version.outputs.content }}
-      #     extra_files: LICENSE .VERSION
-
       - name: Release
         uses: wangyoucao577/go-release-action@v1.25
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: darwin
-          goarch: amd64
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
           build_command: make
           binary_name: honeypot
           extra_files: LICENSE .VERSION
