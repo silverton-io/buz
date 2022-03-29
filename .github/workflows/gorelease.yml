@@ -34,13 +34,20 @@ jobs:
         with:
           path: ./.VERSION
 
+      # - name: Release
+      #   uses: wangyoucao577/go-release-action@v1.25
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     goos: ${{ matrix.goos }}
+      #     goarch: ${{ matrix.goarch }}
+      #     build_command: make
+      #     binary_name: honeypot
+      #     release_tag: ${{ steps.get-version.outputs.content }}
+      #     extra_files: LICENSE .VERSION
+
       - name: Release
         uses: wangyoucao577/go-release-action@v1.25
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: ${{ matrix.goos }}
-          goarch: ${{ matrix.goarch }}
-          build_command: make
-          binary_name: honeypot
-          release_tag: ${{ steps.get-version.outputs.content }}
-          extra_files: LICENSE .VERSION
+          goos: darwin
+          goarch: amd64
