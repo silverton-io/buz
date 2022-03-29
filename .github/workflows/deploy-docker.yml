@@ -34,16 +34,15 @@ jobs:
 
       - name: Login to Google Artifact Registry
         run: |
-          echo "${{ steps.auth-gcloud.outputs.access_token }}" | docker login -u oauth2accesstoken --password-stdin https://us-east1-docker.pkg.dev
+          gcloud auth configure-docker -q
         shell: bash
 
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Log in to the Container registry
+      #   uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      #   with:
+      #     registry: ${{ env.REGISTRY }}
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up build cache
         uses: actions/cache@v2
