@@ -31,6 +31,7 @@ jobs:
         uses: 'google-github-actions/auth@v0'
         with:
           workload_identity_provider: 'projects/860234713891/locations/global/workloadIdentityPools/honeypot-github/providers/github'
+          service_account: 'honeypot-ci@silverton-io.iam.gserviceaccount.com'
           export_environment_variables: true
           create_credentials_file: true
 
@@ -57,11 +58,14 @@ jobs:
           context: .
           file: ./deploy/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
-          platforms: linux/amd64, linux/arm64
+          # platforms: linux/amd64, linux/arm64
+          platforms: linux/amd64
           push: true
           cache-from: type=local,src=/tmp/.build-cache
           cache-to: type=local,dest=/tmp/.build-cache
+          # tags: |
+          #   ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
+          #   ${{ env.GCP_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
           tags: |
-            ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
-            ${{ env.GCP_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
+              ${{ env.GCP_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
           labels: ${{ steps.meta.outputs.labels }}
