@@ -49,15 +49,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-
 
-      - name: Test gcloud
-        shell: bash
-        run: |
-          gcloud artifacts repositories list
+      # - name: Test gcloud
+      #   shell: bash
+      #   run: |
+      #     gcloud artifacts repositories list
 
       - name: Dump docker info
         shell: bash
         run: |
-          cat ~/.docker/config.json
+          cat /home/runner/.docker/config.json
 
       - name: Set up Buildx
         id: buildx
