@@ -20,11 +20,6 @@ jobs:
     #       - goarch: arm64
     #         goos: windows
     steps:
-      # - name: Install Go
-      #   uses: actions/setup-go@v2
-      #   with:
-      #     go-version: 1.18.x
-
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -51,3 +46,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: darwin
           goarch: amd64
+          build_command: make
+          binary_name: honeypot
+          extra_files: LICENSE .VERSION
