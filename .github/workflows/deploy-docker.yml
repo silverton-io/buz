@@ -37,13 +37,6 @@ jobs:
           gcloud auth configure-docker -q
         shell: bash
 
-      # - name: Log in to the Container registry
-      #   uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-      #   with:
-      #     registry: ${{ env.REGISTRY }}
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Set up build cache
         uses: actions/cache@v2
         with:
@@ -66,7 +59,7 @@ jobs:
           push: true
           cache-from: type=local,src=/tmp/.build-cache
           cache-to: type=local,dest=/tmp/.build-cache
-          tags: |
+          tags:
             - ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
             - ${{ env.GCP_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
           labels: ${{ steps.meta.outputs.labels }}
