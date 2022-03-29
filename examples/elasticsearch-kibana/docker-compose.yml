@@ -3,7 +3,7 @@ version: "3.9"
 services:
   honeypot:
     container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.1.33
+    image: ghcr.io/silverton-io/honeypot:v0.1.34
     volumes:
       - type: bind
         source: ./honeypot/elastic-kibana.conf.yml
