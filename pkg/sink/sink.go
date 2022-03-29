@@ -2,13 +2,11 @@ package sink
 
 import (
 	"errors"
-	"sync/atomic"
 
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/protocol"
-	"github.com/silverton-io/honeypot/pkg/tele"
 	"golang.org/x/net/context"
 )
 
@@ -22,13 +20,18 @@ const (
 	HTTPS            string = "https"
 	RELAY            string = "relay"
 	ELASTICSEARCH    string = "elasticsearch"
+	BLACKHOLE        string = "blackhole"
+	FILE             string = "file"
+	POSTGRES         string = "postgres"
+	PUBNUB           string = "pubnub"
 )
 
 type Sink interface {
-	Initialize(conf config.Sink)
-	BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope)
-	BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope)
-	BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta)
+	Id() *uuid.UUID
+	Name() string
+	Initialize(conf config.Sink) error
+	BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope)
+	BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope)
 	Close()
 }
 
@@ -61,6 +64,18 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	case ELASTICSEARCH:
 		sink := ElasticsearchSink{}
 		return &sink, nil
+	case BLACKHOLE:
+		sink := BlackholeSink{}
+		return &sink, nil
+	case FILE:
+		sink := FileSink{}
+		return &sink, nil
+	case PUBNUB:
+		sink := PubnubSink{}
+		return &sink, nil
+	case POSTGRES:
+		sink := PostgresSink{}
+		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
 		log.Error().Stack().Err(e).Msg("unsupported sink")
@@ -68,28 +83,30 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	}
 }
 
-func InitializeSink(conf config.Sink, s Sink) {
-	s.Initialize(conf)
+func InitializeSink(conf config.Sink, s Sink) error {
+	err := s.Initialize(conf)
+	if err != nil {
+		log.Debug().Stack().Err(err).Msg("could not initialize sink")
+		return err
+	}
 	log.Info().Msg(conf.Type + " sink initialized")
+	return nil
 }
 
-func incrementStats(protocolName string, validCount int, invalidCount int, meta *tele.Meta) {
-	var validCounter *int64
-	var invalidCounter *int64
-	switch protocolName {
-	case protocol.GENERIC:
-		validCounter = &meta.ValidGenericEventsProcessed
-		invalidCounter = &meta.InvalidGenericEventsProcessed
-	case protocol.CLOUDEVENTS:
-		validCounter = &meta.ValidCloudEventsProcessed
-		invalidCounter = &meta.InvalidCloudEventsProcessed
-	case protocol.SNOWPLOW:
-		validCounter = &meta.ValidSnowplowEventsProcessed
-		invalidCounter = &meta.InvalidSnowplowEventsProcessed
-	default:
-		validCounter = &meta.ValidRelayEventsProcessed
-		invalidCounter = &meta.InvalidRelayEventsProcessed
+func BuildAndInitializeSinks(conf []config.Sink) ([]Sink, error) {
+	var sinks []Sink
+	for _, sConf := range conf {
+		sink, err := BuildSink(sConf)
+		if err != nil {
+			log.Debug().Err(err).Msg("could not build sink")
+			return nil, err
+		}
+		err = InitializeSink(sConf, sink)
+		if err != nil {
+			log.Debug().Err(err).Msg("could not initialize sink")
+			return nil, err
+		}
+		sinks = append(sinks, sink)
 	}
-	atomic.AddInt64(validCounter, int64(validCount))
-	atomic.AddInt64(invalidCounter, int64(invalidCount))
+	return sinks, nil
 }

@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/twmb/franz-go/pkg/kadm"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"golang.org/x/net/context"
@@ -20,37 +20,53 @@ const (
 )
 
 type KafkaSink struct {
+	id                 *uuid.UUID
+	name               string
 	client             *kgo.Client
 	validEventsTopic   string
 	invalidEventsTopic string
 }
 
-func (s *KafkaSink) Initialize(conf config.Sink) {
+func (s *KafkaSink) Id() *uuid.UUID {
+	return s.id
+}
+
+func (s *KafkaSink) Name() string {
+	return s.name
+}
+
+func (s *KafkaSink) Initialize(conf config.Sink) error {
 	ctx := context.Background()
 	log.Debug().Msg("initializing kafka client")
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(conf.KafkaBrokers...),
 	)
 	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("could not create kafka sink client")
+		log.Debug().Stack().Err(err).Msg("could not create kafka sink client")
+		return err
 	}
 	log.Debug().Msg("pinging kafka brokers")
 	err = client.Ping(ctx)
 	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("could not ping kafka sink brokers")
+		log.Debug().Stack().Err(err).Msg("could not ping kafka sink brokers")
+		return err
 	}
 	admClient := kadm.NewClient(client)
 	log.Debug().Msg("verifying topics exist")
 	topicDetails, err := admClient.DescribeTopicConfigs(ctx, conf.ValidEventTopic, conf.InvalidEventTopic)
 	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("could not describe topic configs")
+		log.Debug().Stack().Err(err).Msg("could not describe topic configs")
+		return err
 	}
 	for _, d := range topicDetails {
 		if d.Err != nil {
 			log.Fatal().Stack().Err(d.Err).Msg("topic doesn't exist: " + d.Name)
 		}
 	}
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, conf.ValidEventTopic, conf.InvalidEventTopic
+	return nil
 }
 
 func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []envelope.Envelope) {
@@ -79,14 +95,6 @@ func (s *KafkaSink) BatchPublishValid(ctx context.Context, envelopes []envelope.
 
 func (s *KafkaSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
 	s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
-}
-
-func (s *KafkaSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
-	// Publish
-	go s.BatchPublishValid(ctx, validEnvelopes)
-	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
-	// Increment stats counters
-	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
 
 func (s *KafkaSink) Close() {

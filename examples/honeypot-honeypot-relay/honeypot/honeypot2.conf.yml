@@ -21,7 +21,7 @@ middleware:
     period: S
     limit: 10
   cookie:
-    enabled: true
+    enabled: false
     name: sp-nuid
     secure: false
     ttlDays: 365
@@ -84,17 +84,22 @@ schemaCache:
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
   purge:
-    enabled: true
+    enabled: false
     path: /c/purge
   schemaEndpoints:
-    enabled: true
+    enabled: false
 
-sink:
-  type: stdout
-  produceTimeout: 5
+manifold:
+  bufferRecordThreshold: 1
+  bufferByteThreshold: 1024
+  bufferTimeThreshold: 60
+
+sinks:
+  - name: console
+    type: stdout
 
 squawkBox:
-  enabled: true
+  enabled: false
   cloudeventsPath: /sqwk/ce
   snowplowPath: /sqwk/sp
   genericPath: /sqwk/gen

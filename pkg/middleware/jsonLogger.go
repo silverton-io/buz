@@ -34,9 +34,9 @@ func getIp(c *gin.Context) string {
 
 func RequestLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		start := time.Now()
+		start := time.Now().UTC()
 		c.Next()
-		end := time.Now()
+		end := time.Now().UTC()
 		duration := util.GetDuration(start, end)
 		r := request{
 			ResponseCode:             c.Writer.Status(),

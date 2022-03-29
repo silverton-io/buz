@@ -13,13 +13,44 @@ app:
   env: development
   mode: debug
   port: 8080
-  trackerDomain: localhost
+  trackerDomain: trck.slvrtnio.com
   health:
     enabled: true
     path: /health
   stats:
     enabled: true
     path: /stats
+
+middleware:
+  timeout:
+    enabled: false
+    ms: 2000
+  rateLimiter:
+    enabled: false
+    period: S
+    limit: 10
+  cookie:
+    enabled: true
+    name: nuid
+    secure: false
+    ttlDays: 365
+    domain: slvrtnio.com
+    path: /
+    sameSite: Lax
+  cors:
+    enabled: true
+    allowOrigin:
+      - "*"
+    allowCredentials: true
+    allowMethods:
+      - POST
+      - OPTIONS
+      - GET
+    maxAge: 86400
+  requestLogger:
+    enabled: true
+  yeet:
+    enabled: false
 
 inputs:
   snowplow:
@@ -34,18 +65,16 @@ inputs:
       userId: false
   cloudevents:
     enabled: true
-    postPath: /ce/p
-    batchPostPath: /ce/bp
+    path: /ce/p
   generic:
     enabled: true
-    postPath: /gen/p
-    batchPostPath: /gen/bp
+    path: /gen/p
     contexts:
       rootKey: contexts
       schemaKey: schema
       dataKey: data
     payload:
-      rootKey: data
+      rootKey: payload
       schemaKey: schema
       dataKey: data
   webhook:
@@ -67,40 +96,24 @@ schemaCache:
   schemaEndpoints:
     enabled: true
 
-sink:
-  type: stdout
-  produceTimeout: 3
+manifold:
+  bufferRecordThreshold: 1
+  bufferByteThreshold: 1024
+  bufferTimeThreshold: 60
 
-middleware:
-  timeout:
-    enabled: false
-    ms: 2
-  rateLimiter:
-    enabled: false
-    period: H
-    limit: 1
-  cookie:
-    enabled: true
-    name: sp-nuid
-    secure: false
-    ttlDays: 365
-    domain: localhost
-    path: /
-    sameSite: Lax
-  cors:
-    enabled: true
-    allowOrigin:
-      - "*"
-    allowCredentials: true
-    allowMethods:
-      - POST
-      - OPTIONS
-      - GET
-    maxAge: 86400
-  requestLogger:
-    enabled: true
-  yeet:
-    enabled: false
+sinks:
+  - name: primary
+    type: kafka
+    kafkaBrokers:
+      - redpanda-1:29092
+      - redpanda-2:29093
+      - redpanda-3:29094
+    invalidEventTopic: hpt-invalid
+    validEventTopic: hpt-valid
+  - name: console
+    type: stdout
+  - name: adios
+    type: blackhole
 
 squawkBox:
   enabled: true
@@ -110,6 +123,6 @@ squawkBox:
 
 tele:
   enabled: true
-  heartbeatMs: 30000
+  heartbeatMs: 3000
 
 ```

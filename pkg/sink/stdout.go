@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/silverton-io/honeypot/pkg/util"
 )
 
@@ -36,10 +36,24 @@ func Colorize(colorString string) func(...interface{}) string {
 	return sprint
 }
 
-type StdoutSink struct{}
+type StdoutSink struct {
+	id   *uuid.UUID
+	name string
+}
 
-func (s *StdoutSink) Initialize(conf config.Sink) {
+func (s *StdoutSink) Id() *uuid.UUID {
+	return s.id
+}
+
+func (s *StdoutSink) Name() string {
+	return s.name
+}
+
+func (s *StdoutSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing stdout sink")
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
+	return nil
 }
 
 func (s *StdoutSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
@@ -54,12 +68,6 @@ func (s *StdoutSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes [
 		invalidEnvelopes := util.Stringify(invalidEnvelopes)
 		fmt.Println(Red(invalidEnvelopes))
 	}
-}
-
-func (s *StdoutSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
-	s.BatchPublishValid(ctx, validEnvelopes)
-	s.BatchPublishInvalid(ctx, invalidEnvelopes)
-	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
 
 func (s *StdoutSink) Close() {

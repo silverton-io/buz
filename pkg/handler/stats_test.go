@@ -16,19 +16,13 @@ import (
 
 func TestStatsHandler(t *testing.T) {
 	u := uuid.New()
-	now := time.Now()
+	now := time.Now().UTC()
 	m := tele.Meta{
-		Version:                        "1.0.x",
-		InstanceId:                     u,
-		StartTime:                      now,
-		TrackerDomain:                  "somewhere.net",
-		CookieDomain:                   "somewhere.io",
-		ValidSnowplowEventsProcessed:   1,
-		InvalidSnowplowEventsProcessed: 1,
-		ValidGenericEventsProcessed:    1,
-		InvalidGenericEventsProcessed:  1,
-		ValidCloudEventsProcessed:      1,
-		InvalidCloudEventsProcessed:    1,
+		Version:       "1.0.x",
+		InstanceId:    u,
+		StartTime:     now,
+		TrackerDomain: "somewhere.net",
+		CookieDomain:  "somewhere.io",
 	}
 	rec := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(rec)

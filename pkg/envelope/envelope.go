@@ -22,12 +22,13 @@ type ValidationError struct {
 type Envelope struct {
 	Id              uuid.UUID        `json:"id"`
 	EventProtocol   string           `json:"eventProtocol"`
-	EventSchema     *string          `json:"eventSchema"`
+	EventSchema     string           `json:"eventSchema"`
 	Source          string           `json:"source"`
 	Tstamp          time.Time        `json:"tstamp"`
 	Ip              string           `json:"ip"`
 	IsValid         *bool            `json:"isValid"`
 	IsRelayed       *bool            `json:"isRelayed"`
+	RelayedId       *uuid.UUID       `json:"relayedId"`
 	ValidationError *ValidationError `json:"validationErrors"`
 	Payload         event.Event      `json:"payload"`
 }

@@ -7,23 +7,36 @@ import (
 
 	awsconf "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/kinesis"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
 type KinesisSink struct {
+	id                  *uuid.UUID
+	name                string
 	client              *kinesis.Client
 	validEventsStream   string
 	invalidEventsStream string
 }
 
-func (s *KinesisSink) Initialize(conf config.Sink) {
+func (s *KinesisSink) Id() *uuid.UUID {
+	return s.id
+}
+
+func (s *KinesisSink) Name() string {
+	return s.name
+}
+
+func (s *KinesisSink) Initialize(conf config.Sink) error {
 	ctx := context.Background()
-	cfg, _ := awsconf.LoadDefaultConfig(ctx)
+	cfg, err := awsconf.LoadDefaultConfig(ctx)
 	client := kinesis.NewFromConfig(cfg)
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
 	s.client, s.validEventsStream, s.invalidEventsStream = client, conf.ValidEventTopic, conf.InvalidEventTopic
+	return err
 }
 
 func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) {
@@ -56,14 +69,6 @@ func (s *KinesisSink) BatchPublishValid(ctx context.Context, envelopes []envelop
 
 func (s *KinesisSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
 	s.batchPublish(ctx, s.invalidEventsStream, envelopes)
-}
-
-func (s *KinesisSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
-	// Publish
-	go s.BatchPublishValid(ctx, validEnvelopes)
-	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
-	// Increment stats counters
-	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
 
 func (s *KinesisSink) Close() {

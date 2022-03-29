@@ -18,47 +18,43 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+func buildSnowplowEnvelope(spEvent snowplow.SnowplowEvent) Envelope {
+	isRelayed := false
+	schema := spEvent.Schema()
+	uid := uuid.New()
+	if schema == nil {
+		schema = spEvent.EventName // FIXME? Is this the right approach?
+	}
+	envelope := Envelope{
+		Id:            uid,
+		EventProtocol: protocol.SNOWPLOW,
+		EventSchema:   *schema,
+		Tstamp:        time.Now().UTC(),
+		Ip:            *spEvent.UserIpaddress,
+		Payload:       spEvent,
+		IsRelayed:     &isRelayed,
+	}
+	return envelope
+}
+
 func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelope {
 	var envelopes []Envelope
-	isRelayed := false
 	if c.Request.Method == "POST" {
 		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not read request body")
-			envelope := Envelope{}
-			envelopes = append(envelopes, envelope)
 			return envelopes
 		}
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
 			spEvent := snowplow.BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf)
-			schema := spEvent.Schema()
-			uid := uuid.New()
-			envelope := Envelope{
-				Id:            uid,
-				EventProtocol: protocol.SNOWPLOW,
-				EventSchema:   schema,
-				Tstamp:        time.Now(),
-				Ip:            *spEvent.User_ipaddress,
-				Payload:       spEvent,
-				IsRelayed:     &isRelayed,
-			}
-			envelopes = append(envelopes, envelope)
+			e := buildSnowplowEnvelope(spEvent)
+			envelopes = append(envelopes, e)
 		}
 	} else {
 		params := util.MapUrlParams(c)
 		spEvent := snowplow.BuildEventFromMappedParams(c, params, conf)
-		schema := spEvent.Schema()
-		uid := uuid.New()
-		e := Envelope{
-			Id:            uid,
-			EventProtocol: protocol.SNOWPLOW,
-			EventSchema:   schema,
-			Tstamp:        time.Now(),
-			Ip:            *spEvent.User_ipaddress,
-			Payload:       spEvent,
-			IsRelayed:     &isRelayed,
-		}
+		e := buildSnowplowEnvelope(spEvent)
 		envelopes = append(envelopes, e)
 	}
 	return envelopes
@@ -69,8 +65,6 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not read request body")
-		envelope := Envelope{}
-		envelopes = append(envelopes, envelope)
 		return envelopes
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
@@ -80,8 +74,8 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 		envelope := Envelope{
 			Id:            uid,
 			EventProtocol: protocol.GENERIC,
-			EventSchema:   &genEvent.Payload.Schema,
-			Tstamp:        time.Now(),
+			EventSchema:   genEvent.Payload.Schema,
+			Tstamp:        time.Now().UTC(),
 			Ip:            c.ClientIP(),
 			Payload:       genEvent,
 			IsRelayed:     &isRelayed,
@@ -96,8 +90,6 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []E
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not read request body")
-		envelope := Envelope{}
-		envelopes = append(envelopes, envelope)
 		return envelopes
 	}
 	for _, ce := range gjson.ParseBytes(reqBody).Array() {
@@ -107,8 +99,8 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []E
 		envelope := Envelope{
 			Id:            uid,
 			EventProtocol: protocol.CLOUDEVENTS,
-			EventSchema:   &cEvent.DataSchema,
-			Tstamp:        time.Now(),
+			EventSchema:   cEvent.DataSchema,
+			Tstamp:        time.Now().UTC(),
 			Source:        cEvent.Source,
 			Ip:            c.ClientIP(),
 			Payload:       cEvent,
@@ -130,6 +122,7 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 	}
 	relayedEvents := gjson.ParseBytes(reqBody)
 	for _, relayedEvent := range relayedEvents.Array() {
+		rid := uuid.New()
 		eventProtocol := relayedEvent.Get("eventProtocol").String()
 		eventPayload := relayedEvent.Get("payload").Raw
 		var envelope Envelope
@@ -147,6 +140,10 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 			payload := generic.GenericEvent{}
 			json.Unmarshal([]byte(eventPayload), &payload)
 			envelope.Payload = payload
+		case protocol.WEBHOOK:
+			payload := webhook.WebhookEvent{}
+			json.Unmarshal([]byte(eventPayload), &payload)
+			envelope.Payload = payload
 		default:
 			payload := snowplow.SnowplowEvent{}
 			json.Unmarshal([]byte(eventPayload), &payload)
@@ -154,6 +151,7 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 		}
 		isRelayed := true
 		envelope.IsRelayed = &isRelayed
+		envelope.RelayedId = &rid
 		envelopes = append(envelopes, envelope)
 	}
 	return envelopes
@@ -164,11 +162,10 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context) []Envelope {
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not read request body")
-		envelope := Envelope{}
-		envelopes = append(envelopes, envelope)
 		return envelopes
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
+		uid := uuid.New()
 		whEvent, err := webhook.BuildEvent(c, e)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not build WebhookEvent")
@@ -176,9 +173,10 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context) []Envelope {
 		isValid := true
 		isRelayed := false
 		envelope := Envelope{
+			Id:            uid,
 			EventProtocol: protocol.WEBHOOK,
-			EventSchema:   whEvent.Schema(),
-			Tstamp:        time.Now(),
+			EventSchema:   *whEvent.Schema(),
+			Tstamp:        time.Now().UTC(),
 			Ip:            c.ClientIP(),
 			Payload:       whEvent,
 			IsValid:       &isValid,

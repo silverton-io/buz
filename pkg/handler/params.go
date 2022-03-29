@@ -3,13 +3,11 @@ package handler
 import (
 	"github.com/silverton-io/honeypot/pkg/cache"
 	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/sink"
-	"github.com/silverton-io/honeypot/pkg/tele"
+	"github.com/silverton-io/honeypot/pkg/manifold"
 )
 
 type EventHandlerParams struct {
-	Config *config.Config
-	Cache  *cache.SchemaCache
-	Sink   sink.Sink
-	Meta   *tele.Meta
+	Config   *config.Config
+	Cache    *cache.SchemaCache
+	Manifold *manifold.Manifold
 }

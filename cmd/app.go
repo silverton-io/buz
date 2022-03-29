@@ -10,13 +10,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/cache"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/env"
 	"github.com/silverton-io/honeypot/pkg/handler"
+	"github.com/silverton-io/honeypot/pkg/manifold"
 	"github.com/silverton-io/honeypot/pkg/middleware"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/sink"
@@ -32,16 +32,16 @@ type App struct {
 	config      *config.Config
 	engine      *gin.Engine
 	schemaCache *cache.SchemaCache
-	sink        sink.Sink
+	manifold    *manifold.Manifold
+	sinks       []sink.Sink
 	meta        *tele.Meta
 }
 
 func (a *App) handlerParams() handler.EventHandlerParams {
 	params := handler.EventHandlerParams{
-		Config: a.config,
-		Cache:  a.schemaCache,
-		Sink:   a.sink,
-		Meta:   a.meta,
+		Config:   a.config,
+		Cache:    a.schemaCache,
+		Manifold: a.manifold,
 	}
 	return params
 }
@@ -70,22 +70,8 @@ func (a *App) configure() {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
 	a.config.App.Version = VERSION
-	instanceId := uuid.New()
-	m := tele.Meta{
-		Version:       VERSION,
-		InstanceId:    instanceId,
-		StartTime:     time.Now(),
-		TrackerDomain: a.config.App.TrackerDomain,
-		CookieDomain:  a.config.Cookie.Domain,
-	}
-	a.meta = &m
-}
-
-func (a *App) initializeSinks() {
-	log.Info().Msg("initializing sinks")
-	s, _ := sink.BuildSink(a.config.Sink)
-	sink.InitializeSink(a.config.Sink, s)
-	a.sink = s
+	meta := tele.BuildMeta(VERSION, a.config)
+	a.meta = meta
 }
 
 func (a *App) initializeSchemaCache() {
@@ -93,6 +79,24 @@ func (a *App) initializeSchemaCache() {
 	cache := cache.SchemaCache{}
 	cache.Initialize(a.config.SchemaCache)
 	a.schemaCache = &cache
+}
+
+func (a *App) initializeSinks() {
+	log.Info().Msg("initializing sinks")
+	sinks, err := sink.BuildAndInitializeSinks(a.config.Sinks)
+	if err != nil {
+		log.Fatal().Err(err).Msg("could not build and init sinks")
+	}
+	a.sinks = sinks
+}
+
+func (a *App) initializeManifold() {
+	log.Info().Msg("initializing manifold")
+	m, err := manifold.BuildManifold(a.config.Manifold, &a.sinks)
+	if err != nil {
+		log.Fatal().Stack().Err(err).Msg("could not build manifold")
+	}
+	a.manifold = m
 }
 
 func (a *App) initializeRouter() {
@@ -198,8 +202,7 @@ func (a *App) initializeGenericRoutes() {
 	if a.config.Inputs.Generic.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing generic routes")
-		a.engine.POST(a.config.Inputs.Generic.PostPath, handler.GenericHandler(handlerParams))
-		a.engine.POST(a.config.Inputs.Generic.BatchPostPath, handler.GenericHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Generic.Path, handler.GenericHandler(handlerParams))
 	}
 }
 
@@ -207,8 +210,7 @@ func (a *App) initializeCloudeventsRoutes() {
 	if a.config.Inputs.Cloudevents.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing cloudevents routes")
-		a.engine.POST(a.config.Inputs.Cloudevents.PostPath, handler.CloudeventsHandler(handlerParams))
-		a.engine.POST(a.config.Inputs.Cloudevents.BatchPostPath, handler.CloudeventsHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Cloudevents.Path, handler.CloudeventsHandler(handlerParams))
 	}
 }
 
@@ -254,6 +256,7 @@ func (a *App) Initialize() {
 	log.Info().Msg("initializing app")
 	a.configure()
 	a.initializeSinks()
+	a.initializeManifold()
 	a.initializeSchemaCache()
 	a.initializeRouter()
 	a.initializeMiddleware()
@@ -283,6 +286,8 @@ func (a *App) Run() {
 	}()
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	shutDownManifold := make(chan bool, 1)
+	a.manifold.Run(a.meta, &shutDownManifold)
 	<-quit
 	log.Info().Msg("shutting down server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -290,5 +295,6 @@ func (a *App) Run() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal().Stack().Err(err).Msg("server forced to shutdown")
 	}
+	shutDownManifold <- true
 	tele.Sis(a.meta)
 }

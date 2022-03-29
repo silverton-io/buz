@@ -7,44 +7,62 @@ import (
 	"sync"
 
 	"cloud.google.com/go/pubsub"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/tele"
 	"golang.org/x/net/context"
 )
 
+const INIT_TIMEOUT_SECONDS = 10
+
 type PubsubSink struct {
+	id                 *uuid.UUID
+	name               string
 	client             *pubsub.Client
 	validEventsTopic   *pubsub.Topic
 	invalidEventsTopic *pubsub.Topic
 }
 
-const INIT_TIMEOUT_SECONDS = 10
+func (s *PubsubSink) Id() *uuid.UUID {
+	return s.id
+}
 
-func (s *PubsubSink) Initialize(conf config.Sink) {
+func (s *PubsubSink) Name() string {
+	return s.name
+}
+
+func (s *PubsubSink) Initialize(conf config.Sink) error {
 	ctx, _ := context.WithTimeout(context.Background(), INIT_TIMEOUT_SECONDS*time.Second)
 	client, err := pubsub.NewClient(ctx, conf.Project)
 	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("could not initialize pubsub sink")
+		log.Debug().Stack().Err(err).Msg("could not initialize pubsub sink")
+		return err
 	}
 	validTopic := client.Topic(conf.ValidEventTopic)
 	invalidTopic := client.Topic(conf.InvalidEventTopic)
 	vTopicExists, err := validTopic.Exists(ctx)
 	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("cannot check valid event topic existence")
+		log.Debug().Stack().Err(err).Msg("cannot check valid event topic existence")
+		return err
 	}
 	if !vTopicExists {
-		log.Fatal().Stack().Err(err).Msg("valid event topic doesn't exist in project " + conf.Project)
+		log.Debug().Stack().Err(err).Msg("valid event topic doesn't exist in project " + conf.Project)
+		return err
 	}
 	invTopicExists, err := invalidTopic.Exists(ctx)
 	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("cannot check invalid event topic existence")
+		log.Debug().Stack().Err(err).Msg("cannot check invalid event topic existence")
+		return err
 	}
 	if !invTopicExists {
-		log.Fatal().Stack().Err(err).Msg("invalid event topic doesn't exist in project " + conf.Project)
+		log.Debug().Stack().Err(err).Msg("invalid event topic doesn't exist in project " + conf.Project)
+		return err
 	}
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, validTopic, invalidTopic
+	return nil
 }
 
 func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, envelopes []envelope.Envelope) {
@@ -75,14 +93,6 @@ func (s *PubsubSink) BatchPublishValid(ctx context.Context, envelopes []envelope
 
 func (s *PubsubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
 	s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
-}
-
-func (s *PubsubSink) BatchPublishValidAndInvalid(ctx context.Context, inputType string, validEnvelopes []envelope.Envelope, invalidEnvelopes []envelope.Envelope, meta *tele.Meta) {
-	// Publish
-	go s.BatchPublishValid(ctx, validEnvelopes)
-	go s.BatchPublishInvalid(ctx, invalidEnvelopes)
-	// Increment stats counters
-	incrementStats(inputType, len(validEnvelopes), len(invalidEnvelopes), meta)
 }
 
 func (s *PubsubSink) Close() {

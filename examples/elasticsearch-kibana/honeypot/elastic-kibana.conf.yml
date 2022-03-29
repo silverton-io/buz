@@ -56,12 +56,10 @@ inputs:
       userId: false
   cloudevents:
     enabled: true
-    postPath: /ce/p
-    batchPostPath: /ce/bp
+    path: /ce/p
   generic:
     enabled: true
-    postPath: /gen/p
-    batchPostPath: /gen/bp
+    path: /gen/p
     contexts:
       rootKey: contexts
       schemaKey: schema
@@ -89,15 +87,20 @@ schemaCache:
   schemaEndpoints:
     enabled: true
 
-sink:
-  type: elasticsearch
-  elasticsearchHosts: 
-    - http://elasticsearch:9200
-  elasticsearchUsername: elastic
-  elasticsearchPassword: elastic
-  validIndex: honeypot-valid
-  invalidIndex: honeypot-invalid
-  produceTimeout: 5
+manifold:
+  bufferRecordThreshold: 1
+  bufferByteThreshold: 1024
+  bufferTimeThreshold: 60
+
+sinks:
+  - name: elk
+    type: elasticsearch
+    elasticsearchHosts:
+      - http://elasticsearch:9200
+    elasticsearchUsername: elastic
+    elasticsearchPassword: elastic
+    validIndex: honeypot-valid
+    invalidIndex: honeypot-invalid
 
 squawkBox:
   enabled: true

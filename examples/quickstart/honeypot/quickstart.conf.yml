@@ -56,12 +56,10 @@ inputs:
       userId: false
   cloudevents:
     enabled: true
-    postPath: /ce/p
-    batchPostPath: /ce/bp
+    path: /ce/p
   generic:
     enabled: true
-    postPath: /gen/p
-    batchPostPath: /gen/bp
+    path: /gen/p
     contexts:
       rootKey: contexts
       schemaKey: schema
@@ -89,15 +87,20 @@ schemaCache:
   schemaEndpoints:
     enabled: true
 
-sink:
-  type: kafka
-  kafkaBrokers:
-    - redpanda-1:29092 # internally advertised
-    - redpanda-2:29093 # internally advertised
-    - redpanda-3:29094 # internally advertised
-  invalidEventTopic: hpt-invalid
-  validEventTopic: hpt-valid
-  produceTimeout: 3
+manifold:
+  bufferRecordThreshold: 1
+  bufferByteThreshold: 1024
+  bufferTimeThreshold: 60
+
+sinks:
+  - name: primary
+    type: kafka
+    kafkaBrokers:
+      - redpanda-1:29092 # internally advertised
+      - redpanda-2:29093 # internally advertised
+      - redpanda-3:29094 # internally advertised
+    invalidEventTopic: hpt-invalid
+    validEventTopic: hpt-valid
 
 squawkBox:
   enabled: true

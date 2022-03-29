@@ -301,19 +301,14 @@
                             "default": "true",
                             "description": "Whether or not to activate cloudevents tracking"
                         },
-                        "postPath": {
+                        "path": {
                             "type": "string",
                             "default": "/ce/p",
-                            "description": "The path by which to process incoming single-message cloudevents payloads"
-                        },
-                        "batchPostPath": {
-                            "type": "string",
-                            "default": "/ce/bp",
-                            "description": "The path by which to process incoming batch cloudevents payloads"
+                            "description": "The path by which to process incoming cloudevents payloads"
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["enabled", "postPath", "batchPostPath"]
+                    "required": ["enabled", "path"]
                 },
                 "generic": {
                     "type": "object",
@@ -324,15 +319,10 @@
                             "default": "true",
                             "description": "Whether or not to activate generic self-describing event tracking"
                         },
-                        "postPath": {
-                            "type": "string",
-                            "default": "/gen/p",
-                            "description": "The path by which to process incoming single-message self describing payloads"
-                        },
-                        "batchPostPath": {
+                        "path": {
                             "type": "string",
                             "default": "/gen/bp",
-                            "description": "The path by which to process incoming batch self describing payloads"
+                            "description": "The path by which to process incoming self describing payloads"
                         },
                         "contexts": {
                             "type": "object",
@@ -382,7 +372,7 @@
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["enabled", "postPath", "batchPostPath", "contexts", "payload"]
+                    "required": ["enabled", "path", "contexts", "payload"]
                 },
                 "webhook": {
                     "type": "object",
@@ -501,158 +491,284 @@
             "additionalProperties": false,
             "required": ["schemaCacheBackend", "ttlSeconds", "maxSizeBytes", "purge", "schemaEndpoints"]
         },
-        "sink": {
+        "manifold": {
             "type": "object",
-            "description": "Sink configuration",
+            "description": "Manifold configuration",
             "properties": {
-                "type": {
-                    "type": "string",
-                    "default": "pubsub",
-                    "description": "The sink configuration",
-                    "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch"]
+                "bufferRecordThreshold": {
+                    "type": "number",
+                    "description": "The record threshold at which point the manifold buffer is purged",
+                    "default": "1"
                 },
-                "kafkaBrokers": {
-                    "type": "array",
-                    "description": "A list of kafka brokers (HOST:PORT), if sink type is kafka",
-                    "default": ["BROKER1:9092", "BROKER2:9092", "BROKER3:9092"]
+                "bufferByteThreshold": {
+                    "type": "number",
+                    "description": "The byte threshold at which point the manifold buffer is purged",
+                    "default": "1024"
                 },
-                "elasticsearchHosts": {
-                    "type": "array",
-                    "description": "A list of elasticsearch hosts, if sink type is elasticsearch",
-                    "default": ["http://es1:9200"]
-                },
-                "elasticsearchUsername": {
-                    "type": "string",
-                    "description": "The elasticsearch username, if sink type is elasticsearch",
-                    "default": "elastic"
-                },
-                "elasticsearchPassword": {
-                    "type": "string",
-                    "description": "The elasticsearch password, if sink type is elasticsearch",
-                    "default": "elastic"
-                },
-                "validEventTopic": {
-                    "type": "string",
-                    "default": "honeypot-valid-topic",
-                    "description": "The name of the valid event topic (or 'stream', if kinesis)"
-                },
-                "validUrl": {
-                    "type": "string",
-                    "description": "The url to sink valid envelopes to if sink type is http or https",
-                    "default": "https://your-endpoint.net/valid-events-here"
-                },
-                "validIndex": {
-                    "type": "string",
-                    "description": "The index to sink valid envelopes to if sink type is elasticsearch",
-                    "default": "honeypot-valid"
-                },
-                "invalidEventTopic": {
-                    "type": "string",
-                    "description": "The name of the invalid event topic (or 'stream', if kinesis)",
-                    "default": "honeypot-invalid-topic"
-                },
-                "invalidUrl": {
-                    "type": "string",
-                    "description": "The url to sink invalid envelopes if sink type is http or https",
-                    "default": "https://your-endpoint.net/invalid-events-here"
-                },
-                "invalidIndex": {
-                    "type": "string",
-                    "description": "The index to sink invalid envelopes to if sink type is elasticsearch",
-                    "default": "honeypot-invalid"
-                },
-                "produceTimeout": {
-                    "type": "integer",
-                    "default": "5",
-                    "description": "The sink producer timeout in seconds"
-                },
-                "project": {
-                    "type": "string",
-                    "default": "honeypot-gcp-project",
-                    "description": "The name of the GCP project, if sink type is pubsub"
-                },
-                "relayUrl": {
-                    "type": "string",
-                    "description": "The url to relay envelopes to, if sink type is relay",
-                    "default": "https://another-honeypot.net/relay"
+                "bufferTimeThreshold": {
+                    "type": "number",
+                    "description": "The time threshold (in seconds) at which point the manifold buffer is purged",
+                    "default": "60"
                 }
             },
             "additionalProperties": false,
-            "required": ["type", "produceTimeout"],
-            "anyOf": [
-                {
-                    "properties": {
-                        "type": {
-                            "const": "stdout"
-                        }
+            "required": ["bufferRecordThreshold", "bufferByteThreshold", "bufferTimeThreshold"]
+        },
+        "sinks": {
+            "type": "array",
+            "description": "Configuration for the sinks",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+                "type": "object",
+                "description": "Configuration for an individual sink",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "default": "SINK-NAME",
+                        "description": "The sink name"
                     },
-                    "required": []
+                    "type": {
+                        "type": "string",
+                        "default": "pubsub",
+                        "description": "The sink configuration",
+                        "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch", "blackhole", "file", "postgres", "pubnub"]
+                    },
+                    "kafkaBrokers": {
+                        "type": "array",
+                        "description": "A list of kafka brokers (HOST:PORT), if sink type is kafka",
+                        "default": ["BROKER1:9092", "BROKER2:9092", "BROKER3:9092"]
+                    },
+                    "elasticsearchHosts": {
+                        "type": "array",
+                        "description": "A list of elasticsearch hosts, if sink type is elasticsearch",
+                        "default": ["http://es1:9200"]
+                    },
+                    "elasticsearchUsername": {
+                        "type": "string",
+                        "description": "The elasticsearch username, if sink type is elasticsearch",
+                        "default": "elastic"
+                    },
+                    "elasticsearchPassword": {
+                        "type": "string",
+                        "description": "The elasticsearch password, if sink type is elasticsearch",
+                        "default": "elastic"
+                    },
+                    "validEventTopic": {
+                        "type": "string",
+                        "default": "honeypot-valid-topic",
+                        "description": "The name of the valid event topic (or 'stream', if kinesis)"
+                    },
+                    "validUrl": {
+                        "type": "string",
+                        "description": "The url to sink valid envelopes to if sink type is http or https",
+                        "default": "https://your-endpoint.net/valid-events-here"
+                    },
+                    "validIndex": {
+                        "type": "string",
+                        "description": "The index to sink valid envelopes to if sink type is elasticsearch",
+                        "default": "honeypot-valid"
+                    },
+                    "validFile": {
+                        "type": "string",
+                        "description": "The file to sink valid envelopes to if sink type is file",
+                        "default": "honeypot-valid.json"
+                    },
+                    "validTable": {
+                        "type": "string",
+                        "description": "The table to sink valid envelopes to if sink type is postgres",
+                        "default": "honeypot_valid"
+                    },
+                    "validChannel": {
+                        "type": "string",
+                        "description": "The channel to sink valid envelopes to if sink type is pubnub",
+                        "default": "honeypot-valid"
+                    },
+                    "invalidEventTopic": {
+                        "type": "string",
+                        "description": "The name of the invalid event topic (or 'stream', if kinesis)",
+                        "default": "honeypot-invalid-topic"
+                    },
+                    "invalidUrl": {
+                        "type": "string",
+                        "description": "The url to sink invalid envelopes if sink type is http or https",
+                        "default": "https://your-endpoint.net/invalid-events-here"
+                    },
+                    "invalidIndex": {
+                        "type": "string",
+                        "description": "The index to sink invalid envelopes to if sink type is elasticsearch",
+                        "default": "honeypot-invalid"
+                    },
+                    "invalidFile": {
+                        "type": "string",
+                        "description": "The file to sink invalid envelopes to if sink type is file",
+                        "default": "honeypot-invalid.json"
+                    },
+                    "invalidTable": {
+                        "type": "string",
+                        "description": "The table to sink invalid envelopes to if sink type is postgres",
+                        "default": "honeypot_invalid"
+                    },
+                    "invalidChannel": {
+                        "type": "string",
+                        "description": "The channel to sink invalid envelopes to if sink type is pubnub",
+                        "default": "honeypot-invalid"
+                    },
+                    "project": {
+                        "type": "string",
+                        "default": "honeypot-gcp-project",
+                        "description": "The name of the GCP project, if sink type is pubsub"
+                    },
+                    "relayUrl": {
+                        "type": "string",
+                        "description": "The url to relay envelopes to, if sink type is relay",
+                        "default": "https://another-honeypot.net/relay"
+                    },
+                    "dbHost": {
+                        "type": "string",
+                        "description": "The database hostname to write envelopes to if sink type is postgres",
+                        "default": "localhost"
+                    },
+                    "dbPort": {
+                        "type": "number",
+                        "description": "The database port to write envelopes to if sink type is postgres",
+                        "default": 5432
+                    },
+                    "dbName": {
+                        "type": "string",
+                        "description": "The database name if sink type is postgres",
+                        "default": "honeypot"
+                    },
+                    "dbUser": {
+                        "type": "string",
+                        "description": "The database connection user if sink type is postgres",
+                        "default": "honeypot"
+                    },
+                    "dbPass": {
+                        "type": "string",
+                        "description": "The database connection password if sink type is postgres",
+                        "default": "honeypot"
+                    },
+                    "pubnubPubKey": {
+                        "type": "string",
+                        "description": "The pubnub pub key",
+                        "default": "YOUR-PUB-KEY"
+                    },
+                    "pubnubSubKey": {
+                        "type": "string",
+                        "description": "The pubnub sub key",
+                        "default": "YOUR-SUB-KEY"
+                    }
                 },
-                {
-                    "properties": {
-                        "type": {
-                            "const": "kafka"
-                        }
+                "additionalProperties": false,
+                "required": ["name", "type"],
+                "anyOf": [
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "stdout"
+                            }
+                        },
+                        "required": []
                     },
-                    "required": ["kafkaBrokers", "validEventTopic", "invalidEventTopic"]
-                },
-                {
-                    "properties": {
-                        "type": {
-                            "const": "pubsub"
-                        }
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "kafka"
+                            }
+                        },
+                        "required": ["kafkaBrokers", "validEventTopic", "invalidEventTopic"]
                     },
-                    "required": ["project", "validEventTopic", "invalidEventTopic"]
-                },
-                {
-                    "properties": {
-                        "type": {
-                            "const": "kinesis"
-                        }
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "pubsub"
+                            }
+                        },
+                        "required": ["project", "validEventTopic", "invalidEventTopic"]
                     },
-                    "required": ["validEventTopic", "invalidEventTopic"]
-                },
-                {
-                    "properties": {
-                        "type": {
-                            "const": "kinesis-firehose"
-                        }
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "kinesis"
+                            }
+                        },
+                        "required": ["validEventTopic", "invalidEventTopic"]
                     },
-                    "required": ["validEventTopic", "invalidEventTopic"]
-                },
-                {
-                    "properties": {
-                        "type": {
-                            "const": "http"
-                        }
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "kinesis-firehose"
+                            }
+                        },
+                        "required": ["validEventTopic", "invalidEventTopic"]
                     },
-                    "required": ["validUrl", "invalidUrl"]
-                },
-                {
-                    "properties": {
-                        "type": {
-                            "const": "https"
-                        }
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "http"
+                            }
+                        },
+                        "required": ["validUrl", "invalidUrl"]
                     },
-                    "required": ["validUrl", "invalidUrl"]
-                },
-                {
-                    "properties": {
-                        "type": {
-                            "const": "relay"
-                        }
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "https"
+                            }
+                        },
+                        "required": ["validUrl", "invalidUrl"]
                     },
-                    "required": ["relayUrl"]
-                },
-                {
-                    "properties": {
-                        "type": {
-                            "const": "elasticsearch"
-                        }
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "relay"
+                            }
+                        },
+                        "required": ["relayUrl"]
                     },
-                    "required": ["elasticsearchHosts", "elasticsearchUsername", "elasticsearchPassword", "validIndex", "invalidIndex"]
-                }
-            ]
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "elasticsearch"
+                            }
+                        },
+                        "required": ["elasticsearchHosts", "elasticsearchUsername", "elasticsearchPassword", "validIndex", "invalidIndex"]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "blackhole"
+                            }
+                        },
+                        "required": []
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "file"
+                            }
+                        },
+                        "required": ["validFile", "invalidFile"]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "postgres"
+                            }
+                        },
+                        "required": ["dbHost", "dbPort", "dbName", "dbUser", "dbPass", "validTable", "invalidTable"]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "pubnub"
+                            }
+                        },
+                        "required": ["validChannel", "invalidChannel", "pubnubPubKey", "pubnubSubKey"]
+                    }
+                ]
+            }
         },
         "squawkBox": {
             "type": "object",
@@ -703,5 +819,5 @@
         }
     },
     "additionalProperties": false,
-    "required": [ "version", "app", "middleware", "inputs", "schemaCache", "sink", "squawkBox","tele"]
+    "required": [ "version", "app", "middleware", "inputs", "schemaCache", "manifold", "sinks", "squawkBox","tele"]
 }
