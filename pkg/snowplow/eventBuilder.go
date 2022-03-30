@@ -187,7 +187,7 @@ func setUserFields(c *gin.Context, e *SnowplowEvent, params map[string]interface
 	e.Userid = getStringParam(params, "uid")
 	e.DomainSessionIdx = getInt64Param(params, "vid")
 	e.DomainSessionId = getStringParam(params, "sid")
-	e.UserIpaddress = &sIp
+	e.UserIpAddress = &sIp
 	e.Useragent = &useragent
 	e.MacAddress = getStringParam(params, "mac")
 }
@@ -268,9 +268,9 @@ func setReferrerFields(e *SnowplowEvent, params map[string]interface{}) {
 }
 
 func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
-	if conf.Anonymize.Ip && e.UserIpaddress != nil {
-		hashedIp := util.Md5(*e.UserIpaddress)
-		e.UserIpaddress = &hashedIp
+	if conf.Anonymize.Ip && e.UserIpAddress != nil {
+		hashedIp := util.Md5(*e.UserIpAddress)
+		e.UserIpAddress = &hashedIp
 	}
 	if conf.Anonymize.UserId && e.Userid != nil {
 		hashedUserId := util.Md5(*e.Userid)
