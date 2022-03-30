@@ -76,9 +76,7 @@ jobs:
           push: true
           cache-from: type=local,src=/tmp/.build-cache
           cache-to: type=local,dest=/tmp/.build-cache
-          # tags: |
-          #   ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
-          #   ${{ env.GCP_REGISTRY }}/silverton-io/docker/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
           tags: |
             ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
+            ${{ env.GCP_REGISTRY }}/silverton-io/docker/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.content }}
           labels: ${{ steps.meta.outputs.labels }}
