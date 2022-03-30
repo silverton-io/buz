@@ -1,6 +1,9 @@
 name: Releaser
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   cut-release:
