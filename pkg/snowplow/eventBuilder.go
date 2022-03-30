@@ -93,6 +93,7 @@ func getContexts(b64encodedContexts *string) *[]event.SelfDescribingContext {
 	payload, err := b64.RawStdEncoding.DecodeString(*b64encodedContexts)
 	if err != nil {
 		log.Error().Err(err).Msg("could not decode b64 encoded contexts")
+		return nil
 	}
 	contextPayload := gjson.ParseBytes(payload)
 	for _, pl := range contextPayload.Get("data").Array() {
@@ -106,15 +107,15 @@ func getContexts(b64encodedContexts *string) *[]event.SelfDescribingContext {
 }
 
 func getSdPayload(b64EncodedPayload *string) *event.SelfDescribingPayload {
-	p := event.SelfDescribingPayload{}
 	payload, err := b64.RawStdEncoding.DecodeString(*b64EncodedPayload)
 	if err != nil {
 		log.Error().Err(err).Msg("could not decode b64 encoded self describing payload")
+		return nil
 	}
-	schema := gjson.GetBytes(payload, "data.schema").Value().(string)
-	data := gjson.GetBytes(payload, "data.data").Value().(map[string]interface{})
-	p.Schema = schema
-	p.Data = data
+	p := event.SelfDescribingPayload{
+		Schema: gjson.GetBytes(payload, "data.schema").String(),
+		Data:   gjson.GetBytes(payload, "data.data").Value().(map[string]interface{}),
+	}
 	return &p
 }
 
@@ -130,8 +131,13 @@ func getQueryParam(u url.URL, k string) *string {
 
 func getPageFieldsFromUrl(rawUrl string) (PageFields, error) {
 	parsedUrl, err := url.Parse(rawUrl)
+	if err != nil {
+		log.Error().Err(err).Interface("url", rawUrl).Msg("could not parse url")
+		return PageFields{}, err
+	}
 	unescapedQry, err := url.QueryUnescape(parsedUrl.RawQuery)
 	if err != nil {
+		log.Error().Err(err).Interface("query", parsedUrl.RawQuery).Msg("could not unescape query params")
 		return PageFields{}, err
 	}
 	pageFields := PageFields{
@@ -172,8 +178,8 @@ func setMetadataFields(e *SnowplowEvent, params map[string]interface{}, conf con
 	e.EventFingerprint = fingerprint
 	e.OsTimezone = getStringParam(params, "tz")
 	e.TrackerVersion = getStringParam(params, "tv")
-	e.EtlVersion = &conf.Version
-	e.CollectorVersion = &conf.Version
+	e.EtlVersion = &conf.App.Version
+	e.CollectorVersion = &conf.App.Version
 	e.Event = getEventType(*eName)
 }
 
@@ -234,7 +240,7 @@ func setPageFields(e *SnowplowEvent, params map[string]interface{}) {
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("error getting page fields from url")
 		}
-		e.PageUrlScheme = &pageFields.scheme // FIXME! Has to be a better way
+		e.PageUrlScheme = &pageFields.scheme
 		e.PageUrlHost = &pageFields.host
 		e.PageUrlPath = &pageFields.path
 		e.PageUrlQuery = pageFields.query
