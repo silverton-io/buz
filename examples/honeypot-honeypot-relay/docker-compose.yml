@@ -3,7 +3,7 @@ version: "3.9"
 services:
   honeypot:
     container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.1.36
+    image: ghcr.io/silverton-io/honeypot:v0.1.37
     volumes:
       - type: bind
         source: ./honeypot/honeypot1.conf.yml
@@ -30,7 +30,7 @@ services:
 
   relay:
     container_name: relay
-    image: ghcr.io/silverton-io/honeypot:v0.1.36
+    image: ghcr.io/silverton-io/honeypot:v0.1.37
     volumes:
       - type: bind
         source: ./honeypot/honeypot2.conf.yml
