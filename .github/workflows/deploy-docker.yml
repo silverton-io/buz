@@ -31,9 +31,9 @@ jobs:
         id: auth-gcloud
         uses: 'google-github-actions/auth@v0'
         with:
+          token_format: 'access_token'
           workload_identity_provider: 'projects/860234713891/locations/global/workloadIdentityPools/honeypot/providers/github'
           service_account: 'honeypot-ci@silverton-io.iam.gserviceaccount.com'
-          create_credentials_file: true
 
       - name: Configure Docker
         shell: bash
