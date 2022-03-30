@@ -1,27 +1,68 @@
 package snowplow
 
-import "testing"
+import (
+	"strconv"
+	"testing"
+	"time"
 
-func TestGetStringParam(t *testing.T) {
+	"github.com/stretchr/testify/assert"
+)
 
+func buildMockMap() map[string]interface{} {
+	mm := map[string]interface{}{
+		"s": "somestring",
+		"f": "23.99",
+		"i": "10",
+		"b": "true",
+		"t": "1648667060951",
+	}
+	return mm
 }
 
-func TestGetInt64Param(t *testing.T) {}
+func TestGetStringParam(t *testing.T) {
+	mm := buildMockMap()
+	expected := "somestring"
+	actual := getStringParam(mm, "s")
+	assert.Equal(t, expected, *actual)
+}
+
+func TestGetInt64Param(t *testing.T) {
+	mm := buildMockMap()
+	var expected int64 = 10
+	actual := getInt64Param(mm, "i")
+	assert.Equal(t, expected, *actual)
+}
 
 func TestGetFloat64Param(t *testing.T) {
-
+	mm := buildMockMap()
+	var expected float64 = 23.99
+	actual := getFloat64Param(mm, "f")
+	assert.Equal(t, expected, *actual)
 }
 
 func TestGetTimeParam(t *testing.T) {
-
+	mm := buildMockMap()
+	iVal, _ := strconv.ParseInt("1648667060951", 10, 64)
+	expected := time.UnixMilli(iVal)
+	actual := getTimeParam(mm, "t")
+	assert.Equal(t, expected, *actual)
 }
 
 func TestGetBoolParam(t *testing.T) {
-
+	mm := buildMockMap()
+	var expected bool = true
+	actual := getBoolParam(mm, "b")
+	assert.Equal(t, expected, *actual)
 }
 
 func TestGetDimensions(t *testing.T) {
-
+	dimString := "100x200"
+	expected := Dimension{
+		height: 100,
+		width:  200,
+	}
+	actual, _ := getDimensions(dimString)
+	assert.Equal(t, expected, actual)
 }
 
 func TestGetContexts(t *testing.T) {

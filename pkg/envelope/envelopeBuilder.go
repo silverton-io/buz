@@ -30,7 +30,7 @@ func buildSnowplowEnvelope(spEvent snowplow.SnowplowEvent) Envelope {
 		EventProtocol: protocol.SNOWPLOW,
 		EventSchema:   *schema,
 		Tstamp:        time.Now().UTC(),
-		Ip:            *spEvent.UserIpaddress,
+		Ip:            *spEvent.UserIpAddress,
 		Payload:       spEvent,
 		IsRelayed:     &isRelayed,
 	}
