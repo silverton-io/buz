@@ -2,7 +2,7 @@ name: Publish Honeypot image to ghcr.io
 
 on:
   push:
-    branches: ['consolidate-release-process']
+    branches: ['main']
 
 env:
   GH_REGISTRY: ghcr.io
