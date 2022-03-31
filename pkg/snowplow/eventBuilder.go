@@ -208,6 +208,10 @@ func setPage(e *SnowplowEvent, params map[string]interface{}) {
 	page := getStringParam(params, "page")
 }
 
+func setReferrer(e *SnowplowEvent, params map[string]interface{}) {
+	referrer := getStringParam(params, "refr")
+}
+
 func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
 	if conf.Anonymize.Ip && e.UserIpAddress != nil {
 		hashedIp := util.Md5(*e.UserIpAddress)
