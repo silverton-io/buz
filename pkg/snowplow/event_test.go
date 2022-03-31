@@ -65,8 +65,6 @@ func TestSnowplowEvent(t *testing.T) {
 		Useragent:           &blah,
 		UserFingerprint:     &blah,
 		MacAddress:          &blah,
-		PageUrl:             &blah,
-		PageTitle:           &blah,
 		SelfDescribingEvent: &sdPayload,
 	}
 	expectedPayloadByte, _ := json.Marshal(e.SelfDescribingEvent.Data)

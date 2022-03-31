@@ -108,30 +108,30 @@ func TestGetQueryParam(t *testing.T) {
 	assert.Equal(t, v2, p2)
 }
 
-func TestGetPageFieldsFromUrl(t *testing.T) {
-	someMarketingUrl := "https://somewhere-with-good-marketing.net?utm_medium=medium&utm_source=source&utm_term=term&utm_content=content&utm_campaign=campaign#frag"
-	frag := "frag"
-	med := "medium"
-	src := "source"
-	term := "term"
-	content := "content"
-	campaign := "campaign"
-	qry := "utm_medium=medium&utm_source=source&utm_term=term&utm_content=content&utm_campaign=campaign"
-	expectedPageFields := PageFields{
-		scheme:   "https",
-		host:     "somewhere-with-good-marketing.net",
-		path:     "",
-		query:    &qry,
-		fragment: &frag,
-		medium:   &med,
-		source:   &src,
-		term:     &term,
-		content:  &content,
-		campaign: &campaign,
-	}
-	actualPageFields, _ := getPageFieldsFromUrl(someMarketingUrl)
-	assert.Equal(t, expectedPageFields, actualPageFields)
-}
+// func TestGetPageFieldsFromUrl(t *testing.T) {
+// 	someMarketingUrl := "https://somewhere-with-good-marketing.net?utm_medium=medium&utm_source=source&utm_term=term&utm_content=content&utm_campaign=campaign#frag"
+// 	frag := "frag"
+// 	med := "medium"
+// 	src := "source"
+// 	term := "term"
+// 	content := "content"
+// 	campaign := "campaign"
+// 	qry := "utm_medium=medium&utm_source=source&utm_term=term&utm_content=content&utm_campaign=campaign"
+// 	expectedPageFields := PageFields{
+// 		scheme:   "https",
+// 		host:     "somewhere-with-good-marketing.net",
+// 		path:     "",
+// 		query:    &qry,
+// 		fragment: &frag,
+// 		medium:   &med,
+// 		source:   &src,
+// 		term:     &term,
+// 		content:  &content,
+// 		campaign: &campaign,
+// 	}
+// 	actualPageFields, _ := getPageFieldsFromUrl(someMarketingUrl)
+// 	assert.Equal(t, expectedPageFields, actualPageFields)
+// }
 
 func TestSetTsFields(t *testing.T) {
 	e := SnowplowEvent{}

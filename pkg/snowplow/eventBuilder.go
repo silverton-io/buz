@@ -129,34 +129,6 @@ func getQueryParam(u url.URL, k string) *string {
 	}
 }
 
-func getPageFieldsFromUrl(rawUrl string) (PageFields, error) {
-	parsedUrl, err := url.Parse(rawUrl)
-	if err != nil {
-		log.Error().Err(err).Interface("url", rawUrl).Msg("could not parse url")
-		return PageFields{}, err
-	}
-	unescapedQry, err := url.QueryUnescape(parsedUrl.RawQuery)
-	if err != nil {
-		log.Error().Err(err).Interface("query", parsedUrl.RawQuery).Msg("could not unescape query params")
-		return PageFields{}, err
-	}
-	pageFields := PageFields{
-		scheme:   parsedUrl.Scheme,
-		host:     parsedUrl.Host,
-		path:     parsedUrl.Path,
-		query:    &unescapedQry,
-		medium:   getQueryParam(*parsedUrl, "utm_medium"),
-		source:   getQueryParam(*parsedUrl, "utm_source"),
-		term:     getQueryParam(*parsedUrl, "utm_term"),
-		content:  getQueryParam(*parsedUrl, "utm_content"),
-		campaign: getQueryParam(*parsedUrl, "utm_campaign"),
-	}
-	if parsedUrl.Fragment != "" {
-		pageFields.fragment = &parsedUrl.Fragment
-	}
-	return pageFields, nil
-}
-
 func setTsFields(e *SnowplowEvent, params map[string]interface{}) {
 	e.DvceCreatedTstamp = *getTimeParam(params, "dtm")
 	e.DvceSentTstamp = *getTimeParam(params, "stm")
@@ -232,45 +204,8 @@ func setDimensionFields(e *SnowplowEvent, params map[string]interface{}) {
 	}
 }
 
-func setPageFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.PageUrl = getStringParam(params, "url")
-	e.PageTitle = getStringParam(params, "page")
-	if e.PageUrl != nil {
-		pageFields, err := getPageFieldsFromUrl(*e.PageUrl)
-		if err != nil {
-			log.Error().Stack().Err(err).Msg("error getting page fields from url")
-		}
-		e.PageUrlScheme = &pageFields.scheme
-		e.PageUrlHost = &pageFields.host
-		e.PageUrlPath = &pageFields.path
-		e.PageUrlQuery = pageFields.query
-		e.PageUrlFragment = pageFields.fragment
-		e.MktMedium = pageFields.medium
-		e.MktSource = pageFields.source
-		e.MktTerm = pageFields.term
-		e.MktContent = pageFields.content
-		e.MktCampaign = pageFields.campaign
-	}
-}
-
-func setReferrerFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.PageReferrer = getStringParam(params, "refr")
-	if e.PageReferrer != nil {
-		pageFields, err := getPageFieldsFromUrl(*e.PageReferrer)
-		if err != nil {
-			log.Error().Err(err).Msg("error setting page fields")
-		}
-		e.RefrUrlScheme = &pageFields.scheme
-		e.RefrUrlHost = &pageFields.host
-		e.RefrUrlPath = &pageFields.path
-		e.RefrUrlQuery = pageFields.query
-		e.RefrUrlFragment = pageFields.fragment
-		e.RefrMedium = pageFields.medium
-		e.RefrSource = pageFields.source
-		e.RefrTerm = pageFields.term
-		e.RefrContent = pageFields.content
-		e.RefrCampaign = pageFields.campaign
-	}
+func setPage(e *SnowplowEvent, params map[string]interface{}) {
+	page := getStringParam(params, "page")
 }
 
 func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
@@ -285,40 +220,56 @@ func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
 }
 
 func setPagePingFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.PpXOffsetMin = getInt64Param(params, "pp_mix")
-	e.PpXOffsetMax = getInt64Param(params, "pp_max")
-	e.PpYOffsetMin = getInt64Param(params, "pp_miy")
-	e.PpYOffsetMax = getInt64Param(params, "pp_may")
+	evnt := PagePingEvent{
+		PpXOffsetMin: getInt64Param(params, "pp_mix"),
+		PpXOffsetMax: getInt64Param(params, "pp_max"),
+		PpYOffsetMin: getInt64Param(params, "pp_miy"),
+		PpYOffsetMax: getInt64Param(params, "pp_may"),
+	}
+	sde := evnt.toSelfDescribing()
+	e.SelfDescribingEvent = &sde
 }
 
 func setStructFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.SeCategory = getStringParam(params, "se_ca")
-	e.SeAction = getStringParam(params, "se_ac")
-	e.SeLabel = getStringParam(params, "se_la")
-	e.SeProperty = getStringParam(params, "se_pr")
-	e.SeValue = getFloat64Param(params, "se_va")
+	evnt := StructEvent{
+		SeCategory: getStringParam(params, "se_ca"),
+		SeAction:   getStringParam(params, "se_ac"),
+		SeLabel:    getStringParam(params, "se_la"),
+		SeProperty: getStringParam(params, "se_pr"),
+		SeValue:    getFloat64Param(params, "se_va"),
+	}
+	sde := evnt.toSelfDescribing()
+	e.SelfDescribingEvent = &sde
 }
 
 func setTransactionFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.TrOrderId = getStringParam(params, "tr_id")
-	e.TrAffiliation = getStringParam(params, "tr_af")
-	e.TrTotal = getFloat64Param(params, "tr_tt")
-	e.TrTax = getFloat64Param(params, "tr_tx")
-	e.TrShipping = getFloat64Param(params, "tr_sh")
-	e.TrCity = getStringParam(params, "tr_ci")
-	e.TrState = getStringParam(params, "tr_st")
-	e.TrCountry = getStringParam(params, "tr_co")
-	e.TrCurrency = getStringParam(params, "tr_cu")
+	evnt := TransactionEvent{
+		TrOrderId:     getStringParam(params, "tr_id"),
+		TrAffiliation: getStringParam(params, "tr_af"),
+		TrTotal:       getFloat64Param(params, "tr_tt"),
+		TrTax:         getFloat64Param(params, "tr_tx"),
+		TrShipping:    getFloat64Param(params, "tr_sh"),
+		TrCity:        getStringParam(params, "tr_ci"),
+		TrState:       getStringParam(params, "tr_st"),
+		TrCountry:     getStringParam(params, "tr_co"),
+		TrCurrency:    getStringParam(params, "tr_cu"),
+	}
+	sde := evnt.toSelfDescribing()
+	e.SelfDescribingEvent = &sde
 }
 
 func setTransactionItemFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.TiOrderId = getStringParam(params, "ti_id")
-	e.TiSku = getStringParam(params, "ti_sk")
-	e.TiName = getStringParam(params, "ti_nm")
-	e.TiCategory = getStringParam(params, "ti_ca")
-	e.TiPrice = getFloat64Param(params, "ti_pr")
-	e.TiQuantity = getInt64Param(params, "ti_qu")
-	e.TiCurrency = getStringParam(params, "ti_cu")
+	evnt := TransactionItemEvent{
+		TiOrderId:  getStringParam(params, "ti_id"),
+		TiSku:      getStringParam(params, "ti_sk"),
+		TiName:     getStringParam(params, "ti_nm"),
+		TiCategory: getStringParam(params, "ti_ca"),
+		TiPrice:    getFloat64Param(params, "ti_pr"),
+		TiQuantity: getInt64Param(params, "ti_qu"),
+		TiCurrency: getStringParam(params, "ti_cu"),
+	}
+	sde := evnt.toSelfDescribing()
+	e.SelfDescribingEvent = &sde
 }
 
 func setContexts(e *SnowplowEvent, params map[string]interface{}) {
@@ -358,8 +309,6 @@ func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, c
 	setUserFields(c, &event, params)
 	setBrowserFeatures(&event, params)
 	setDimensionFields(&event, params)
-	setPageFields(&event, params)
-	setReferrerFields(&event, params)
 	anonymizeFields(&event, conf.Snowplow)
 	setContexts(&event, params)
 	if event.Event == PAGE_PING {

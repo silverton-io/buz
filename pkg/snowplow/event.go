@@ -7,19 +7,25 @@ import (
 	"github.com/google/uuid"
 	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/protocol"
+	"github.com/silverton-io/honeypot/pkg/util"
 )
 
 const (
-	PAGE_PING             = "page_ping"
-	PAGE_VIEW             = "page_view"
-	STRUCT_EVENT          = "struct_event"
-	SELF_DESCRIBING_EVENT = "self_describing"
-	TRANSACTION           = "transaction"
-	TRANSACTION_ITEM      = "transaction_item"
-	AD_IMPRESSION         = "ad_impression"
-	UNKNOWN_EVENT         = "unknown_event"
-	UNKNOWN_SCHEMA        = "unknown_schema"
-	IGLU                  = "iglu"
+	PAGE_PING               = "page_ping"
+	PAGE_PING_SCHEMA        = "com.silverton.io/snowplow/page_ping"
+	PAGE_VIEW               = "page_view"
+	PAGE_VIEW_SCHEMA        = "com.silverton.io/snowplow/page_view"
+	STRUCT_EVENT            = "struct_event"
+	STRUCT_EVENT_SCHEMA     = "com.silverton.io/snowplow/struct"
+	TRANSACTION             = "transaction"
+	TRANSACTION_SCHEMA      = "com.silverton.io/snowplow/transaction"
+	TRANSACTION_ITEM        = "transaction_item"
+	TRANSACTION_ITEM_SCHEMA = "com.silverton.io/snowplow/transaction_item"
+	AD_IMPRESSION           = "ad_impression" // NOTE - already a self-describing event.
+	UNKNOWN_EVENT           = "unknown_event"
+	UNKNOWN_SCHEMA          = "unknown_schema"
+	SELF_DESCRIBING_EVENT   = "self_describing"
+	IGLU                    = "iglu"
 )
 
 type SnowplowEvent struct {
@@ -52,32 +58,9 @@ type SnowplowEvent struct {
 	UserFingerprint  *string `json:"user_fingerprint"`
 	MacAddress       *string `json:"mac_address"`
 	// Page fields
-	PageUrl         *string `json:"page_url"`
-	PageTitle       *string `json:"page_title"`
-	PageUrlScheme   *string `json:"page_urlscheme"`
-	PageUrlHost     *string `json:"page_urlhost"`
-	PageUrlPort     *string `json:"page_urlport"`
-	PageUrlPath     *string `json:"page_urlpath"`
-	PageUrlQuery    *string `json:"page_urlquery"`
-	PageUrlFragment *string `json:"page_urlfragment"`
-	MktMedium       *string `json:"mkt_medium"`
-	MktSource       *string `json:"mkt_source"`
-	MktTerm         *string `json:"mkt_term"`
-	MktContent      *string `json:"mkt_content"`
-	MktCampaign     *string `json:"mkt_campaign"`
+	Page
 	// Referrer fields
-	PageReferrer     *string    `json:"page_referrer"`
-	RefrUrlScheme    *string    `json:"refr_urlscheme"`
-	RefrUrlHost      *string    `json:"refr_urlhost"`
-	RefrUrlPort      *string    `json:"refr_urlport"`
-	RefrUrlPath      *string    `json:"refr_urlpath"`
-	RefrUrlQuery     *string    `json:"refr_urlquery"`
-	RefrUrlFragment  *string    `json:"refr_urlfragment"`
-	RefrMedium       *string    `json:"refr_medium"`
-	RefrSource       *string    `json:"refr_source"`
-	RefrTerm         *string    `json:"refr_term"`
-	RefrContent      *string    `json:"refr_content"`
-	RefrCampaign     *string    `json:"refr_campaign"`
+	Referrer
 	RefrDomainUserId *string    `json:"refr_domain_userid"` // FIXME! Domain Linker
 	RefrDomainTstamp *time.Time `json:"refr_domain_tstamp"` // FIXME! Domain Linker
 	// Br features fields
@@ -107,35 +90,6 @@ type SnowplowEvent struct {
 	// Payload/context fields
 	Contexts            *[]event.SelfDescribingContext `json:"contexts"`
 	SelfDescribingEvent *event.SelfDescribingPayload   `json:"self_describing_event"` // Self Describing Event
-	// Page ping fields
-	PpXOffsetMin *int64 `json:"pp_xoffset_min"` // Page Ping Event
-	PpXOffsetMax *int64 `json:"pp_xoffset_max"` // Page Ping Event
-	PpYOffsetMin *int64 `json:"pp_yoffset_min"` // Page Ping Event
-	PpYOffsetMax *int64 `json:"pp_yoffset_max"` // Page Ping Event
-	// Struct fields
-	SeCategory *string  `json:"se_category"` // Struct Event
-	SeAction   *string  `json:"se_action"`   // Struct Event
-	SeLabel    *string  `json:"se_label"`    // Struct Event
-	SeProperty *string  `json:"se_property"` // Struct Event
-	SeValue    *float64 `json:"se_value"`    // Struct Event
-	// Transaction fields
-	TrOrderId     *string  `json:"tr_orderid"`     // Transaction Event
-	TrAffiliation *string  `json:"tr_affiliation"` // Transaction Event
-	TrTotal       *float64 `json:"tr_total"`       // Transaction Event
-	TrTax         *float64 `json:"tr_tax"`         // Transaction Event
-	TrShipping    *float64 `json:"tr_shipping"`    // Transaction Event
-	TrCity        *string  `json:"tr_city"`        // Transaction Event
-	TrState       *string  `json:"tr_state"`       // Transaction Event
-	TrCountry     *string  `json:"tr_country"`     // Transaction Event
-	TrCurrency    *string  `json:"tr_currency"`    // Transaction Event
-	// Transaction item fields
-	TiOrderId  *string  `json:"ti_orderid"`      // Transaction Item Event
-	TiSku      *string  `json:"ti_sku"`          // Transaction Item Event
-	TiName     *string  `json:"ti_name"`         // Transaction Item Event
-	TiCategory *string  `json:"ti_category"`     // Transaction Item Event
-	TiPrice    *float64 `json:"ti_price,string"` // Transaction Item Event
-	TiQuantity *int64   `json:"ti_quantity"`     // Transaction Item Event
-	TiCurrency *string  `json:"ti_currency"`     // Transaction Item Event
 	// Event fields
 	EventVendor  *string `json:"event_vendor"`
 	EventName    *string `json:"event_name"`
@@ -190,6 +144,71 @@ func (e SnowplowEvent) AsMap() (map[string]interface{}, error) {
 	return m, nil
 }
 
+type PagePingEvent struct {
+	PpXOffsetMin *int64 `json:"pp_xoffset_min"`
+	PpXOffsetMax *int64 `json:"pp_xoffset_max"`
+	PpYOffsetMin *int64 `json:"pp_yoffset_min"`
+	PpYOffsetMax *int64 `json:"pp_yoffset_max"`
+}
+
+func (e *PagePingEvent) toSelfDescribing() event.SelfDescribingPayload {
+	return event.SelfDescribingPayload{
+		Schema: PAGE_PING_SCHEMA,
+		Data:   util.StructToMap(e),
+	}
+}
+
+type StructEvent struct {
+	SeCategory *string  `json:"se_category"`
+	SeAction   *string  `json:"se_action"`
+	SeLabel    *string  `json:"se_label"`
+	SeProperty *string  `json:"se_property"`
+	SeValue    *float64 `json:"se_value"`
+}
+
+func (e *StructEvent) toSelfDescribing() event.SelfDescribingPayload {
+	return event.SelfDescribingPayload{
+		Schema: STRUCT_EVENT_SCHEMA,
+		Data:   util.StructToMap(e),
+	}
+}
+
+type TransactionEvent struct {
+	TrOrderId     *string  `json:"tr_orderid"`
+	TrAffiliation *string  `json:"tr_affiliation"`
+	TrTotal       *float64 `json:"tr_total"`
+	TrTax         *float64 `json:"tr_tax"`
+	TrShipping    *float64 `json:"tr_shipping"`
+	TrCity        *string  `json:"tr_city"`
+	TrState       *string  `json:"tr_state"`
+	TrCountry     *string  `json:"tr_country"`
+	TrCurrency    *string  `json:"tr_currency"`
+}
+
+func (e *TransactionEvent) toSelfDescribing() event.SelfDescribingPayload {
+	return event.SelfDescribingPayload{
+		Schema: TRANSACTION_SCHEMA,
+		Data:   util.StructToMap(e),
+	}
+}
+
+type TransactionItemEvent struct {
+	TiOrderId  *string  `json:"ti_orderid"`
+	TiSku      *string  `json:"ti_sku"`
+	TiName     *string  `json:"ti_name"`
+	TiCategory *string  `json:"ti_category"`
+	TiPrice    *float64 `json:"ti_price"`
+	TiQuantity *int64   `json:"ti_quantity"`
+	TiCurrency *string  `json:"ti_currency"`
+}
+
+func (e *TransactionItemEvent) toSelfDescribing() event.SelfDescribingPayload {
+	return event.SelfDescribingPayload{
+		Schema: TRANSACTION_ITEM_SCHEMA,
+		Data:   util.StructToMap(e),
+	}
+}
+
 type SelfDescribingMetadata struct {
 	Event_vendor  *string `json:"event_vendor"`
 	Event_name    *string `json:"event_name"`
@@ -217,20 +236,39 @@ func getEventType(param string) string {
 	return UNKNOWN_EVENT
 }
 
+type Page struct {
+	Url      string `json:"url"`
+	Title    string `json:"title"`
+	Scheme   string `json:"scheme"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Path     string `json:"path"`
+	Query    string `json:"query"`
+	Fragment string `json:"fragment"`
+	Medium   string `json:"medium"`
+	Source   string `json:"source"`
+	Term     string `json:"term"`
+	Content  string `json:"content"`
+	Campaign string `json:"campaign"`
+}
+
+type Referrer struct {
+	Url      string `json:"url"`
+	Title    string `json:"title"`
+	Scheme   string `json:"scheme"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Path     string `json:"path"`
+	Query    string `json:"query"`
+	Fragment string `json:"fragment"`
+	Medium   string `json:"medium"`
+	Source   string `json:"source"`
+	Term     string `json:"term"`
+	Content  string `json:"content"`
+	Campaign string `json:"campaign"`
+}
+
 type Dimension struct {
 	height int
 	width  int
-}
-
-type PageFields struct {
-	scheme   string
-	host     string
-	path     string
-	query    *string
-	fragment *string
-	medium   *string
-	source   *string
-	term     *string
-	content  *string
-	campaign *string
 }
