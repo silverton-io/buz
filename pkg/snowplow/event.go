@@ -9,8 +9,6 @@ import (
 	"github.com/silverton-io/honeypot/pkg/protocol"
 )
 
-// Event Types
-
 const (
 	PAGE_PING             = "page_ping"
 	PAGE_VIEW             = "page_view"
@@ -21,12 +19,7 @@ const (
 	AD_IMPRESSION         = "ad_impression"
 	UNKNOWN_EVENT         = "unknown_event"
 	UNKNOWN_SCHEMA        = "unknown_schema"
-)
-
-// Other
-
-const (
-	IGLU = "iglu"
+	IGLU                  = "iglu"
 )
 
 type SnowplowEvent struct {
@@ -54,7 +47,7 @@ type SnowplowEvent struct {
 	Userid           *string `json:"user_id"`
 	DomainSessionIdx *int64  `json:"domain_sessionidx"`
 	DomainSessionId  *string `json:"domain_sessionid"`
-	UserIpaddress    *string `json:"user_ipaddress"`
+	UserIpAddress    *string `json:"user_ipaddress"`
 	Useragent        *string `json:"useragent"`
 	UserFingerprint  *string `json:"user_fingerprint"`
 	MacAddress       *string `json:"mac_address"`
