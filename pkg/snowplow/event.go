@@ -58,9 +58,8 @@ type SnowplowEvent struct {
 	UserFingerprint  *string `json:"user_fingerprint"`
 	MacAddress       *string `json:"mac_address"`
 	// Page fields
-	Page
-	// Referrer fields
-	Referrer
+	Page             Page       `json:"page"`
+	Referrer         Page       `json:"referrer"`
 	RefrDomainUserId *string    `json:"refr_domain_userid"` // FIXME! Domain Linker
 	RefrDomainTstamp *time.Time `json:"refr_domain_tstamp"` // FIXME! Domain Linker
 	// Br features fields
@@ -237,35 +236,19 @@ func getEventType(param string) string {
 }
 
 type Page struct {
-	Url      string `json:"url"`
-	Title    string `json:"title"`
-	Scheme   string `json:"scheme"`
-	Host     string `json:"host"`
-	Port     string `json:"port"`
-	Path     string `json:"path"`
-	Query    string `json:"query"`
-	Fragment string `json:"fragment"`
-	Medium   string `json:"medium"`
-	Source   string `json:"source"`
-	Term     string `json:"term"`
-	Content  string `json:"content"`
-	Campaign string `json:"campaign"`
-}
-
-type Referrer struct {
-	Url      string `json:"url"`
-	Title    string `json:"title"`
-	Scheme   string `json:"scheme"`
-	Host     string `json:"host"`
-	Port     string `json:"port"`
-	Path     string `json:"path"`
-	Query    string `json:"query"`
-	Fragment string `json:"fragment"`
-	Medium   string `json:"medium"`
-	Source   string `json:"source"`
-	Term     string `json:"term"`
-	Content  string `json:"content"`
-	Campaign string `json:"campaign"`
+	Url      string  `json:"url"`
+	Title    *string `json:"title"`
+	Scheme   string  `json:"scheme"`
+	Host     string  `json:"host"`
+	Port     string  `json:"port"`
+	Path     string  `json:"path"`
+	Query    *string `json:"query"`
+	Fragment *string `json:"fragment"`
+	Medium   *string `json:"medium"`
+	Source   *string `json:"source"`
+	Term     *string `json:"term"`
+	Content  *string `json:"content"`
+	Campaign *string `json:"campaign"`
 }
 
 type Dimension struct {

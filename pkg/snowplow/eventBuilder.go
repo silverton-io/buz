@@ -129,6 +129,39 @@ func getQueryParam(u url.URL, k string) *string {
 	}
 }
 
+func getPageParam(params map[string]interface{}, k string) (Page, error) {
+	p := getStringParam(params, k)
+	if p != nil {
+		parsedUrl, err := url.Parse(*p)
+		if err != nil {
+			log.Error().Err(err).Interface("url", *p).Msg("could not parse url")
+			return Page{}, err
+		}
+		unescapedQry, err := url.QueryUnescape(parsedUrl.RawQuery)
+		if err != nil {
+			log.Error().Err(err).Interface("query", parsedUrl.RawQuery).Msg("could not unescape query params")
+		}
+		frag := parsedUrl.Fragment
+		page := Page{
+			Url:      *p,
+			Scheme:   parsedUrl.Scheme,
+			Host:     parsedUrl.Host,
+			Port:     parsedUrl.Port(),
+			Path:     parsedUrl.Path,
+			Query:    &unescapedQry,
+			Fragment: &frag,
+			Medium:   getQueryParam(*parsedUrl, "utm_medium"),
+			Source:   getQueryParam(*parsedUrl, "utm_source"),
+			Term:     getQueryParam(*parsedUrl, "utm_term"),
+			Content:  getQueryParam(*parsedUrl, "utm_content"),
+			Campaign: getQueryParam(*parsedUrl, "utm_campaign"),
+		}
+		return page, nil
+	} else {
+		return Page{}, nil
+	}
+}
+
 func setTsFields(e *SnowplowEvent, params map[string]interface{}) {
 	e.DvceCreatedTstamp = *getTimeParam(params, "dtm")
 	e.DvceSentTstamp = *getTimeParam(params, "stm")
@@ -205,11 +238,15 @@ func setDimensionFields(e *SnowplowEvent, params map[string]interface{}) {
 }
 
 func setPage(e *SnowplowEvent, params map[string]interface{}) {
-	page := getStringParam(params, "page")
+	page, _ := getPageParam(params, "url")
+	title := getStringParam(params, "page")
+	page.Title = title
+	e.Page = page
 }
 
 func setReferrer(e *SnowplowEvent, params map[string]interface{}) {
-	referrer := getStringParam(params, "refr")
+	referrer, _ := getPageParam(params, "refr")
+	e.Referrer = referrer
 }
 
 func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
@@ -311,6 +348,8 @@ func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, c
 	setTsFields(&event, params)
 	setMetadataFields(&event, params, conf)
 	setUserFields(c, &event, params)
+	setPage(&event, params)
+	setReferrer(&event, params)
 	setBrowserFeatures(&event, params)
 	setDimensionFields(&event, params)
 	anonymizeFields(&event, conf.Snowplow)
