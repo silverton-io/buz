@@ -1,0 +1,15 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://schemas.silverton.io/com.silverton.io/snowplow/page_view/v1.0.json",
+    "title": "com.silverton.io/snowplow/page_view/v1.0.json",
+    "description": "Snowplow Page View Event",
+	"self": {
+		"vendor": "com.silverton.io",
+		"name": "snowplow/page_view",
+		"format": "jsonschema",
+		"version": "1.0"
+	},
+    "type": "object",
+    "properties": {},
+    "additionalProperties": false
+}

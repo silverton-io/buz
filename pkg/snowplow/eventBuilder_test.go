@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
@@ -109,89 +108,9 @@ func TestGetQueryParam(t *testing.T) {
 }
 
 func TestGetPageFieldsFromUrl(t *testing.T) {
-	someMarketingUrl := "https://somewhere-with-good-marketing.net?utm_medium=medium&utm_source=source&utm_term=term&utm_content=content&utm_campaign=campaign#frag"
-	frag := "frag"
-	med := "medium"
-	src := "source"
-	term := "term"
-	content := "content"
-	campaign := "campaign"
-	qry := "utm_medium=medium&utm_source=source&utm_term=term&utm_content=content&utm_campaign=campaign"
-	expectedPageFields := PageFields{
-		scheme:   "https",
-		host:     "somewhere-with-good-marketing.net",
-		path:     "",
-		query:    &qry,
-		fragment: &frag,
-		medium:   &med,
-		source:   &src,
-		term:     &term,
-		content:  &content,
-		campaign: &campaign,
-	}
-	actualPageFields, _ := getPageFieldsFromUrl(someMarketingUrl)
-	assert.Equal(t, expectedPageFields, actualPageFields)
-}
-
-func TestSetTsFields(t *testing.T) {
-	e := SnowplowEvent{}
-	p := map[string]interface{}{
-		"dtm": "1648667060951",
-		"stm": "1648667060952",
-		"ttm": "1648667060951",
-	}
-	dtm := getTimeParam(p, "dtm")
-	stm := getTimeParam(p, "stm")
-	ttm := getTimeParam(p, "ttm")
-	setTsFields(&e, p)
-	assert.Equal(t, *dtm, e.DvceCreatedTstamp)
-	assert.Equal(t, *stm, e.DvceSentTstamp)
-	assert.Equal(t, ttm, e.TrueTstamp)
-	assert.NotNil(t, e.CollectorTstamp)
-	assert.NotNil(t, e.EtlTstamp)
-	assert.NotNil(t, e.CollectorTstamp)
 }
 
 func TestSetMetadataFields(t *testing.T) {
-	e := SnowplowEvent{}
-	tna := "tracker name"
-	aid := "app id"
-	p := "web"
-	evnt := "pp"
-	tid := "txn id"
-	eid := "event id"
-	tz := "America/New_York"
-	tv := "1.1.1"
-	params := map[string]interface{}{
-		"e":   evnt,
-		"tna": tna,
-		"aid": aid,
-		"p":   p,
-		"tid": tid,
-		"eid": eid,
-		"tz":  tz,
-		"tv":  tv,
-	}
-	a := config.App{
-		Version: "2.2.2",
-	}
-	c := config.Config{
-		App: a,
-	}
-
-	setMetadataFields(&e, params, c)
-
-	assert.Equal(t, tna, e.NameTracker)
-	assert.Equal(t, aid, e.AppId)
-	assert.Equal(t, p, e.Platform)
-	assert.Equal(t, &tid, e.TxnId)
-	assert.Equal(t, &eid, e.EventId)
-	assert.NotNil(t, e.EventFingerprint)
-	assert.Equal(t, &tz, e.OsTimezone)
-	assert.Equal(t, &tv, e.TrackerVersion)
-	assert.Equal(t, &c.App.Version, e.EtlVersion)
-	assert.Equal(t, &c.App.Version, e.CollectorVersion)
-	assert.Equal(t, getEventType(evnt), e.Event)
 }
 
 func TestSetUserFields(t *testing.T) {

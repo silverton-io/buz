@@ -5,9 +5,9 @@
 	"description": "Schema for testing generic events",
 	"self": {
 		"vendor": "com.silverton.io",
-		"name": "sample",
+		"name": "example/generic/sample",
 		"format": "jsonschema",
-		"version": "1-0-0"
+		"version": "1.0"
 	},
 	"type": "object",
 	"properties": {

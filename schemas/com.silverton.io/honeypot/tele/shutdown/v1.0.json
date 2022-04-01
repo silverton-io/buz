@@ -3,6 +3,12 @@
     "$id": "http://schemas.silverton.io/com.silverton.io/honeypot/tele/shutdown/v1.0.json",
     "title": "com.silverton.io/honeypot/tele/shutdown/v1.0.json",
     "description": "Honeypot shutdown event",
+	"self": {
+		"vendor": "com.silverton.io",
+		"name": "honeypot/tele/shutdown",
+		"format": "jsonschema",
+		"version": "1.0"
+	},
     "type": "object",
     "properties": {
         "meta": {

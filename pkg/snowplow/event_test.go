@@ -3,9 +3,7 @@ package snowplow
 import (
 	"encoding/json"
 	"testing"
-	"time"
 
-	"github.com/google/uuid"
 	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/stretchr/testify/assert"
@@ -24,9 +22,6 @@ func TestConstants(t *testing.T) {
 }
 
 func TestSnowplowEvent(t *testing.T) {
-	n := time.Now().UTC()
-	tz := "America/New_York"
-	blah := "blah"
 	schema := "com.something.somewhere/did/v1.0.json"
 	gooddata := map[string]interface{}{
 		"something": "somewhere",
@@ -37,36 +32,7 @@ func TestSnowplowEvent(t *testing.T) {
 		Schema: schema,
 		Data:   gooddata,
 	}
-	var maximalBounty int64 = 123456
 	e := SnowplowEvent{
-		NameTracker:         "sometracker",
-		AppId:               "someapp",
-		Platform:            "someplatform",
-		EtlTstamp:           n,
-		DvceCreatedTstamp:   n,
-		DvceSentTstamp:      n,
-		TrueTstamp:          &n,
-		CollectorTstamp:     n,
-		DerivedTstamp:       n,
-		OsTimezone:          &tz,
-		Event:               SELF_DESCRIBING_EVENT,
-		TxnId:               &blah,
-		EventId:             &blah,
-		EventFingerprint:    uuid.New(),
-		TrackerVersion:      &blah,
-		CollectorVersion:    &blah,
-		EtlVersion:          &blah,
-		DomainUserid:        &blah,
-		NetworkUserid:       &blah,
-		Userid:              &blah,
-		DomainSessionIdx:    &maximalBounty,
-		DomainSessionId:     &blah,
-		UserIpAddress:       &blah,
-		Useragent:           &blah,
-		UserFingerprint:     &blah,
-		MacAddress:          &blah,
-		PageUrl:             &blah,
-		PageTitle:           &blah,
 		SelfDescribingEvent: &sdPayload,
 	}
 	expectedPayloadByte, _ := json.Marshal(e.SelfDescribingEvent.Data)

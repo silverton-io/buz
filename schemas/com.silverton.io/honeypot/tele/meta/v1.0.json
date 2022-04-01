@@ -2,6 +2,12 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "http://schemas.silverton.io/com.silverton.io/honeypot/tele/meta/v1.0.json",
     "title": "com.silverton.io/honeypot/tele/meta/v1.0.json",
+	"self": {
+		"vendor": "com.silverton.io",
+		"name": "honeypot/tele/meta",
+		"format": "jsonschema",
+		"version": "1.0"
+	},
     "type": "object",
     "properties": {
         "version": {

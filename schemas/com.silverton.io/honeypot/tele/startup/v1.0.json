@@ -3,6 +3,12 @@
     "$id": "http://schemas.silverton.io/com.silverton.io/honeypot/tele/startup/v1.0.json",
     "title": "com.silverton.io/honeypot/tele/startup/v1.0.json",
     "description": "Honeypot startup event",
+	"self": {
+		"vendor": "com.silverton.io",
+		"name": "honeypot/tele/startup",
+		"format": "jsonschema",
+		"version": "1.0"
+	},
     "type": "object",
     "properties": {
         "config": {
