@@ -1,8 +1,14 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "http://schemas.silverton.io/com.silverton.io/honeypot/tele/beat/v1.0.json",
+    "$id": "https://schemas.silverton.io/com.silverton.io/honeypot/tele/beat/v1.0.json",
     "title": "com.silverton.io/honeypot/tele/beat/v1.0.json",
     "description": "Honeypot heartbeat event",
+	"self": {
+		"vendor": "com.silverton.io",
+		"name": "honeypot/tele/beat",
+		"format": "jsonschema",
+		"version": "1.0"
+	},
     "type": "object",
     "properties": {
         "meta": {

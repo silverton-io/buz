@@ -3,6 +3,35 @@
     "$id": "http://schemas.silverton.io/com.silverton.io/snowplow/struct/v1.0.json",
     "title": "com.silverton.io/snowplow/struct/v1.0.json",
     "description": "Snowplow Struct Event",
+	"self": {
+		"vendor": "com.silverton.io",
+		"name": "snowplow/struct",
+		"format": "jsonschema",
+		"version": "1.0"
+	},
     "type": "object",
-    "properties": {}
+    "properties": {
+        "se_category": {
+            "type": "string",
+            "description": "The struct event category"
+        },
+        "se_action": {
+            "type": "string",
+            "description": "The struct event action"
+        },
+        "se_label": {
+            "type": "string",
+            "description": "The struct event label"
+        },
+        "se_property": {
+            "type": "string",
+            "description": "The struct event property"
+        },
+        "se_value": {
+            "type": "number",
+            "description": "The struct event value"
+        }
+    },
+    "required": [],
+    "additionalProperties": false
 }
