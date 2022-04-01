@@ -143,7 +143,7 @@
                 document.getElementById('self-describing-get').addEventListener("click", function() {
                     window.spget('trackSelfDescribingEvent', {
                         event: {
-                            schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
+                            schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/v1.0.json',
                             data: {
                                 productId: 'ASO01043',
                                 category: 'Dresses',
@@ -159,7 +159,7 @@
                 document.getElementById('self-describing-get-invalid').addEventListener("click", function() {
                     window.spget('trackSelfDescribingEvent', {
                         event: {
-                            schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
+                            schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/v1.0.json',
                             data: {
                                 productId: 'ASO01043',
                                 category: 'Dresses',
@@ -207,7 +207,7 @@
                 document.getElementById('self-describing-post').addEventListener("click", function() {
                 window.sppost('trackSelfDescribingEvent', {
                     event: {
-                        schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
+                        schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/v1.0.json',
                         data: {
                             productId: 'ASO01043',
                             category: 'Dresses',
@@ -223,7 +223,7 @@
             document.getElementById('self-describing-post-invalid').addEventListener("click", function() {
                 window.sppost('trackSelfDescribingEvent', {
                     event: {
-                        schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/jsonschema/1-0-0',
+                        schema: 'iglu:com.silverton.io/honeypot/example/viewed_product/v1.0.json',
                         data: {
                             productId: 'ASO01043',
                             category: 'Dresses',

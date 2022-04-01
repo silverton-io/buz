@@ -5,7 +5,8 @@
     "description": "Snowplow Struct Event",
 	"self": {
 		"vendor": "com.silverton.io",
-		"name": "snowplow/struct",
+        "primaryNamespace": "snowplow",
+		"name": "struct",
 		"format": "jsonschema",
 		"version": "1.0"
 	},

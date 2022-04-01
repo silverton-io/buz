@@ -109,11 +109,11 @@ func (m *Manifold) Run(meta *tele.Meta, shutdown *chan bool) {
 				if *e.IsValid {
 					log.Debug().Msg("appending valid envelope to buffer...")
 					m.AppendValidEnvelope(e)
-					meta.ProtocolStats.IncrementValid(e.EventProtocol, e.EventSchema, 1)
+					meta.ProtocolStats.IncrementValid(e.EventProtocol, e.EventMetadata, 1)
 				} else {
 					log.Debug().Msg("appending invalid envelope to buffer...")
 					m.AppendInvalidEnvelope(e)
-					meta.ProtocolStats.IncrementInvalid(e.EventProtocol, e.EventSchema, 1)
+					meta.ProtocolStats.IncrementInvalid(e.EventProtocol, e.EventMetadata, 1)
 				}
 				m.PurgeBuffersToSinksIfFull(ctx, meta)
 			}

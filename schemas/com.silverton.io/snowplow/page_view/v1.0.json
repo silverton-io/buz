@@ -5,7 +5,8 @@
     "description": "Snowplow Page View Event",
 	"self": {
 		"vendor": "com.silverton.io",
-		"name": "snowplow/page_view",
+        "primaryNamespace": "snowplow",
+		"name": "page_view",
 		"format": "jsonschema",
 		"version": "1.0"
 	},

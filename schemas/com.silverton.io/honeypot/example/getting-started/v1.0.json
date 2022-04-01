@@ -5,7 +5,9 @@
     "description": "A getting started event used to bootstrap and demonstrate validation",
 	"self": {
 		"vendor": "com.silverton.io",
-		"name": "example/getting-started",
+        "primaryNamespace": "honeypot",
+        "secondaryNamespace": "example",
+		"name": "getting-started",
 		"format": "jsonschema",
 		"version": "1.0"
 	},

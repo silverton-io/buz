@@ -290,7 +290,7 @@ func (a *App) Run() {
 	a.manifold.Run(a.meta, &shutDownManifold)
 	<-quit
 	log.Info().Msg("shutting down server...")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal().Stack().Err(err).Msg("server forced to shutdown")

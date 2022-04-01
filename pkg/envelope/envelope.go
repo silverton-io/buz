@@ -7,6 +7,17 @@ import (
 	"github.com/silverton-io/honeypot/pkg/event"
 )
 
+const (
+	EVENT_VENDOR              string = "vendor"
+	EVENT_PRIMARY_NAMESPACE   string = "primaryNamespace"
+	EVENT_SECONDARY_NAMESPACE string = "secondaryNamespace"
+	EVENT_TERTIARY_NAMESPACE  string = "tertiaryNamespace"
+	EVENT_NAME                string = "name"
+	EVENT_VERSION             string = "version"
+	EVENT_FORMAT              string = "format"
+	EVENT_PATH                string = "path"
+)
+
 type PayloadValidationError struct {
 	Field       string `json:"field"`
 	Description string `json:"description"`
@@ -20,10 +31,10 @@ type ValidationError struct {
 }
 
 type Envelope struct {
-	Id              uuid.UUID        `json:"id"`
-	EventProtocol   string           `json:"eventProtocol"`
-	EventSchema     string           `json:"eventSchema"`
-	Source          string           `json:"source"`
+	Id              uuid.UUID      `json:"id"`
+	EventProtocol   string         `json:"eventProtocol"`
+	EventMetadata   *EventMetadata `json:"eventMetadata"`
+	SourceMetadata  `json:"sourceMetadata"`
 	Tstamp          time.Time        `json:"tstamp"`
 	Ip              string           `json:"ip"`
 	IsValid         *bool            `json:"isValid"`
@@ -31,4 +42,19 @@ type Envelope struct {
 	RelayedId       *uuid.UUID       `json:"relayedId"`
 	ValidationError *ValidationError `json:"validationErrors"`
 	Payload         event.Event      `json:"payload"`
+}
+
+type EventMetadata struct {
+	Vendor             string `json:"vendor,omitempty"`
+	PrimaryNamespace   string `json:"primaryNamespace,omitempty"`
+	SecondaryNamespace string `json:"secondaryNamespace,omitempty"`
+	TertiaryNamespace  string `json:"tertiaryNamespace,omitempty"`
+	Name               string `json:"name,omitempty"`
+	Version            string `json:"version,omitempty"`
+	Format             string `json:"format,omitempty"`
+	Path               string `json:"path,omitempty"`
+}
+
+type SourceMetadata struct {
+	Name string `json:"name,omitempty"`
 }

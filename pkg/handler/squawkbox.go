@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/silverton-io/honeypot/pkg/annotator"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/protocol"
-	"github.com/silverton-io/honeypot/pkg/validator"
 )
 
 func SquawkboxHandler(h EventHandlerParams, eventProtocol string) gin.HandlerFunc {
@@ -20,7 +20,7 @@ func SquawkboxHandler(h EventHandlerParams, eventProtocol string) gin.HandlerFun
 		case protocol.GENERIC:
 			envelopes = envelope.BuildGenericEnvelopesFromRequest(c, *h.Config)
 		}
-		annotatedEnvelopes := validator.Annotate(envelopes, h.Cache)
+		annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
 		c.JSON(http.StatusOK, annotatedEnvelopes)
 	}
 	return gin.HandlerFunc(fn)

@@ -351,26 +351,6 @@ func setSelfDescribing(e *SnowplowEvent, params map[string]interface{}) {
 	e.SelfDescribingEvent = getSdPayload(b64EncodedPayload)
 }
 
-func setEventMetadataFields(e *SnowplowEvent, schema []byte) {
-	schemaContents := gjson.ParseBytes(schema)
-	vendor := schemaContents.Get("self.vendor").String()
-	name := schemaContents.Get("self.name").String()
-	format := schemaContents.Get("self.format").String()
-	version := schemaContents.Get("self.version").String()
-	if vendor != "" {
-		e.EventVendor = &vendor
-	}
-	if name != "" {
-		e.EventName = &name
-	}
-	if format != "" {
-		e.EventFormat = &format
-	}
-	if version != "" {
-		e.EventVersion = &version
-	}
-}
-
 func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
 	if conf.Anonymize.Ip && e.UserIpAddress != nil {
 		hashedIp := util.Md5(*e.UserIpAddress)

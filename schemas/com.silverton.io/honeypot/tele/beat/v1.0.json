@@ -5,7 +5,9 @@
     "description": "Honeypot heartbeat event",
 	"self": {
 		"vendor": "com.silverton.io",
-		"name": "honeypot/tele/beat",
+        "primaryNamespace": "honeypot",
+        "secondaryNamespace": "tele",
+		"name": "beat",
 		"format": "jsonschema",
 		"version": "1.0"
 	},
