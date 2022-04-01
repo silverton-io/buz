@@ -20,10 +20,10 @@ type ValidationError struct {
 }
 
 type Envelope struct {
-	Id              uuid.UUID `json:"id"`
-	EventProtocol   string    `json:"eventProtocol"`
-	EventMetadata   `json:"eventMetadata"`
-	Source          `json:"source"`
+	Id              uuid.UUID        `json:"id"`
+	EventProtocol   string           `json:"eventProtocol"`
+	EventMetadata   *EventMetadata   `json:"eventMetadata"`
+	Source          Source           `json:"source"`
 	Tstamp          time.Time        `json:"tstamp"`
 	Ip              string           `json:"ip"`
 	IsValid         *bool            `json:"isValid"`
@@ -34,16 +34,16 @@ type Envelope struct {
 }
 
 type Source struct {
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 }
 
 type EventMetadata struct {
-	Vendor            *string `json:"vendor"`
-	PrimaryCategory   *string `json:"primaryCategory,omitempty"`
-	SecondaryCategory *string `json:"secondaryCategory,omitempty"`
-	TertiaryCategory  *string `json:"tertiaryCategory,omitempty"`
-	Name              *string `json:"name"`
-	Version           *string `json:"version"`
-	Format            *string `json:"format"`
-	Path              *string `json:"path"`
+	Vendor            string `json:"vendor,omitempty"`
+	PrimaryCategory   string `json:"primaryCategory,omitempty"`
+	SecondaryCategory string `json:"secondaryCategory,omitempty"`
+	TertiaryCategory  string `json:"tertiaryCategory,omitempty"`
+	Name              string `json:"name,omitempty"`
+	Version           string `json:"version,omitempty"`
+	Format            string `json:"format,omitempty"`
+	Path              string `json:"path,omitempty"`
 }
