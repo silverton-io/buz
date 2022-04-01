@@ -23,6 +23,7 @@ extra:
 
 nav:
   - index.md
+  - why.md
   - Quickstart:
     - quickstart/getting-started.md
     # - quickstart/honeypot-and-benthos.md
@@ -69,6 +70,7 @@ nav:
     - sinks/snowflake.md
     - sinks/bigquery.md
     - sinks/redshift.md
+    - sinks/azuredw.md
     - sinks/firebolt.md
     - sinks/clickhouse.md
   - Validation Protocols:
