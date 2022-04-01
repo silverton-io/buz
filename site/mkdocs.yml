@@ -84,6 +84,7 @@ nav:
     - middleware/advancing-cookie.md
     - middleware/cors.md
     - middleware/request-logger.md
+    - middleware/uid2.md
     - middleware/yeet.md
   - Examples:
     - examples/redpanda-kowl-materialize.md
