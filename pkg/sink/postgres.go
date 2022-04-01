@@ -65,7 +65,7 @@ func (s *PostgresSink) batchPublish(ctx context.Context, tableName string, envel
 		row := []interface{}{
 			envelope.Id,
 			envelope.EventProtocol,
-			envelope.EventSchema,
+			envelope.EventMetadata,
 			envelope.Source,
 			envelope.Tstamp,
 			envelope.Ip,
@@ -78,7 +78,7 @@ func (s *PostgresSink) batchPublish(ctx context.Context, tableName string, envel
 	}
 	copyCount, err := s.conn.CopyFrom(
 		pgx.Identifier{tableName},
-		[]string{"id", "eventProtocol", "eventSchema", "source", "tstamp", "ip", "isValid", "isRelayed", "validationError", "payload"},
+		[]string{"id", "eventProtocol", "eventMetadata", "source", "tstamp", "ip", "isValid", "isRelayed", "validationError", "payload"},
 		pgx.CopyFromRows(rows),
 	)
 	if err != nil {

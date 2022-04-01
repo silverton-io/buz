@@ -29,20 +29,20 @@ const (
 )
 
 type SnowplowEvent struct {
-	Tstamp                 `json:"tstamp"`
-	PlatformMetadata       `json:"platform_metadata"`
-	Event                  `json:"event"`
-	User                   `json:"user"`
-	Session                `json:"session"`
-	Page                   `json:"page"`
-	Referrer               Page `json:"referrer"`
-	DomainLinker           `json:"domain_linker"`
-	Device                 `json:"device"`
-	Browser                `json:"browser"`
-	Screen                 `json:"screen"`
-	Contexts               *[]event.SelfDescribingContext `json:"contexts"`
-	SelfDescribingEvent    *event.SelfDescribingPayload   `json:"self_describing_event"` // Self Describing Event
-	SelfDescribingMetadata `json:"self_describing_metadata"`
+	Tstamp              `json:"tstamp"`
+	PlatformMetadata    `json:"platform_metadata"`
+	Event               `json:"event"`
+	User                `json:"user"`
+	Session             `json:"session"`
+	Page                `json:"page"`
+	Referrer            Page `json:"referrer"`
+	DomainLinker        `json:"domain_linker"`
+	Device              `json:"device"`
+	Browser             `json:"browser"`
+	Screen              `json:"screen"`
+	Contexts            *[]event.SelfDescribingContext `json:"contexts"`
+	SelfDescribingEvent *event.SelfDescribingPayload   `json:"self_describing_event"`
+	// SelfDescribingMetadata `json:"self_describing_metadata"` // NOTE - maybe put this back someday?
 }
 
 func (e SnowplowEvent) Schema() *string {
@@ -230,13 +230,6 @@ func (e *TransactionItemEvent) toSelfDescribing() event.SelfDescribingPayload {
 		Schema: TRANSACTION_ITEM_SCHEMA,
 		Data:   util.StructToMap(e),
 	}
-}
-
-type SelfDescribingMetadata struct {
-	EventVendor  *string `json:"event_vendor"`
-	EventName    *string `json:"event_name"`
-	EventFormat  *string `json:"event_format"`
-	EventVersion *string `json:"event_version"`
 }
 
 func getEventType(param string) string {

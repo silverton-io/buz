@@ -1,11 +1,14 @@
 {
-	"$schema": "http://iglucentral.com/schemas/com.snowplowanalytics.self-desc/schema/jsonschema/1-0-0#",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"$id": "http://schemas.silverton.io/com.silverton.io/honeypot/example/generic/sample/v1.0.json",
 	"title": "com.silverton.io/honeypot/example/generic/sample/v1.0.json",
 	"description": "Schema for testing generic events",
 	"self": {
 		"vendor": "com.silverton.io",
-		"name": "example/generic/sample",
+        "primaryCategory": "honeypot",
+        "secondaryCategory": "example",
+		"tertiaryCategory": "generic",
+		"name": "sample",
 		"format": "jsonschema",
 		"version": "1.0"
 	},

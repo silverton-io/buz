@@ -5,7 +5,9 @@
     "description": "Honeypot shutdown event",
 	"self": {
 		"vendor": "com.silverton.io",
-		"name": "honeypot/tele/shutdown",
+        "primaryCategory": "honeypot",
+        "secondaryCategory": "tele",
+		"name": "shutdown",
 		"format": "jsonschema",
 		"version": "1.0"
 	},

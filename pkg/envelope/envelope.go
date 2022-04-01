@@ -20,9 +20,9 @@ type ValidationError struct {
 }
 
 type Envelope struct {
-	Id              uuid.UUID        `json:"id"`
-	EventProtocol   string           `json:"eventProtocol"`
-	EventSchema     string           `json:"eventSchema"`
+	Id              uuid.UUID `json:"id"`
+	EventProtocol   string    `json:"eventProtocol"`
+	EventMetadata   `json:"eventMetadata"`
 	Source          string           `json:"source"`
 	Tstamp          time.Time        `json:"tstamp"`
 	Ip              string           `json:"ip"`
@@ -31,4 +31,15 @@ type Envelope struct {
 	RelayedId       *uuid.UUID       `json:"relayedId"`
 	ValidationError *ValidationError `json:"validationErrors"`
 	Payload         event.Event      `json:"payload"`
+}
+
+type EventMetadata struct {
+	Vendor            *string `json:"vendor"`
+	PrimaryCategory   *string `json:"primaryCategory"`
+	SecondaryCategory *string `json:"secondaryCategory"`
+	TertiaryCategory  *string `json:"tertiaryCategory"`
+	Name              *string `json:"name"`
+	Version           *string `json:"version"`
+	Format            *string `json:"format"`
+	Path              *string `json:"path"`
 }

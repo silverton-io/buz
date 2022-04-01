@@ -3,6 +3,14 @@
     "$id": "http://schemas.silverton.io/com.silverton.io/honeypot/config/app/v1.0.json",
     "title": "com.silverton.io/honeypot/config/app/v1.0.json",
     "description": "Application configuration",
+	"self": {
+		"vendor": "com.silverton.io",
+        "primaryCategory": "honeypot",
+        "secondaryCategory": "config",
+		"name": "app",
+		"format": "jsonschema",
+		"version": "1.0"
+	},
     "type": "object",
     "properties": {
         "version": {

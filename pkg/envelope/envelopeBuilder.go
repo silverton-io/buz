@@ -20,15 +20,10 @@ import (
 
 func buildSnowplowEnvelope(spEvent snowplow.SnowplowEvent) Envelope {
 	isRelayed := false
-	schema := spEvent.Schema()
 	uid := uuid.New()
-	if schema == nil {
-		schema = spEvent.EventName // FIXME? Is this the right approach?
-	}
 	envelope := Envelope{
 		Id:            uid,
 		EventProtocol: protocol.SNOWPLOW,
-		EventSchema:   *schema,
 		Tstamp:        time.Now().UTC(),
 		Ip:            *spEvent.UserIpAddress,
 		Payload:       spEvent,
@@ -74,7 +69,6 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 		envelope := Envelope{
 			Id:            uid,
 			EventProtocol: protocol.GENERIC,
-			EventSchema:   genEvent.Payload.Schema,
 			Tstamp:        time.Now().UTC(),
 			Ip:            c.ClientIP(),
 			Payload:       genEvent,
@@ -99,7 +93,6 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []E
 		envelope := Envelope{
 			Id:            uid,
 			EventProtocol: protocol.CLOUDEVENTS,
-			EventSchema:   cEvent.DataSchema,
 			Tstamp:        time.Now().UTC(),
 			Source:        cEvent.Source,
 			Ip:            c.ClientIP(),
@@ -175,7 +168,6 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context) []Envelope {
 		envelope := Envelope{
 			Id:            uid,
 			EventProtocol: protocol.WEBHOOK,
-			EventSchema:   *whEvent.Schema(),
 			Tstamp:        time.Now().UTC(),
 			Ip:            c.ClientIP(),
 			Payload:       whEvent,
