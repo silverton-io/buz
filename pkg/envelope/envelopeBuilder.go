@@ -48,7 +48,6 @@ func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []Env
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
 			spEvent := snowplow.BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf)
-			util.Pprint(spEvent)
 			e := buildSnowplowEnvelope(spEvent)
 			envelopes = append(envelopes, e)
 		}

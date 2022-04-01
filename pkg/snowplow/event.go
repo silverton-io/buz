@@ -46,14 +46,10 @@ type SnowplowEvent struct {
 }
 
 func (e SnowplowEvent) Schema() *string {
-	schema := ""
-	if e.SelfDescribingEvent.Schema != "" {
-		schema = e.SelfDescribingEvent.Schema
-	}
+	schema := e.SelfDescribingEvent.Schema
 	if schema[:4] == IGLU {
 		schema = schema[5:]
 	}
-	util.Pprint(schema)
 	return &schema
 }
 
@@ -160,6 +156,15 @@ type Screen struct {
 type Session struct {
 	DomainSessionIdx *int64  `json:"domain_sessionidx"`
 	DomainSessionId  *string `json:"domain_sessionid"`
+}
+
+type PageViewEvent struct{}
+
+func (e *PageViewEvent) toSelfDescribing() event.SelfDescribingPayload {
+	return event.SelfDescribingPayload{
+		Schema: PAGE_VIEW_SCHEMA,
+		Data:   map[string]interface{}{},
+	}
 }
 
 type PagePingEvent struct {

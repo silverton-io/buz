@@ -282,6 +282,12 @@ func setScreen(e *SnowplowEvent, params map[string]interface{}) {
 	e.Screen = s
 }
 
+func setPageView(e *SnowplowEvent, params map[string]interface{}) {
+	evnt := PageViewEvent{}
+	sde := evnt.toSelfDescribing()
+	e.SelfDescribingEvent = &sde
+}
+
 func setPagePing(e *SnowplowEvent, params map[string]interface{}) {
 	evnt := PagePingEvent{
 		PpXOffsetMin: getInt64Param(params, "pp_mix"),
@@ -390,6 +396,8 @@ func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, c
 	setScreen(&event, params)
 	setContexts(&event, params)
 	switch event.Event.Event {
+	case PAGE_VIEW:
+		setPageView(&event, params)
 	case PAGE_PING:
 		setPagePing(&event, params)
 	case STRUCT_EVENT:
