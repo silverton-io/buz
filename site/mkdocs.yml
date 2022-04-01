@@ -67,6 +67,8 @@ nav:
     - sinks/mongodb.md
     - sinks/blackhole.md
     - sinks/snowflake.md
+    - sinks/bigquery.md
+    - sinks/redshift.md
     - sinks/firebolt.md
     - sinks/clickhouse.md
   - Validation Protocols:
