@@ -3,6 +3,7 @@ package tele
 import (
 	"sync"
 
+	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 )
 
@@ -26,14 +27,22 @@ func (ps *ProtocolStats) Build() {
 	}
 }
 
-func (ps *ProtocolStats) IncrementValid(protocol string, event string, count int64) {
+func (ps *ProtocolStats) IncrementValid(protocol string, eventMetadata envelope.EventMetadata, count int64) {
+	var event string
+	if eventMetadata.Path != nil {
+		event = *eventMetadata.Path
+	}
 	i := ps.Valid[protocol][event]
 	ps.vmu.Lock()
 	defer ps.vmu.Unlock()
 	ps.Valid[protocol][event] = i + count
 }
 
-func (ps *ProtocolStats) IncrementInvalid(protocol string, event string, count int64) {
+func (ps *ProtocolStats) IncrementInvalid(protocol string, eventMetadata envelope.EventMetadata, count int64) {
+	var event string
+	if eventMetadata.Path != nil {
+		event = *eventMetadata.Path
+	}
 	i := ps.Invalid[protocol][event]
 	ps.imu.Lock()
 	defer ps.imu.Unlock()
