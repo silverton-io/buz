@@ -46,18 +46,15 @@ type SnowplowEvent struct {
 }
 
 func (e SnowplowEvent) Schema() *string {
-	evnt := e.Event.Event
-	switch evnt {
-	case SELF_DESCRIBING_EVENT:
-		schemaName := e.SelfDescribingEvent.Schema
-		if schemaName[:4] == IGLU {
-			schemaName = schemaName[5:]
-		}
-		return &schemaName
-	default:
-		schemaName := string(evnt)
-		return &schemaName
+	schema := ""
+	if e.SelfDescribingEvent.Schema != "" {
+		schema = e.SelfDescribingEvent.Schema
 	}
+	if schema[:4] == IGLU {
+		schema = schema[5:]
+	}
+	util.Pprint(schema)
+	return &schema
 }
 
 func (e SnowplowEvent) Protocol() string {
