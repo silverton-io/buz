@@ -5,7 +5,7 @@
     "description": "Honeypot Transit",
 	"self": {
 		"vendor": "com.silverton.io",
-        "primaryCategory": "honeypot",
+        "primaryNamespace": "honeypot",
 		"name": "transit",
 		"format": "jsonschema",
 		"version": "1.0"

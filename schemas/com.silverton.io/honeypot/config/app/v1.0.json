@@ -5,8 +5,8 @@
     "description": "Application configuration",
 	"self": {
 		"vendor": "com.silverton.io",
-        "primaryCategory": "honeypot",
-        "secondaryCategory": "config",
+        "primaryNamespace": "honeypot",
+        "secondaryNamespace": "config",
 		"name": "app",
 		"format": "jsonschema",
 		"version": "1.0"

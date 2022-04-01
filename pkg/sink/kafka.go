@@ -75,9 +75,9 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []
 		payload, _ := json.Marshal(event)
 		headers := []kgo.RecordHeader{
 			{Key: "vendor", Value: []byte(event.EventMetadata.Vendor)},
-			{Key: "primaryCategory", Value: []byte(event.EventMetadata.PrimaryCategory)},
-			{Key: "secondaryCategory", Value: []byte(event.EventMetadata.SecondaryCategory)},
-			{Key: "tertiaryCategory", Value: []byte(event.EventMetadata.TertiaryCategory)},
+			{Key: "primaryNamespace", Value: []byte(event.EventMetadata.PrimaryNamespace)},
+			{Key: "secondaryNamespace", Value: []byte(event.EventMetadata.SecondaryNamespace)},
+			{Key: "tertiaryNamespace", Value: []byte(event.EventMetadata.TertiaryNamespace)},
 			{Key: "name", Value: []byte(event.EventMetadata.Name)},
 			{Key: "version", Value: []byte(event.EventMetadata.Version)},
 		}

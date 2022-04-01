@@ -34,14 +34,14 @@ type Envelope struct {
 }
 
 type EventMetadata struct {
-	Vendor            string `json:"vendor,omitempty"`
-	PrimaryCategory   string `json:"primaryCategory,omitempty"`
-	SecondaryCategory string `json:"secondaryCategory,omitempty"`
-	TertiaryCategory  string `json:"tertiaryCategory,omitempty"`
-	Name              string `json:"name,omitempty"`
-	Version           string `json:"version,omitempty"`
-	Format            string `json:"format,omitempty"`
-	Path              string `json:"path,omitempty"`
+	Vendor             string `json:"vendor,omitempty"`
+	PrimaryNamespace   string `json:"primaryNamespace,omitempty"`
+	SecondaryNamespace string `json:"secondaryNamespace,omitempty"`
+	TertiaryNamespace  string `json:"tertiaryNamespace,omitempty"`
+	Name               string `json:"name,omitempty"`
+	Version            string `json:"version,omitempty"`
+	Format             string `json:"format,omitempty"`
+	Path               string `json:"path,omitempty"`
 }
 
 type SourceMetadata struct {

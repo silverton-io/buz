@@ -5,8 +5,8 @@
     "description": "Honeypot startup event",
 	"self": {
 		"vendor": "com.silverton.io",
-        "primaryCategory": "honeypot",
-        "secondaryCategory": "tele",
+        "primaryNamespace": "honeypot",
+        "secondaryNamespace": "tele",
 		"name": "startup",
 		"format": "jsonschema",
 		"version": "1.0"

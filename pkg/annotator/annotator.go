@@ -12,22 +12,22 @@ import (
 func getMetadataFromSchema(schema []byte) envelope.EventMetadata {
 	schemaContents := gjson.ParseBytes(schema)
 	vendor := schemaContents.Get("self.vendor").String()
-	primaryCategory := schemaContents.Get("self.primaryCategory").String()
-	secondaryCategory := schemaContents.Get("self.secondaryCategory").String()
-	tertiaryCategory := schemaContents.Get("self.tertiaryCategory").String()
+	primaryNamespace := schemaContents.Get("self.primaryNamespace").String()
+	secondaryNamespace := schemaContents.Get("self.secondaryNamespace").String()
+	tertiaryNamespace := schemaContents.Get("self.tertiaryNamespace").String()
 	name := schemaContents.Get("self.name").String()
 	version := schemaContents.Get("self.version").String()
 	format := schemaContents.Get("self.format").String()
 	path := schemaContents.Get("title").String()
 	return envelope.EventMetadata{
-		Vendor:            vendor,
-		PrimaryCategory:   primaryCategory,
-		SecondaryCategory: secondaryCategory,
-		TertiaryCategory:  tertiaryCategory,
-		Name:              name,
-		Version:           version,
-		Format:            format,
-		Path:              path,
+		Vendor:             vendor,
+		PrimaryNamespace:   primaryNamespace,
+		SecondaryNamespace: secondaryNamespace,
+		TertiaryNamespace:  tertiaryNamespace,
+		Name:               name,
+		Version:            version,
+		Format:             format,
+		Path:               path,
 	}
 }
 

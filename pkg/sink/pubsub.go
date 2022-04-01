@@ -72,12 +72,12 @@ func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, enve
 		msg := &pubsub.Message{
 			Data: payload,
 			Attributes: map[string]string{
-				"vendor":            event.EventMetadata.Vendor,
-				"primaryCategory":   event.EventMetadata.PrimaryCategory,
-				"secondaryCategory": event.EventMetadata.SecondaryCategory,
-				"tertiaryCategory":  event.EventMetadata.TertiaryCategory,
-				"name":              event.EventMetadata.Name,
-				"version":           event.EventMetadata.Version,
+				"vendor":             event.EventMetadata.Vendor,
+				"primaryNamespace":   event.EventMetadata.PrimaryNamespace,
+				"secondaryNamespace": event.EventMetadata.SecondaryNamespace,
+				"tertiaryNamespace":  event.EventMetadata.TertiaryNamespace,
+				"name":               event.EventMetadata.Name,
+				"version":            event.EventMetadata.Version,
 			},
 		}
 		result := topic.Publish(ctx, msg)

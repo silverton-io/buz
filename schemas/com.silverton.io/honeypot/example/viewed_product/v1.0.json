@@ -5,8 +5,8 @@
 	"description": "Schema for viewing a product",
 	"self": {
 		"vendor": "com.silverton.io",
-        "primaryCategory": "honeypot",
-        "secondaryCategory": "example",
+        "primaryNamespace": "honeypot",
+        "secondaryNamespace": "example",
 		"name": "viewed_product",
 		"format": "jsonschema",
 		"version": "1.0"

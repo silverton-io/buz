@@ -5,7 +5,7 @@
     "description": "Snowplow Transaction Item Event",
 	"self": {
 		"vendor": "com.silverton.io",
-        "primaryCategory": "snowplow",
+        "primaryNamespace": "snowplow",
 		"name": "transaction_item",
 		"format": "jsonschema",
 		"version": "1.0"
