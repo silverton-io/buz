@@ -36,6 +36,7 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 		envelope.IsValid = &isValid
 		envelope.ValidationError = &validationError
 		envelope.EventMetadata = getMetadata(schemaContents)
+		// FIXME! Do better at source annotation
 		e = append(e, envelope)
 	}
 	return e

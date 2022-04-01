@@ -94,7 +94,6 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []E
 			Id:            uid,
 			EventProtocol: protocol.CLOUDEVENTS,
 			Tstamp:        time.Now().UTC(),
-			Source:        cEvent.Source,
 			Ip:            c.ClientIP(),
 			Payload:       cEvent,
 			IsRelayed:     &isRelayed,

@@ -23,7 +23,7 @@ type Envelope struct {
 	Id              uuid.UUID `json:"id"`
 	EventProtocol   string    `json:"eventProtocol"`
 	EventMetadata   `json:"eventMetadata"`
-	Source          string           `json:"source"`
+	Source          `json:"source"`
 	Tstamp          time.Time        `json:"tstamp"`
 	Ip              string           `json:"ip"`
 	IsValid         *bool            `json:"isValid"`
@@ -31,6 +31,10 @@ type Envelope struct {
 	RelayedId       *uuid.UUID       `json:"relayedId"`
 	ValidationError *ValidationError `json:"validationErrors"`
 	Payload         event.Event      `json:"payload"`
+}
+
+type Source struct {
+	Name string `json:"name"`
 }
 
 type EventMetadata struct {

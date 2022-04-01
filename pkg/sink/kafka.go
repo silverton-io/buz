@@ -73,7 +73,20 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []
 	var wg sync.WaitGroup
 	for _, event := range envelopes {
 		payload, _ := json.Marshal(event)
-		record := &kgo.Record{Topic: topic, Value: payload}
+		headers := []kgo.RecordHeader{
+			{Key: "vendor", Value: []byte(*event.EventMetadata.Vendor)},
+			{Key: "primaryCategory", Value: []byte(*event.EventMetadata.PrimaryCategory)},
+			{Key: "secondaryCategory", Value: []byte(*event.EventMetadata.SecondaryCategory)},
+			{Key: "tertiaryCategory", Value: []byte(*event.EventMetadata.TertiaryCategory)},
+			{Key: "name", Value: []byte(*event.EventMetadata.Name)},
+			{Key: "version", Value: []byte(*event.EventMetadata.Version)},
+		}
+		record := &kgo.Record{
+			Key:     []byte(*event.EventMetadata.Path), // FIXME! Add configurable partition assignment
+			Topic:   topic,
+			Value:   payload,
+			Headers: headers,
+		}
 		wg.Add(1)
 		s.client.Produce(ctx, record, func(r *kgo.Record, err error) {
 			defer wg.Done()
