@@ -74,12 +74,12 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []
 	for _, event := range envelopes {
 		payload, _ := json.Marshal(event)
 		headers := []kgo.RecordHeader{
-			{Key: "vendor", Value: []byte(event.EventMetadata.Vendor)},
-			{Key: "primaryNamespace", Value: []byte(event.EventMetadata.PrimaryNamespace)},
-			{Key: "secondaryNamespace", Value: []byte(event.EventMetadata.SecondaryNamespace)},
-			{Key: "tertiaryNamespace", Value: []byte(event.EventMetadata.TertiaryNamespace)},
-			{Key: "name", Value: []byte(event.EventMetadata.Name)},
-			{Key: "version", Value: []byte(event.EventMetadata.Version)},
+			{Key: envelope.EVENT_VENDOR, Value: []byte(event.EventMetadata.Vendor)},
+			{Key: envelope.EVENT_PRIMARY_NAMESPACE, Value: []byte(event.EventMetadata.PrimaryNamespace)},
+			{Key: envelope.EVENT_SECONDARY_NAMESPACE, Value: []byte(event.EventMetadata.SecondaryNamespace)},
+			{Key: envelope.EVENT_TERTIARY_NAMESPACE, Value: []byte(event.EventMetadata.TertiaryNamespace)},
+			{Key: envelope.EVENT_NAME, Value: []byte(event.EventMetadata.Name)},
+			{Key: envelope.EVENT_VERSION, Value: []byte(event.EventMetadata.Version)},
 		}
 		record := &kgo.Record{
 			Key:     []byte(event.EventMetadata.Path), // FIXME! Add configurable partition assignment

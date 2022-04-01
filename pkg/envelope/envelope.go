@@ -7,6 +7,17 @@ import (
 	"github.com/silverton-io/honeypot/pkg/event"
 )
 
+const (
+	EVENT_VENDOR              string = "vendor"
+	EVENT_PRIMARY_NAMESPACE   string = "primaryNamespace"
+	EVENT_SECONDARY_NAMESPACE string = "secondaryNamespace"
+	EVENT_TERTIARY_NAMESPACE  string = "tertiaryNamespace"
+	EVENT_NAME                string = "name"
+	EVENT_VERSION             string = "version"
+	EVENT_FORMAT              string = "format"
+	EVENT_PATH                string = "path"
+)
+
 type PayloadValidationError struct {
 	Field       string `json:"field"`
 	Description string `json:"description"`
