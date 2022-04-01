@@ -1,5 +1,7 @@
 # Honeypot
 
+![agplv3](https://img.shields.io/badge/license-AGPLv3-blue)
+
 ![Honeypot](site/docs/img/honeypot.png)
 
 A lightweight, snowplow-compatible streaming event collection system.
