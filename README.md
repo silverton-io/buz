@@ -1,6 +1,6 @@
 # Honeypot
 
-![agplv3](https://img.shields.io/badge/license-AGPLv3-blue)
+![agplv3](https://img.shields.io/badge/license-AGPLv3-brightgreen)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/silverton-io/honeypot)
 
 ![Honeypot](site/docs/img/honeypot.png)
