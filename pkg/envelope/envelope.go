@@ -35,9 +35,9 @@ type Envelope struct {
 
 type EventMetadata struct {
 	Vendor            *string `json:"vendor"`
-	PrimaryCategory   *string `json:"primaryCategory"`
-	SecondaryCategory *string `json:"secondaryCategory"`
-	TertiaryCategory  *string `json:"tertiaryCategory"`
+	PrimaryCategory   *string `json:"primaryCategory,omitempty"`
+	SecondaryCategory *string `json:"secondaryCategory,omitempty"`
+	TertiaryCategory  *string `json:"tertiaryCategory,omitempty"`
 	Name              *string `json:"name"`
 	Version           *string `json:"version"`
 	Format            *string `json:"format"`
