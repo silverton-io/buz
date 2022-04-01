@@ -14,16 +14,13 @@ func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, valid
 	eventProtocol := e.Protocol()
 	// Short-circuit if the event is an unknown snowplow event or if it is a snowplow event but not self-describing
 	if eventProtocol == protocol.SNOWPLOW {
-		if e.(snowplow.SnowplowEvent).Event == snowplow.UNKNOWN_EVENT {
+		if e.(snowplow.SnowplowEvent).Event.Event == snowplow.UNKNOWN_EVENT {
 			validationError := envelope.ValidationError{
 				ErrorType:       &UnknownSnowplowEventType.Type,
 				ErrorResolution: &UnknownSnowplowEventType.Resolution,
 				Errors:          nil,
 			}
 			return false, validationError, nil
-		}
-		if e.(snowplow.SnowplowEvent).Event != snowplow.SELF_DESCRIBING_EVENT {
-			return true, envelope.ValidationError{}, nil
 		}
 	}
 	if *schemaName == "" {

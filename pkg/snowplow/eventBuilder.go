@@ -162,79 +162,62 @@ func getPageParam(params map[string]interface{}, k string) (Page, error) {
 	}
 }
 
-func setTsFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.DvceCreatedTstamp = *getTimeParam(params, "dtm")
-	e.DvceSentTstamp = *getTimeParam(params, "stm")
-	e.TrueTstamp = getTimeParam(params, "ttm")
-	e.CollectorTstamp = time.Now().UTC()
-	e.EtlTstamp = time.Now().UTC()
-	timeOnDevice := e.DvceSentTstamp.Sub(e.DvceCreatedTstamp)
-	e.DerivedTstamp = e.CollectorTstamp.Add(-timeOnDevice)
+func setTstamps(e *SnowplowEvent, params map[string]interface{}) {
+	ts := Tstamp{
+		DvceCreatedTstamp: *getTimeParam(params, "dtm"),
+		DvceSentTstamp:    *getTimeParam(params, "stm"),
+		TrueTstamp:        getTimeParam(params, "ttm"),
+		CollectorTstamp:   time.Now().UTC(),
+		EtlTstamp:         time.Now().UTC(),
+	}
+	timeOnDevice := ts.DvceSentTstamp.Sub(ts.DvceCreatedTstamp)
+	ts.DerivedTstamp = ts.CollectorTstamp.Add(-timeOnDevice)
+	e.Tstamp = ts
 }
 
-func setMetadataFields(e *SnowplowEvent, params map[string]interface{}, conf config.Config) {
-	fingerprint := uuid.New()
+func setPlatformMetadata(e *SnowplowEvent, params map[string]interface{}, conf config.Config) {
+	pm := PlatformMetadata{
+		NameTracker:      *getStringParam(params, "tna"),
+		TrackerVersion:   getStringParam(params, "tv"),
+		CollectorVersion: &conf.App.Version,
+		EtlVersion:       &conf.App.Version,
+	}
+	e.PlatformMetadata = pm
+}
+
+func setEvent(e *SnowplowEvent, params map[string]interface{}) {
 	eName := getStringParam(params, "e")
-	e.NameTracker = *getStringParam(params, "tna")
-	e.AppId = *getStringParam(params, "aid")
-	e.Platform = *getStringParam(params, "p")
-	e.TxnId = getStringParam(params, "tid")
-	e.EventId = getStringParam(params, "eid")
-	e.EventFingerprint = fingerprint
-	e.OsTimezone = getStringParam(params, "tz")
-	e.TrackerVersion = getStringParam(params, "tv")
-	e.EtlVersion = &conf.App.Version
-	e.CollectorVersion = &conf.App.Version
-	e.Event = getEventType(*eName)
+	fingerprint := uuid.New()
+	evnt := Event{
+		AppId:            *getStringParam(params, "aid"),
+		Platform:         *getStringParam(params, "p"),
+		Event:            getEventType(*eName),
+		TxnId:            getStringParam(params, "tid"),
+		EventId:          getStringParam(params, "eid"),
+		EventFingerprint: fingerprint,
+	}
+	e.Event = evnt
 }
 
-func setUserFields(c *gin.Context, e *SnowplowEvent, params map[string]interface{}) {
+func setUser(c *gin.Context, e *SnowplowEvent, params map[string]interface{}) {
+	nuid := c.GetString("identity")
 	ip, _ := c.RemoteIP()
 	sIp := ip.String() // FIXME! Should incorporate other IP sources
-	useragent := c.Request.UserAgent()
-	nuid := c.GetString("identity")
-	e.DomainUserid = getStringParam(params, "duid")
-	e.NetworkUserid = &nuid
-	e.Userid = getStringParam(params, "uid")
-	e.DomainSessionIdx = getInt64Param(params, "vid")
-	e.DomainSessionId = getStringParam(params, "sid")
-	e.UserIpAddress = &sIp
-	e.Useragent = &useragent
-	e.MacAddress = getStringParam(params, "mac")
+	user := User{
+		DomainUserid:  getStringParam(params, "duid"),
+		NetworkUserid: &nuid,
+		Userid:        getStringParam(params, "uid"),
+		UserIpAddress: &sIp,
+	}
+	e.User = user
 }
 
-func setBrowserFeatures(e *SnowplowEvent, params map[string]interface{}) {
-	e.BrCookies = getBoolParam(params, "cookie")
-	e.BrLang = getStringParam(params, "lang")
-	e.BrFeaturesPdf = getBoolParam(params, "f_pdf")
-	e.BrFeaturesQuicktime = getBoolParam(params, "f_qt")
-	e.BrFeaturesRealplayer = getBoolParam(params, "f_realp")
-	e.BrFeaturesWindowsmedia = getBoolParam(params, "f_wma")
-	e.BrFeaturesDirector = getBoolParam(params, "f_dir")
-	e.BrFeaturesFlash = getBoolParam(params, "f_fla")
-	e.BrFeaturesJava = getBoolParam(params, "f_java")
-	e.BrFeaturesGears = getBoolParam(params, "f_gears")
-	e.BrFeaturesSilverlight = getBoolParam(params, "f_ag")
-	e.BrColordepth = getInt64Param(params, "cd")
-	e.DocCharset = getStringParam(params, "cs")
-}
-
-func setDimensionFields(e *SnowplowEvent, params map[string]interface{}) {
-	e.DocSize = getStringParam(params, "ds")
-	e.ViewportSize = getStringParam(params, "vp")
-	e.MonitorResolution = getStringParam(params, "res")
-	if e.DocSize != nil {
-		docDimension, _ := getDimensions(*e.DocSize)
-		e.DocWidth, e.DocHeight = &docDimension.width, &docDimension.height
+func setSession(e *SnowplowEvent, params map[string]interface{}) {
+	s := Session{
+		DomainSessionIdx: getInt64Param(params, "vid"),
+		DomainSessionId:  getStringParam(params, "sid"),
 	}
-	if e.ViewportSize != nil {
-		vpDimension, _ := getDimensions(*e.ViewportSize)
-		e.BrViewWidth, e.BrViewHeight = &vpDimension.width, &vpDimension.height
-	}
-	if e.MonitorResolution != nil {
-		monDimension, _ := getDimensions(*e.MonitorResolution)
-		e.DvceScreenWidth, e.DvceScreenHeight = &monDimension.width, &monDimension.height
-	}
+	e.Session = s
 }
 
 func setPage(e *SnowplowEvent, params map[string]interface{}) {
@@ -249,18 +232,57 @@ func setReferrer(e *SnowplowEvent, params map[string]interface{}) {
 	e.Referrer = referrer
 }
 
-func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
-	if conf.Anonymize.Ip && e.UserIpAddress != nil {
-		hashedIp := util.Md5(*e.UserIpAddress)
-		e.UserIpAddress = &hashedIp
+func setDevice(c *gin.Context, e *SnowplowEvent, params map[string]interface{}) {
+	useragent := c.Request.UserAgent()
+	d := Device{
+		Useragent:  &useragent,
+		MacAddress: getStringParam(params, "mac"),
+		OsTimezone: getStringParam(params, "tz"),
 	}
-	if conf.Anonymize.UserId && e.Userid != nil {
-		hashedUserId := util.Md5(*e.Userid)
-		e.Userid = &hashedUserId
-	}
+	e.Device = d
 }
 
-func setPagePingFields(e *SnowplowEvent, params map[string]interface{}) {
+func setBrowser(e *SnowplowEvent, params map[string]interface{}) {
+	b := Browser{
+		BrCookies:              getBoolParam(params, "cookie"),
+		BrLang:                 getStringParam(params, "lang"),
+		BrFeaturesPdf:          getBoolParam(params, "f_pdf"),
+		BrFeaturesQuicktime:    getBoolParam(params, "f_qt"),
+		BrFeaturesRealplayer:   getBoolParam(params, "f_realp"),
+		BrFeaturesWindowsmedia: getBoolParam(params, "f_wma"),
+		BrFeaturesDirector:     getBoolParam(params, "f_dir"),
+		BrFeaturesFlash:        getBoolParam(params, "f_fla"),
+		BrFeaturesJava:         getBoolParam(params, "f_java"),
+		BrFeaturesGears:        getBoolParam(params, "f_gears"),
+		BrFeaturesSilverlight:  getBoolParam(params, "f_ag"),
+		BrColordepth:           getInt64Param(params, "cd"),
+	}
+	e.Browser = b
+}
+
+func setScreen(e *SnowplowEvent, params map[string]interface{}) {
+	s := Screen{
+		DocCharset:        getStringParam(params, "cs"),
+		ViewportSize:      getStringParam(params, "vp"),
+		DocSize:           getStringParam(params, "ds"),
+		MonitorResolution: getStringParam(params, "res"),
+	}
+	if s.DocSize != nil {
+		docDimension, _ := getDimensions(*s.DocSize)
+		s.DocWidth, s.DocHeight = &docDimension.width, &docDimension.height
+	}
+	if s.ViewportSize != nil {
+		vpDimension, _ := getDimensions(*s.ViewportSize)
+		s.BrViewWidth, s.BrViewHeight = &vpDimension.width, &vpDimension.height
+	}
+	if s.MonitorResolution != nil {
+		monDimension, _ := getDimensions(*s.MonitorResolution)
+		s.DvceScreenWidth, s.DvceScreenHeight = &monDimension.width, &monDimension.height
+	}
+	e.Screen = s
+}
+
+func setPagePing(e *SnowplowEvent, params map[string]interface{}) {
 	evnt := PagePingEvent{
 		PpXOffsetMin: getInt64Param(params, "pp_mix"),
 		PpXOffsetMax: getInt64Param(params, "pp_max"),
@@ -271,7 +293,7 @@ func setPagePingFields(e *SnowplowEvent, params map[string]interface{}) {
 	e.SelfDescribingEvent = &sde
 }
 
-func setStructFields(e *SnowplowEvent, params map[string]interface{}) {
+func setStruct(e *SnowplowEvent, params map[string]interface{}) {
 	evnt := StructEvent{
 		SeCategory: getStringParam(params, "se_ca"),
 		SeAction:   getStringParam(params, "se_ac"),
@@ -283,7 +305,7 @@ func setStructFields(e *SnowplowEvent, params map[string]interface{}) {
 	e.SelfDescribingEvent = &sde
 }
 
-func setTransactionFields(e *SnowplowEvent, params map[string]interface{}) {
+func setTransaction(e *SnowplowEvent, params map[string]interface{}) {
 	evnt := TransactionEvent{
 		TrOrderId:     getStringParam(params, "tr_id"),
 		TrAffiliation: getStringParam(params, "tr_af"),
@@ -299,7 +321,7 @@ func setTransactionFields(e *SnowplowEvent, params map[string]interface{}) {
 	e.SelfDescribingEvent = &sde
 }
 
-func setTransactionItemFields(e *SnowplowEvent, params map[string]interface{}) {
+func setTransactionItem(e *SnowplowEvent, params map[string]interface{}) {
 	evnt := TransactionItemEvent{
 		TiOrderId:  getStringParam(params, "ti_id"),
 		TiSku:      getStringParam(params, "ti_sk"),
@@ -318,7 +340,7 @@ func setContexts(e *SnowplowEvent, params map[string]interface{}) {
 	e.Contexts = getContexts(b64encodedContexts)
 }
 
-func setSelfDescribingFields(e *SnowplowEvent, params map[string]interface{}) {
+func setSelfDescribing(e *SnowplowEvent, params map[string]interface{}) {
 	b64EncodedPayload := getStringParam(params, "ue_px")
 	e.SelfDescribingEvent = getSdPayload(b64EncodedPayload)
 }
@@ -343,31 +365,42 @@ func setEventMetadataFields(e *SnowplowEvent, schema []byte) {
 	}
 }
 
+func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
+	if conf.Anonymize.Ip && e.UserIpAddress != nil {
+		hashedIp := util.Md5(*e.UserIpAddress)
+		e.UserIpAddress = &hashedIp
+	}
+	if conf.Anonymize.UserId && e.Userid != nil {
+		hashedUserId := util.Md5(*e.Userid)
+		e.Userid = &hashedUserId
+	}
+}
+
 func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Config) SnowplowEvent {
 	event := SnowplowEvent{}
-	setTsFields(&event, params)
-	setMetadataFields(&event, params, conf)
-	setUserFields(c, &event, params)
+	setTstamps(&event, params)
+	setPlatformMetadata(&event, params, conf)
+	setEvent(&event, params)
+	setUser(c, &event, params)
+	setSession(&event, params)
 	setPage(&event, params)
 	setReferrer(&event, params)
-	setBrowserFeatures(&event, params)
-	setDimensionFields(&event, params)
-	anonymizeFields(&event, conf.Snowplow)
+	setDevice(c, &event, params)
+	setBrowser(&event, params)
+	setScreen(&event, params)
 	setContexts(&event, params)
-	if event.Event == PAGE_PING {
-		setPagePingFields(&event, params)
+	switch event.Event.Event {
+	case PAGE_PING:
+		setPagePing(&event, params)
+	case STRUCT_EVENT:
+		setStruct(&event, params)
+	case TRANSACTION:
+		setTransaction(&event, params)
+	case TRANSACTION_ITEM:
+		setTransactionItem(&event, params)
+	case SELF_DESCRIBING_EVENT:
+		setSelfDescribing(&event, params)
 	}
-	if event.Event == STRUCT_EVENT {
-		setStructFields(&event, params)
-	}
-	if event.Event == TRANSACTION {
-		setTransactionFields(&event, params)
-	}
-	if event.Event == TRANSACTION_ITEM {
-		setTransactionItemFields(&event, params)
-	}
-	if event.Event == SELF_DESCRIBING_EVENT {
-		setSelfDescribingFields(&event, params)
-	}
+	anonymizeFields(&event, conf.Snowplow)
 	return event
 }
