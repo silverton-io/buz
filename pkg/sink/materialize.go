@@ -50,7 +50,7 @@ func (s *MaterializeSink) Initialize(conf config.Sink) error {
 			}
 			// NOTE! This is a hacky workaround so that the same gorm struct tag of "json" can be used, but "jsonb" is used for pg.
 			for _, col := range []string{"event_metadata", "validation_error", "payload"} {
-				alterStmt := "alter table " + tbl + " alter column " + col + " set data type jsonb using " + col + "::jsonb;"
+				alterStmt := "alter table " + tbl + " rename column " + col + " set data type jsonb using " + col + "::jsonb;"
 				log.Debug().Msg("ensuring jsonb columns via: " + alterStmt)
 				s.gormDb.Exec(alterStmt)
 			}

@@ -43,7 +43,7 @@ func (e *ValidationError) Scan(input interface{}) error {
 
 type Envelope struct {
 	// gorm.Model FIXME: maybe at some point in the future?
-	Id              uuid.UUID      `json:"id"`
+	Uuid            uuid.UUID      `json:"uuid"`
 	EventProtocol   string         `json:"eventProtocol"`
 	EventMetadata   *EventMetadata `json:"eventMetadata" gorm:"type:json"`
 	SourceMetadata  `json:"sourceMetadata" gorm:"type:json"`

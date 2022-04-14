@@ -22,7 +22,7 @@ func buildSnowplowEnvelope(spEvent snowplow.SnowplowEvent) Envelope {
 	isRelayed := false
 	uid := uuid.New()
 	envelope := Envelope{
-		Id:            uid,
+		Uuid:          uid,
 		EventProtocol: protocol.SNOWPLOW,
 		Tstamp:        time.Now().UTC(),
 		Ip:            *spEvent.UserIpAddress,
@@ -67,7 +67,7 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 		genEvent := generic.BuildEvent(e, conf.Generic)
 		isRelayed := false
 		envelope := Envelope{
-			Id:            uid,
+			Uuid:          uid,
 			EventProtocol: protocol.GENERIC,
 			Tstamp:        time.Now().UTC(),
 			Ip:            c.ClientIP(),
@@ -91,7 +91,7 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []E
 		uid := uuid.New()
 		isRelayed := false
 		envelope := Envelope{
-			Id:            uid,
+			Uuid:          uid,
 			EventProtocol: protocol.CLOUDEVENTS,
 			Tstamp:        time.Now().UTC(),
 			Ip:            c.ClientIP(),
@@ -165,7 +165,7 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context) []Envelope {
 		isValid := true
 		isRelayed := false
 		envelope := Envelope{
-			Id:            uid,
+			Uuid:          uid,
 			EventProtocol: protocol.WEBHOOK,
 			Tstamp:        time.Now().UTC(),
 			Ip:            c.ClientIP(),
