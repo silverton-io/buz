@@ -13,15 +13,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func generateConnectionString(conf config.Sink) string {
+func generateMysqlDsn(conf config.Sink) string {
 	port := strconv.FormatUint(uint64(conf.DbPort), 10)
 	return conf.DbUser + ":" + conf.DbPass + "@tcp(" + conf.DbHost + ":" + port + ")/" + conf.DbName
 }
-
-// func generateEnsureMysqlTableSql(tableName string) string {
-// 	ensureSql := "create table if not exists " + tableName + " (id text not null, eventProtocol text not null, eventSchema text not null, source text not null, tstamp timestamp not null, ip text not null, isValid boolean not null, isRelayed boolean not null, validationError json, payload json not null);"
-// 	return ensureSql
-// }
 
 type MysqlSink struct {
 	id           *uuid.UUID
@@ -43,16 +38,16 @@ func (s *MysqlSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing mysql sink")
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name
-	connString := generateConnectionString(conf)
+	connString := generateMysqlDsn(conf)
 	gormDb, err := gorm.Open(mysql.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("could not open gorm connection")
+		log.Error().Err(err).Msg("could not open mysql connection")
 		return err
 	}
 	s.gormDb = gormDb
 	s.validTable, s.invalidTable = conf.ValidTable, conf.InvalidTable
 	for _, tbl := range []string{s.validTable, s.invalidTable} {
-		s.gormDb.Table(tbl).AutoMigrate(&envelope.Envelope{})
+		err = s.gormDb.Table(tbl).AutoMigrate(&envelope.Envelope{})
 		if err != nil {
 			log.Error().Err(err).Msg("could not auto migrate table")
 			return err
@@ -71,4 +66,6 @@ func (s *MysqlSink) BatchPublishInvalid(ctx context.Context, envelopes []envelop
 
 func (s *MysqlSink) Close() {
 	log.Debug().Msg("closing mysql sink")
+	db, _ := s.gormDb.DB()
+	db.Close()
 }
