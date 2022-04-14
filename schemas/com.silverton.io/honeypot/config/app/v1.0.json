@@ -540,7 +540,7 @@
                         "type": "string",
                         "default": "pubsub",
                         "description": "The sink configuration",
-                        "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch", "blackhole", "file", "postgres", "pubnub", "mongodb", "mysql"]
+                        "enum": ["kafka", "pubsub", "kinesis", "kinesis-firehose", "stdout", "http", "https", "relay", "elasticsearch", "blackhole", "file", "postgres", "pubnub", "mongodb", "mysql", "materialize"]
                     },
                     "kafkaBrokers": {
                         "type": "array",
@@ -798,6 +798,14 @@
                         "properties": {
                             "type": {
                                 "const": "postgres"
+                            }
+                        },
+                        "required": ["dbHost", "dbPort", "dbName", "dbUser", "dbPass", "validTable", "invalidTable"]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "materialize"
                             }
                         },
                         "required": ["dbHost", "dbPort", "dbName", "dbUser", "dbPass", "validTable", "invalidTable"]

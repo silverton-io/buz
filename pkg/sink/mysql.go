@@ -47,10 +47,16 @@ func (s *MysqlSink) Initialize(conf config.Sink) error {
 	s.gormDb = gormDb
 	s.validTable, s.invalidTable = conf.ValidTable, conf.InvalidTable
 	for _, tbl := range []string{s.validTable, s.invalidTable} {
-		err = s.gormDb.Table(tbl).AutoMigrate(&envelope.Envelope{})
-		if err != nil {
-			log.Error().Err(err).Msg("could not auto migrate table")
-			return err
+		tblExists := s.gormDb.Migrator().HasTable(tbl)
+		if !tblExists {
+			log.Debug().Msg(tbl + " table doesn't exist - ensuring")
+			err = s.gormDb.Table(tbl).AutoMigrate(&envelope.Envelope{})
+			if err != nil {
+				log.Error().Err(err).Msg("could not auto migrate table")
+				return err
+			}
+		} else {
+			log.Debug().Msg(tbl + " table already exists - not ensuring")
 		}
 	}
 	return nil
