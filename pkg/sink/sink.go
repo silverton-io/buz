@@ -25,6 +25,7 @@ const (
 	POSTGRES         string = "postgres"
 	MYSQL            string = "mysql"
 	MATERIALIZE      string = "materialize"
+	CLICKHOUSE       string = "clickhouse"
 	PUBNUB           string = "pubnub"
 	MONGODB          string = "mongodb"
 )
@@ -84,6 +85,9 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		return &sink, nil
 	case MATERIALIZE:
 		sink := MaterializeSink{}
+		return &sink, nil
+	case CLICKHOUSE:
+		sink := ClickhouseSink{}
 		return &sink, nil
 	case MONGODB:
 		sink := MongodbSink{}
