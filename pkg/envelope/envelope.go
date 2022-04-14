@@ -42,7 +42,6 @@ func (e *ValidationError) Scan(input interface{}) error {
 }
 
 type Envelope struct {
-	// gorm.Model FIXME: maybe at some point in the future?
 	Uuid            uuid.UUID      `json:"uuid"`
 	EventProtocol   string         `json:"eventProtocol"`
 	EventMetadata   *EventMetadata `json:"eventMetadata" gorm:"type:json"`
@@ -51,9 +50,51 @@ type Envelope struct {
 	Ip              string           `json:"ip"`
 	IsValid         *bool            `json:"isValid"`
 	IsRelayed       *bool            `json:"isRelayed"`
-	RelayedId       *uuid.UUID       `json:"relayedId"`
+	RelayedId       uuid.UUID        `json:"relayedId"`
 	ValidationError *ValidationError `json:"validationErrors" gorm:"type:json"`
 	Payload         event.Event      `json:"payload" gorm:"type:json"`
+}
+
+type PgEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
+	Uuid            uuid.UUID      `json:"uuid"`
+	EventProtocol   string         `json:"eventProtocol"`
+	EventMetadata   *EventMetadata `json:"eventMetadata" gorm:"type:jsonb"`
+	SourceMetadata  `json:"sourceMetadata" gorm:"type:jsonb"`
+	Tstamp          time.Time        `json:"tstamp"`
+	Ip              string           `json:"ip"`
+	IsValid         *bool            `json:"isValid"`
+	IsRelayed       *bool            `json:"isRelayed"`
+	RelayedId       uuid.UUID        `json:"relayedId"`
+	ValidationError *ValidationError `json:"validationErrors" gorm:"type:jsonb"`
+	Payload         event.Event      `json:"payload" gorm:"type:jsonb"`
+}
+
+type MysqlEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
+	Uuid            uuid.UUID      `json:"uuid"`
+	EventProtocol   string         `json:"eventProtocol"`
+	EventMetadata   *EventMetadata `json:"eventMetadata" gorm:"type:json"`
+	SourceMetadata  `json:"sourceMetadata" gorm:"type:json"`
+	Tstamp          time.Time        `json:"tstamp"`
+	Ip              string           `json:"ip"`
+	IsValid         *bool            `json:"isValid"`
+	IsRelayed       *bool            `json:"isRelayed"`
+	RelayedId       uuid.UUID        `json:"relayedId"`
+	ValidationError *ValidationError `json:"validationErrors" gorm:"type:json"`
+	Payload         event.Event      `json:"payload" gorm:"type:json"`
+}
+
+type ClickhouseEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
+	Uuid            uuid.UUID      `json:"uuid"`
+	EventProtocol   string         `json:"eventProtocol"`
+	EventMetadata   *EventMetadata `json:"eventMetadata" gorm:"type:string"`
+	SourceMetadata  `json:"sourceMetadata" gorm:"type:string"`
+	Tstamp          time.Time        `json:"tstamp"`
+	Ip              string           `json:"ip"`
+	IsValid         *bool            `json:"isValid"`
+	IsRelayed       *bool            `json:"isRelayed"`
+	RelayedId       uuid.UUID        `json:"relayedId"`
+	ValidationError *ValidationError `json:"validationErrors" gorm:"type:string"`
+	Payload         event.Event      `json:"payload" gorm:"type:string"`
 }
 
 type EventMetadata struct {

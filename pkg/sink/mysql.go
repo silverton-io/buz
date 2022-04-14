@@ -50,7 +50,7 @@ func (s *MysqlSink) Initialize(conf config.Sink) error {
 		tblExists := s.gormDb.Migrator().HasTable(tbl)
 		if !tblExists {
 			log.Debug().Msg(tbl + " table doesn't exist - ensuring")
-			err = s.gormDb.Table(tbl).AutoMigrate(&envelope.Envelope{})
+			err = s.gormDb.Table(tbl).AutoMigrate(&envelope.MysqlEnvelope{})
 			if err != nil {
 				log.Error().Err(err).Msg("could not auto migrate table")
 				return err

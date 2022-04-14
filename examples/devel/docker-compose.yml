@@ -1,29 +1,29 @@
 version: "3.9"
 
 services:
-  honeypot:
-    container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.1.45
-    volumes:
-      # - type: bind
-      #   source: ./honeypot/elastic-kibana.conf.yml
-      #   target: /etc/honeypot/config.yml
-      - type: bind
-        source: ../../schemas
-        target: /schemas/
-      - type: bind
-        source: ../../site/index.html
-        target: /app/site/index.html
-    # environment:
-    #   - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
-    ports:
-      - 8080:8080
-    deploy:
-      restart_policy:
-        condition: on-failure
-    healthcheck:
-      test: curl -f localhost:8080/health
-      interval: 15s
+  # honeypot:
+  #   container_name: honeypot
+  #   image: ghcr.io/silverton-io/honeypot:v0.1.45
+  #   volumes:
+  #     # - type: bind
+  #     #   source: ./honeypot/elastic-kibana.conf.yml
+  #     #   target: /etc/honeypot/config.yml
+  #     - type: bind
+  #       source: ../../schemas
+  #       target: /schemas/
+  #     - type: bind
+  #       source: ../../site/index.html
+  #       target: /app/site/index.html
+  #   # environment:
+  #   #   - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
+  #   ports:
+  #     - 8080:8080
+  #   deploy:
+  #     restart_policy:
+  #       condition: on-failure
+  #   healthcheck:
+  #     test: curl -f localhost:8080/health
+  #     interval: 15s
 
   mysql:
     container_name: mysql
@@ -34,8 +34,16 @@ services:
   clickhouse:
     container_name: clickhouse
     image: yandex/clickhouse-server
+    volumes:
+      - type: bind
+        source: ./clickhouse/conf.d
+        target: /etc/clickhouse-server/config.d/
+      - type: bind
+        source: ./clickhouse/conf.d/users.xml
+        target: /etc/clickhouse-server/users.xml
     ports:
       - 8123:8123
+      - 9000:9000
 
   postgres:
     container_name: postgres

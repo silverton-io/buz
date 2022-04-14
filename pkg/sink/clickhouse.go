@@ -51,7 +51,7 @@ func (s *ClickhouseSink) Initialize(conf config.Sink) error {
 		tblExists := s.gormDb.Migrator().HasTable(tbl)
 		if !tblExists {
 			log.Debug().Msg(tbl + " table doesn't exist - ensuring")
-			err = s.gormDb.Table(tbl).AutoMigrate(&envelope.Envelope{})
+			err = s.gormDb.Table(tbl).AutoMigrate(&envelope.ClickhouseEnvelope{})
 			if err != nil {
 				log.Error().Err(err).Msg("could not auto migrate table")
 				return err
@@ -68,6 +68,7 @@ func (s *ClickhouseSink) BatchPublishValid(ctx context.Context, envelopes []enve
 }
 
 func (s *ClickhouseSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
+	fmt.Println("made it here too")
 	s.gormDb.Table(s.invalidTable).Create(envelopes)
 }
 

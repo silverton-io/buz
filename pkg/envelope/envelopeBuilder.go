@@ -143,7 +143,7 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 		}
 		isRelayed := true
 		envelope.IsRelayed = &isRelayed
-		envelope.RelayedId = &rid
+		envelope.RelayedId = rid
 		envelopes = append(envelopes, envelope)
 	}
 	return envelopes
