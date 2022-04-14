@@ -14,8 +14,8 @@ import (
 
 func generatePgDsn(conf config.Sink) string {
 	// postgresql://[user[:password]@][netloc][:port][/dbname]
-	port := strconv.FormatUint(uint64(conf.DbPort), 10)
-	return "postgresql://" + conf.DbUser + ":" + conf.DbPass + "@" + conf.DbHost + ":" + port + "/" + conf.DbName
+	port := strconv.FormatUint(uint64(conf.PgPort), 10)
+	return "postgresql://" + conf.PgUser + ":" + conf.PgPass + "@" + conf.PgHost + ":" + port + "/" + conf.PgDbName
 }
 
 type PostgresSink struct {

@@ -14,8 +14,8 @@ import (
 )
 
 func generateMysqlDsn(conf config.Sink) string {
-	port := strconv.FormatUint(uint64(conf.DbPort), 10)
-	return conf.DbUser + ":" + conf.DbPass + "@tcp(" + conf.DbHost + ":" + port + ")/" + conf.DbName
+	port := strconv.FormatUint(uint64(conf.MysqlPort), 10)
+	return conf.MysqlUser + ":" + conf.MysqlPass + "@tcp(" + conf.MysqlHost + ":" + port + ")/" + conf.MysqlDbName
 }
 
 type MysqlSink struct {

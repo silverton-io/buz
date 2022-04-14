@@ -2,6 +2,7 @@ package sink
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -10,6 +11,12 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+func generateMzDsn(conf config.Sink) string {
+	// postgresql://[user[:password]@][netloc][:port][/dbname]
+	port := strconv.FormatUint(uint64(conf.MzPort), 10)
+	return "postgresql://" + conf.MzUser + ":" + conf.MzPass + "@" + conf.MzHost + ":" + port + "/" + conf.MzDbName
+}
 
 type MaterializeSink struct {
 	id           *uuid.UUID
@@ -28,10 +35,10 @@ func (s *MaterializeSink) Name() string {
 }
 
 func (s *MaterializeSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing postgres sink")
+	log.Debug().Msg("initializing materialize sink")
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name
-	connString := generatePgDsn(conf)
+	connString := generateMzDsn(conf)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
 		log.Error().Err(err).Msg("could not open materialize connection")
@@ -47,12 +54,6 @@ func (s *MaterializeSink) Initialize(conf config.Sink) error {
 			if err != nil {
 				log.Error().Err(err).Msg("could not auto migrate table")
 				return err
-			}
-			// NOTE! This is a hacky workaround so that the same gorm struct tag of "json" can be used, but "jsonb" is used for pg.
-			for _, col := range []string{"event_metadata", "validation_error", "payload"} {
-				alterStmt := "alter table " + tbl + " rename column " + col + " set data type jsonb using " + col + "::jsonb;"
-				log.Debug().Msg("ensuring jsonb columns via: " + alterStmt)
-				s.gormDb.Exec(alterStmt)
 			}
 		} else {
 			log.Debug().Msg(tbl + " table already exists - not ensuring")

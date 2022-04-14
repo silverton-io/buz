@@ -22,12 +22,31 @@ type Sink struct {
 	// File
 	ValidFile   string `json:"validFile,omitempty"`
 	InvalidFile string `json:"invalidFile,omitempty"`
+	// Postgres Database
+	PgHost   string `json:"-"`
+	PgPort   uint16 `json:"-"`
+	PgDbName string `json:"-"`
+	PgUser   string `json:"-"`
+	PgPass   string `json:"-"`
+	// Mysql Database
+	MysqlHost   string `json:"-"`
+	MysqlPort   uint16 `json:"-"`
+	MysqlDbName string `json:"-"`
+	MysqlUser   string `json:"-"`
+	MysqlPass   string `json:"-"`
+	// Materialize Database
+	MzHost   string `json:"-"`
+	MzPort   uint16 `json:"-"`
+	MzDbName string `json:"-"`
+	MzUser   string `json:"-"`
+	MzPass   string `json:"-"`
+	// Clickhouse Database
+	ClickhouseHost   string `json:"-"`
+	ClickhousePort   uint16 `json:"-"`
+	ClickhouseDbName string `json:"-"`
+	ClickhouseUser   string `json:"-"`
+	ClickhousePass   string `json:"-"`
 	// Database
-	DbHost       string `json:"-"`
-	DbPort       uint16 `json:"-"`
-	DbName       string `json:"-"`
-	DbUser       string `json:"-"`
-	DbPass       string `json:"-"`
 	ValidTable   string `json:"validTable,omitempty"`
 	InvalidTable string `json:"invalidTable,omitempty"`
 	// Pubnub
