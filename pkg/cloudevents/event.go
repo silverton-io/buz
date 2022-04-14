@@ -1,6 +1,7 @@
 package cloudevents
 
 import (
+	"database/sql/driver"
 	"encoding/json"
 	"time"
 
@@ -55,4 +56,13 @@ func (e CloudEvent) AsMap() (map[string]interface{}, error) {
 		return nil, err
 	}
 	return event, nil
+}
+
+func (e CloudEvent) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e CloudEvent) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
 }

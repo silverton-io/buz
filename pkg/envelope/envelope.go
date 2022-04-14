@@ -1,6 +1,8 @@
 package envelope
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
@@ -30,18 +32,28 @@ type ValidationError struct {
 	Errors          []PayloadValidationError `json:"payloadValidationErrors"`
 }
 
+func (e *ValidationError) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e *ValidationError) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), e)
+}
+
 type Envelope struct {
+	// gorm.Model FIXME: maybe at some point in the future?
 	Id              uuid.UUID      `json:"id"`
 	EventProtocol   string         `json:"eventProtocol"`
-	EventMetadata   *EventMetadata `json:"eventMetadata"`
-	SourceMetadata  `json:"sourceMetadata"`
+	EventMetadata   *EventMetadata `json:"eventMetadata" gorm:"type:json"`
+	SourceMetadata  `json:"sourceMetadata" gorm:"type:json"`
 	Tstamp          time.Time        `json:"tstamp"`
 	Ip              string           `json:"ip"`
 	IsValid         *bool            `json:"isValid"`
 	IsRelayed       *bool            `json:"isRelayed"`
 	RelayedId       *uuid.UUID       `json:"relayedId"`
-	ValidationError *ValidationError `json:"validationErrors"`
-	Payload         event.Event      `json:"payload"`
+	ValidationError *ValidationError `json:"validationErrors" gorm:"type:json"`
+	Payload         event.Event      `json:"payload" gorm:"type:json"`
 }
 
 type EventMetadata struct {
@@ -53,6 +65,15 @@ type EventMetadata struct {
 	Version            string `json:"version,omitempty"`
 	Format             string `json:"format,omitempty"`
 	Path               string `json:"path,omitempty"`
+}
+
+func (e *EventMetadata) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e *EventMetadata) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), e)
 }
 
 type SourceMetadata struct {

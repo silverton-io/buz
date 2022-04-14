@@ -11,7 +11,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/envelope"
 )
 
-func generateCreateTableSql(tableName string) string {
+func generateEnsurePostgresTableSql(tableName string) string {
 	return "create table if not exists " + tableName + "(id uuid, \"eventProtocol\" text, \"eventSchema\" text, source text, tstamp timestamp with time zone, ip text, \"isValid\" boolean, \"isRelayed\" boolean, \"validationError\" jsonb, payload jsonb);"
 }
 
@@ -42,17 +42,17 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 	}
 	conn, err := pgx.Connect(connectionConf)
 	if err != nil {
-		log.Debug().Err(err).Msg("could not open db connection")
+		log.Error().Err(err).Msg("could not open db connection")
 		return err
 	}
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name
 	s.conn, s.validTable, s.invalidTable = conn, conf.ValidTable, conf.InvalidTable
-	createValidSql, createInvalidSql := generateCreateTableSql(s.validTable), generateCreateTableSql(s.invalidTable)
-	for _, sql := range []string{createValidSql, createInvalidSql} {
+	ensureValidSql, ensureInvalidSql := generateEnsurePostgresTableSql(s.validTable), generateEnsurePostgresTableSql(s.invalidTable)
+	for _, sql := range []string{ensureValidSql, ensureInvalidSql} {
 		_, err := s.conn.Exec(sql)
 		if err != nil {
-			log.Debug().Err(err).Msg("could not create table")
+			log.Error().Err(err).Msg("could not ensure table")
 			return err
 		}
 	}

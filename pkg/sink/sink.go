@@ -23,6 +23,7 @@ const (
 	BLACKHOLE        string = "blackhole"
 	FILE             string = "file"
 	POSTGRES         string = "postgres"
+	MYSQL            string = "mysql"
 	PUBNUB           string = "pubnub"
 	MONGODB          string = "mongodb"
 )
@@ -76,6 +77,9 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		return &sink, nil
 	case POSTGRES:
 		sink := PostgresSink{}
+		return &sink, nil
+	case MYSQL:
+		sink := MysqlSink{}
 		return &sink, nil
 	case MONGODB:
 		sink := MongodbSink{}

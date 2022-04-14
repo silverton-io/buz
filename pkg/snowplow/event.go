@@ -1,6 +1,7 @@
 package snowplow
 
 import (
+	"database/sql/driver"
 	"encoding/json"
 	"time"
 
@@ -84,6 +85,15 @@ func (e SnowplowEvent) AsMap() (map[string]interface{}, error) {
 		return nil, err
 	}
 	return m, nil
+}
+
+func (e SnowplowEvent) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e SnowplowEvent) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
 }
 
 type PlatformMetadata struct {
