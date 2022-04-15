@@ -1,35 +1,50 @@
 version: "3.9"
 
 services:
-  # honeypot:
-  #   container_name: honeypot
-  #   image: ghcr.io/silverton-io/honeypot:v0.1.45
-  #   volumes:
-  #     # - type: bind
-  #     #   source: ./honeypot/elastic-kibana.conf.yml
-  #     #   target: /etc/honeypot/config.yml
-  #     - type: bind
-  #       source: ../../schemas
-  #       target: /schemas/
-  #     - type: bind
-  #       source: ../../site/index.html
-  #       target: /app/site/index.html
-  #   # environment:
-  #   #   - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
-  #   ports:
-  #     - 8080:8080
-  #   deploy:
-  #     restart_policy:
-  #       condition: on-failure
-  #   healthcheck:
-  #     test: curl -f localhost:8080/health
-  #     interval: 15s
+  honeypot:
+    container_name: honeypot
+    image: honeypot:v0.4.0 # Note! use latest :)
+    volumes:
+      - type: bind
+        source: ./honeypot/devel.conf.yml
+        target: /etc/honeypot/config.yml
+      - type: bind
+        source: ../../schemas
+        target: /schemas/
+      - type: bind
+        source: ../../site/index.html
+        target: /app/site/index.html
+    environment:
+      - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
+    ports:
+      - 8080:8080
+    deploy:
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: curl -f localhost:8080/health
+      interval: 15s
 
   mysql:
     container_name: mysql
     image: mysql/mysql-server:8.0
     ports:
       - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=honeypot
+      - MYSQL_DATABASE=honeypot
+      - MYSQL_USER=honeypot
+      - MYSQL_PASSWORD=honeypot
+
+  postgres:
+    container_name: postgres
+    image: postgres:14.2
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=honeypot
+      - POSTGRES_USER=honeypot
+      - POSTGRES_PASSWORD=honeypot
 
   clickhouse:
     container_name: clickhouse
@@ -44,14 +59,6 @@ services:
     ports:
       - 8123:8123
       - 9000:9000
-
-  postgres:
-    container_name: postgres
-    image: postgres:14.2
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_PASSWORD=postgres
 
   materialized:
     container_name: materialized

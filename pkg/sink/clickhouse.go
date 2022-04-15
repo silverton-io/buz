@@ -68,7 +68,6 @@ func (s *ClickhouseSink) BatchPublishValid(ctx context.Context, envelopes []enve
 }
 
 func (s *ClickhouseSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
-	fmt.Println("made it here too")
 	s.gormDb.Table(s.invalidTable).Create(envelopes)
 }
 

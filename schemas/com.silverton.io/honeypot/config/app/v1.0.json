@@ -526,7 +526,7 @@
             "type": "array",
             "description": "Configuration for the sinks",
             "minItems": 1,
-            "maxItems": 4,
+            "maxItems": 5,
             "items": {
                 "type": "object",
                 "description": "Configuration for an individual sink",
@@ -675,7 +675,7 @@
                     "mysqlPort": {
                         "type": "number",
                         "description": "The database port to write envelopes to if sink type is mysql",
-                        "default": 5432
+                        "default": 3306
                     },
                     "mysqlDbName": {
                         "type": "string",
@@ -700,22 +700,22 @@
                     "mzPort": {
                         "type": "number",
                         "description": "The database port to write envelopes to if sink type is materialize",
-                        "default": 5432
+                        "default": 6875
                     },
                     "mzDbName": {
                         "type": "string",
                         "description": "The database name if sink type is materialize",
-                        "default": "honeypot"
+                        "default": "materialize"
                     },
                     "mzUser": {
                         "type": "string",
                         "description": "The database connection user if sink type is materialize",
-                        "default": "honeypot"
+                        "default": "materialize"
                     },
                     "mzPass": {
                         "type": "string",
                         "description": "The database connection password if sink type is materialize",
-                        "default": "honeypot"
+                        "default": ""
                     },
                     "clickhouseHost": {
                         "type": "string",
@@ -725,7 +725,7 @@
                     "clickhousePort": {
                         "type": "number",
                         "description": "The database port to write envelopes to if sink type is clickhouse",
-                        "default": 5432
+                        "default": 9000
                     },
                     "clickhouseDbName": {
                         "type": "string",
