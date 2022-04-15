@@ -1,0 +1,15 @@
+kafka:
+  brokers:
+    - redpanda-1:29092
+  schemaRegistry:
+    enabled: false
+    urls: ["http://redpanda-1:8081"]
+
+connect:
+  enabled: false
+  clusters:
+    - name: connect
+      url: http://connect:8083
+
+server:
+  listenPort: 8081

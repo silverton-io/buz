@@ -29,6 +29,8 @@ func (s *MongodbSink) Name() string {
 }
 
 func (s *MongodbSink) Initialize(conf config.Sink) error {
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
 	ctx := context.Background()
 	opt := options.ClientOptions{
 		Hosts: conf.MongoHosts,

@@ -1,6 +1,7 @@
 package generic
 
 import (
+	"database/sql/driver"
 	"encoding/json"
 
 	"github.com/silverton-io/honeypot/pkg/event"
@@ -44,4 +45,13 @@ func (e GenericEvent) AsMap() (map[string]interface{}, error) {
 		return nil, err
 	}
 	return m, nil
+}
+
+func (e GenericEvent) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e GenericEvent) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
 }

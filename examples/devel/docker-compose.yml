@@ -1,0 +1,130 @@
+version: "3.9"
+
+services:
+  honeypot:
+    container_name: honeypot
+    image: honeypot:v0.5.0 # Note! use latest :)
+    volumes:
+      - type: bind
+        source: ./honeypot/devel.conf.yml
+        target: /etc/honeypot/config.yml
+      - type: bind
+        source: ../../schemas
+        target: /schemas/
+      - type: bind
+        source: ../../site/index.html
+        target: /app/site/index.html
+    environment:
+      - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
+    ports:
+      - 8080:8080
+    deploy:
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: curl -f localhost:8080/health
+      interval: 15s
+
+  mysql:
+    container_name: mysql
+    image: mysql/mysql-server:8.0
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=honeypot
+      - MYSQL_DATABASE=honeypot
+      - MYSQL_USER=honeypot
+      - MYSQL_PASSWORD=honeypot
+
+  postgres:
+    container_name: postgres
+    image: postgres:14.2
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=honeypot
+      - POSTGRES_USER=honeypot
+      - POSTGRES_PASSWORD=honeypot
+
+  clickhouse:
+    container_name: clickhouse
+    image: yandex/clickhouse-server
+    volumes:
+      - type: bind
+        source: ./clickhouse/conf.d
+        target: /etc/clickhouse-server/config.d/
+      - type: bind
+        source: ./clickhouse/conf.d/users.xml
+        target: /etc/clickhouse-server/users.xml
+    ports:
+      - 8123:8123
+      - 9000:9000
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: honeypot
+      MONGO_INITDB_ROOT_PASSWORD: honeypot
+    ports:
+      - 27017:27017
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express
+    restart: always
+    ports:
+      - 8084:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: honeypot
+      ME_CONFIG_MONGODB_ADMINPASSWORD: honeypot
+      ME_CONFIG_MONGODB_URL: mongodb://honeypot:honeypot@mongo:27017/
+
+  materialized:
+    container_name: materialized
+    image: materialize/materialized # Note! Use the latest version :)
+    init: true
+    command: -w2 --disable-telemetry
+    ports:
+      - 6875:6875
+
+  redpanda-1:
+    image: docker.vectorized.io/vectorized/redpanda:v21.11.9 # Note! Use the latest version :)
+    container_name: redpanda-1
+    command:
+      - redpanda start
+      - --overprovisioned
+      - --check=false
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --node-id 0
+      - --kafka-addr
+      - INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - INSIDE://redpanda-1:29092,OUTSIDE://127.0.0.1:9092
+      - --rpc-addr 0.0.0.0:33145
+      - --advertise-rpc-addr redpanda-1:33145
+      - --set redpanda.enable_transactions=true
+      - --set redpanda.enable_idempotence=true
+    ports:
+      - 9092:9092
+      - 9081:8081
+    healthcheck:
+      test: curl -f localhost:9644/v1/status/ready
+      interval: 1s
+      start_period: 30s
+
+  kowl:
+    image: quay.io/cloudhut/kowl:v1.5.0
+    restart: on-failure
+    container_name: kowl
+    volumes:
+    - ./kowl/devel.yml:/etc/kowl/config.yml
+    ports:
+    - 8081:8081
+    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yml
+    depends_on:
+      redpanda-1:
+        condition: service_healthy

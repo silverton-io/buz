@@ -12,13 +12,13 @@ import (
 	"gorm.io/gorm"
 )
 
-func generatePgDsn(conf config.Sink) string {
+func generateMzDsn(conf config.Sink) string {
 	// postgresql://[user[:password]@][netloc][:port][/dbname]
-	port := strconv.FormatUint(uint64(conf.PgPort), 10)
-	return "postgresql://" + conf.PgUser + ":" + conf.PgPass + "@" + conf.PgHost + ":" + port + "/" + conf.PgDbName
+	port := strconv.FormatUint(uint64(conf.MzPort), 10)
+	return "postgresql://" + conf.MzUser + ":" + conf.MzPass + "@" + conf.MzHost + ":" + port + "/" + conf.MzDbName
 }
 
-type PostgresSink struct {
+type MaterializeSink struct {
 	id           *uuid.UUID
 	name         string
 	gormDb       *gorm.DB
@@ -26,22 +26,22 @@ type PostgresSink struct {
 	invalidTable string
 }
 
-func (s *PostgresSink) Id() *uuid.UUID {
+func (s *MaterializeSink) Id() *uuid.UUID {
 	return s.id
 }
 
-func (s *PostgresSink) Name() string {
+func (s *MaterializeSink) Name() string {
 	return s.name
 }
 
-func (s *PostgresSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing postgres sink")
+func (s *MaterializeSink) Initialize(conf config.Sink) error {
+	log.Debug().Msg("initializing materialize sink")
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name
-	connString := generatePgDsn(conf)
+	connString := generateMzDsn(conf)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("could not open pg connection")
+		log.Error().Err(err).Msg("could not open materialize connection")
 		return err
 	}
 	s.gormDb = gormDb
@@ -50,16 +50,10 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 		tblExists := s.gormDb.Migrator().HasTable(tbl)
 		if !tblExists {
 			log.Debug().Msg(tbl + " table doesn't exist - ensuring")
-			err = s.gormDb.Table(tbl).AutoMigrate(&envelope.PgEnvelope{})
+			err = s.gormDb.Table(tbl).AutoMigrate(&envelope.Envelope{})
 			if err != nil {
 				log.Error().Err(err).Msg("could not auto migrate table")
 				return err
-			}
-			// NOTE! This is a hacky workaround so that the same gorm struct tag of "json" can be used, but "jsonb" is used for pg.
-			for _, col := range []string{"event_metadata", "validation_error", "payload"} {
-				alterStmt := "alter table " + tbl + " alter column " + col + " set data type jsonb using " + col + "::jsonb;"
-				log.Debug().Msg("ensuring jsonb columns via: " + alterStmt)
-				s.gormDb.Exec(alterStmt)
 			}
 		} else {
 			log.Debug().Msg(tbl + " table already exists - not ensuring")
@@ -68,15 +62,15 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *PostgresSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
+func (s *MaterializeSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
 	s.gormDb.Table(s.validTable).Create(envelopes)
 }
 
-func (s *PostgresSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
+func (s *MaterializeSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
 	s.gormDb.Table(s.invalidTable).Create(envelopes)
 }
 
-func (s *PostgresSink) Close() {
+func (s *MaterializeSink) Close() {
 	log.Debug().Msg("closing postgres sink")
 	db, _ := s.gormDb.DB()
 	db.Close()

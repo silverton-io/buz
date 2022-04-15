@@ -1,6 +1,7 @@
 package webhook
 
 import (
+	"database/sql/driver"
 	"encoding/json"
 
 	"github.com/silverton-io/honeypot/pkg/protocol"
@@ -47,4 +48,13 @@ func (e WebhookEvent) AsMap() (map[string]interface{}, error) {
 		return nil, err
 	}
 	return m, nil
+}
+
+func (e WebhookEvent) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e WebhookEvent) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
 }

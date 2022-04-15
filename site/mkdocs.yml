@@ -65,6 +65,8 @@ nav:
     - sinks/file.md
     - sinks/pubnub.md
     - sinks/postgres.md
+    - sinks/materialize.md
+    - sinks/mysql.md
     - sinks/mongodb.md
     - sinks/blackhole.md
     - sinks/snowflake.md

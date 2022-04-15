@@ -36,6 +36,8 @@ func (s *KafkaSink) Name() string {
 }
 
 func (s *KafkaSink) Initialize(conf config.Sink) error {
+	id := uuid.New()
+	s.id, s.name = &id, conf.Name
 	ctx := context.Background()
 	log.Debug().Msg("initializing kafka client")
 	client, err := kgo.NewClient(
@@ -63,8 +65,6 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 			log.Fatal().Stack().Err(d.Err).Msg("topic doesn't exist: " + d.Name)
 		}
 	}
-	id := uuid.New()
-	s.id, s.name = &id, conf.Name
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, conf.ValidEventTopic, conf.InvalidEventTopic
 	return nil
 }
