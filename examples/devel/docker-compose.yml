@@ -88,3 +88,43 @@ services:
     command: -w2 --disable-telemetry
     ports:
       - 6875:6875
+
+  redpanda-1:
+    image: docker.vectorized.io/vectorized/redpanda:v21.11.9 # Note! Use the latest version :)
+    container_name: redpanda-1
+    command:
+      - redpanda start
+      - --overprovisioned
+      - --check=false
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --node-id 0
+      - --kafka-addr
+      - INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - INSIDE://redpanda-1:29092,OUTSIDE://127.0.0.1:9092
+      - --rpc-addr 0.0.0.0:33145
+      - --advertise-rpc-addr redpanda-1:33145
+      - --set redpanda.enable_transactions=true
+      - --set redpanda.enable_idempotence=true
+    ports:
+      - 9092:9092
+      - 9081:8081
+    healthcheck:
+      test: curl -f localhost:9644/v1/status/ready
+      interval: 1s
+      start_period: 30s
+
+  kowl:
+    image: quay.io/cloudhut/kowl:v1.5.0
+    restart: on-failure
+    container_name: kowl
+    volumes:
+    - ./kowl/devel.yml:/etc/kowl/config.yml
+    ports:
+    - 8081:8081
+    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yml
+    depends_on:
+      redpanda-1:
+        condition: service_healthy

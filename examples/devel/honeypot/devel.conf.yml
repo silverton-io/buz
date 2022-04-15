@@ -139,6 +139,12 @@ sinks:
     mongoDbName: honeypot
     validCollection: honeypotValid
     invalidCollection: honeypotInvalid
+  - name: thepanda
+    type: kafka
+    kafkaBrokers:
+      - redpanda-1:29092
+    validEventTopic: honeypot-valid
+    invalidEventTopic: honeypot-invalid
 
 squawkBox:
   enabled: true

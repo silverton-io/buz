@@ -2,7 +2,6 @@ package sink
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -40,7 +39,6 @@ func (s *ClickhouseSink) Initialize(conf config.Sink) error {
 	id := uuid.New()
 	s.id, s.name = &id, conf.Name
 	connString := generateClickhouseDsn(conf)
-	fmt.Println(connString)
 	gormDb, err := gorm.Open(clickhouse.Open(connString), &gorm.Config{})
 	if err != nil {
 		log.Error().Err(err).Msg("could not open clickhouse connection")
