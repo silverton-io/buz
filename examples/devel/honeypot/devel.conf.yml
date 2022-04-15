@@ -129,6 +129,16 @@ sinks:
     clickhousePass: honeypot
     validTable: honeypot_valid
     invalidTable: honeypot_invalid
+  - name: mango
+    type: mongodb
+    mongoHosts:
+      - mongo
+    mongoDbPort: 27017
+    mongoDbUser: honeypot
+    mongoDbPass: honeypot
+    mongoDbName: honeypot
+    validCollection: honeypotValid
+    invalidCollection: honeypotInvalid
 
 squawkBox:
   enabled: true

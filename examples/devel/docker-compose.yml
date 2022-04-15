@@ -60,6 +60,27 @@ services:
       - 8123:8123
       - 9000:9000
 
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: honeypot
+      MONGO_INITDB_ROOT_PASSWORD: honeypot
+    ports:
+      - 27017:27017
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express
+    restart: always
+    ports:
+      - 8084:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: honeypot
+      ME_CONFIG_MONGODB_ADMINPASSWORD: honeypot
+      ME_CONFIG_MONGODB_URL: mongodb://honeypot:honeypot@mongo:27017/
+
   materialized:
     container_name: materialized
     image: materialize/materialized # Note! Use the latest version :)
