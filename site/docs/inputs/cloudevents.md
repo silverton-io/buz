@@ -7,15 +7,15 @@ tags:
 
 # 🟢 CloudEvents
 
-## Event Collection Methods
+## Event Collection Method
 
 Honeypot listens on a configurable endpoint for incoming `POST` requests of [Cloudevents payloads](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/formats/json-format.md).
 
 
 This endpoint requires one of the following content types to be designated:
 
-  - `application/cloudevents+json` (for single events)
-  - `application/cloudevents-batch+json` (for a batch of events)
+  - `application/cloudevents+json` (for single cloudevents)
+  - `application/cloudevents-batch+json` (for a batch of cloudevents)
 
 **Note!** If a `Content-Type` header is not specified, the event will not be accepted.
 
