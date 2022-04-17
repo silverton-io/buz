@@ -32,5 +32,5 @@ Honeypot validates, annotates, and redirects incoming cloudevents using the [dat
 ```
 cloudevents:
   enabled: true   # Whether or not to enable the Cloudevents collection endpoint
-  path: /ce/p     # Path that should listen for incoming (single or batch) cloudevents
+  path: /ce/p     # Path for incoming (single or batch) cloudevents
 ```
