@@ -6,4 +6,4 @@ tags:
 
 # 🟢 JSON
 
-JSON serialization is the default for all events.
+JSON is the default serialization for all events.

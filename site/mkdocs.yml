@@ -39,10 +39,11 @@ nav:
     - inputs/self-describing.md
     - inputs/webhook.md
     - inputs/relay.md
-    - inputs/cdc.md
+    # - inputs/cdc.md
     - inputs/segment.md
+    - inputs/rudderstack.md
     - inputs/opcua.md
-    - inputs/ros.md
+    # - inputs/ros.md
     - inputs/mqtt.md
   - Schema Caches:
     - schema-cache/onboard.md
@@ -73,8 +74,9 @@ nav:
     - sinks/blackhole.md
     - sinks/bigquery.md
     - sinks/firebolt.md
-    - sinks/snowflake.md
+    - sinks/databricks.md
     - sinks/redshift.md
+    - sinks/snowflake.md
     - sinks/azuredw.md
   - Validation Protocols:
     - validation-protocols/jsonschema.md

@@ -7,7 +7,7 @@ tags:
 
 # 🟢 CloudEvents
 
-## Event Collection Method
+## Collection Method
 
 Honeypot listens on a configurable endpoint for incoming `POST` requests of [Cloudevents payloads](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/formats/json-format.md).
 
@@ -20,11 +20,11 @@ This endpoint requires one of the following content types to be designated:
 **Note!** If a `Content-Type` header is not specified, the event will not be accepted.
 
 
-## Event Validation Methods
+## Validation Method
 
-Honeypot validates, annotates, and redirects incoming cloudevents using the [dataschema](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#dataschema) property of incoming events.
+Honeypot validates incoming cloudevents using the [dataschema](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#dataschema) property of each event.
 
-**Note!** If the `dataschema` property is not present in incoming events, these events will be redirected to the `invalid` destination(s). This might become configurable in the future, but since Honeypot aims to maintain a high degree of data quality from the point of collection it might not change.
+**Note!** If the `dataschema` property is not present in incoming events, these events will be redirected to the `invalid` destination(s).
 
 
 ## Sample Cloudevents Configuration

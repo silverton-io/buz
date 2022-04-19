@@ -957,15 +957,10 @@
                     "description": "Whether or not to enable telemetry",
                     "default": "true"
                 },
-                "heartbeatMs": {
-                    "type": "integer",
-                    "description": "The number of ms to send a heartbeat",
-                    "default": 30000
-                },
                 "host": {}
             },
             "additionalProperties": false,
-            "required": ["enabled", "heartbeatMs"]
+            "required": ["enabled"]
         }
     },
     "additionalProperties": false,

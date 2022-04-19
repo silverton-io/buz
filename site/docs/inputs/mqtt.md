@@ -6,3 +6,5 @@ tags:
 ---
 
 # 🟡 MQTT
+
+MQTT inputs are not yet supported.

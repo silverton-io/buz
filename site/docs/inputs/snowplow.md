@@ -14,12 +14,12 @@ At the end of the day Snowplow leverages *two* event protocols - the original [T
 
 Honeypot supports both, but does so in a way that seamlessly blends the data model of Self-Describing Events and the traditional Tracker Protocol. It also *validates and redirects tracker-protocol events in the same manner as self-describing events.*
 
-## Event Collection Methods
+## Collection Methods
 
 Snowplow uses two HTTP verbs for event collection:
 
-  - `GET` (single request consisting of a single event, as defined via query params)
-  - `POST` (single request consisting of event batches, as defined via json payloads)
+  - `GET` (request consisting of a single event, as defined via query params)
+  - `POST` (request consisting of event batches, as defined via json payloads)
 
 It leverages three primary event collection endpoints:
 
@@ -28,6 +28,10 @@ It leverages three primary event collection endpoints:
   - `com.snowplow.analytics.snowplow/tp2` (endpoint used for `POST`-based tracking)
 
 Honeypot supports all of the above, but allows various functionality to be enabled/disabled as needed.
+
+## Validation Method
+
+Honeypot uses a set of static schemas to validate incoming "tracker protocol" events, and the associated `schema` property to validate incoming "self describing" events.
 
 ## Navigating Ad Blockers
 

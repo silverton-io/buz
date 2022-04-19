@@ -7,7 +7,7 @@ tags:
 
 # 🟢 Self-Describing Events
 
-## Event Collection Method
+## Collection Method
 Honeypot listens on a configurable endpoint for incoming `POST` requests of `self describing` payloads, structured as:
 
 ```
@@ -23,9 +23,14 @@ Honeypot listens on a configurable endpoint for incoming `POST` requests of `sel
 }
 ```
 
-This endpoint accepts **batches of self-describing events** and **single self-describing events**. It requires a `Content-Type` header of `application/json`. 
+This (configured by you!) endpoint accepts **batches of self-describing events** and **single self-describing events**. It requires a `Content-Type` header of `application/json`.
 
 **Note!** If a `Content-Type` header is not specified, the event will not be accepted.
+
+
+## Validation Method
+
+Honeypot uses the schema defined at `$PAYLOAD_KEY.$SCHEMA_KEY` to validate each payload.
 
 
 ## Sample Self-Describing Event Configuration

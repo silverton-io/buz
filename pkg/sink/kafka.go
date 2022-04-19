@@ -95,7 +95,7 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []
 			} else {
 				offset := strconv.FormatInt(r.Offset, 10)
 				partition := strconv.FormatInt(int64(r.Partition), 10)
-				log.Debug().Msg("published event " + offset + " to topic " + topic + " partition " + partition)
+				log.Trace().Msg("published event " + offset + " to topic " + topic + " partition " + partition)
 			}
 		})
 	}
