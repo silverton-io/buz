@@ -39,7 +39,7 @@ nav:
     - inputs/self-describing.md
     - inputs/webhook.md
     - inputs/relay.md
-    # - inputs/cdc.md
+    - inputs/cdc.md
     - inputs/segment.md
     - inputs/rudderstack.md
     - inputs/opcua.md
