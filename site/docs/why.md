@@ -36,22 +36,22 @@ Streaming data is all about one thing: increasing the speed of action and decisi
 
 Honeypot ships with both Go binaries and a Docker image. This results in minimal artifacts to deploy, maintain, and monitor, and an entirely cloud-agnostic deployment model.
 
-Want to deploy on GCP Cloud Run? Easy.
+Want to deploy on GCP Cloud Run? ✅
 
-Want to deploy with GKE, EKS, or in k8s? Easy.
+Want to deploy with GKE, EKS, or in k8s? ✅
 
-Want to deploy on bare metal? Easy.
+Want to deploy on bare metal? ✅
 
 **TL;DR:**
 
-- Want to have x-cloud event tracking? Honeypot.
-- Want to migrate clouds? Honeypot.
+- Want to have x-cloud event tracking? ✅
+- Want to migrate clouds? ✅
 
 ## **Rich metadata and stream introspection**
 
 After years of building, maintaining, and managing event tracking systems there's one thing that has always stuck out: ***more metadata and expedited knowledge of what is happening within the stream would be unbelievably empowering***.
 
-This usually happens at the tail end of the pipeline - in the data warehouse. **Honeypot aims to flip this on its head.**
+This usually happens at the tail end of the pipeline - in the data warehouse. **Not awesome.**
 
 **TL;DR:**
 

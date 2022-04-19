@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/honeypot/pkg/annotator"
 	"github.com/silverton-io/honeypot/pkg/envelope"
@@ -9,10 +11,14 @@ import (
 
 func GenericHandler(h EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		envelopes := envelope.BuildGenericEnvelopesFromRequest(c, *h.Config)
-		annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
-		h.Manifold.Enqueue(annotatedEnvelopes)
-		c.JSON(200, response.Ok)
+		if c.ContentType() == "application/json" {
+			envelopes := envelope.BuildGenericEnvelopesFromRequest(c, *h.Config)
+			annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
+			h.Manifold.Enqueue(annotatedEnvelopes)
+			c.JSON(200, response.Ok)
+		} else {
+			c.JSON(http.StatusBadRequest, response.InvalidContentType)
+		}
 	}
 	return gin.HandlerFunc(fn)
 }

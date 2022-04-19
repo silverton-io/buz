@@ -154,4 +154,3 @@ squawkBox:
 
 tele:
   enabled: true
-  heartbeatMs: 3000

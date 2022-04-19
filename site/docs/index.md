@@ -25,7 +25,7 @@ Examples of building new technology on top of pre-existing API's include:
 
 - [Materialize](https://materialize.com/), whose clients are built on the Postgres API.
 
-- [Airbyte](https://airbyte.com/), which builds upon the conceptual model of Fivetran or Stich (and the technical model of [Singer](https://www.singer.io/)).
+- [Airbyte](https://airbyte.com/), which builds upon the conceptual model of Fivetran or Stitch (and the technical model of [Singer](https://www.singer.io/)).
 
 - [Timescale](https://www.timescale.com/), which builds on the Postgres API.
 

@@ -3,7 +3,7 @@ version: "3.9"
 services:
   honeypot:
     container_name: honeypot
-    image: honeypot:v0.5.0 # Note! use latest :)
+    image: honeypot:v0.5.1 # Note! use latest :)
     volumes:
       - type: bind
         source: ./honeypot/devel.conf.yml
