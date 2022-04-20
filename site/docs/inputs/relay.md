@@ -10,7 +10,7 @@ tags:
 
 ## Collection Methods
 
-Honeypot is capable of collecting and distributing events relayed from other honeypot instances, which allows for some pretty nifty chain configurations.
+Honeypot is capable of collecting and distributing events relayed from other honeypot instances, which allows for operational flexibility in a set of use cases.
 
 
 ## Validation Method

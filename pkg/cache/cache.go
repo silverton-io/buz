@@ -14,7 +14,7 @@ type SchemaCache struct {
 }
 
 func (s *SchemaCache) Initialize(conf config.SchemaCache) {
-	cacheBackend, _ := BuildSchemaCacheBackend(conf.SchemaCacheBackend)
+	cacheBackend, _ := BuildSchemaCacheBackend(conf.Backend)
 	s.Backend = cacheBackend
 	s.Cache = freecache.NewCache(conf.MaxSizeBytes)
 	s.maxSizeBytes = conf.MaxSizeBytes

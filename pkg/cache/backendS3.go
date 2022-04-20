@@ -19,7 +19,7 @@ type S3SchemaCacheBackend struct {
 	downloader *manager.Downloader
 }
 
-func (b *S3SchemaCacheBackend) Initialize(conf config.SchemaCacheBackend) {
+func (b *S3SchemaCacheBackend) Initialize(conf config.Backend) {
 	log.Debug().Msg("initializing s3 schema cache backend")
 	ctx := context.Background()
 	cfg, err := awsconf.LoadDefaultConfig(ctx)

@@ -85,7 +85,7 @@ inputs:
     path: /relay
 
 schemaCache:
-  schemaCacheBackend:
+  backend:
     type: fs
     path: ./schemas/
   ttlSeconds: 300

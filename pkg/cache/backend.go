@@ -18,12 +18,12 @@ const (
 )
 
 type SchemaCacheBackend interface {
-	Initialize(config config.SchemaCacheBackend)
+	Initialize(config config.Backend)
 	GetRemote(schema string) (contents []byte, err error)
 	Close()
 }
 
-func BuildSchemaCacheBackend(conf config.SchemaCacheBackend) (backend SchemaCacheBackend, err error) {
+func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, err error) {
 	switch conf.Type {
 	case GCS:
 		cacheBackend := GcsSchemaCacheBackend{}
