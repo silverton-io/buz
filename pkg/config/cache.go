@@ -5,7 +5,7 @@ type Purge struct {
 	Path    string `json:"path"`
 }
 
-type SchemaCacheBackend struct {
+type Backend struct {
 	Type   string `json:"type"`
 	Region string `json:"region,omitempty"`
 	Bucket string `json:"bucket,omitempty"`
@@ -13,14 +13,14 @@ type SchemaCacheBackend struct {
 	Path   string `json:"path"`
 }
 
-type SchemaEndpoints struct {
+type SchemaDirectory struct {
 	Enabled bool `json:"enabled"`
 }
 
 type SchemaCache struct {
-	SchemaCacheBackend `json:"schemaCacheBackend"`
-	TtlSeconds         int `json:"ttlSeconds"`
-	MaxSizeBytes       int `json:"maxSizeBytes"`
-	Purge              `json:"purge"`
-	SchemaEndpoints    `json:"schemaEndpoints"`
+	Backend         `json:"backend"`
+	TtlSeconds      int `json:"ttlSeconds"`
+	MaxSizeBytes    int `json:"maxSizeBytes"`
+	Purge           `json:"purge"`
+	SchemaDirectory `json:"schemaDirectory"`
 }

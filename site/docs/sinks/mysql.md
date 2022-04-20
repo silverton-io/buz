@@ -4,4 +4,4 @@ tags:
   - mysql
 ---
 
-# 🟢 Mysql
+# 🟢 MySQL

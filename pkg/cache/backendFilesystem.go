@@ -12,7 +12,7 @@ type FilesystemCacheBackend struct {
 	path string
 }
 
-func (b *FilesystemCacheBackend) Initialize(conf config.SchemaCacheBackend) {
+func (b *FilesystemCacheBackend) Initialize(conf config.Backend) {
 	log.Debug().Msg("initializing filesystem schema cache backend")
 	b.path = conf.Path
 	// No-op

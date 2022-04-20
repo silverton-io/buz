@@ -16,7 +16,7 @@ type GcsSchemaCacheBackend struct {
 	client *storage.Client
 }
 
-func (b *GcsSchemaCacheBackend) Initialize(config config.SchemaCacheBackend) {
+func (b *GcsSchemaCacheBackend) Initialize(config config.Backend) {
 	ctx := context.Background()
 	log.Debug().Msg("initializing gcs schema cache backend")
 	client, err := storage.NewClient(ctx)

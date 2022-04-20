@@ -39,11 +39,11 @@ func (s *RelaySink) Initialize(conf config.Sink) error {
 }
 
 func (s *RelaySink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
-	go request.PostEnvelopes(s.relayUrl, validEnvelopes)
+	request.PostEnvelopes(s.relayUrl, validEnvelopes)
 }
 
 func (s *RelaySink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
-	go request.PostEnvelopes(s.relayUrl, invalidEnvelopes)
+	request.PostEnvelopes(s.relayUrl, invalidEnvelopes)
 }
 
 func (s *RelaySink) Close() {

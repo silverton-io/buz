@@ -14,7 +14,7 @@ type HttpSchemaCacheBackend struct {
 	path     string
 }
 
-func (b *HttpSchemaCacheBackend) Initialize(conf config.SchemaCacheBackend) {
+func (b *HttpSchemaCacheBackend) Initialize(conf config.Backend) {
 	log.Debug().Msg("initializing http schema cache backend")
 	b.protocol = conf.Type
 	b.host = conf.Host // FIXME! String trailing / if it's present (or validate it upstream)

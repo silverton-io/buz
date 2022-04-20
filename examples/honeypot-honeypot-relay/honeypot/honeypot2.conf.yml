@@ -55,19 +55,17 @@ inputs:
       ip: false
       userId: false
   cloudevents:
-    enabled: false
-    postPath: /ce/p
-    batchPostPath: /ce/bp
+    enabled: true
+    path: /ce/p
   generic:
-    enabled: false
-    postPath: /gen/p
-    batchPostPath: /gen/bp
+    enabled: true
+    path: /gen/p
     contexts:
       rootKey: contexts
       schemaKey: schema
       dataKey: data
     payload:
-      rootKey: data
+      rootKey: payload
       schemaKey: schema
       dataKey: data
   webhook:
@@ -78,7 +76,7 @@ inputs:
     path: /relay
 
 schemaCache:
-  schemaCacheBackend:
+  backend:
     type: fs
     path: /schemas
   ttlSeconds: 300
@@ -86,7 +84,7 @@ schemaCache:
   purge:
     enabled: false
     path: /c/purge
-  schemaEndpoints:
+  schemaDirectory:
     enabled: false
 
 manifold:
@@ -106,4 +104,3 @@ squawkBox:
 
 tele:
   enabled: true
-  heartbeatMs: 30000
