@@ -84,7 +84,7 @@ schemaCache:
   purge:
     enabled: true
     path: /c/purge
-  schemaEndpoints:
+  schemaDirectory:
     enabled: true
 
 manifold:
@@ -105,4 +105,3 @@ squawkBox:
 
 tele:
   enabled: true
-  heartbeatMs: 30000

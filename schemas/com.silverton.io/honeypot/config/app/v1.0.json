@@ -482,7 +482,7 @@
                     "additionalProperties": false,
                     "required": ["enabled", "path"]
                 },
-                "schemaEndpoints": {
+                "schemaDirectory": {
                     "type": "object",
                     "description": "Schema endpoint configuration",
                     "properties": {
@@ -497,7 +497,7 @@
                 }
             },
             "additionalProperties": false,
-            "required": ["schemaCacheBackend", "ttlSeconds", "maxSizeBytes", "purge", "schemaEndpoints"]
+            "required": ["schemaCacheBackend", "ttlSeconds", "maxSizeBytes", "purge", "schemaDirectory"]
         },
         "manifold": {
             "type": "object",

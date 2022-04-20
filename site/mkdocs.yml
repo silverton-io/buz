@@ -72,6 +72,8 @@ nav:
     - sinks/clickhouse.md
     - sinks/mongodb.md
     - sinks/blackhole.md
+    - sinks/iterable.md
+    - sinks/amplitude.md
     - sinks/bigquery.md
     - sinks/firebolt.md
     - sinks/databricks.md

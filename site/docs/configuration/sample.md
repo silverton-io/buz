@@ -34,7 +34,7 @@ middleware:
     name: nuid
     secure: false
     ttlDays: 365
-    domain: slvrtnio.com
+    domain: localhost
     path: /
     sameSite: Lax
   cors:
@@ -87,13 +87,13 @@ inputs:
 schemaCache:
   schemaCacheBackend:
     type: fs
-    path: ./schemas
+    path: ./schemas/
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
   purge:
     enabled: true
     path: /c/purge
-  schemaEndpoints:
+  schemaDirectory:
     enabled: true
 
 manifold:
@@ -102,18 +102,50 @@ manifold:
   bufferTimeThreshold: 60
 
 sinks:
-  - name: primary
+  - name: nada
+    type: blackhole
+  - name: redpanda
     type: kafka
     kafkaBrokers:
-      - redpanda-1:29092
-      - redpanda-2:29093
-      - redpanda-3:29094
-    invalidEventTopic: hpt-invalid
-    validEventTopic: hpt-valid
-  - name: console
-    type: stdout
-  - name: adios
-    type: blackhole
+      - 127.0.0.1:9092
+    validEventTopic: honeypot-valid
+    invalidEventTopic: honeypot-invalid
+  - name: mysql
+    type: mysql
+    mysqlHost: 127.0.0.1
+    mysqlPort: 3306
+    mysqlDbName: honeypot
+    mysqlUser: honeypot
+    mysqlPass: honeypot
+    validTable: honeypot_valid
+    invalidTable: honeypot_invalid
+  - name: postgres
+    type: postgres
+    pgHost: 127.0.0.1
+    pgPort: 5432
+    pgDbName: honeypot
+    pgUser: honeypot
+    pgPass: honeypot
+    validTable: honeypot_valid
+    invalidTable: honeypot_invalid
+  - name: materialize
+    type: materialize
+    mzHost: 127.0.0.1
+    mzPort: 6875
+    mzDbName: materialize
+    mzUser: materialize
+    mzPass: ""
+    validTable: honeypot_valid
+    invalidTable: honeypot_invalid
+  - name: clickhouse
+    type: clickhouse
+    clickhouseHost: 127.0.0.1
+    clickhousePort: 9000
+    clickhouseDbName: honeypot
+    clickhouseUser: honeypot
+    clickhousePass: honeypot
+    validTable: honeypot_valid
+    invalidTable: honeypot_invalid
 
 squawkBox:
   enabled: true
@@ -123,6 +155,5 @@ squawkBox:
 
 tele:
   enabled: true
-  heartbeatMs: 3000
 
 ```

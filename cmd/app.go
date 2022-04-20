@@ -168,7 +168,7 @@ func (a *App) initializeSchemaCacheRoutes() {
 		log.Info().Msg("initializing schema cache purge route")
 		a.engine.GET(a.config.SchemaCache.Purge.Path, handler.CachePurgeHandler(a.schemaCache))
 	}
-	if a.config.SchemaCache.SchemaEndpoints.Enabled {
+	if a.config.SchemaCache.SchemaDirectory.Enabled {
 		log.Info().Msg("initializing schema cache index and getter routes")
 		a.engine.GET(cache.SCHEMA_CACHE_ROOT_ROUTE, handler.CacheIndexHandler(a.schemaCache))
 		a.engine.GET(cache.SCHEMA_CACHE_ROOT_ROUTE+"/*"+cache.SCHEMA_ROUTE_PARAM, handler.CacheGetHandler(a.schemaCache))
@@ -284,6 +284,7 @@ func (a *App) Run() {
 			log.Info().Msgf("server shut down")
 		}
 	}()
+	// Safe shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	shutDownManifold := make(chan bool, 1)
