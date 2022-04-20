@@ -25,79 +25,83 @@ nav:
   - index.md
   - why.md
   - Quickstart:
-    - quickstart/getting-started.md
+      - quickstart/getting-started.md
     # - quickstart/honeypot-and-benthos.md
   - Roadmap:
-    - roadmap/2022.md
+      - roadmap/2022.md
   # - Deploying Honeypot:
   #   - deployment/gcp.md
   #   - deployment/aws.md
   #   - deployment/azure.md
   - Input Protocols:
-    - inputs/snowplow.md
-    - inputs/cloudevents.md
-    - inputs/self-describing.md
-    - inputs/webhook.md
-    - inputs/relay.md
-    - inputs/cdc.md
-    - inputs/segment.md
-    - inputs/rudderstack.md
-    - inputs/opcua.md
-    # - inputs/ros.md
-    - inputs/mqtt.md
+      - inputs/snowplow.md
+      - inputs/cloudevents.md
+      - inputs/self-describing.md
+      - inputs/webhook.md
+      - inputs/relay.md
+      - inputs/cdc.md
+      - inputs/segment.md
+      - inputs/rudderstack.md
+      - inputs/opcua.md
+      # - inputs/ros.md
+      - inputs/mqtt.md
   - Schema Caches:
-    - schema-cache/onboard.md
-    - schema-cache/redis.md
+      - schema-cache/onboard.md
+      - schema-cache/redis.md
   - Schema Cache Backends:
-    - schema-cache-backends/s3.md
-    - schema-cache-backends/gcs.md
-    - schema-cache-backends/filesystem.md
-    - schema-cache-backends/http.md
-    - schema-cache-backends/iglu.md
-    - schema-cache-backends/kafka-registry.md
+      - schema-cache-backends/s3.md
+      - schema-cache-backends/gcs.md
+      - schema-cache-backends/filesystem.md
+      - schema-cache-backends/http.md
+      - schema-cache-backends/mysql.md
+      - schema-cache-backends/postgres.md
+      - schema-cache-backends/materialize.md
+      - schema-cache-backends/redis.md
+      - schema-cache-backends/iglu.md
+      - schema-cache-backends/kafka-registry.md
   - Sinks:
-    - sinks/kafka.md
-    - sinks/pubsub.md
-    - sinks/kinesis.md
-    - sinks/kinesis-firehose.md
-    - sinks/relay.md
-    - sinks/http.md
-    - sinks/stdout.md
-    - sinks/elasticsearch.md
-    - sinks/file.md
-    - sinks/pubnub.md
-    - sinks/materialize.md
-    - sinks/postgres.md
-    - sinks/mysql.md
-    - sinks/clickhouse.md
-    - sinks/mongodb.md
-    - sinks/blackhole.md
-    - sinks/iterable.md
-    - sinks/amplitude.md
-    - sinks/bigquery.md
-    - sinks/firebolt.md
-    - sinks/databricks.md
-    - sinks/redshift.md
-    - sinks/snowflake.md
-    - sinks/azuredw.md
+      - sinks/kafka.md
+      - sinks/pubsub.md
+      - sinks/kinesis.md
+      - sinks/kinesis-firehose.md
+      - sinks/relay.md
+      - sinks/http.md
+      - sinks/stdout.md
+      - sinks/elasticsearch.md
+      - sinks/file.md
+      - sinks/pubnub.md
+      - sinks/materialize.md
+      - sinks/postgres.md
+      - sinks/mysql.md
+      - sinks/clickhouse.md
+      - sinks/mongodb.md
+      - sinks/blackhole.md
+      - sinks/iterable.md
+      - sinks/amplitude.md
+      - sinks/bigquery.md
+      - sinks/firebolt.md
+      - sinks/databricks.md
+      - sinks/redshift.md
+      - sinks/snowflake.md
+      - sinks/azuredw.md
   - Validation Protocols:
-    - validation-protocols/jsonschema.md
+      - validation-protocols/jsonschema.md
   - Serialization Protocols:
-    - serialization-protocols/json.md
-    - serialization-protocols/avro.md
+      - serialization-protocols/json.md
+      - serialization-protocols/avro.md
   - Tools:
-    - tools/squawkbox.md
+      - tools/squawkbox.md
   - Middleware:
-    - middleware/timeout.md
-    - middleware/rate-limiter.md
-    - middleware/advancing-cookie.md
-    - middleware/cors.md
-    - middleware/request-logger.md
-    - middleware/uid2.md
-    - middleware/yeet.md
+      - middleware/timeout.md
+      - middleware/rate-limiter.md
+      - middleware/advancing-cookie.md
+      - middleware/cors.md
+      - middleware/request-logger.md
+      - middleware/uid2.md
+      - middleware/yeet.md
   - Examples:
-    - examples/redpanda-kowl-materialize.md
-    - examples/honeypot-to-honeypot-relay.md
-    - examples/elasticsearch-kibana.md
+      - examples/redpanda-kowl-materialize.md
+      - examples/honeypot-to-honeypot-relay.md
+      - examples/elasticsearch-kibana.md
   - Configuration:
-    - configuration/sample.md
+      - configuration/sample.md
