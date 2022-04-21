@@ -15,6 +15,8 @@ This quickstart will get you started with Honeypot, a multi-node Redpanda cluste
 
 Note! If you don't have `docker` and `docker-compose`, you will need to install those first.
 
+`rpk` is a nice tool from the fine folks at redpanda.
+
 `psql` is also a nice tool to have if you want to query Materialize.
 
 ## 1. Clone the Honeypot repo
@@ -38,6 +40,8 @@ Resolving deltas: 100% (611/611), done.
 
 **`docker-compose -f examples/quickstart/docker-compose.yml up -d`**
 
+**Note:** This step requires [docker-compose](https://docs.docker.com/compose/).
+
 
 ```
 ~/c/honeypot ❯❯❯ docker-compose -f examples/quickstart/docker-compose.yml up -d
@@ -56,6 +60,8 @@ Resolving deltas: 100% (611/611), done.
 ```
 
 ## 3. Create Kafka Topics, Materialize Sources and Materialized Views
+
+**Note:** This step requires [rpk](https://docs.redpanda.com/docs/quickstart/quick-start-macos/#installing-rpk) and [psql](https://www.postgresql.org/docs/current/app-psql.html).
 
 **`./examples/quickstart/setup.sh`**
 

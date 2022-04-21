@@ -99,9 +99,5 @@ nav:
       - middleware/request-logger.md
       - middleware/uid2.md
       - middleware/yeet.md
-  - Examples:
-      - examples/redpanda-kowl-materialize.md
-      - examples/honeypot-to-honeypot-relay.md
-      - examples/elasticsearch-kibana.md
   - Configuration:
       - configuration/sample.md

@@ -3,7 +3,7 @@ version: "3.9"
 services:
   honeypot:
     container_name: honeypot
-    image: honeypot:v0.5.0 # Note! use latest :)
+    image: ghcr.io/silverton-io/honeypot:v0.5.1
     volumes:
       - type: bind
         source: ./honeypot/devel.conf.yml
@@ -128,3 +128,43 @@ services:
     depends_on:
       redpanda-1:
         condition: service_healthy
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.1.0
+    container_name: elasticsearch
+    environment:
+      - cluster.name=honeypot-cluster
+      - "discovery.type=single-node"
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "xpack.security.http.ssl.enabled=false"
+      - "xpack.security.enabled=false"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    healthcheck:
+      test: curl -s http://elasticsearch:9200 >/dev/null || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 50
+
+  # kibana:
+  #     image: docker.elastic.co/kibana/kibana:8.1.0
+  #     container_name: kibana
+  #     environment:
+  #       - "ELASTICSEARCH_HOSTS=http://elasticsearch:9200"
+  #     ports:
+  #       - "5601:5601"
+  #     depends_on:
+  #       elasticsearch:
+  #         condition: service_healthy
+
+volumes:
+  esdata1:
+    driver: local
