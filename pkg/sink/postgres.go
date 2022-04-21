@@ -68,12 +68,20 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *PostgresSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.gormDb.Table(s.validTable).Create(envelopes)
+func (s *PostgresSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.gormDb.Table(s.validTable).Create(envelopes).Error
+	if err != nil {
+		log.Debug().Stack().Err(err).Msg("error when publishing valid envelopes to postgres")
+	}
+	return err
 }
 
-func (s *PostgresSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.gormDb.Table(s.invalidTable).Create(envelopes)
+func (s *PostgresSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
+	if err != nil {
+		log.Debug().Stack().Err(err).Msg("error when publishing invalid envelopes to postgres")
+	}
+	return err
 }
 
 func (s *PostgresSink) Close() {

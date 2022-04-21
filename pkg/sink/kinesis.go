@@ -39,7 +39,7 @@ func (s *KinesisSink) Initialize(conf config.Sink) error {
 	return err
 }
 
-func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) {
+func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
 	for _, event := range envelopes {
 		partitionKey := "blah" // FIXME!
@@ -50,25 +50,35 @@ func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes
 			StreamName:   &stream,
 		}
 		wg.Add(1)
-		go func() {
+		pubErr := make(chan error, 1)
+		go func(pErr chan error) {
 			output, err := s.client.PutRecord(ctx, input) // Will want to use `PutRecordBatch`
 			defer wg.Done()
 			if err != nil {
 				log.Error().Stack().Err(err).Msg("could not publish event to kinesis")
+				pErr <- err
 			} else {
 				log.Debug().Msgf("published event " + *output.SequenceNumber + " to stream " + stream)
+				pErr <- nil
 			}
-		}()
+		}(pubErr)
+		err := <-pubErr
+		if err != nil {
+			return err
+		}
 	}
 	wg.Wait()
+	return nil
 }
 
-func (s *KinesisSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.validEventsStream, envelopes)
+func (s *KinesisSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.validEventsStream, envelopes)
+	return err
 }
 
-func (s *KinesisSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.invalidEventsStream, envelopes)
+func (s *KinesisSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.invalidEventsStream, envelopes)
+	return err
 }
 
 func (s *KinesisSink) Close() {

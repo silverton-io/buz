@@ -56,18 +56,20 @@ func (s *StdoutSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *StdoutSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
+func (s *StdoutSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) error {
 	if len(validEnvelopes) > 0 {
 		validEnvelopes := util.Stringify(validEnvelopes)
 		fmt.Println(Green(validEnvelopes))
 	}
+	return nil
 }
 
-func (s *StdoutSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
+func (s *StdoutSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) error {
 	if len(invalidEnvelopes) > 0 {
 		invalidEnvelopes := util.Stringify(invalidEnvelopes)
 		fmt.Println(Red(invalidEnvelopes))
 	}
+	return nil
 }
 
 func (s *StdoutSink) Close() {

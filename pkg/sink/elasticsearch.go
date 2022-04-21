@@ -42,19 +42,21 @@ func (s *ElasticsearchSink) Initialize(conf config.Sink) error {
 	return err
 }
 
-func (s *ElasticsearchSink) batchPublish(ctx context.Context, index string, envelopes []envelope.Envelope) {
+func (s *ElasticsearchSink) batchPublish(ctx context.Context, index string, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
 	for _, envelope := range envelopes {
 		eByte, err := json.Marshal(envelope)
 		reader := bytes.NewReader(eByte)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not encode envelope to buffer")
+			return err
 		} else {
 			wg.Add(1)
 			envId := envelope.Uuid.String()
 			_, err := s.client.Create(index, envId, reader)
 			if err != nil {
 				log.Error().Stack().Interface("envelopeId", envId).Err(err).Msg("could not publish envelope to elasticsearch")
+				return err
 			} else {
 				log.Debug().Interface("envelopeId", envId).Interface("indexId", index).Msg("published envelope to index")
 			}
@@ -62,14 +64,17 @@ func (s *ElasticsearchSink) batchPublish(ctx context.Context, index string, enve
 		}
 	}
 	wg.Wait()
+	return nil
 }
 
-func (s *ElasticsearchSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.validIndex, validEnvelopes)
+func (s *ElasticsearchSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.validIndex, validEnvelopes)
+	return err
 }
 
-func (s *ElasticsearchSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.invalidIndex, invalidEnvelopes)
+func (s *ElasticsearchSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.invalidIndex, invalidEnvelopes)
+	return err
 }
 
 func (s *ElasticsearchSink) Close() {

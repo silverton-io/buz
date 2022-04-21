@@ -44,12 +44,14 @@ func (s *HttpSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *HttpSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
-	request.PostEnvelopes(s.validUrl, validEnvelopes)
+func (s *HttpSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) error {
+	_, err := request.PostEnvelopes(s.validUrl, validEnvelopes)
+	return err
 }
 
-func (s *HttpSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
-	request.PostEnvelopes(s.invalidUrl, invalidEnvelopes)
+func (s *HttpSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) error {
+	_, err := request.PostEnvelopes(s.invalidUrl, invalidEnvelopes)
+	return err
 }
 
 func (s *HttpSink) Close() {

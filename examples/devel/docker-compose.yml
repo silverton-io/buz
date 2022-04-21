@@ -1,29 +1,29 @@
 version: "3.9"
 
 services:
-  honeypot:
-    container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.5.1
-    volumes:
-      - type: bind
-        source: ./honeypot/devel.conf.yml
-        target: /etc/honeypot/config.yml
-      - type: bind
-        source: ../../schemas
-        target: /schemas/
-      - type: bind
-        source: ../../site/index.html
-        target: /app/site/index.html
-    environment:
-      - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
-    ports:
-      - 8080:8080
-    deploy:
-      restart_policy:
-        condition: on-failure
-    healthcheck:
-      test: curl -f localhost:8080/health
-      interval: 15s
+  # honeypot:
+  #   container_name: honeypot
+  #   image: ghcr.io/silverton-io/honeypot:v0.5.1
+  #   volumes:
+  #     - type: bind
+  #       source: ./honeypot/devel.conf.yml
+  #       target: /etc/honeypot/config.yml
+  #     - type: bind
+  #       source: ../../schemas
+  #       target: /schemas/
+  #     - type: bind
+  #       source: ../../site/index.html
+  #       target: /app/site/index.html
+  #   environment:
+  #     - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
+  #   ports:
+  #     - 8080:8080
+  #   deploy:
+  #     restart_policy:
+  #       condition: on-failure
+  #   healthcheck:
+  #     test: curl -f localhost:8080/health
+  #     interval: 15s
 
   mysql:
     container_name: mysql

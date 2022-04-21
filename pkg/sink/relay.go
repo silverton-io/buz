@@ -38,12 +38,14 @@ func (s *RelaySink) Initialize(conf config.Sink) error {
 	return err
 }
 
-func (s *RelaySink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
-	request.PostEnvelopes(s.relayUrl, validEnvelopes)
+func (s *RelaySink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) error {
+	_, err := request.PostEnvelopes(s.relayUrl, validEnvelopes)
+	return err
 }
 
-func (s *RelaySink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
-	request.PostEnvelopes(s.relayUrl, invalidEnvelopes)
+func (s *RelaySink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) error {
+	_, err := request.PostEnvelopes(s.relayUrl, invalidEnvelopes)
+	return err
 }
 
 func (s *RelaySink) Close() {

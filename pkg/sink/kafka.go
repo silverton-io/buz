@@ -69,10 +69,13 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []envelope.Envelope) {
+func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
 	for _, event := range envelopes {
-		payload, _ := json.Marshal(event)
+		payload, err := json.Marshal(event)
+		if err != nil {
+			return err
+		}
 		headers := []kgo.RecordHeader{
 			{Key: envelope.EVENT_VENDOR, Value: []byte(event.EventMetadata.Vendor)},
 			{Key: envelope.EVENT_PRIMARY_NAMESPACE, Value: []byte(event.EventMetadata.PrimaryNamespace)},
@@ -88,26 +91,34 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []
 			Headers: headers,
 		}
 		wg.Add(1)
+		var produceErr error // FIXME! Could probably do this similarly to pubsub sink and use a chan?
 		s.client.Produce(ctx, record, func(r *kgo.Record, err error) {
 			defer wg.Done()
 			if err != nil {
-				log.Error().Stack().Err(err).Msg("could not publish event to kafka")
+				log.Error().Err(err).Msg("could not publish record")
+				produceErr = err
 			} else {
 				offset := strconv.FormatInt(r.Offset, 10)
 				partition := strconv.FormatInt(int64(r.Partition), 10)
 				log.Trace().Msg("published event " + offset + " to topic " + topic + " partition " + partition)
 			}
 		})
+		if produceErr != nil {
+			return produceErr
+		}
 	}
 	wg.Wait()
+	return nil
 }
 
-func (s *KafkaSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.validEventsTopic, envelopes)
+func (s *KafkaSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.validEventsTopic, envelopes)
+	return err
 }
 
-func (s *KafkaSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
+func (s *KafkaSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
+	return err
 }
 
 func (s *KafkaSink) Close() {

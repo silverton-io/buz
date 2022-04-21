@@ -55,20 +55,20 @@ func (s *PubnubSink) buildPublishUrl(channel string) *url.URL {
 	return u
 }
 
-func (s *PubnubSink) batchPublish(ctx context.Context, channel string, envelopes []envelope.Envelope) {
+func (s *PubnubSink) batchPublish(ctx context.Context, channel string, envelopes []envelope.Envelope) error {
 	u := s.buildPublishUrl(channel)
 	_, err := request.PostEnvelopes(*u, envelopes)
-	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not post envelopes")
-	}
+	return err
 }
 
-func (s *PubnubSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.validChannel, envelopes)
+func (s *PubnubSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.validChannel, envelopes)
+	return err
 }
 
-func (s *PubnubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.invalidChannel, envelopes)
+func (s *PubnubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.invalidChannel, envelopes)
+	return err
 }
 
 func (s *PubnubSink) Close() {

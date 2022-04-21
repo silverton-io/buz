@@ -65,7 +65,7 @@ func (s *PubsubSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, envelopes []envelope.Envelope) {
+func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
 	for _, event := range envelopes {
 		payload, _ := json.Marshal(event)
@@ -82,25 +82,36 @@ func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, enve
 		}
 		result := topic.Publish(ctx, msg)
 		wg.Add(1)
-		go func(res *pubsub.PublishResult) {
+		publishErr := make(chan error, 1)
+		go func(res *pubsub.PublishResult, pErr chan error) {
 			defer wg.Done()
 			id, err := res.Get(ctx)
 			if err != nil {
 				log.Error().Stack().Err(err).Msg("could not publish event to pubsub")
+				pErr <- err
+
 			} else {
 				log.Debug().Msgf("published event id " + id + " to topic " + topic.ID())
+				pErr <- nil
 			}
-		}(result)
+		}(result, publishErr)
+		err := <-publishErr
+		if err != nil {
+			return err
+		}
 	}
 	wg.Wait()
+	return nil
 }
 
-func (s *PubsubSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.validEventsTopic, envelopes)
+func (s *PubsubSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.validEventsTopic, envelopes)
+	return err
 }
 
-func (s *PubsubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
+func (s *PubsubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
+	return err
 }
 
 func (s *PubsubSink) Close() {

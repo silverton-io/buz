@@ -31,12 +31,14 @@ func (ms *MockSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (ms *MockSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
+func (ms *MockSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) error {
 	ms.Called()
+	return nil
 }
 
-func (ms *MockSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
+func (ms *MockSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) error {
 	ms.Called()
+	return nil
 }
 
 func (ms *MockSink) BatchPublishValidAndInvalid(ctx context.Context, validEvents []envelope.Envelope, invalidEvents []envelope.Envelope) {

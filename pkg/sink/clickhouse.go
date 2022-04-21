@@ -61,12 +61,14 @@ func (s *ClickhouseSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *ClickhouseSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.gormDb.Table(s.validTable).Create(envelopes)
+func (s *ClickhouseSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.gormDb.Table(s.validTable).Create(envelopes).Error
+	return err
 }
 
-func (s *ClickhouseSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.gormDb.Table(s.invalidTable).Create(envelopes)
+func (s *ClickhouseSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
+	return err
 }
 
 func (s *ClickhouseSink) Close() {
