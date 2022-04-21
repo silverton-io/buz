@@ -5,8 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
-            ;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[]; p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments) };p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1; n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://cdn.jsdelivr.net/npm/@snowplow/javascript-tracker@3.2.3/dist/sp.js","spget")); 
-            ;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[]; p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments) };p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1; n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://cdn.jsdelivr.net/npm/@snowplow/javascript-tracker@3.2.3/dist/sp.js","sppost")); 
+            ;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[]; p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments) };p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1; n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://cdn.jsdelivr.net/npm/@snowplow/javascript-tracker@3.3.1/dist/sp.js","spget")); 
+            ;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[]; p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments) };p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1; n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://cdn.jsdelivr.net/npm/@snowplow/javascript-tracker@3.3.1/dist/sp.js","sppost")); 
         </script>
         <script>
             // GET tracker
@@ -73,11 +73,11 @@
             </div>
           </nav>
           <div class="container mx-auto px-16 pt-4">
-            <h1 class="font-semibold text-xl">Nav</h1>
+            <h1 class="font-semibold text-xl">Misc</h1>
             <button class="bg-transparent hover:bg-green-600 text-green-800 font-semibold hover:text-white py-2 px-4 border border-green-600 hover:border-transparent rounded"><a href="/">Home</a></button>
             <button class="bg-transparent hover:bg-green-600 text-green-800 font-semibold hover:text-white py-2 px-4 border border-green-600 hover:border-transparent rounded"><a href="/test?utm_medium=somemedium&utm_source=somesource&utm_term=someterm&utm_content=somecontent&utm_campaign=somecampaign">Test</a></button>
-            <button class="bg-transparent hover:bg-green-600 text-green-800 font-semibold hover:text-white py-2 px-4 border border-green-600 hover:border-transparent rounded"><a href="/stats">Stats</a></button>
-            <button class="bg-transparent hover:bg-green-600 text-green-800 font-semibold hover:text-white py-2 px-4 border border-green-600 hover:border-transparent rounded"><a href="/schemas">Schemas</a></button>
+            <button class="bg-transparent hover:bg-green-600 text-green-800 font-semibold hover:text-white py-2 px-4 border border-green-600 hover:border-transparent rounded"><a href="/stats" target="_blank">Stats</a></button>
+            <button class="bg-transparent hover:bg-green-600 text-green-800 font-semibold hover:text-white py-2 px-4 border border-green-600 hover:border-transparent rounded"><a href="/schemas" target="_blank">Schemas</a></button>
         </div>
           <div class="container mx-auto px-16 pt-4 snowplow-get">
               <h1 class="font-semibold text-xl">GET-based Snowplow Events</h1>
@@ -91,7 +91,7 @@
               </div>
           </div>
         <div class="container mx-auto px-16 pt-4 snowplow-post">
-            <h1 class="font-semibold text-xl">POST-based Snowplow Events</h1>
+            <h1 class="font-semibold text-xl">POST-based Snowplow Events (batched using tracker bufferSize)</h1>
         </div>
         <div class="container mx-auto px-16 py-8 snowplow-post">
           <div class="grid grid-cols-4 gap-4">
@@ -101,7 +101,7 @@
               <button class="bg-transparent hover:bg-sky-800 text-sky-800 font-semibold hover:text-white py-2 px-4 border border-sky-600 hover:border-transparent rounded" id="transaction-post">Transaction Event</button>
           </div>
         </div>
-        <div class="container mx-auto px-16 pt-4 snowplow-post">
+        <!-- <div class="container mx-auto px-16 pt-4 snowplow-post">
             <h1 class="font-semibold text-xl">POST-based Cloud Events</h1>
         </div>
         <div class="container mx-auto px-16 py-8 cloudevents-post">
@@ -111,24 +111,15 @@
           </div>
         </div>
         <div class="container mx-auto px-16 pt-4 snowplow-post">
-            <h1 class="font-semibold text-xl">POST-based Generic Self-Describing addEventListener</h1>
+            <h1 class="font-semibold text-xl">POST-based Generic Self-Describing</h1>
         </div>
         <div class="container mx-auto px-16 py-8">
           <div class="grid grid-cols-4 gap-4">
               <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Valid Self Describing Event</button>
               <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Invalid Self Describing Event</button>
           </div>
-        </div>
-        <div class="container mx-auto px-16 pt-4">
-            <h1 class="font-semibold text-xl">Webhook</h1>
-        </div>
-        <div class="container mx-auto px-16 py-8">
-          <div class="grid grid-cols-4 gap-4">
-              <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Webhook with ID</button>
-              <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Webhook without ID</button>
-          </div>
-        </div>
-        <div class="container mx-auto px-16 pt-4 snowplow-post">
+        </div> -->
+        <!-- <div class="container mx-auto px-16 pt-4 snowplow-post">
             <h1 class="font-semibold text-xl">Honeypot Relay Event</h1>
         </div>
         <div class="container mx-auto px-16 py-8 cloudevents-post">
@@ -137,6 +128,15 @@
               <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Valid Relay Envelope</button>
           </div>
         </div>
+        <div class="container mx-auto px-16 pt-4">
+            <h1 class="font-semibold text-xl">Webhook</h1>
+        </div>
+        <div class="container mx-auto px-16 py-8">
+          <div class="grid grid-cols-4 gap-4">
+              <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" id="webhook-named">Webhook with ID</button>
+              <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" id="webhook-unnamed">Webhook without ID</button>
+          </div>
+        </div> -->
         <footer>
             <script>
                 // GET-based snowplow
