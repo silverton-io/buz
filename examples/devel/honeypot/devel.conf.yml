@@ -145,6 +145,14 @@ sinks:
       - redpanda-1:29092
     validEventTopic: honeypot-valid
     invalidEventTopic: honeypot-invalid
+  - name: elk
+    type: elasticsearch
+    elasticsearchHosts:
+      - http://elasticsearch:9200
+    elasticsearchUsername: elastic
+    elasticsearchPassword: elastic
+    validIndex: honeypot-valid
+    invalidIndex: honeypot-invalid
 
 squawkBox:
   enabled: true
