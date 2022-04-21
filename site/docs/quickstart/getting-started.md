@@ -40,7 +40,7 @@ Resolving deltas: 100% (611/611), done.
 
 **`docker-compose -f examples/quickstart/docker-compose.yml up -d`**
 
-**Note:** This step requires [docker-compose]().
+**Note:** This step requires [docker-compose](https://docs.docker.com/compose/).
 
 
 ```
