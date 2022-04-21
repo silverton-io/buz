@@ -17,7 +17,7 @@ psql \
     -U materialize \
     -f examples/quickstart/materialize/create_sources_and_views.sql;
 
-echo "\nWaiting for services...\n"
+echo "\nHoneypotting...\n"
 for run in {1..15}; do printf "🍯" && sleep 1; done
 echo "\n\nOpening associated resources...\n";
 
@@ -27,4 +27,7 @@ open http://localhost:8080/stats;
 sleep 2;
 open http://localhost:8080/schemas;
 sleep 2;
+open http://localhost:8080/schemas/com.silverton.io/snowplow/page_view/v1.0.json;
+sleep 2;
 open http://localhost:8081/topics;
+sleep 2;
