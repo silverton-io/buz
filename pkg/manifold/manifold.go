@@ -67,6 +67,7 @@ func (m *Manifold) PurgeBuffersToSinks(ctx context.Context, meta *tele.Meta) {
 
 func (m *Manifold) PurgeBuffersToSinksIfFull(ctx context.Context, meta *tele.Meta) {
 	if m.buffersFull() {
+		log.Debug().Msg("purging buffers")
 		m.PurgeBuffersToSinks(ctx, meta)
 	}
 }
@@ -74,13 +75,23 @@ func (m *Manifold) PurgeBuffersToSinksIfFull(ctx context.Context, meta *tele.Met
 func (m *Manifold) purgeBuffersToSink(ctx context.Context, s *sink.Sink, meta *tele.Meta) {
 	sink := *s
 	if m.validCount() >= 1 {
-		log.Info().Interface("envelopeCount", m.validCount()).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking valid envelopes")
-		sink.BatchPublishValid(ctx, m.validEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
+		err := sink.BatchPublishValid(ctx, m.validEnvelopes)
+		if err != nil {
+			log.Error().Err(err).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("could not publish valid envelopes")
+			// Should buffer somewhere durably and retry
+		} else {
+			log.Info().Interface("envelopeCount", m.validCount()).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sunk valid envelopes")
+		}
 		meta.BufferPurgeStats.IncrementValid()
 	}
 	if m.invalidCount() >= 1 {
-		log.Info().Interface("envelopeCount", m.invalidCount()).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sinking invalid envelopes")
-		sink.BatchPublishInvalid(ctx, m.invalidEnvelopes) // FIXME! What happens when sink fails? Should buffer somewhere durably.
+		err := sink.BatchPublishInvalid(ctx, m.invalidEnvelopes)
+		if err != nil {
+			log.Error().Err(err).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("could not publish invalid envelopes")
+			// Should buffer somewhere durably and retry
+		} else {
+			log.Info().Interface("envelopeCount", m.invalidCount()).Interface("sinkId", sink.Id()).Interface("sinkName", sink.Name()).Msg("sunk invalid envelopes")
+		}
 		meta.BufferPurgeStats.IncrementInvalid()
 	}
 }
@@ -117,7 +128,7 @@ func (m *Manifold) Run(meta *tele.Meta, shutdown *chan bool) {
 				}
 				m.PurgeBuffersToSinksIfFull(ctx, meta)
 			}
-			// FIXME! Have a ticker on a bufferTimeThreshold and send to a channel
+			// FIXME! Have a ticker on a bufferTimeThreshold and run m.PurgeBuffersToSinks?
 		}
 	}()
 }

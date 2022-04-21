@@ -57,12 +57,10 @@ func (s *MongodbSink) BatchPublishValid(ctx context.Context, envelopes []envelop
 	for _, e := range envelopes {
 		payload, err := bson.Marshal(e)
 		if err != nil {
-			log.Error().Err(err).Msg("could not bson marshal valid envelope")
 			return err
 		}
 		_, err = s.validCollection.InsertOne(ctx, payload) // FIXME - should batch these
 		if err != nil {
-			log.Error().Err(err).Msg("could not publish valid envelope")
 			return err
 		}
 	}
@@ -73,12 +71,10 @@ func (s *MongodbSink) BatchPublishInvalid(ctx context.Context, envelopes []envel
 	for _, e := range envelopes {
 		payload, err := bson.Marshal(e)
 		if err != nil {
-			log.Error().Err(err).Msg("could not bson marshal invalid envelope")
 			return err
 		}
 		_, err = s.invalidCollection.InsertOne(ctx, payload) // FIXME - should batch these
 		if err != nil {
-			log.Error().Err(err).Msg("could not publish invalid envelope")
 			return err
 		}
 	}

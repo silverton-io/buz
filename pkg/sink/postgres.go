@@ -55,12 +55,6 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 				log.Error().Err(err).Msg("could not auto migrate table")
 				return err
 			}
-			// NOTE! This is a hacky workaround so that the same gorm struct tag of "json" can be used, but "jsonb" is used for pg.
-			for _, col := range []string{"event_metadata", "validation_error", "payload"} {
-				alterStmt := "alter table " + tbl + " alter column " + col + " set data type jsonb using " + col + "::jsonb;"
-				log.Debug().Msg("ensuring jsonb columns via: " + alterStmt)
-				s.gormDb.Exec(alterStmt)
-			}
 		} else {
 			log.Debug().Msg(tbl + " table already exists - not ensuring")
 		}
@@ -70,17 +64,11 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 
 func (s *PostgresSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.gormDb.Table(s.validTable).Create(envelopes).Error
-	if err != nil {
-		log.Debug().Stack().Err(err).Msg("error when publishing valid envelopes to postgres")
-	}
 	return err
 }
 
 func (s *PostgresSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
-	if err != nil {
-		log.Debug().Stack().Err(err).Msg("error when publishing invalid envelopes to postgres")
-	}
 	return err
 }
 

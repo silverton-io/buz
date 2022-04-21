@@ -64,17 +64,11 @@ func (s *MysqlSink) Initialize(conf config.Sink) error {
 
 func (s *MysqlSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.gormDb.Table(s.validTable).Create(envelopes).Error
-	if err != nil {
-		log.Debug().Stack().Err(err).Msg("error when publishing valid envelopes to mysql")
-	}
 	return err
 }
 
 func (s *MysqlSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
-	if err != nil {
-		log.Debug().Stack().Err(err).Msg("error when publishing invalid envelopes to mysql")
-	}
 	return err
 }
 
