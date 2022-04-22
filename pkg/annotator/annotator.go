@@ -36,6 +36,11 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 	for _, envelope := range envelopes {
 		log.Debug().Msg("annotating event")
 		switch envelope.EventProtocol {
+		case protocol.PIXEL:
+			var schema []byte
+			eventMetadata := getMetadataFromSchema(schema)
+			envelope.EventMetadata = &eventMetadata
+			e = append(e, envelope)
 		case protocol.WEBHOOK:
 			var schema []byte
 			eventMetadata := getMetadataFromSchema(schema)

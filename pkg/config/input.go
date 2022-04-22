@@ -5,5 +5,6 @@ type Inputs struct {
 	Cloudevents `json:"cloudevents"`
 	Generic     `json:"generic"`
 	Webhook     `json:"webhook"`
+	Pixel       `json:"pixel"`
 	Relay       `json:"relay"`
 }

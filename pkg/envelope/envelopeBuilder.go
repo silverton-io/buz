@@ -11,6 +11,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/cloudevents"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/generic"
+	"github.com/silverton-io/honeypot/pkg/pixel"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/snowplow"
 	"github.com/silverton-io/honeypot/pkg/util"
@@ -103,6 +104,58 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []E
 	return envelopes
 }
 
+func BuildWebhookEnvelopesFromRequest(c *gin.Context) []Envelope {
+	var envelopes []Envelope
+	reqBody, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Error().Stack().Err(err).Msg("could not read request body")
+		return envelopes
+	}
+	for _, e := range gjson.ParseBytes(reqBody).Array() {
+		uid := uuid.New()
+		whEvent, err := webhook.BuildEvent(c, e)
+		if err != nil {
+			log.Error().Stack().Err(err).Msg("could not build WebhookEvent")
+		}
+		isValid := true
+		isRelayed := false
+		envelope := Envelope{
+			Uuid:          uid,
+			EventProtocol: protocol.WEBHOOK,
+			Tstamp:        time.Now().UTC(),
+			Ip:            c.ClientIP(),
+			Payload:       whEvent,
+			IsValid:       &isValid,
+			IsRelayed:     &isRelayed,
+		}
+		envelopes = append(envelopes, envelope)
+	}
+	return envelopes
+}
+
+func BuildPixelEnvelopesFromRequest(c *gin.Context) []Envelope {
+	var envelopes []Envelope
+	params := util.MapUrlParams(c)
+	pEvent, err := pixel.BuildEvent(c, params)
+	if err != nil {
+		log.Error().Err(err).Msg("could not build PixelEvent")
+	}
+	uid := uuid.New()
+	isValid := true
+	isRelayed := false
+	envelope := Envelope{
+		Uuid:          uid,
+		EventProtocol: protocol.PIXEL,
+		Tstamp:        time.Now().UTC(),
+		Ip:            c.ClientIP(),
+		Payload:       pEvent,
+		IsValid:       &isValid,
+		IsRelayed:     &isRelayed,
+	}
+	envelopes = append(envelopes, envelope)
+	return envelopes
+}
+
 func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 	var envelopes []Envelope
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
@@ -144,35 +197,6 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 		isRelayed := true
 		envelope.IsRelayed = &isRelayed
 		envelope.RelayedId = rid
-		envelopes = append(envelopes, envelope)
-	}
-	return envelopes
-}
-
-func BuildWebhookEnvelopesFromRequest(c *gin.Context) []Envelope {
-	var envelopes []Envelope
-	reqBody, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not read request body")
-		return envelopes
-	}
-	for _, e := range gjson.ParseBytes(reqBody).Array() {
-		uid := uuid.New()
-		whEvent, err := webhook.BuildEvent(c, e)
-		if err != nil {
-			log.Error().Stack().Err(err).Msg("could not build WebhookEvent")
-		}
-		isValid := true
-		isRelayed := false
-		envelope := Envelope{
-			Uuid:          uid,
-			EventProtocol: protocol.WEBHOOK,
-			Tstamp:        time.Now().UTC(),
-			Ip:            c.ClientIP(),
-			Payload:       whEvent,
-			IsValid:       &isValid,
-			IsRelayed:     &isRelayed,
-		}
 		envelopes = append(envelopes, envelope)
 	}
 	return envelopes
