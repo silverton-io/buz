@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/base64"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +22,6 @@ func PixelHandler(h EventHandlerParams) gin.HandlerFunc {
 			c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)
 		} else {
 			b, _ := base64.StdEncoding.DecodeString(PX)
-			fmt.Print()
 			c.Data(http.StatusOK, "image/png", b)
 		}
 	}
