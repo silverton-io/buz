@@ -12,10 +12,11 @@ import (
 )
 
 type FileSink struct {
-	id          *uuid.UUID
-	name        string
-	validFile   string
-	invalidFile string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	validFile        string
+	invalidFile      string
 }
 
 func (s *FileSink) Id() *uuid.UUID {
@@ -26,11 +27,15 @@ func (s *FileSink) Name() string {
 	return s.name
 }
 
+func (s *FileSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *FileSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing file sink")
 	s.validFile = conf.ValidFile
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	s.invalidFile = conf.InvalidFile
 	return nil
 }

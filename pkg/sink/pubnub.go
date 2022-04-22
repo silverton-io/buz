@@ -18,14 +18,15 @@ const (
 )
 
 type PubnubSink struct {
-	id             *uuid.UUID
-	name           string
-	validChannel   string
-	invalidChannel string
-	pubKey         string
-	subKey         string
-	store          int
-	callback       string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	validChannel     string
+	invalidChannel   string
+	pubKey           string
+	subKey           string
+	store            int
+	callback         string
 }
 
 func (s *PubnubSink) Id() *uuid.UUID {
@@ -36,10 +37,14 @@ func (s *PubnubSink) Name() string {
 	return s.name
 }
 
+func (s *PubnubSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *PubnubSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing pubnub sink")
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	s.validChannel, s.invalidChannel = conf.ValidChannel, conf.InvalidChannel
 	s.pubKey, s.subKey = conf.PubnubPubKey, conf.PubnubSubKey
 	return nil

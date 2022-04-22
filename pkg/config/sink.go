@@ -1,10 +1,11 @@
 package config
 
 type Sink struct {
-	Name         string   `json:"name"`
-	Type         string   `json:"type"`
-	Project      string   `json:"project,omitempty"`
-	KafkaBrokers []string `json:"kakfaBrokers,omitempty"`
+	Name             string   `json:"name"`
+	Type             string   `json:"type"`
+	DeliveryRequired bool     `json:"deliveryRequired"`
+	Project          string   `json:"project,omitempty"`
+	KafkaBrokers     []string `json:"kakfaBrokers,omitempty"`
 	// Kafka, Pubsub
 	ValidEventTopic   string `json:"validEventTopic,omitempty"`
 	InvalidEventTopic string `json:"invalidEventTopic,omitempty"`

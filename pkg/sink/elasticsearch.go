@@ -14,11 +14,12 @@ import (
 )
 
 type ElasticsearchSink struct {
-	id           *uuid.UUID
-	name         string
-	client       *elasticsearch.Client
-	validIndex   string
-	invalidIndex string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	client           *elasticsearch.Client
+	validIndex       string
+	invalidIndex     string
 }
 
 func (s *ElasticsearchSink) Id() *uuid.UUID {
@@ -29,6 +30,10 @@ func (s *ElasticsearchSink) Name() string {
 	return s.name
 }
 
+func (s *ElasticsearchSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *ElasticsearchSink) Initialize(conf config.Sink) error {
 	cfg := elasticsearch.Config{
 		Addresses: conf.ElasticsearchHosts,
@@ -37,7 +42,7 @@ func (s *ElasticsearchSink) Initialize(conf config.Sink) error {
 	}
 	es, err := elasticsearch.NewClient(cfg)
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	s.client, s.validIndex, s.invalidIndex = es, conf.ValidIndex, conf.InvalidIndex
 	return err
 }

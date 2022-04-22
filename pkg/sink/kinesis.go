@@ -16,6 +16,7 @@ import (
 type KinesisSink struct {
 	id                  *uuid.UUID
 	name                string
+	deliveryRequired    bool
 	client              *kinesis.Client
 	validEventsStream   string
 	invalidEventsStream string
@@ -29,12 +30,16 @@ func (s *KinesisSink) Name() string {
 	return s.name
 }
 
+func (s *KinesisSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *KinesisSink) Initialize(conf config.Sink) error {
 	ctx := context.Background()
 	cfg, err := awsconf.LoadDefaultConfig(ctx)
 	client := kinesis.NewFromConfig(cfg)
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	s.client, s.validEventsStream, s.invalidEventsStream = client, conf.ValidEventTopic, conf.InvalidEventTopic
 	return err
 }

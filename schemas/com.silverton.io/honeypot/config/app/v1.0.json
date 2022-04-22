@@ -742,6 +742,10 @@
                             "clickhouse"
                         ]
                     },
+                    "deliveryRequired": {
+                        "type": "boolean",
+                        "default": "true"
+                    },
                     "kafkaBrokers": {
                         "type": "array",
                         "description": "A list of kafka brokers (HOST:PORT), if sink type is kafka",
@@ -991,7 +995,8 @@
                 "additionalProperties": false,
                 "required": [
                     "name",
-                    "type"
+                    "type",
+                    "deliveryRequired"
                 ],
                 "anyOf": [
                     {

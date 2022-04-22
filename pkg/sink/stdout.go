@@ -37,8 +37,9 @@ func Colorize(colorString string) func(...interface{}) string {
 }
 
 type StdoutSink struct {
-	id   *uuid.UUID
-	name string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
 }
 
 func (s *StdoutSink) Id() *uuid.UUID {
@@ -49,10 +50,14 @@ func (s *StdoutSink) Name() string {
 	return s.name
 }
 
+func (s *StdoutSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *StdoutSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing stdout sink")
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	return nil
 }
 

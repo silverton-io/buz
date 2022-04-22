@@ -19,11 +19,12 @@ func generateMysqlDsn(conf config.Sink) string {
 }
 
 type MysqlSink struct {
-	id           *uuid.UUID
-	name         string
-	gormDb       *gorm.DB
-	validTable   string
-	invalidTable string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	gormDb           *gorm.DB
+	validTable       string
+	invalidTable     string
 }
 
 func (s *MysqlSink) Id() *uuid.UUID {
@@ -34,10 +35,14 @@ func (s *MysqlSink) Name() string {
 	return s.name
 }
 
+func (s *MysqlSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *MysqlSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing mysql sink")
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	connString := generateMysqlDsn(conf)
 	gormDb, err := gorm.Open(mysql.Open(connString), &gorm.Config{})
 	if err != nil {

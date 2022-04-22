@@ -19,6 +19,7 @@ const INIT_TIMEOUT_SECONDS = 10
 type PubsubSink struct {
 	id                 *uuid.UUID
 	name               string
+	deliveryRequired   bool
 	client             *pubsub.Client
 	validEventsTopic   *pubsub.Topic
 	invalidEventsTopic *pubsub.Topic
@@ -30,6 +31,10 @@ func (s *PubsubSink) Id() *uuid.UUID {
 
 func (s *PubsubSink) Name() string {
 	return s.name
+}
+
+func (s *PubsubSink) DeliveryRequired() bool {
+	return s.deliveryRequired
 }
 
 func (s *PubsubSink) Initialize(conf config.Sink) error {
@@ -60,7 +65,7 @@ func (s *PubsubSink) Initialize(conf config.Sink) error {
 		return err
 	}
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, validTopic, invalidTopic
 	return nil
 }

@@ -15,6 +15,7 @@ import (
 type MongodbSink struct {
 	id                *uuid.UUID
 	name              string
+	deliveryRequired  bool
 	client            *mongo.Client
 	validCollection   *mongo.Collection
 	invalidCollection *mongo.Collection
@@ -28,9 +29,13 @@ func (s *MongodbSink) Name() string {
 	return s.name
 }
 
+func (s *MongodbSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *MongodbSink) Initialize(conf config.Sink) error {
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	ctx := context.Background()
 	opt := options.ClientOptions{
 		Hosts: conf.MongoHosts,

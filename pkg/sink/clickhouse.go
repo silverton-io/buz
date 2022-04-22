@@ -19,11 +19,12 @@ func generateClickhouseDsn(conf config.Sink) string {
 }
 
 type ClickhouseSink struct {
-	id           *uuid.UUID
-	name         string
-	gormDb       *gorm.DB
-	validTable   string
-	invalidTable string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	gormDb           *gorm.DB
+	validTable       string
+	invalidTable     string
 }
 
 func (s *ClickhouseSink) Id() *uuid.UUID {
@@ -34,10 +35,14 @@ func (s *ClickhouseSink) Name() string {
 	return s.name
 }
 
+func (s *ClickhouseSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *ClickhouseSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing clickhouse sink")
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	connString := generateClickhouseDsn(conf)
 	gormDb, err := gorm.Open(clickhouse.Open(connString), &gorm.Config{})
 	if err != nil {

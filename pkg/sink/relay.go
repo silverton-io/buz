@@ -12,9 +12,10 @@ import (
 )
 
 type RelaySink struct {
-	id       *uuid.UUID
-	name     string
-	relayUrl url.URL
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	relayUrl         url.URL
 }
 
 func (s *RelaySink) Id() *uuid.UUID {
@@ -25,6 +26,10 @@ func (s *RelaySink) Name() string {
 	return s.name
 }
 
+func (s *RelaySink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *RelaySink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing http sink")
 	u, err := url.Parse(conf.RelayUrl)
@@ -33,7 +38,7 @@ func (s *RelaySink) Initialize(conf config.Sink) error {
 		return err
 	}
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	s.relayUrl = *u
 	return err
 }

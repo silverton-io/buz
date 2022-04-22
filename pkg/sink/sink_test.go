@@ -26,6 +26,10 @@ func (ms *MockSink) Name() string {
 	return id
 }
 
+func (ms *MockSink) DeliveryRequired() bool {
+	return false
+}
+
 func (ms *MockSink) Initialize(conf config.Sink) error {
 	ms.Called(conf)
 	return nil

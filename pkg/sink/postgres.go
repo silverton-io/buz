@@ -19,11 +19,12 @@ func generatePgDsn(conf config.Sink) string {
 }
 
 type PostgresSink struct {
-	id           *uuid.UUID
-	name         string
-	gormDb       *gorm.DB
-	validTable   string
-	invalidTable string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	gormDb           *gorm.DB
+	validTable       string
+	invalidTable     string
 }
 
 func (s *PostgresSink) Id() *uuid.UUID {
@@ -34,10 +35,14 @@ func (s *PostgresSink) Name() string {
 	return s.name
 }
 
+func (s *PostgresSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *PostgresSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing postgres sink")
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	connString := generatePgDsn(conf)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {

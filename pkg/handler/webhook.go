@@ -14,8 +14,12 @@ func WebhookHandler(h EventHandlerParams) gin.HandlerFunc {
 		if c.ContentType() == "application/json" {
 			envelopes := envelope.BuildWebhookEnvelopesFromRequest(c)
 			annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
-			h.Manifold.Enqueue(annotatedEnvelopes)
-			c.JSON(http.StatusOK, response.Ok)
+			err := h.Manifold.Distribute(annotatedEnvelopes)
+			if err != nil {
+				c.JSON(http.StatusServiceUnavailable, response.DistributionError)
+			} else {
+				c.JSON(http.StatusOK, response.Ok)
+			}
 		} else {
 			c.JSON(http.StatusBadRequest, response.InvalidContentType)
 		}

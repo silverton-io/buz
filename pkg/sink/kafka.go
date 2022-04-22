@@ -22,6 +22,7 @@ const (
 type KafkaSink struct {
 	id                 *uuid.UUID
 	name               string
+	deliveryRequired   bool
 	client             *kgo.Client
 	validEventsTopic   string
 	invalidEventsTopic string
@@ -35,9 +36,13 @@ func (s *KafkaSink) Name() string {
 	return s.name
 }
 
+func (s *KafkaSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *KafkaSink) Initialize(conf config.Sink) error {
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	ctx := context.Background()
 	log.Debug().Msg("initializing kafka client")
 	client, err := kgo.NewClient(

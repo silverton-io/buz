@@ -95,6 +95,7 @@ manifold:
 sinks:
   - name: primary
     type: kafka
+    deliveryRequired: true
     kafkaBrokers:
       - redpanda-1:29092 # internally advertised
       - redpanda-2:29093 # internally advertised

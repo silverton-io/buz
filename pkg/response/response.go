@@ -27,3 +27,7 @@ var Timeout = Response{
 var RateLimitExceeded = Response{
 	Message: "rate limit exceeded",
 }
+
+var DistributionError = Response{
+	Message: "distribution error",
+}
