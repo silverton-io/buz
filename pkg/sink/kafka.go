@@ -36,6 +36,10 @@ func (s *KafkaSink) Name() string {
 	return s.name
 }
 
+func (s *KafkaSink) Type() string {
+	return KAFKA
+}
+
 func (s *KafkaSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

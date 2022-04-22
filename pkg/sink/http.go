@@ -27,6 +27,10 @@ func (s *HttpSink) Name() string {
 	return s.name
 }
 
+func (s *HttpSink) Type() string {
+	return HTTP
+}
+
 func (s *HttpSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

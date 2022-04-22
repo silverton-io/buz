@@ -34,20 +34,20 @@ func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope) error {
 	for _, s := range *m.sinks {
 		ctx := context.Background()
 		if len(validEnvelopes) > 0 {
-			log.Debug().Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Msg("purging valid envelopes to sink")
+			log.Debug().Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("purging valid envelopes to sink")
 			publishErr := s.BatchPublishValid(ctx, validEnvelopes)
 			if publishErr != nil {
-				log.Error().Err(publishErr).Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Msg("could not purge valid envelopes to sink")
+				log.Error().Err(publishErr).Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("could not purge valid envelopes to sink")
 				if s.DeliveryRequired() {
 					return publishErr
 				}
 			}
 		}
 		if len(invalidEnvelopes) > 0 {
-			log.Debug().Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Msg("purging invalid envelopes to sink")
+			log.Debug().Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("purging invalid envelopes to sink")
 			publishErr := s.BatchPublishInvalid(ctx, invalidEnvelopes)
 			if publishErr != nil {
-				log.Error().Err(publishErr).Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Msg("could not purge invalid envelopes to sink")
+				log.Error().Err(publishErr).Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("could not purge invalid envelopes to sink")
 				if s.DeliveryRequired() {
 					return publishErr
 				}

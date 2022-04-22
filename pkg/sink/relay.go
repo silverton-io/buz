@@ -26,6 +26,10 @@ func (s *RelaySink) Name() string {
 	return s.name
 }
 
+func (s *RelaySink) Type() string {
+	return RELAY
+}
+
 func (s *RelaySink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

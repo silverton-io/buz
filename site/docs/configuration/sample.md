@@ -96,22 +96,20 @@ schemaCache:
   schemaDirectory:
     enabled: true
 
-manifold:
-  bufferRecordThreshold: 1
-  bufferByteThreshold: 1024
-  bufferTimeThreshold: 60
-
 sinks:
   - name: nada
     type: blackhole
+    deliveryRequired: false
   - name: redpanda
     type: kafka
+    deliveryRequired: true
     kafkaBrokers:
       - 127.0.0.1:9092
-    validEventTopic: honeypot-valid
-    invalidEventTopic: honeypot-invalid
+    validTopic: honeypot-valid
+    invalidTopic: honeypot-invalid
   - name: mysql
     type: mysql
+    deliveryRequired: true
     mysqlHost: 127.0.0.1
     mysqlPort: 3306
     mysqlDbName: honeypot
@@ -121,6 +119,7 @@ sinks:
     invalidTable: honeypot_invalid
   - name: postgres
     type: postgres
+    deliveryRequired: true
     pgHost: 127.0.0.1
     pgPort: 5432
     pgDbName: honeypot
@@ -130,6 +129,7 @@ sinks:
     invalidTable: honeypot_invalid
   - name: materialize
     type: materialize
+    deliveryRequired: false
     mzHost: 127.0.0.1
     mzPort: 6875
     mzDbName: materialize
@@ -139,6 +139,7 @@ sinks:
     invalidTable: honeypot_invalid
   - name: clickhouse
     type: clickhouse
+    deliveryRequired: true
     clickhouseHost: 127.0.0.1
     clickhousePort: 9000
     clickhouseDbName: honeypot
@@ -155,5 +156,4 @@ squawkBox:
 
 tele:
   enabled: true
-
 ```

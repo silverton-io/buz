@@ -35,6 +35,10 @@ func (s *MaterializeSink) Name() string {
 	return s.name
 }
 
+func (s *MaterializeSink) Type() string {
+	return MATERIALIZE
+}
+
 func (s *MaterializeSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }
