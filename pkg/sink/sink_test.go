@@ -26,17 +26,23 @@ func (ms *MockSink) Name() string {
 	return id
 }
 
+func (ms *MockSink) DeliveryRequired() bool {
+	return false
+}
+
 func (ms *MockSink) Initialize(conf config.Sink) error {
 	ms.Called(conf)
 	return nil
 }
 
-func (ms *MockSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
+func (ms *MockSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) error {
 	ms.Called()
+	return nil
 }
 
-func (ms *MockSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
+func (ms *MockSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) error {
 	ms.Called()
+	return nil
 }
 
 func (ms *MockSink) BatchPublishValidAndInvalid(ctx context.Context, validEvents []envelope.Envelope, invalidEvents []envelope.Envelope) {
@@ -49,11 +55,11 @@ func (ms *MockSink) Close() {
 
 func TestBuildSink(t *testing.T) {
 	c := config.Sink{
-		Type:              PUBSUB,
-		Project:           "myproject",
-		KafkaBrokers:      []string{"broker1"},
-		ValidEventTopic:   "valid-topic",
-		InvalidEventTopic: "invalid-topic",
+		Type:         PUBSUB,
+		Project:      "myproject",
+		KafkaBrokers: []string{"broker1"},
+		ValidTopic:   "valid-topic",
+		InvalidTopic: "invalid-topic",
 	}
 
 	t.Run(PUBSUB, func(t *testing.T) {
@@ -106,11 +112,11 @@ func TestBuildSink(t *testing.T) {
 
 func TestInitializeSink(t *testing.T) {
 	c := config.Sink{
-		Type:              PUBSUB,
-		Project:           "myproject",
-		KafkaBrokers:      []string{"broker1"},
-		ValidEventTopic:   "valid-topic",
-		InvalidEventTopic: "invalid-topic",
+		Type:         PUBSUB,
+		Project:      "myproject",
+		KafkaBrokers: []string{"broker1"},
+		ValidTopic:   "valid-topic",
+		InvalidTopic: "invalid-topic",
 	}
 	mSink := MockSink{}
 	mSink.On("Initialize", c)

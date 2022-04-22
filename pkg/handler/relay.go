@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/honeypot/pkg/envelope"
+	"github.com/silverton-io/honeypot/pkg/response"
 )
 
 // RelayHandler processes incoming envelopes, splits them in half,
@@ -10,7 +13,13 @@ import (
 func RelayHandler(h EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		envelopes := envelope.BuildRelayEnvelopesFromRequest(c)
-		h.Manifold.Enqueue(envelopes)
+		err := h.Manifold.Distribute(envelopes)
+		if err != nil {
+			c.Header("Retry-After", response.RETRY_AFTER_3)
+			c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)
+		} else {
+			c.JSON(200, response.Ok)
+		}
 	}
 	return gin.HandlerFunc(fn)
 }

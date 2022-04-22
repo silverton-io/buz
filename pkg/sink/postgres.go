@@ -19,11 +19,12 @@ func generatePgDsn(conf config.Sink) string {
 }
 
 type PostgresSink struct {
-	id           *uuid.UUID
-	name         string
-	gormDb       *gorm.DB
-	validTable   string
-	invalidTable string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	gormDb           *gorm.DB
+	validTable       string
+	invalidTable     string
 }
 
 func (s *PostgresSink) Id() *uuid.UUID {
@@ -34,10 +35,14 @@ func (s *PostgresSink) Name() string {
 	return s.name
 }
 
+func (s *PostgresSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *PostgresSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing postgres sink")
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	connString := generatePgDsn(conf)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
@@ -55,12 +60,6 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 				log.Error().Err(err).Msg("could not auto migrate table")
 				return err
 			}
-			// NOTE! This is a hacky workaround so that the same gorm struct tag of "json" can be used, but "jsonb" is used for pg.
-			for _, col := range []string{"event_metadata", "validation_error", "payload"} {
-				alterStmt := "alter table " + tbl + " alter column " + col + " set data type jsonb using " + col + "::jsonb;"
-				log.Debug().Msg("ensuring jsonb columns via: " + alterStmt)
-				s.gormDb.Exec(alterStmt)
-			}
 		} else {
 			log.Debug().Msg(tbl + " table already exists - not ensuring")
 		}
@@ -68,12 +67,14 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *PostgresSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.gormDb.Table(s.validTable).Create(envelopes)
+func (s *PostgresSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.gormDb.Table(s.validTable).Create(envelopes).Error
+	return err
 }
 
-func (s *PostgresSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.gormDb.Table(s.invalidTable).Create(envelopes)
+func (s *PostgresSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
+	return err
 }
 
 func (s *PostgresSink) Close() {

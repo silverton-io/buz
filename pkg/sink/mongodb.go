@@ -15,6 +15,7 @@ import (
 type MongodbSink struct {
 	id                *uuid.UUID
 	name              string
+	deliveryRequired  bool
 	client            *mongo.Client
 	validCollection   *mongo.Collection
 	invalidCollection *mongo.Collection
@@ -28,9 +29,13 @@ func (s *MongodbSink) Name() string {
 	return s.name
 }
 
+func (s *MongodbSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *MongodbSink) Initialize(conf config.Sink) error {
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	ctx := context.Background()
 	opt := options.ClientOptions{
 		Hosts: conf.MongoHosts,
@@ -53,30 +58,32 @@ func (s *MongodbSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *MongodbSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
+func (s *MongodbSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
 	for _, e := range envelopes {
 		payload, err := bson.Marshal(e)
 		if err != nil {
-			log.Error().Err(err).Msg("could not bson marshal valid envelope")
+			return err
 		}
 		_, err = s.validCollection.InsertOne(ctx, payload) // FIXME - should batch these
 		if err != nil {
-			log.Error().Err(err).Msg("could not publish valid envelope")
+			return err
 		}
 	}
+	return nil
 }
 
-func (s *MongodbSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
+func (s *MongodbSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	for _, e := range envelopes {
 		payload, err := bson.Marshal(e)
 		if err != nil {
-			log.Error().Err(err).Msg("could not bson marshal invalid envelope")
+			return err
 		}
 		_, err = s.invalidCollection.InsertOne(ctx, payload) // FIXME - should batch these
 		if err != nil {
-			log.Error().Err(err).Msg("could not publish invalid envelope")
+			return err
 		}
 	}
+	return nil
 }
 
 func (s *MongodbSink) Close() {

@@ -14,7 +14,13 @@ func SnowplowHandler(h EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		envelopes := envelope.BuildSnowplowEnvelopesFromRequest(c, *h.Config)
 		annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
-		h.Manifold.Enqueue(annotatedEnvelopes)
+		err := h.Manifold.Distribute(annotatedEnvelopes)
+		if err != nil {
+			c.Header("Retry-After", response.RETRY_AFTER_60)
+			c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)
+		} else {
+			c.JSON(http.StatusOK, response.Ok)
+		}
 		if c.Request.Method == http.MethodGet {
 			redirectUrl, _ := c.GetQuery("u")
 			if redirectUrl != "" && h.Config.Snowplow.OpenRedirectsEnabled {
@@ -22,7 +28,6 @@ func SnowplowHandler(h EventHandlerParams) gin.HandlerFunc {
 				c.Redirect(http.StatusFound, redirectUrl)
 			}
 		}
-		c.JSON(http.StatusOK, response.Ok)
 	}
 	return gin.HandlerFunc(fn)
 }

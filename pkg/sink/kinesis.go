@@ -14,11 +14,12 @@ import (
 )
 
 type KinesisSink struct {
-	id                  *uuid.UUID
-	name                string
-	client              *kinesis.Client
-	validEventsStream   string
-	invalidEventsStream string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	client           *kinesis.Client
+	validStream      string
+	invalidStream    string
 }
 
 func (s *KinesisSink) Id() *uuid.UUID {
@@ -29,17 +30,21 @@ func (s *KinesisSink) Name() string {
 	return s.name
 }
 
+func (s *KinesisSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *KinesisSink) Initialize(conf config.Sink) error {
 	ctx := context.Background()
 	cfg, err := awsconf.LoadDefaultConfig(ctx)
 	client := kinesis.NewFromConfig(cfg)
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
-	s.client, s.validEventsStream, s.invalidEventsStream = client, conf.ValidEventTopic, conf.InvalidEventTopic
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
+	s.client, s.validStream, s.invalidStream = client, conf.ValidStream, conf.InvalidStream
 	return err
 }
 
-func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) {
+func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
 	for _, event := range envelopes {
 		partitionKey := "blah" // FIXME!
@@ -50,25 +55,35 @@ func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes
 			StreamName:   &stream,
 		}
 		wg.Add(1)
-		go func() {
+		pubErr := make(chan error, 1)
+		go func(pErr chan error) {
 			output, err := s.client.PutRecord(ctx, input) // Will want to use `PutRecordBatch`
 			defer wg.Done()
 			if err != nil {
 				log.Error().Stack().Err(err).Msg("could not publish event to kinesis")
+				pErr <- err
 			} else {
 				log.Debug().Msgf("published event " + *output.SequenceNumber + " to stream " + stream)
+				pErr <- nil
 			}
-		}()
+		}(pubErr)
+		err := <-pubErr
+		if err != nil {
+			return err
+		}
 	}
 	wg.Wait()
+	return nil
 }
 
-func (s *KinesisSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.validEventsStream, envelopes)
+func (s *KinesisSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.validStream, envelopes)
+	return err
 }
 
-func (s *KinesisSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.invalidEventsStream, envelopes)
+func (s *KinesisSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.invalidStream, envelopes)
+	return err
 }
 
 func (s *KinesisSink) Close() {

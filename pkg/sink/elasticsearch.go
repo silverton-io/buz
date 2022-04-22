@@ -14,11 +14,12 @@ import (
 )
 
 type ElasticsearchSink struct {
-	id           *uuid.UUID
-	name         string
-	client       *elasticsearch.Client
-	validIndex   string
-	invalidIndex string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	client           *elasticsearch.Client
+	validIndex       string
+	invalidIndex     string
 }
 
 func (s *ElasticsearchSink) Id() *uuid.UUID {
@@ -29,6 +30,10 @@ func (s *ElasticsearchSink) Name() string {
 	return s.name
 }
 
+func (s *ElasticsearchSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *ElasticsearchSink) Initialize(conf config.Sink) error {
 	cfg := elasticsearch.Config{
 		Addresses: conf.ElasticsearchHosts,
@@ -37,24 +42,26 @@ func (s *ElasticsearchSink) Initialize(conf config.Sink) error {
 	}
 	es, err := elasticsearch.NewClient(cfg)
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	s.client, s.validIndex, s.invalidIndex = es, conf.ValidIndex, conf.InvalidIndex
 	return err
 }
 
-func (s *ElasticsearchSink) batchPublish(ctx context.Context, index string, envelopes []envelope.Envelope) {
+func (s *ElasticsearchSink) batchPublish(ctx context.Context, index string, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
 	for _, envelope := range envelopes {
 		eByte, err := json.Marshal(envelope)
 		reader := bytes.NewReader(eByte)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not encode envelope to buffer")
+			return err
 		} else {
 			wg.Add(1)
 			envId := envelope.Uuid.String()
 			_, err := s.client.Create(index, envId, reader)
 			if err != nil {
 				log.Error().Stack().Interface("envelopeId", envId).Err(err).Msg("could not publish envelope to elasticsearch")
+				return err
 			} else {
 				log.Debug().Interface("envelopeId", envId).Interface("indexId", index).Msg("published envelope to index")
 			}
@@ -62,14 +69,17 @@ func (s *ElasticsearchSink) batchPublish(ctx context.Context, index string, enve
 		}
 	}
 	wg.Wait()
+	return nil
 }
 
-func (s *ElasticsearchSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.validIndex, validEnvelopes)
+func (s *ElasticsearchSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.validIndex, validEnvelopes)
+	return err
 }
 
-func (s *ElasticsearchSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.invalidIndex, invalidEnvelopes)
+func (s *ElasticsearchSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.invalidIndex, invalidEnvelopes)
+	return err
 }
 
 func (s *ElasticsearchSink) Close() {

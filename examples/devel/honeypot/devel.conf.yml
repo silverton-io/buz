@@ -87,14 +87,10 @@ schemaCache:
   schemaDirectory:
     enabled: true
 
-manifold:
-  bufferRecordThreshold: 1
-  bufferByteThreshold: 1024
-  bufferTimeThreshold: 60
-
 sinks:
   - name: mysql
     type: mysql
+    deliveryRequired: true
     mysqlHost: mysql
     mysqlPort: 3306
     mysqlDbName: honeypot
@@ -104,6 +100,7 @@ sinks:
     invalidTable: honeypot_invalid
   - name: postgres
     type: postgres
+    deliveryRequired: true
     pgHost: postgres
     pgPort: 5432
     pgDbName: honeypot
@@ -113,6 +110,7 @@ sinks:
     invalidTable: honeypot_invalid
   - name: materialize
     type: materialize
+    deliveryRequired: true
     mzHost: materialized
     mzPort: 6875
     mzDbName: materialize
@@ -122,6 +120,7 @@ sinks:
     invalidTable: honeypot_invalid
   - name: clickhouse
     type: clickhouse
+    deliveryRequired: true
     clickhouseHost: clickhouse
     clickhousePort: 9000
     clickhouseDbName: honeypot
@@ -131,6 +130,7 @@ sinks:
     invalidTable: honeypot_invalid
   - name: mango
     type: mongodb
+    deliveryRequired: true
     mongoHosts:
       - mongo
     mongoDbPort: 27017
@@ -141,12 +141,14 @@ sinks:
     invalidCollection: honeypotInvalid
   - name: thepanda
     type: kafka
+    deliveryRequired: true
     kafkaBrokers:
       - redpanda-1:29092
-    validEventTopic: honeypot-valid
-    invalidEventTopic: honeypot-invalid
+    validTopic: honeypot-valid
+    invalidTopic: honeypot-invalid
   - name: elk
     type: elasticsearch
+    deliveryRequired: true
     elasticsearchHosts:
       - http://elasticsearch:9200
     elasticsearchUsername: elastic

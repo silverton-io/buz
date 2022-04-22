@@ -14,8 +14,13 @@ func CloudeventsHandler(h EventHandlerParams) gin.HandlerFunc {
 		if c.ContentType() == "application/cloudevents+json" || c.ContentType() == "application/cloudevents-batch+json" {
 			envelopes := envelope.BuildCloudeventEnvelopesFromRequest(c, *h.Config)
 			annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
-			h.Manifold.Enqueue(annotatedEnvelopes)
-			c.JSON(http.StatusOK, response.Ok)
+			err := h.Manifold.Distribute(annotatedEnvelopes)
+			if err != nil {
+				c.Header("Retry-After", response.RETRY_AFTER_60)
+				c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)
+			} else {
+				c.JSON(http.StatusOK, response.Ok)
+			}
 		} else {
 			c.JSON(http.StatusBadRequest, response.InvalidContentType)
 		}

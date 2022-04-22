@@ -677,33 +677,6 @@
                 "schemaDirectory"
             ]
         },
-        "manifold": {
-            "type": "object",
-            "description": "Manifold configuration",
-            "properties": {
-                "bufferRecordThreshold": {
-                    "type": "number",
-                    "description": "The record threshold at which point the manifold buffer is purged",
-                    "default": "1"
-                },
-                "bufferByteThreshold": {
-                    "type": "number",
-                    "description": "The byte threshold at which point the manifold buffer is purged",
-                    "default": "1024"
-                },
-                "bufferTimeThreshold": {
-                    "type": "number",
-                    "description": "The time threshold (in seconds) at which point the manifold buffer is purged",
-                    "default": "60"
-                }
-            },
-            "additionalProperties": false,
-            "required": [
-                "bufferRecordThreshold",
-                "bufferByteThreshold",
-                "bufferTimeThreshold"
-            ]
-        },
         "sinks": {
             "type": "array",
             "description": "Configuration for the sinks",
@@ -742,6 +715,10 @@
                             "clickhouse"
                         ]
                     },
+                    "deliveryRequired": {
+                        "type": "boolean",
+                        "default": "true"
+                    },
                     "kafkaBrokers": {
                         "type": "array",
                         "description": "A list of kafka brokers (HOST:PORT), if sink type is kafka",
@@ -768,10 +745,15 @@
                         "description": "The elasticsearch password, if sink type is elasticsearch",
                         "default": "elastic"
                     },
-                    "validEventTopic": {
+                    "validTopic": {
                         "type": "string",
-                        "default": "honeypot-valid-topic",
-                        "description": "The name of the valid event topic (or 'stream', if kinesis)"
+                        "default": "honeypot-valid",
+                        "description": "The name of the valid event topic"
+                    },
+                    "validStream": {
+                        "type": "string",
+                        "default": "honeypot-valid",
+                        "description": "The name of the valid event stream, if sink type is kinesis"
                     },
                     "validUrl": {
                         "type": "string",
@@ -803,10 +785,15 @@
                         "description": "The collection to sink valid envelopes to if sink type is mongodb",
                         "default": "honeypotValid"
                     },
-                    "invalidEventTopic": {
+                    "invalidTopic": {
                         "type": "string",
-                        "description": "The name of the invalid event topic (or 'stream', if kinesis)",
-                        "default": "honeypot-invalid-topic"
+                        "description": "The name of the invalid event topic",
+                        "default": "honeypot-invalid"
+                    },
+                    "invalidStream": {
+                        "type": "string",
+                        "default": "honeypot-valid",
+                        "description": "The name of the invalid event stream, if sink type is kinesis"
                     },
                     "invalidUrl": {
                         "type": "string",
@@ -991,7 +978,8 @@
                 "additionalProperties": false,
                 "required": [
                     "name",
-                    "type"
+                    "type",
+                    "deliveryRequired"
                 ],
                 "anyOf": [
                     {
@@ -1010,8 +998,8 @@
                         },
                         "required": [
                             "kafkaBrokers",
-                            "validEventTopic",
-                            "invalidEventTopic"
+                            "validTopic",
+                            "invalidTopic"
                         ]
                     },
                     {
@@ -1022,8 +1010,8 @@
                         },
                         "required": [
                             "project",
-                            "validEventTopic",
-                            "invalidEventTopic"
+                            "validTopic",
+                            "invalidTopic"
                         ]
                     },
                     {
@@ -1033,8 +1021,8 @@
                             }
                         },
                         "required": [
-                            "validEventTopic",
-                            "invalidEventTopic"
+                            "validStream",
+                            "invalidStream"
                         ]
                     },
                     {
@@ -1044,8 +1032,8 @@
                             }
                         },
                         "required": [
-                            "validEventTopic",
-                            "invalidEventTopic"
+                            "validTopic",
+                            "invalidTopic"
                         ]
                     },
                     {
@@ -1264,7 +1252,6 @@
         "middleware",
         "inputs",
         "schemaCache",
-        "manifold",
         "sinks",
         "squawkBox",
         "tele"

@@ -17,6 +17,7 @@ import (
 type KinesisFirehoseSink struct {
 	id                  *uuid.UUID
 	name                string
+	deliveryRequired    bool
 	client              *firehose.Client
 	validEventsStream   string
 	invalidEventsStream string
@@ -30,17 +31,21 @@ func (s *KinesisFirehoseSink) Name() string {
 	return s.name
 }
 
+func (s *KinesisFirehoseSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *KinesisFirehoseSink) Initialize(conf config.Sink) error {
 	ctx := context.Background()
 	cfg, err := awsconf.LoadDefaultConfig(ctx)
 	client := firehose.NewFromConfig(cfg)
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
-	s.client, s.validEventsStream, s.invalidEventsStream = client, conf.ValidEventTopic, conf.InvalidEventTopic
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
+	s.client, s.validEventsStream, s.invalidEventsStream = client, conf.ValidTopic, conf.InvalidTopic
 	return err
 }
 
-func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) {
+func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
 	for _, event := range envelopes {
 		payload, _ := json.Marshal(event)
@@ -54,25 +59,35 @@ func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, e
 			Record:             &record,
 		}
 		wg.Add(1)
-		go func() {
+		pubErr := make(chan error, 1)
+		go func(pErr chan error) {
 			output, err := s.client.PutRecord(ctx, input) // Will want to use `PutRecordBatch`
 			defer wg.Done()
 			if err != nil {
 				log.Error().Stack().Err(err).Msg("could not publish event to kinesis firehose")
+				pubErr <- err
 			} else {
 				log.Debug().Msgf("published event " + *output.RecordId + " to stream " + stream)
+				pubErr <- nil
 			}
-		}()
+		}(pubErr)
+		err := <-pubErr
+		if err != nil {
+			return err
+		}
 	}
 	wg.Wait()
+	return nil
 }
 
-func (s *KinesisFirehoseSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.validEventsStream, envelopes)
+func (s *KinesisFirehoseSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.validEventsStream, envelopes)
+	return err
 }
 
-func (s *KinesisFirehoseSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.invalidEventsStream, envelopes)
+func (s *KinesisFirehoseSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.invalidEventsStream, envelopes)
+	return err
 }
 
 func (s *KinesisFirehoseSink) Close() {

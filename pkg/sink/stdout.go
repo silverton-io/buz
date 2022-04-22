@@ -37,8 +37,9 @@ func Colorize(colorString string) func(...interface{}) string {
 }
 
 type StdoutSink struct {
-	id   *uuid.UUID
-	name string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
 }
 
 func (s *StdoutSink) Id() *uuid.UUID {
@@ -49,25 +50,31 @@ func (s *StdoutSink) Name() string {
 	return s.name
 }
 
+func (s *StdoutSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *StdoutSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing stdout sink")
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	return nil
 }
 
-func (s *StdoutSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
+func (s *StdoutSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) error {
 	if len(validEnvelopes) > 0 {
 		validEnvelopes := util.Stringify(validEnvelopes)
 		fmt.Println(Green(validEnvelopes))
 	}
+	return nil
 }
 
-func (s *StdoutSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
+func (s *StdoutSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) error {
 	if len(invalidEnvelopes) > 0 {
 		invalidEnvelopes := util.Stringify(invalidEnvelopes)
 		fmt.Println(Red(invalidEnvelopes))
 	}
+	return nil
 }
 
 func (s *StdoutSink) Close() {

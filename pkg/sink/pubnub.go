@@ -18,14 +18,15 @@ const (
 )
 
 type PubnubSink struct {
-	id             *uuid.UUID
-	name           string
-	validChannel   string
-	invalidChannel string
-	pubKey         string
-	subKey         string
-	store          int
-	callback       string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	validChannel     string
+	invalidChannel   string
+	pubKey           string
+	subKey           string
+	store            int
+	callback         string
 }
 
 func (s *PubnubSink) Id() *uuid.UUID {
@@ -36,10 +37,14 @@ func (s *PubnubSink) Name() string {
 	return s.name
 }
 
+func (s *PubnubSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *PubnubSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing pubnub sink")
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	s.validChannel, s.invalidChannel = conf.ValidChannel, conf.InvalidChannel
 	s.pubKey, s.subKey = conf.PubnubPubKey, conf.PubnubSubKey
 	return nil
@@ -55,20 +60,20 @@ func (s *PubnubSink) buildPublishUrl(channel string) *url.URL {
 	return u
 }
 
-func (s *PubnubSink) batchPublish(ctx context.Context, channel string, envelopes []envelope.Envelope) {
+func (s *PubnubSink) batchPublish(ctx context.Context, channel string, envelopes []envelope.Envelope) error {
 	u := s.buildPublishUrl(channel)
 	_, err := request.PostEnvelopes(*u, envelopes)
-	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not post envelopes")
-	}
+	return err
 }
 
-func (s *PubnubSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.validChannel, envelopes)
+func (s *PubnubSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.validChannel, envelopes)
+	return err
 }
 
-func (s *PubnubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) {
-	s.batchPublish(ctx, s.invalidChannel, envelopes)
+func (s *PubnubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.invalidChannel, envelopes)
+	return err
 }
 
 func (s *PubnubSink) Close() {

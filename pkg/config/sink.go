@@ -1,13 +1,17 @@
 package config
 
 type Sink struct {
-	Name         string   `json:"name"`
-	Type         string   `json:"type"`
-	Project      string   `json:"project,omitempty"`
-	KafkaBrokers []string `json:"kakfaBrokers,omitempty"`
+	Name             string   `json:"name"`
+	Type             string   `json:"type"`
+	DeliveryRequired bool     `json:"deliveryRequired"`
+	Project          string   `json:"project,omitempty"`
+	KafkaBrokers     []string `json:"kakfaBrokers,omitempty"`
 	// Kafka, Pubsub
-	ValidEventTopic   string `json:"validEventTopic,omitempty"`
-	InvalidEventTopic string `json:"invalidEventTopic,omitempty"`
+	ValidTopic   string `json:"validTopic,omitempty"`
+	InvalidTopic string `json:"invalidTopic,omitempty"`
+	// Kinesis
+	ValidStream   string `json:"validStream,omitempty"`
+	InvalidStream string `json:"invalidStream,omitempty"`
 	// Relay, HTTP/S, etc
 	ValidUrl   string `json:"validUrl,omitempty"`
 	InvalidUrl string `json:"invalidUrl,omitempty"`

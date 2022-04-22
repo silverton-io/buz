@@ -27,3 +27,7 @@ var Timeout = Response{
 var RateLimitExceeded = Response{
 	Message: "rate limit exceeded",
 }
+
+var ManifoldDistributionError = Response{
+	Message: "distribution error",
+}

@@ -12,10 +12,11 @@ import (
 )
 
 type HttpSink struct {
-	id         *uuid.UUID
-	name       string
-	validUrl   url.URL
-	invalidUrl url.URL
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	validUrl         url.URL
+	invalidUrl       url.URL
 }
 
 func (s *HttpSink) Id() *uuid.UUID {
@@ -24,6 +25,10 @@ func (s *HttpSink) Id() *uuid.UUID {
 
 func (s *HttpSink) Name() string {
 	return s.name
+}
+
+func (s *HttpSink) DeliveryRequired() bool {
+	return s.deliveryRequired
 }
 
 func (s *HttpSink) Initialize(conf config.Sink) error {
@@ -39,17 +44,19 @@ func (s *HttpSink) Initialize(conf config.Sink) error {
 		return invErr
 	}
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	s.validUrl, s.invalidUrl = *vUrl, *invUrl
 	return nil
 }
 
-func (s *HttpSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {
-	request.PostEnvelopes(s.validUrl, validEnvelopes)
+func (s *HttpSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) error {
+	_, err := request.PostEnvelopes(s.validUrl, validEnvelopes)
+	return err
 }
 
-func (s *HttpSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
-	request.PostEnvelopes(s.invalidUrl, invalidEnvelopes)
+func (s *HttpSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) error {
+	_, err := request.PostEnvelopes(s.invalidUrl, invalidEnvelopes)
+	return err
 }
 
 func (s *HttpSink) Close() {

@@ -9,5 +9,5 @@ import (
 type EventHandlerParams struct {
 	Config   *config.Config
 	Cache    *cache.SchemaCache
-	Manifold *manifold.Manifold
+	Manifold *manifold.SimpleManifold
 }

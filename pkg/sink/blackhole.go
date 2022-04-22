@@ -9,8 +9,9 @@ import (
 )
 
 type BlackholeSink struct {
-	id   *uuid.UUID
-	name string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
 }
 
 func (s *BlackholeSink) Id() *uuid.UUID {
@@ -21,15 +22,22 @@ func (s *BlackholeSink) Name() string {
 	return s.name
 }
 
+func (s *BlackholeSink) DeliveryRequired() bool {
+	return s.deliveryRequired
+}
+
 func (s *BlackholeSink) Initialize(conf config.Sink) error {
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	return nil
 }
 
-func (s *BlackholeSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) {}
+func (s *BlackholeSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) error {
+	return nil
+}
 
-func (s *BlackholeSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) {
+func (s *BlackholeSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) error {
+	return nil
 }
 
 func (s *BlackholeSink) Close() {

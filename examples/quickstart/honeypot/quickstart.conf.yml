@@ -87,20 +87,16 @@ schemaCache:
   schemaDirectory:
     enabled: true
 
-manifold:
-  bufferRecordThreshold: 1
-  bufferByteThreshold: 1024
-  bufferTimeThreshold: 60
-
 sinks:
   - name: primary
     type: kafka
+    deliveryRequired: true
     kafkaBrokers:
       - redpanda-1:29092 # internally advertised
       - redpanda-2:29093 # internally advertised
       - redpanda-3:29094 # internally advertised
-    invalidEventTopic: hpt-invalid
-    validEventTopic: hpt-valid
+    invalidTopic: hpt-invalid
+    validTopic: hpt-valid
 
 squawkBox:
   enabled: true
