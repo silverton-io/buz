@@ -44,8 +44,8 @@ func (s *PubsubSink) Initialize(conf config.Sink) error {
 		log.Debug().Stack().Err(err).Msg("could not initialize pubsub sink")
 		return err
 	}
-	validTopic := client.Topic(conf.ValidEventTopic)
-	invalidTopic := client.Topic(conf.InvalidEventTopic)
+	validTopic := client.Topic(conf.ValidTopic)
+	invalidTopic := client.Topic(conf.InvalidTopic)
 	vTopicExists, err := validTopic.Exists(ctx)
 	if err != nil {
 		log.Debug().Stack().Err(err).Msg("cannot check valid event topic existence")
@@ -92,11 +92,10 @@ func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, enve
 			defer wg.Done()
 			id, err := res.Get(ctx)
 			if err != nil {
-				log.Error().Stack().Err(err).Msg("could not publish event to pubsub")
 				pErr <- err
 
 			} else {
-				log.Debug().Msgf("published event id " + id + " to topic " + topic.ID())
+				log.Trace().Msgf("published event id " + id + " to topic " + topic.ID())
 				pErr <- nil
 			}
 		}(result, publishErr)

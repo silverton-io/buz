@@ -60,7 +60,7 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 	}
 	admClient := kadm.NewClient(client)
 	log.Debug().Msg("verifying topics exist")
-	topicDetails, err := admClient.DescribeTopicConfigs(ctx, conf.ValidEventTopic, conf.InvalidEventTopic)
+	topicDetails, err := admClient.DescribeTopicConfigs(ctx, conf.ValidTopic, conf.InvalidTopic)
 	if err != nil {
 		log.Debug().Stack().Err(err).Msg("could not describe topic configs")
 		return err
@@ -70,7 +70,7 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 			log.Fatal().Stack().Err(d.Err).Msg("topic doesn't exist: " + d.Name)
 		}
 	}
-	s.client, s.validEventsTopic, s.invalidEventsTopic = client, conf.ValidEventTopic, conf.InvalidEventTopic
+	s.client, s.validEventsTopic, s.invalidEventsTopic = client, conf.ValidTopic, conf.InvalidTopic
 	return nil
 }
 

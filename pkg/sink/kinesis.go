@@ -14,12 +14,12 @@ import (
 )
 
 type KinesisSink struct {
-	id                  *uuid.UUID
-	name                string
-	deliveryRequired    bool
-	client              *kinesis.Client
-	validEventsStream   string
-	invalidEventsStream string
+	id               *uuid.UUID
+	name             string
+	deliveryRequired bool
+	client           *kinesis.Client
+	validStream      string
+	invalidStream    string
 }
 
 func (s *KinesisSink) Id() *uuid.UUID {
@@ -40,7 +40,7 @@ func (s *KinesisSink) Initialize(conf config.Sink) error {
 	client := kinesis.NewFromConfig(cfg)
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	s.client, s.validEventsStream, s.invalidEventsStream = client, conf.ValidEventTopic, conf.InvalidEventTopic
+	s.client, s.validStream, s.invalidStream = client, conf.ValidStream, conf.InvalidStream
 	return err
 }
 
@@ -77,12 +77,12 @@ func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes
 }
 
 func (s *KinesisSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, s.validEventsStream, envelopes)
+	err := s.batchPublish(ctx, s.validStream, envelopes)
 	return err
 }
 
 func (s *KinesisSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, s.invalidEventsStream, envelopes)
+	err := s.batchPublish(ctx, s.invalidStream, envelopes)
 	return err
 }
 

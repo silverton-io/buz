@@ -55,11 +55,11 @@ func (ms *MockSink) Close() {
 
 func TestBuildSink(t *testing.T) {
 	c := config.Sink{
-		Type:              PUBSUB,
-		Project:           "myproject",
-		KafkaBrokers:      []string{"broker1"},
-		ValidEventTopic:   "valid-topic",
-		InvalidEventTopic: "invalid-topic",
+		Type:         PUBSUB,
+		Project:      "myproject",
+		KafkaBrokers: []string{"broker1"},
+		ValidTopic:   "valid-topic",
+		InvalidTopic: "invalid-topic",
 	}
 
 	t.Run(PUBSUB, func(t *testing.T) {
@@ -112,11 +112,11 @@ func TestBuildSink(t *testing.T) {
 
 func TestInitializeSink(t *testing.T) {
 	c := config.Sink{
-		Type:              PUBSUB,
-		Project:           "myproject",
-		KafkaBrokers:      []string{"broker1"},
-		ValidEventTopic:   "valid-topic",
-		InvalidEventTopic: "invalid-topic",
+		Type:         PUBSUB,
+		Project:      "myproject",
+		KafkaBrokers: []string{"broker1"},
+		ValidTopic:   "valid-topic",
+		InvalidTopic: "invalid-topic",
 	}
 	mSink := MockSink{}
 	mSink.On("Initialize", c)

@@ -100,8 +100,8 @@ sinks:
       - redpanda-1:29092 # internally advertised
       - redpanda-2:29093 # internally advertised
       - redpanda-3:29094 # internally advertised
-    invalidEventTopic: hpt-invalid
-    validEventTopic: hpt-valid
+    invalidTopic: hpt-invalid
+    validTopic: hpt-valid
 
 squawkBox:
   enabled: true

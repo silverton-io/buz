@@ -41,7 +41,7 @@ func (s *KinesisFirehoseSink) Initialize(conf config.Sink) error {
 	client := firehose.NewFromConfig(cfg)
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	s.client, s.validEventsStream, s.invalidEventsStream = client, conf.ValidEventTopic, conf.InvalidEventTopic
+	s.client, s.validEventsStream, s.invalidEventsStream = client, conf.ValidTopic, conf.InvalidTopic
 	return err
 }
 
