@@ -677,33 +677,6 @@
                 "schemaDirectory"
             ]
         },
-        "manifold": {
-            "type": "object",
-            "description": "Manifold configuration",
-            "properties": {
-                "bufferRecordThreshold": {
-                    "type": "number",
-                    "description": "The record threshold at which point the manifold buffer is purged",
-                    "default": "1"
-                },
-                "bufferByteThreshold": {
-                    "type": "number",
-                    "description": "The byte threshold at which point the manifold buffer is purged",
-                    "default": "1024"
-                },
-                "bufferTimeThreshold": {
-                    "type": "number",
-                    "description": "The time threshold (in seconds) at which point the manifold buffer is purged",
-                    "default": "60"
-                }
-            },
-            "additionalProperties": false,
-            "required": [
-                "bufferRecordThreshold",
-                "bufferByteThreshold",
-                "bufferTimeThreshold"
-            ]
-        },
         "sinks": {
             "type": "array",
             "description": "Configuration for the sinks",
@@ -1279,7 +1252,6 @@
         "middleware",
         "inputs",
         "schemaCache",
-        "manifold",
         "sinks",
         "squawkBox",
         "tele"

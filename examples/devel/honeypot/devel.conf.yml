@@ -87,11 +87,6 @@ schemaCache:
   schemaDirectory:
     enabled: true
 
-manifold:
-  bufferRecordThreshold: 1
-  bufferByteThreshold: 1024
-  bufferTimeThreshold: 60
-
 sinks:
   - name: mysql
     type: mysql
