@@ -28,6 +28,6 @@ var RateLimitExceeded = Response{
 	Message: "rate limit exceeded",
 }
 
-var DistributionError = Response{
+var ManifoldDistributionError = Response{
 	Message: "distribution error",
 }

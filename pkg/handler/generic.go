@@ -17,7 +17,7 @@ func GenericHandler(h EventHandlerParams) gin.HandlerFunc {
 			err := h.Manifold.Distribute(annotatedEnvelopes)
 			if err != nil {
 				c.Header("Retry-After", response.RETRY_AFTER_60)
-				c.JSON(http.StatusServiceUnavailable, response.DistributionError)
+				c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)
 			} else {
 				c.JSON(200, response.Ok)
 			}
