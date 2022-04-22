@@ -6,6 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/sink"
+	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
 // A stupid-simple manifold with strict guarantees
@@ -18,15 +19,17 @@ func (m *SimpleManifold) Initialize(sinks *[]sink.Sink) error {
 	return nil
 }
 
-func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope) error {
+func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope, meta *tele.Meta) error {
 	var validEnvelopes []envelope.Envelope
 	var invalidEnvelopes []envelope.Envelope
 
 	for _, e := range envelopes {
 		isValid := *e.IsValid
 		if isValid {
+			meta.ProtocolStats.IncrementValid(e.EventProtocol, e.EventMetadata, 1)
 			validEnvelopes = append(validEnvelopes, e)
 		} else {
+			meta.ProtocolStats.IncrementInvalid(e.EventProtocol, e.EventMetadata, 1)
 			invalidEnvelopes = append(invalidEnvelopes, e)
 		}
 	}
