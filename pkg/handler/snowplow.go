@@ -16,7 +16,7 @@ func SnowplowHandler(h EventHandlerParams) gin.HandlerFunc {
 		annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
 		err := h.Manifold.Distribute(annotatedEnvelopes)
 		if err != nil {
-			c.Request.Header.Add("Retry-After", response.RETRY_AFTER_60)
+			c.Header("Retry-After", response.RETRY_AFTER_60)
 			c.JSON(http.StatusServiceUnavailable, response.DistributionError)
 		} else {
 			c.JSON(http.StatusOK, response.Ok)

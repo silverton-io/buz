@@ -15,7 +15,7 @@ func RelayHandler(h EventHandlerParams) gin.HandlerFunc {
 		envelopes := envelope.BuildRelayEnvelopesFromRequest(c)
 		err := h.Manifold.Distribute(envelopes)
 		if err != nil {
-			c.Request.Header.Add("Retry-After", response.RETRY_AFTER_60)
+			c.Header("Retry-After", response.RETRY_AFTER_60)
 			c.JSON(http.StatusServiceUnavailable, response.DistributionError)
 		} else {
 			c.JSON(200, response.Ok)
