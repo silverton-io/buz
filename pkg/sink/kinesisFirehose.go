@@ -31,6 +31,10 @@ func (s *KinesisFirehoseSink) Name() string {
 	return s.name
 }
 
+func (s *KinesisFirehoseSink) Type() string {
+	return KINESIS_FIREHOSE
+}
+
 func (s *KinesisFirehoseSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

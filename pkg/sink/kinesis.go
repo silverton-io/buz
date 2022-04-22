@@ -30,6 +30,10 @@ func (s *KinesisSink) Name() string {
 	return s.name
 }
 
+func (s *KinesisSink) Type() string {
+	return KINESIS
+}
+
 func (s *KinesisSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

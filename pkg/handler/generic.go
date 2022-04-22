@@ -14,7 +14,7 @@ func GenericHandler(h EventHandlerParams) gin.HandlerFunc {
 		if c.ContentType() == "application/json" {
 			envelopes := envelope.BuildGenericEnvelopesFromRequest(c, *h.Config)
 			annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
-			err := h.Manifold.Distribute(annotatedEnvelopes)
+			err := h.Manifold.Distribute(annotatedEnvelopes, h.Meta)
 			if err != nil {
 				c.Header("Retry-After", response.RETRY_AFTER_60)
 				c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)

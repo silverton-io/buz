@@ -26,6 +26,11 @@ func (ms *MockSink) Name() string {
 	return id
 }
 
+func (ms *MockSink) Type() string {
+	id := "mock"
+	return id
+}
+
 func (ms *MockSink) DeliveryRequired() bool {
 	return false
 }

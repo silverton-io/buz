@@ -35,6 +35,10 @@ func (s *MysqlSink) Name() string {
 	return s.name
 }
 
+func (s *MysqlSink) Type() string {
+	return MYSQL
+}
+
 func (s *MysqlSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

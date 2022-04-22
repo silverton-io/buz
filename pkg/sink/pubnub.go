@@ -37,6 +37,10 @@ func (s *PubnubSink) Name() string {
 	return s.name
 }
 
+func (s *PubnubSink) Type() string {
+	return PUBNUB
+}
+
 func (s *PubnubSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

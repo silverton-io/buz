@@ -27,6 +27,10 @@ func (s *FileSink) Name() string {
 	return s.name
 }
 
+func (s *FileSink) Type() string {
+	return FILE
+}
+
 func (s *FileSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

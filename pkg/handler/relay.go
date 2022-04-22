@@ -13,7 +13,7 @@ import (
 func RelayHandler(h EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		envelopes := envelope.BuildRelayEnvelopesFromRequest(c)
-		err := h.Manifold.Distribute(envelopes)
+		err := h.Manifold.Distribute(envelopes, h.Meta)
 		if err != nil {
 			c.Header("Retry-After", response.RETRY_AFTER_3)
 			c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)

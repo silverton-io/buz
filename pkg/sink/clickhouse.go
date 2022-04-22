@@ -35,6 +35,10 @@ func (s *ClickhouseSink) Name() string {
 	return s.name
 }
 
+func (s *ClickhouseSink) Type() string {
+	return CLICKHOUSE
+}
+
 func (s *ClickhouseSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

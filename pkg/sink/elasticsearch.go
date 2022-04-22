@@ -30,6 +30,10 @@ func (s *ElasticsearchSink) Name() string {
 	return s.name
 }
 
+func (s *ElasticsearchSink) Type() string {
+	return ELASTICSEARCH
+}
+
 func (s *ElasticsearchSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

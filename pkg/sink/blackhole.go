@@ -22,6 +22,10 @@ func (s *BlackholeSink) Name() string {
 	return s.name
 }
 
+func (s *BlackholeSink) Type() string {
+	return BLACKHOLE
+}
+
 func (s *BlackholeSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

@@ -35,6 +35,10 @@ func (s *PostgresSink) Name() string {
 	return s.name
 }
 
+func (s *PostgresSink) Type() string {
+	return POSTGRES
+}
+
 func (s *PostgresSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

@@ -42,6 +42,7 @@ func (a *App) handlerParams() handler.EventHandlerParams {
 		Config:   a.config,
 		Cache:    a.schemaCache,
 		Manifold: a.manifold,
+		Meta:     a.meta,
 	}
 	return params
 }

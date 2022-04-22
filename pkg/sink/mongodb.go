@@ -29,6 +29,10 @@ func (s *MongodbSink) Name() string {
 	return s.name
 }
 
+func (s *MongodbSink) Type() string {
+	return MONGODB
+}
+
 func (s *MongodbSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

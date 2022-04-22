@@ -33,6 +33,7 @@ const (
 type Sink interface {
 	Id() *uuid.UUID
 	Name() string
+	Type() string
 	DeliveryRequired() bool
 	Initialize(conf config.Sink) error
 	BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error

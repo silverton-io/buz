@@ -33,6 +33,10 @@ func (s *PubsubSink) Name() string {
 	return s.name
 }
 
+func (s *PubsubSink) Type() string {
+	return PUBSUB
+}
+
 func (s *PubsubSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }

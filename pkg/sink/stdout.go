@@ -50,6 +50,10 @@ func (s *StdoutSink) Name() string {
 	return s.name
 }
 
+func (s *StdoutSink) Type() string {
+	return STDOUT
+}
+
 func (s *StdoutSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }
