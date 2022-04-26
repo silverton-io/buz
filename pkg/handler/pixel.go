@@ -14,7 +14,8 @@ const PX string = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8X
 
 func PixelHandler(h EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		envelopes := envelope.BuildPixelEnvelopesFromRequest(c)
+
+		envelopes := envelope.BuildPixelEnvelopesFromRequest(c, *h.Config)
 		annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
 		err := h.Manifold.Distribute(annotatedEnvelopes, h.Meta)
 		if err != nil {

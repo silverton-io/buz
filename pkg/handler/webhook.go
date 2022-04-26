@@ -12,7 +12,7 @@ import (
 func WebhookHandler(h EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/json" {
-			envelopes := envelope.BuildWebhookEnvelopesFromRequest(c)
+			envelopes := envelope.BuildWebhookEnvelopesFromRequest(c, *h.Config)
 			annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
 			err := h.Manifold.Distribute(annotatedEnvelopes, h.Meta)
 			if err != nil {

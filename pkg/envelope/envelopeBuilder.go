@@ -104,7 +104,7 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []E
 	return envelopes
 }
 
-func BuildWebhookEnvelopesFromRequest(c *gin.Context) []Envelope {
+func BuildWebhookEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelope {
 	var envelopes []Envelope
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
@@ -133,10 +133,15 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context) []Envelope {
 	return envelopes
 }
 
-func BuildPixelEnvelopesFromRequest(c *gin.Context) []Envelope {
+func BuildPixelEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelope {
 	var envelopes []Envelope
 	params := util.MapUrlParams(c)
-	pEvent, err := pixel.BuildEvent(c, params)
+	var urlNames = make(map[string]string)
+	for _, i := range conf.Pixel.Paths {
+		urlNames[i.Path] = i.Name
+	}
+	name := urlNames[c.Request.URL.Path]
+	pEvent, err := pixel.BuildEvent(c, name, params)
 	if err != nil {
 		log.Error().Err(err).Msg("could not build PixelEvent")
 	}
