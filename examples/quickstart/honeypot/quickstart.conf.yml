@@ -71,6 +71,12 @@ inputs:
   webhook:
     enabled: true
     path: /wb/hk
+  pixel:
+    enabled: true
+    paths:
+      - name: default
+        path: /pxl/d
+
   relay:
     enabled: true
     path: /relay

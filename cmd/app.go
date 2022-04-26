@@ -225,6 +225,16 @@ func (a *App) initializeWebhookRoutes() {
 	}
 }
 
+func (a *App) initializePixelRoutes() {
+	if a.config.Inputs.Pixel.Enabled {
+		handlerParams := a.handlerParams()
+		log.Info().Msg("initializing pixel routes")
+		for _, r := range a.config.Inputs.Pixel.Paths {
+			a.engine.GET(r.Path, handler.PixelHandler(handlerParams))
+		}
+	}
+}
+
 func (a *App) initializeRelayRoute() {
 	if a.config.Inputs.Relay.Enabled {
 		handlerParams := a.handlerParams()
@@ -269,6 +279,7 @@ func (a *App) Initialize() {
 	a.initializeGenericRoutes()
 	a.initializeCloudeventsRoutes()
 	a.initializeWebhookRoutes()
+	a.initializePixelRoutes()
 	a.initializeSquawkboxRoutes()
 	a.initializeRelayRoute()
 	a.serveStaticIfDev()

@@ -27,18 +27,18 @@ func (ps *ProtocolStats) Build() {
 	}
 }
 
-func (ps *ProtocolStats) IncrementValid(protocol string, eventMetadata *envelope.EventMetadata, count int64) {
-	i := ps.Valid[protocol][eventMetadata.Path]
+func (ps *ProtocolStats) IncrementValid(eventMetadata *envelope.EventMetadata, count int64) {
+	i := ps.Valid[eventMetadata.Protocol][eventMetadata.Path]
 	ps.vmu.Lock()
 	defer ps.vmu.Unlock()
-	ps.Valid[protocol][eventMetadata.Path] = i + count
+	ps.Valid[eventMetadata.Protocol][eventMetadata.Path] = i + count
 }
 
-func (ps *ProtocolStats) IncrementInvalid(protocol string, eventMetadata *envelope.EventMetadata, count int64) {
-	i := ps.Invalid[protocol][eventMetadata.Path]
+func (ps *ProtocolStats) IncrementInvalid(eventMetadata *envelope.EventMetadata, count int64) {
+	i := ps.Invalid[eventMetadata.Protocol][eventMetadata.Path]
 	ps.imu.Lock()
 	defer ps.imu.Unlock()
-	ps.Invalid[protocol][eventMetadata.Path] = i + count
+	ps.Invalid[eventMetadata.Protocol][eventMetadata.Path] = i + count
 }
 
 func BuildProtocolStats() *ProtocolStats {

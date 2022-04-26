@@ -38,6 +38,7 @@ nav:
       - inputs/cloudevents.md
       - inputs/self-describing.md
       - inputs/webhook.md
+      - inputs/pixel.md
       - inputs/relay.md
       - inputs/cdc.md
       - inputs/segment.md

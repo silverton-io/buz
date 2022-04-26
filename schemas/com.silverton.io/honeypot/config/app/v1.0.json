@@ -499,6 +499,41 @@
                         "path"
                     ]
                 },
+                "pixel": {
+                    "type": "object",
+                    "description": "Pixel configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "Whether or not to enable 1x1 pixels",
+                            "default": "true"
+                        },
+                        "paths": {
+                            "type": "array",
+                            "description": "Configuration for pixel paths",
+                            "minItems": 1,
+                            "items": {
+                                "type": "object",
+                                "description": "Configuration for a pixel path",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "default": "default",
+                                        "description": "The pixel path name"
+                                    },
+                                    "path": {
+                                        "type": "string",
+                                        "default": "/pxl/d"
+                                    }
+                                },
+                                "additionalProperties": false,
+                                "required": ["name", "path"]
+                            }
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["enabled", "paths"]
+                },
                 "relay": {
                     "type": "object",
                     "description": "Relay configuration",
@@ -527,6 +562,7 @@
                 "cloudevents",
                 "generic",
                 "webhook",
+                "pixel",
                 "relay"
             ]
         },

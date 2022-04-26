@@ -42,81 +42,115 @@ func (e *ValidationError) Scan(input interface{}) error {
 }
 
 type Envelope struct {
-	Uuid            uuid.UUID      `json:"uuid"`
-	EventProtocol   string         `json:"eventProtocol"`
-	EventMetadata   *EventMetadata `json:"eventMetadata" gorm:"type:json"`
-	SourceMetadata  `json:"sourceMetadata" gorm:"type:json"`
-	Tstamp          time.Time        `json:"tstamp"`
-	Ip              string           `json:"ip"`
-	IsValid         *bool            `json:"isValid"`
-	IsRelayed       *bool            `json:"isRelayed"`
-	RelayedId       uuid.UUID        `json:"relayedId"`
-	ValidationError *ValidationError `json:"validationErrors" gorm:"type:json"`
-	Payload         event.Event      `json:"payload" gorm:"type:json"`
+	SourceMetadata     SourceMetadata     `json:"sourceMetadata" gorm:"type:json"`
+	CollectorMetadata  CollectorMetadata  `json:"collectorMetadata" gorm:"type:json"`
+	EventMetadata      EventMetadata      `json:"eventMetadata" gorm:"type:json"`
+	RelayMetadata      RelayMetadata      `json:"relayMetadata" gorm:"type:json"`
+	ValidationMetadata ValidationMetadata `json:"validationMetadata" gorm:"type:json"`
+	Payload            event.Event        `json:"payload" gorm:"type:json"`
 }
 
 type PgEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
-	Uuid            uuid.UUID      `json:"uuid"`
-	EventProtocol   string         `json:"eventProtocol"`
-	EventMetadata   *EventMetadata `json:"eventMetadata" gorm:"type:jsonb"`
-	SourceMetadata  `json:"sourceMetadata" gorm:"type:jsonb"`
-	Tstamp          time.Time        `json:"tstamp"`
-	Ip              string           `json:"ip"`
-	IsValid         *bool            `json:"isValid"`
-	IsRelayed       *bool            `json:"isRelayed"`
-	RelayedId       uuid.UUID        `json:"relayedId"`
-	ValidationError *ValidationError `json:"validationErrors" gorm:"type:jsonb"`
-	Payload         event.Event      `json:"payload" gorm:"type:jsonb"`
+	SourceMetadata     `json:"sourceMetadata" gorm:"type:jsonb"`
+	CollectorMetadata  `json:"collectorMetadata" gorm:"type:jsonb"`
+	EventMetadata      `json:"eventMetadata" gorm:"type:jsonb"`
+	RelayMetadata      `json:"relayMetadata" gorm:"type:jsonb"`
+	ValidationMetadata `json:"validationMetadata" gorm:"type:jsonb"`
+	Payload            event.Event `json:"payload" gorm:"type:jsonb"`
 }
 
 type MysqlEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
-	Uuid            uuid.UUID      `json:"uuid"`
-	EventProtocol   string         `json:"eventProtocol"`
-	EventMetadata   *EventMetadata `json:"eventMetadata" gorm:"type:json"`
-	SourceMetadata  `json:"sourceMetadata" gorm:"type:json"`
-	Tstamp          time.Time        `json:"tstamp"`
-	Ip              string           `json:"ip"`
-	IsValid         *bool            `json:"isValid"`
-	IsRelayed       *bool            `json:"isRelayed"`
-	RelayedId       uuid.UUID        `json:"relayedId"`
-	ValidationError *ValidationError `json:"validationErrors" gorm:"type:json"`
-	Payload         event.Event      `json:"payload" gorm:"type:json"`
+	SourceMetadata     `json:"sourceMetadata" gorm:"type:json"`
+	CollectorMetadata  `json:"collectorMetadata" gorm:"type:json"`
+	EventMetadata      `json:"eventMetadata" gorm:"type:json"`
+	RelayMetadata      `json:"relayMetadata" gorm:"type:json"`
+	ValidationMetadata `json:"validationMetadata" gorm:"type:json"`
+	Payload            event.Event `json:"payload" gorm:"type:json"`
 }
 
 type ClickhouseEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
-	Uuid            uuid.UUID      `json:"uuid"`
-	EventProtocol   string         `json:"eventProtocol"`
-	EventMetadata   *EventMetadata `json:"eventMetadata" gorm:"type:string"`
-	SourceMetadata  `json:"sourceMetadata" gorm:"type:string"`
-	Tstamp          time.Time        `json:"tstamp"`
-	Ip              string           `json:"ip"`
-	IsValid         *bool            `json:"isValid"`
-	IsRelayed       *bool            `json:"isRelayed"`
-	RelayedId       uuid.UUID        `json:"relayedId"`
-	ValidationError *ValidationError `json:"validationErrors" gorm:"type:string"`
-	Payload         event.Event      `json:"payload" gorm:"type:string"`
+	SourceMetadata     `json:"sourceMetadata" gorm:"type:string"`
+	CollectorMetadata  `json:"collectorMetadata" gorm:"type:string"`
+	EventMetadata      `json:"eventMetadata" gorm:"type:string"`
+	RelayMetadata      `json:"relayMetadata" gorm:"type:string"`
+	ValidationMetadata `json:"validationMetadata" gorm:"type:string"`
+	Payload            event.Event `json:"payload" gorm:"type:string"`
 }
 
 type EventMetadata struct {
-	Vendor             string `json:"vendor,omitempty"`
-	PrimaryNamespace   string `json:"primaryNamespace,omitempty"`
-	SecondaryNamespace string `json:"secondaryNamespace,omitempty"`
-	TertiaryNamespace  string `json:"tertiaryNamespace,omitempty"`
-	Name               string `json:"name,omitempty"`
-	Version            string `json:"version,omitempty"`
-	Format             string `json:"format,omitempty"`
-	Path               string `json:"path,omitempty"`
+	Protocol           string    `json:"protocol"`
+	Uuid               uuid.UUID `json:"uuid"`
+	Vendor             string    `json:"vendor,omitempty"`
+	PrimaryNamespace   string    `json:"primaryNamespace,omitempty"`
+	SecondaryNamespace string    `json:"secondaryNamespace,omitempty"`
+	TertiaryNamespace  string    `json:"tertiaryNamespace,omitempty"`
+	Name               string    `json:"name,omitempty"`
+	Version            string    `json:"version,omitempty"`
+	Format             string    `json:"format,omitempty"`
+	Path               string    `json:"path,omitempty"`
 }
 
-func (e *EventMetadata) Value() (driver.Value, error) {
+func (e EventMetadata) Value() (driver.Value, error) {
 	b, err := json.Marshal(e)
 	return string(b), err
 }
 
-func (e *EventMetadata) Scan(input interface{}) error {
-	return json.Unmarshal(input.([]byte), e)
+func (e EventMetadata) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
 }
 
 type SourceMetadata struct {
 	Name string `json:"name,omitempty"`
+	Ip   string `json:"ip"`
+}
+
+func (e SourceMetadata) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e SourceMetadata) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
+}
+
+type CollectorMetadata struct {
+	Tstamp time.Time `json:"tstamp"`
+}
+
+func (e CollectorMetadata) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e CollectorMetadata) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
+}
+
+type RelayMetadata struct {
+	IsRelayed bool       `json:"isRelayed"`
+	RelayId   *uuid.UUID `json:"relayId"`
+	Tstamp    *time.Time `json:"tstamp"`
+}
+
+func (e RelayMetadata) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e RelayMetadata) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
+}
+
+type ValidationMetadata struct {
+	IsValid         bool             `json:"isValid"`
+	ValidationError *ValidationError `json:"validationErrors"`
+}
+
+func (e ValidationMetadata) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e ValidationMetadata) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
 }
