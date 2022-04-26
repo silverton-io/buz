@@ -19,16 +19,23 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func buildSnowplowEnvelope(spEvent snowplow.SnowplowEvent) Envelope {
-	isRelayed := false
-	uid := uuid.New()
+func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent) Envelope {
 	envelope := Envelope{
-		Uuid:          uid,
-		EventProtocol: protocol.SNOWPLOW,
-		Tstamp:        time.Now().UTC(),
-		Ip:            *spEvent.UserIpAddress,
-		Payload:       spEvent,
-		IsRelayed:     &isRelayed,
+		SourceMetadata: SourceMetadata{
+			Ip: c.ClientIP(),
+		},
+		EventMetadata: EventMetadata{
+			Uuid:     uuid.New(),
+			Protocol: protocol.SNOWPLOW,
+		},
+		CollectorMetadata: CollectorMetadata{
+			Tstamp: time.Now().UTC(),
+		},
+		RelayMetadata: RelayMetadata{
+			IsRelayed: false,
+		},
+		ValidationMetadata: ValidationMetadata{},
+		Payload:            e,
 	}
 	return envelope
 }
@@ -44,13 +51,13 @@ func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []Env
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
 			spEvent := snowplow.BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf)
-			e := buildSnowplowEnvelope(spEvent)
+			e := buildSnowplowEnvelope(c, spEvent)
 			envelopes = append(envelopes, e)
 		}
 	} else {
 		params := util.MapUrlParams(c)
 		spEvent := snowplow.BuildEventFromMappedParams(c, params, conf)
-		e := buildSnowplowEnvelope(spEvent)
+		e := buildSnowplowEnvelope(c, spEvent)
 		envelopes = append(envelopes, e)
 	}
 	return envelopes
@@ -64,16 +71,21 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 		return envelopes
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
-		uid := uuid.New()
 		genEvent := generic.BuildEvent(e, conf.Generic)
-		isRelayed := false
 		envelope := Envelope{
-			Uuid:          uid,
-			EventProtocol: protocol.GENERIC,
-			Tstamp:        time.Now().UTC(),
-			Ip:            c.ClientIP(),
-			Payload:       genEvent,
-			IsRelayed:     &isRelayed,
+			SourceMetadata: SourceMetadata{Ip: c.ClientIP()},
+			EventMetadata: EventMetadata{
+				Uuid:     uuid.New(),
+				Protocol: protocol.GENERIC,
+			},
+			CollectorMetadata: CollectorMetadata{
+				Tstamp: time.Now().UTC(),
+			},
+			RelayMetadata: RelayMetadata{
+				IsRelayed: false,
+			},
+			ValidationMetadata: ValidationMetadata{},
+			Payload:            genEvent,
 		}
 		envelopes = append(envelopes, envelope)
 	}
@@ -89,15 +101,22 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []E
 	}
 	for _, ce := range gjson.ParseBytes(reqBody).Array() {
 		cEvent, _ := cloudevents.BuildEvent(ce)
-		uid := uuid.New()
-		isRelayed := false
 		envelope := Envelope{
-			Uuid:          uid,
-			EventProtocol: protocol.CLOUDEVENTS,
-			Tstamp:        time.Now().UTC(),
-			Ip:            c.ClientIP(),
-			Payload:       cEvent,
-			IsRelayed:     &isRelayed,
+			SourceMetadata: SourceMetadata{
+				Ip: c.ClientIP(),
+			},
+			EventMetadata: EventMetadata{
+				Uuid:     uuid.New(),
+				Protocol: protocol.CLOUDEVENTS,
+			},
+			CollectorMetadata: CollectorMetadata{
+				Tstamp: time.Now().UTC(),
+			},
+			RelayMetadata: RelayMetadata{
+				IsRelayed: false,
+			},
+			ValidationMetadata: ValidationMetadata{},
+			Payload:            cEvent,
 		}
 		envelopes = append(envelopes, envelope)
 	}
@@ -112,21 +131,28 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 		return envelopes
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
-		uid := uuid.New()
 		whEvent, err := webhook.BuildEvent(c, e)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not build WebhookEvent")
 		}
-		isValid := true
-		isRelayed := false
 		envelope := Envelope{
-			Uuid:          uid,
-			EventProtocol: protocol.WEBHOOK,
-			Tstamp:        time.Now().UTC(),
-			Ip:            c.ClientIP(),
-			Payload:       whEvent,
-			IsValid:       &isValid,
-			IsRelayed:     &isRelayed,
+			SourceMetadata: SourceMetadata{
+				Ip: c.ClientIP(),
+			},
+			EventMetadata: EventMetadata{
+				Uuid:     uuid.New(),
+				Protocol: protocol.WEBHOOK,
+			},
+			CollectorMetadata: CollectorMetadata{
+				Tstamp: time.Now().UTC(),
+			},
+			RelayMetadata: RelayMetadata{
+				IsRelayed: false,
+			},
+			ValidationMetadata: ValidationMetadata{
+				IsValid: true,
+			},
+			Payload: whEvent,
 		}
 		envelopes = append(envelopes, envelope)
 	}
@@ -145,17 +171,24 @@ func BuildPixelEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelo
 	if err != nil {
 		log.Error().Err(err).Msg("could not build PixelEvent")
 	}
-	uid := uuid.New()
-	isValid := true
-	isRelayed := false
 	envelope := Envelope{
-		Uuid:          uid,
-		EventProtocol: protocol.PIXEL,
-		Tstamp:        time.Now().UTC(),
-		Ip:            c.ClientIP(),
-		Payload:       pEvent,
-		IsValid:       &isValid,
-		IsRelayed:     &isRelayed,
+		SourceMetadata: SourceMetadata{
+			Ip: c.ClientIP(),
+		},
+		EventMetadata: EventMetadata{
+			Uuid:     uuid.New(),
+			Protocol: protocol.PIXEL,
+		},
+		CollectorMetadata: CollectorMetadata{
+			Tstamp: time.Now().UTC(),
+		},
+		RelayMetadata: RelayMetadata{
+			IsRelayed: false,
+		},
+		ValidationMetadata: ValidationMetadata{
+			IsValid: true,
+		},
+		Payload: pEvent,
 	}
 	envelopes = append(envelopes, envelope)
 	return envelopes
@@ -172,7 +205,6 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 	}
 	relayedEvents := gjson.ParseBytes(reqBody)
 	for _, relayedEvent := range relayedEvents.Array() {
-		rid := uuid.New()
 		eventProtocol := relayedEvent.Get("eventProtocol").String()
 		eventPayload := relayedEvent.Get("payload").Raw
 		var envelope Envelope
@@ -199,9 +231,11 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 			json.Unmarshal([]byte(eventPayload), &payload)
 			envelope.Payload = payload
 		}
-		isRelayed := true
-		envelope.IsRelayed = &isRelayed
-		envelope.RelayedId = rid
+		relayMeta := RelayMetadata{
+			IsRelayed: true,
+			RelayId:   uuid.New(),
+		}
+		envelope.RelayMetadata = relayMeta
 		envelopes = append(envelopes, envelope)
 	}
 	return envelopes
