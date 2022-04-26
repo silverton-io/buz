@@ -44,8 +44,8 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 			e = append(e, envelope)
 		default:
 			isValid, validationError, _ := validator.ValidateEvent(envelope.Payload, cache)
-			envelope.IsValid = isValid
-			envelope.ValidationError = &validationError
+			envelope.ValidationMetadata.IsValid = isValid
+			envelope.ValidationMetadata.ValidationError = &validationError
 			// eventMetadata := getMetadataFromSchema(schemaContents)
 			// envelope.EventMetadata = &eventMetadata
 			e = append(e, envelope)

@@ -42,12 +42,12 @@ func (e *ValidationError) Scan(input interface{}) error {
 }
 
 type Envelope struct {
-	SourceMetadata     `json:"sourceMetadata" gorm:"type:json"`
-	CollectorMetadata  `json:"collectorMetadata" gorm:"type:json"`
-	EventMetadata      `json:"eventMetadata" gorm:"type:json"`
-	RelayMetadata      `json:"relayMetadata" gorm:"type:json"`
-	ValidationMetadata `json:"validationMetadata" gorm:"type:json"`
-	Payload            event.Event `json:"payload" gorm:"type:json"`
+	SourceMetadata     SourceMetadata     `json:"sourceMetadata" gorm:"type:json"`
+	CollectorMetadata  CollectorMetadata  `json:"collectorMetadata" gorm:"type:json"`
+	EventMetadata      EventMetadata      `json:"eventMetadata" gorm:"type:json"`
+	RelayMetadata      RelayMetadata      `json:"relayMetadata" gorm:"type:json"`
+	ValidationMetadata ValidationMetadata `json:"validationMetadata" gorm:"type:json"`
+	Payload            event.Event        `json:"payload" gorm:"type:json"`
 }
 
 type PgEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
@@ -90,13 +90,13 @@ type EventMetadata struct {
 	Path               string    `json:"path,omitempty"`
 }
 
-func (e *EventMetadata) Value() (driver.Value, error) {
+func (e EventMetadata) Value() (driver.Value, error) {
 	b, err := json.Marshal(e)
 	return string(b), err
 }
 
-func (e *EventMetadata) Scan(input interface{}) error {
-	return json.Unmarshal(input.([]byte), e)
+func (e EventMetadata) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
 }
 
 type SourceMetadata struct {
@@ -104,8 +104,26 @@ type SourceMetadata struct {
 	Ip   string `json:"ip"`
 }
 
+func (e SourceMetadata) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e SourceMetadata) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
+}
+
 type CollectorMetadata struct {
 	Tstamp time.Time `json:"tstamp"`
+}
+
+func (e CollectorMetadata) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e CollectorMetadata) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
 }
 
 type RelayMetadata struct {
@@ -113,7 +131,25 @@ type RelayMetadata struct {
 	RelayId   uuid.UUID `json:"relayId"`
 }
 
+func (e RelayMetadata) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e RelayMetadata) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
+}
+
 type ValidationMetadata struct {
 	IsValid         bool             `json:"isValid"`
 	ValidationError *ValidationError `json:"validationErrors"`
+}
+
+func (e ValidationMetadata) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e ValidationMetadata) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
 }
