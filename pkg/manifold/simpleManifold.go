@@ -26,10 +26,10 @@ func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope, meta *tele.Me
 	for _, e := range envelopes {
 		isValid := e.ValidationMetadata.IsValid
 		if isValid {
-			// meta.ProtocolStats.IncrementValid(e.EventMetadata.Protocol, e.EventMetadata, 1)
+			meta.ProtocolStats.IncrementValid(&e.EventMetadata, 1)
 			validEnvelopes = append(validEnvelopes, e)
 		} else {
-			// meta.ProtocolStats.IncrementInvalid(e.EventMetadata.Protocol, e.EventMetadata, 1)
+			meta.ProtocolStats.IncrementInvalid(&e.EventMetadata, 1)
 			invalidEnvelopes = append(invalidEnvelopes, e)
 		}
 	}
