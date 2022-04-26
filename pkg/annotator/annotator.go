@@ -43,11 +43,17 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 		case protocol.RELAY:
 			e = append(e, envelope)
 		default:
-			isValid, validationError, _ := validator.ValidateEvent(envelope.Payload, cache)
+			isValid, validationError, schemaContents := validator.ValidateEvent(envelope.Payload, cache)
 			envelope.ValidationMetadata.IsValid = isValid
 			envelope.ValidationMetadata.ValidationError = &validationError
-			// eventMetadata := getMetadataFromSchema(schemaContents)
-			// envelope.EventMetadata = &eventMetadata
+			m := getMetadataFromSchema(schemaContents)
+			envelope.EventMetadata.Vendor = m.Vendor
+			envelope.EventMetadata.PrimaryNamespace = m.PrimaryNamespace
+			envelope.EventMetadata.SecondaryNamespace = m.SecondaryNamespace
+			envelope.EventMetadata.TertiaryNamespace = m.TertiaryNamespace
+			envelope.EventMetadata.Name = m.Name
+			envelope.EventMetadata.Version = m.Version
+			envelope.EventMetadata.Path = m.Path
 			e = append(e, envelope)
 		}
 	}

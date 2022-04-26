@@ -231,9 +231,12 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 			json.Unmarshal([]byte(eventPayload), &payload)
 			envelope.Payload = payload
 		}
+		uid := uuid.New()
+		now := time.Now().UTC()
 		envelope.RelayMetadata = RelayMetadata{
 			IsRelayed: true,
-			RelayId:   uuid.New(),
+			RelayId:   &uid,
+			Tstamp:    &now,
 		}
 		envelopes = append(envelopes, envelope)
 	}

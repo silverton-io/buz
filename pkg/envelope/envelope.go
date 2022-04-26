@@ -127,8 +127,9 @@ func (e CollectorMetadata) Scan(input interface{}) error {
 }
 
 type RelayMetadata struct {
-	IsRelayed bool      `json:"isRelayed"`
-	RelayId   uuid.UUID `json:"relayId"`
+	IsRelayed bool       `json:"isRelayed"`
+	RelayId   *uuid.UUID `json:"relayId"`
+	Tstamp    *time.Time `json:"tstamp"`
 }
 
 func (e RelayMetadata) Value() (driver.Value, error) {
