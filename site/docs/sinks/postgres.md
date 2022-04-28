@@ -10,6 +10,8 @@ The Postgres sink writes `valid` and `invalid` events to the configured Postgres
 
 It is especially useful if you already have Postgres running and want to quickly get started with Honeypot-based event tracking.
 
+Tables are ensured upon Honeypot startup, so manual creation is not required.
+
 ## Sample Postgres Sink Configuration
 
 ```
