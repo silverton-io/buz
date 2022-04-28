@@ -7,4 +7,4 @@ tags:
 
 # 🟡 MQTT
 
-MQTT inputs are not yet supported.
+MQTT inputs are not yet supported. Stay tuned 🏴‍☠️😉😮.

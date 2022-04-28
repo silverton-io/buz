@@ -12,6 +12,7 @@ import (
 
 const (
 	PUBSUB           string = "pubsub"
+	REDPANDA         string = "redpanda"
 	KAFKA            string = "kafka"
 	KINESIS          string = "kinesis"
 	KINESIS_FIREHOSE string = "kinesis-firehose"
@@ -47,6 +48,9 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		sink := PubsubSink{}
 		return &sink, nil
 	case KAFKA:
+		sink := KafkaSink{}
+		return &sink, nil
+	case REDPANDA:
 		sink := KafkaSink{}
 		return &sink, nil
 	case KINESIS:

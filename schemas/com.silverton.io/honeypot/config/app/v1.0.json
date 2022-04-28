@@ -733,6 +733,7 @@
                         "description": "The sink configuration",
                         "enum": [
                             "kafka",
+                            "redpanda",
                             "pubsub",
                             "kinesis",
                             "kinesis-firehose",
@@ -828,7 +829,7 @@
                     },
                     "invalidStream": {
                         "type": "string",
-                        "default": "honeypot-valid",
+                        "default": "honeypot-invalid",
                         "description": "The name of the invalid event stream, if sink type is kinesis"
                     },
                     "invalidUrl": {
@@ -990,7 +991,7 @@
                             "mongodb3"
                         ]
                     },
-                    "mongoDbPort": {
+                    "mongoPort": {
                         "type": "number",
                         "description": "The mongo port if sink type is mongodb",
                         "default": "27017"
@@ -1000,12 +1001,12 @@
                         "description": "The mongo database name if sink type is mongodb",
                         "default": "honeypot"
                     },
-                    "mongoDbUser": {
+                    "mongoUser": {
                         "type": "string",
                         "description": "The mongo database user if sink type is mongodb",
                         "default": ""
                     },
-                    "mongoDbPass": {
+                    "mongoPass": {
                         "type": "string",
                         "description": "The mongo database password if sink type is mongodb",
                         "default": ""
@@ -1030,6 +1031,18 @@
                         "properties": {
                             "type": {
                                 "const": "kafka"
+                            }
+                        },
+                        "required": [
+                            "kafkaBrokers",
+                            "validTopic",
+                            "invalidTopic"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "redpanda"
                             }
                         },
                         "required": [
@@ -1068,8 +1081,8 @@
                             }
                         },
                         "required": [
-                            "validTopic",
-                            "invalidTopic"
+                            "validStream",
+                            "invalidStream"
                         ]
                     },
                     {
@@ -1222,7 +1235,7 @@
                         },
                         "required": [
                             "mongoHosts",
-                            "mongoDbPort",
+                            "mongoPort",
                             "mongoDbName",
                             "validCollection",
                             "invalidCollection"

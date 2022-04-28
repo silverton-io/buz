@@ -33,7 +33,11 @@ nav:
   #   - deployment/gcp.md
   #   - deployment/aws.md
   #   - deployment/azure.md
-  - Input Protocols:
+  - Configuration:
+      - configuration/sample.md
+  - Tools:
+      - tools/squawkbox.md
+  - Supported Input Protocols:
       - inputs/snowplow.md
       - inputs/cloudevents.md
       - inputs/self-describing.md
@@ -46,10 +50,10 @@ nav:
       - inputs/opcua.md
       # - inputs/ros.md
       - inputs/mqtt.md
-  - Schema Caches:
+  - Supported Schema Caches:
       - schema-cache/onboard.md
       - schema-cache/redis.md
-  - Schema Cache Backends:
+  - Supported Cache Backends:
       - schema-cache-backends/s3.md
       - schema-cache-backends/gcs.md
       - schema-cache-backends/filesystem.md
@@ -60,12 +64,19 @@ nav:
       - schema-cache-backends/redis.md
       - schema-cache-backends/iglu.md
       - schema-cache-backends/kafka-registry.md
-  - Sinks:
+  - Supported Middleware:
+      - middleware/timeout.md
+      - middleware/rate-limiter.md
+      - middleware/advancing-cookie.md
+      - middleware/cors.md
+      - middleware/request-logger.md
+      - middleware/uid2.md
+      - middleware/yeet.md
+  - Supported Sinks:
       - sinks/kafka.md
       - sinks/pubsub.md
       - sinks/kinesis.md
       - sinks/kinesis-firehose.md
-      - sinks/relay.md
       - sinks/http.md
       - sinks/stdout.md
       - sinks/elasticsearch.md
@@ -76,9 +87,11 @@ nav:
       - sinks/mysql.md
       - sinks/clickhouse.md
       - sinks/mongodb.md
+      - sinks/relay.md
       - sinks/blackhole.md
-      - sinks/iterable.md
+      - sinks/indicative.md
       - sinks/amplitude.md
+      - sinks/vitess.md
       - sinks/bigquery.md
       - sinks/firebolt.md
       - sinks/databricks.md
@@ -90,15 +103,3 @@ nav:
   - Serialization Protocols:
       - serialization-protocols/json.md
       - serialization-protocols/avro.md
-  - Tools:
-      - tools/squawkbox.md
-  - Middleware:
-      - middleware/timeout.md
-      - middleware/rate-limiter.md
-      - middleware/advancing-cookie.md
-      - middleware/cors.md
-      - middleware/request-logger.md
-      - middleware/uid2.md
-      - middleware/yeet.md
-  - Configuration:
-      - configuration/sample.md
