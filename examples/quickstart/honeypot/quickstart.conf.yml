@@ -4,7 +4,7 @@ app:
   env: development
   mode: debug
   port: 8080
-  trackerDomain: localhost
+  trackerDomain: quickstart.silverton.io
   health:
     enabled: true
     path: /health
