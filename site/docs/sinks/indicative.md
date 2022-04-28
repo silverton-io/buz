@@ -1,7 +1,7 @@
 ---
 tags:
   - sink
-  - iterable
+  - indicative
 ---
 
 # 🟡 Indicative
