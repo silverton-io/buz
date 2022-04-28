@@ -1,7 +1,7 @@
 ---
 tags:
   - deployment
-  - azure
+  - azure data warehouse
 ---
 
 # Azure

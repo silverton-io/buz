@@ -733,6 +733,7 @@
                         "description": "The sink configuration",
                         "enum": [
                             "kafka",
+                            "redpanda",
                             "pubsub",
                             "kinesis",
                             "kinesis-firehose",
@@ -1030,6 +1031,18 @@
                         "properties": {
                             "type": {
                                 "const": "kafka"
+                            }
+                        },
+                        "required": [
+                            "kafkaBrokers",
+                            "validTopic",
+                            "invalidTopic"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "redpanda"
                             }
                         },
                         "required": [

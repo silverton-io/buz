@@ -2,7 +2,7 @@
 
 ## Event Streaming for The Rest of Us
 
-Honeypot is a multi-protocol event collection, validation, pipelining, and observability system.
+Honeypot is a multi-protocol event collection, validation, routing, and observability system.
 
 It is designed to be ***easily-configured***, ***easily-deployed***, and ***easily-maintained***.
 
