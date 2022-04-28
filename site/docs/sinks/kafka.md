@@ -7,7 +7,7 @@ tags:
 
 # 🟢 Redpanda/Kafka
 
-The Redpanda/Kafka sink writes `valid` and `invalid` events into the respective topics.
+The Redpanda/Kafka sink writes `valid` and `invalid` events to the respective topics.
 
 
 ## Sample Redpanda/Kafka Sink Configuration

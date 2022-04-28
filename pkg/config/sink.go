@@ -60,10 +60,10 @@ type Sink struct {
 	PubnubSubKey   string `json:"pubnubSubKey,omitempty"`
 	// Mongodb
 	MongoHosts        []string `json:"mongoHosts,omitempty"`
-	MongoDbPort       string   `json:"mongoDbPort,omitempty"`
+	MongoPort         string   `json:"mongoDbPort,omitempty"`
 	MongoDbName       string   `json:"mongoDbName,omitempty"`
-	MongoDbUser       string   `json:"-"`
-	MongoDbPass       string   `json:"-"`
+	MongoUser         string   `json:"-"`
+	MongoPass         string   `json:"-"`
 	ValidCollection   string   `json:"validCollection,omitempty"`
 	InvalidCollection string   `json:"invalidCollection,omitempty"`
 }

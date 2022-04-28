@@ -44,10 +44,10 @@ func (s *MongodbSink) Initialize(conf config.Sink) error {
 	opt := options.ClientOptions{
 		Hosts: conf.MongoHosts,
 	}
-	if conf.MongoDbUser != "" {
+	if conf.MongoUser != "" {
 		c := options.Credential{
-			Username: conf.MongoDbUser,
-			Password: conf.MongoDbPass,
+			Username: conf.MongoUser,
+			Password: conf.MongoPass,
 		}
 		opt.Auth = &c
 	}
