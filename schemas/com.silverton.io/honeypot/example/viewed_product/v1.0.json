@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://schemas.silverton.io/com.silverton.io/honeypot/example/viewed_product/v1.0.json",
+    "$id": "https://registry.silverton.io/com.silverton.io/honeypot/example/viewed_product/v1.0.json",
     "title": "com.silverton.io/honeypot/example/viewed_product/v1.0.json",
 	"description": "Schema for viewing a product",
 	"self": {

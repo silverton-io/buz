@@ -10,6 +10,8 @@ The Materialize sink writes `valid` and `invalid` events to the configured table
 
 This sink is especially useful when wanting to try out a streaming database without the overhead of another set of infrastructure.
 
+Destination tables are ensured on Honeypot startup, so manual creation is not required.
+
 
 ## Sample Materialize Sink Configuration
 
