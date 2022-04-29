@@ -1,18 +1,18 @@
 package config
 
-type SingleLayerConfig struct {
+type GenericRootConfig struct {
 	RootKey string `json:"rootKey"`
 }
 
-type DoubleLayerConfig struct {
+type GenericRootAndChildConfig struct {
 	RootKey   string `json:"rootKey"`
 	SchemaKey string `json:"schemaKey"`
 	DataKey   string `json:"dataKey"`
 }
 
 type Generic struct {
-	Enabled  bool              `json:"enabled"`
-	Path     string            `json:"path"`
-	Contexts SingleLayerConfig `json:"contexts"`
-	Payload  DoubleLayerConfig `json:"payload"`
+	Enabled  bool                      `json:"enabled"`
+	Path     string                    `json:"path"`
+	Contexts GenericRootConfig         `json:"contexts"`
+	Payload  GenericRootAndChildConfig `json:"payload"`
 }

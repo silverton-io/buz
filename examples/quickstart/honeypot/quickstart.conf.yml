@@ -63,7 +63,7 @@ inputs:
     contexts:
       rootKey: contexts
     payload:
-      rootKey: data
+      rootKey: payload
       schemaKey: schema
       dataKey: data
   webhook:
