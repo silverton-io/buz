@@ -41,16 +41,13 @@ type SnowplowEvent struct {
 	Device              `json:"device"`
 	Browser             `json:"browser"`
 	Screen              `json:"screen"`
-	Contexts            *[]event.SelfDescribingContext `json:"contexts"`
-	SelfDescribingEvent *event.SelfDescribingPayload   `json:"self_describing_event"`
+	Contexts            event.Contexts               `json:"contexts"`
+	SelfDescribingEvent *event.SelfDescribingPayload `json:"self_describing_event"`
 	// SelfDescribingMetadata `json:"self_describing_metadata"` // NOTE - maybe put this back someday?
 }
 
 func (e SnowplowEvent) Schema() *string {
-	schema := e.SelfDescribingEvent.Schema
-	if schema[:4] == IGLU {
-		schema = schema[5:]
-	}
+	schema := stripIglu(e.SelfDescribingEvent.Schema)
 	return &schema
 }
 

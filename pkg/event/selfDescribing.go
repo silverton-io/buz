@@ -11,3 +11,6 @@ type SelfDescribingPayload struct {
 }
 
 type SelfDescribingContext SelfDescribingPayload
+
+//
+type Contexts map[string]interface{}

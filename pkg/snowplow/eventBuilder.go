@@ -16,6 +16,13 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+func stripIglu(schema string) string {
+	if schema[:4] == IGLU {
+		return schema[5:]
+	}
+	return schema
+}
+
 func getStringParam(params map[string]interface{}, k string) *string {
 	v := params[k]
 	if v == nil {
@@ -78,6 +85,9 @@ func getDimensions(dimensionString string) (Dimension, error) {
 	dim := strings.Split(dimensionString, "x")
 	wS, hS := dim[0], dim[1]
 	width, err := strconv.Atoi(wS)
+	if err != nil {
+		return Dimension{}, err
+	}
 	height, err := strconv.Atoi(hS)
 	if err != nil {
 		return Dimension{}, err
@@ -88,8 +98,8 @@ func getDimensions(dimensionString string) (Dimension, error) {
 	}, nil
 }
 
-func getContexts(b64encodedContexts *string) *[]event.SelfDescribingContext {
-	var contexts []event.SelfDescribingContext
+func getContexts(b64encodedContexts *string) map[string]interface{} {
+	var contexts = make(map[string]interface{})
 	payload, err := b64.RawStdEncoding.DecodeString(*b64encodedContexts)
 	if err != nil {
 		log.Error().Err(err).Msg("could not decode b64 encoded contexts")
@@ -97,13 +107,14 @@ func getContexts(b64encodedContexts *string) *[]event.SelfDescribingContext {
 	}
 	contextPayload := gjson.ParseBytes(payload)
 	for _, pl := range contextPayload.Get("data").Array() {
+		schema := stripIglu(pl.Get("schema").String())
 		context := event.SelfDescribingContext{
-			Schema: pl.Get("schema").String(),
+			Schema: schema,
 			Data:   pl.Get("data").Value().(map[string]interface{}),
 		}
-		contexts = append(contexts, context)
+		contexts[context.Schema] = context.Data
 	}
-	return &contexts
+	return contexts
 }
 
 func getSdPayload(b64EncodedPayload *string) *event.SelfDescribingPayload {
@@ -112,8 +123,9 @@ func getSdPayload(b64EncodedPayload *string) *event.SelfDescribingPayload {
 		log.Error().Err(err).Msg("could not decode b64 encoded self describing payload")
 		return nil
 	}
+	schema := stripIglu(gjson.GetBytes(payload, "data.schema").String())
 	p := event.SelfDescribingPayload{
-		Schema: gjson.GetBytes(payload, "data.schema").String(),
+		Schema: schema,
 		Data:   gjson.GetBytes(payload, "data.data").Value().(map[string]interface{}),
 	}
 	return &p
