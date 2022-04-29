@@ -75,11 +75,9 @@ func TestGetContexts(t *testing.T) {
 	pl, _ := b64.RawStdEncoding.DecodeString(b64contexts)
 	contextPayload := gjson.ParseBytes(pl)
 	for _, pl := range contextPayload.Get("data").Array() {
-		c := event.SelfDescribingContext{
-			Schema: pl.Get("schema").String(),
-			Data:   pl.Get("data").Value().(map[string]interface{}),
-		}
-		expectedContexts[c.Schema] = c.Data
+		schema := stripIglu(pl.Get("schema").String())
+		data := pl.Get("data").Value().(map[string]interface{})
+		expectedContexts[schema] = data
 	}
 	actualContexts := getContexts(&b64contexts)
 	assert.Equal(t, expectedContexts, actualContexts)

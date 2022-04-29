@@ -108,11 +108,8 @@ func getContexts(b64encodedContexts *string) map[string]interface{} {
 	contextPayload := gjson.ParseBytes(payload)
 	for _, pl := range contextPayload.Get("data").Array() {
 		schema := stripIglu(pl.Get("schema").String())
-		context := event.SelfDescribingContext{
-			Schema: schema,
-			Data:   pl.Get("data").Value().(map[string]interface{}),
-		}
-		contexts[context.Schema] = context.Data
+		data := pl.Get("data").Value().(map[string]interface{})
+		contexts[schema] = data
 	}
 	return contexts
 }
