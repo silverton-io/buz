@@ -23,7 +23,7 @@ func BuildEvent(e gjson.Result, conf config.Generic) GenericEvent {
 		}
 	}
 	genEvent := GenericEvent{
-		Contexts: contexts,
+		Contexts: contexts, // FIXME - validate these contexts.
 		Payload:  sdPayload,
 	}
 	return genEvent
