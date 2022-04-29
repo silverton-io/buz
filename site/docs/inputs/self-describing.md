@@ -12,13 +12,13 @@ Honeypot listens on a configurable endpoint for incoming `POST` requests of `sel
 
 ```
 {
-  $CONTEXTS_KEY: [
-    {$CONTEXT_SCHEMA_KEY: "some-context-key", $CONTEXT_DATA_KEY: {"context-data": "here"}},
-    {$CONTEXT_SCHEMA_KEY: "another-context-key", $CONTEXT_DATA_KEY: {"more-context-data": "here"}},
-  ],
-  $PAYLOAD_KEY: {
-    $SCHEMA_KEY: "some-key",
-    $DATA_KEY: {"data": "here"}
+  $CONTEXTS_ROOT_KEY: {
+    "some-context-schema": {"context-data": "here"},
+    "another-context-schema": {"more-context-data": "here"}
+  },
+  $PAYLOAD_ROOT_KEY: {
+    $PAYLOAD_SCHEMA_KEY: "some-key",
+    $PAYLOAD_DATA_KEY: {"data": "here"}
   }
 }
 ```
@@ -40,8 +40,6 @@ Honeypot uses the schema defined at `$PAYLOAD_KEY.$SCHEMA_KEY` to validate each 
     path: /gen/p          # Path for incoming self-describing events
     contexts: 
       rootKey: contexts   # The contexts root key (contexts)
-      schemaKey: schema   # The contexts schema key (contexts.schema)
-      dataKey: data       # The contexts data key (contexts.data)
     payload:
       rootKey: payload    # The payload root key (payload)
       schemaKey: schema   # The payload schema key (payload.schema)

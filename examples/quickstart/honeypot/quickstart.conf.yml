@@ -62,8 +62,6 @@ inputs:
     path: /gen/p
     contexts:
       rootKey: contexts
-      schemaKey: schema
-      dataKey: data
     payload:
       rootKey: data
       schemaKey: schema
