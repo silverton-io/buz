@@ -24,6 +24,14 @@ func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent) Envelope {
 		SourceMetadata: SourceMetadata{
 			Ip: c.ClientIP(),
 		},
+		UserMetadata: UserMetadata{
+			Nuid:        e.NetworkUserid,
+			Duid:        e.DomainUserid,
+			Uid:         e.Userid,
+			Fingerprint: e.UserFingerprint,
+			Sid:         e.DomainSessionId,
+			Sidx:        e.DomainSessionIdx,
+		},
 		EventMetadata: EventMetadata{
 			Uuid:     uuid.New(),
 			Protocol: protocol.SNOWPLOW,
@@ -70,10 +78,14 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 		log.Error().Stack().Err(err).Msg("could not read request body")
 		return envelopes
 	}
+	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
 		genEvent := generic.BuildEvent(e, conf.Generic)
 		envelope := Envelope{
 			SourceMetadata: SourceMetadata{Ip: c.ClientIP()},
+			UserMetadata: UserMetadata{
+				Nuid: &advancingCookieVal,
+			},
 			EventMetadata: EventMetadata{
 				Uuid:     uuid.New(),
 				Protocol: protocol.GENERIC,
@@ -99,11 +111,15 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []E
 		log.Error().Stack().Err(err).Msg("could not read request body")
 		return envelopes
 	}
+	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
 	for _, ce := range gjson.ParseBytes(reqBody).Array() {
 		cEvent, _ := cloudevents.BuildEvent(ce)
 		envelope := Envelope{
 			SourceMetadata: SourceMetadata{
 				Ip: c.ClientIP(),
+			},
+			UserMetadata: UserMetadata{
+				Nuid: &advancingCookieVal,
 			},
 			EventMetadata: EventMetadata{
 				Uuid:     uuid.New(),
@@ -130,6 +146,7 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 		log.Error().Stack().Err(err).Msg("could not read request body")
 		return envelopes
 	}
+	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
 		whEvent, err := webhook.BuildEvent(c, e)
 		if err != nil {
@@ -138,6 +155,9 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 		envelope := Envelope{
 			SourceMetadata: SourceMetadata{
 				Ip: c.ClientIP(),
+			},
+			UserMetadata: UserMetadata{
+				Nuid: &advancingCookieVal,
 			},
 			EventMetadata: EventMetadata{
 				Uuid:     uuid.New(),
@@ -171,9 +191,13 @@ func BuildPixelEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelo
 	if err != nil {
 		log.Error().Err(err).Msg("could not build PixelEvent")
 	}
+	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
 	envelope := Envelope{
 		SourceMetadata: SourceMetadata{
 			Ip: c.ClientIP(),
+		},
+		UserMetadata: UserMetadata{
+			Nuid: &advancingCookieVal,
 		},
 		EventMetadata: EventMetadata{
 			Uuid:     uuid.New(),
@@ -224,6 +248,10 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 			envelope.Payload = payload
 		case protocol.WEBHOOK:
 			payload := webhook.WebhookEvent{}
+			json.Unmarshal([]byte(eventPayload), &payload)
+			envelope.Payload = payload
+		case protocol.PIXEL:
+			payload := pixel.PixelEvent{}
 			json.Unmarshal([]byte(eventPayload), &payload)
 			envelope.Payload = payload
 		default:
