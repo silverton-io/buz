@@ -18,6 +18,7 @@ const (
 	EVENT_VERSION             string = "version"
 	EVENT_FORMAT              string = "format"
 	EVENT_PATH                string = "path"
+	INPUT_PROTOCOL            string = "inputProtocol"
 )
 
 type PayloadValidationError struct {

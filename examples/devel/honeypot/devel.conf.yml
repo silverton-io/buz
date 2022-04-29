@@ -62,8 +62,6 @@ inputs:
     path: /gen/p
     contexts:
       rootKey: contexts
-      schemaKey: schema
-      dataKey: data
     payload:
       rootKey: payload
       schemaKey: schema
@@ -138,10 +136,10 @@ sinks:
     deliveryRequired: true
     mongoHosts:
       - mongo
-    mongoDbPort: 27017
-    mongoDbUser: honeypot
-    mongoDbPass: honeypot
+    mongoPort: 27017
     mongoDbName: honeypot
+    mongoUser: honeypot
+    mongoPass: honeypot
     validCollection: honeypotValid
     invalidCollection: honeypotInvalid
   - name: thepanda
@@ -149,8 +147,8 @@ sinks:
     deliveryRequired: true
     kafkaBrokers:
       - redpanda-1:29092
-    validTopic: honeypot-valid
-    invalidTopic: honeypot-invalid
+    validTopic: hpt-valid
+    invalidTopic: hpt-invalid
   - name: elk
     type: elasticsearch
     deliveryRequired: true

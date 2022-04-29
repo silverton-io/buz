@@ -1,8 +1,8 @@
 package event
 
 type SelfDescribingEvent struct {
-	Contexts []SelfDescribingContext `json:"contexts"`
-	Payload  SelfDescribingPayload   `json:"payload"`
+	Contexts `json:"contexts"`
+	Payload  SelfDescribingPayload `json:"payload"`
 }
 
 type SelfDescribingPayload struct {
@@ -10,4 +10,5 @@ type SelfDescribingPayload struct {
 	Data   map[string]interface{} `json:"data"`
 }
 
-type SelfDescribingContext SelfDescribingPayload
+//
+type Contexts map[string]interface{}

@@ -3,7 +3,7 @@ version: "3.9"
 services:
   honeypot:
     container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.7.0
+    image: ghcr.io/silverton-io/honeypot:v0.8.0
     volumes:
       - type: bind
         source: ./honeypot/devel.conf.yml
@@ -90,7 +90,7 @@ services:
       - 6875:6875
 
   redpanda-1:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.9 # Note! Use the latest version :)
+    image: docker.vectorized.io/vectorized/redpanda:v21.11.15 # Note! Use the latest version :)
     container_name: redpanda-1
     command:
       - redpanda start

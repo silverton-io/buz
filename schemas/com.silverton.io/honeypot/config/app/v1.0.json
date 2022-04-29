@@ -423,23 +423,11 @@
                                     "type": "string",
                                     "default": "contexts",
                                     "description": "The root json key that defines event contexts"
-                                },
-                                "schemaKey": {
-                                    "type": "string",
-                                    "default": "schema",
-                                    "description": "The key that defines the context schema. (root.CONTEXTKEY.SCHEMAKEY)"
-                                },
-                                "dataKey": {
-                                    "type": "string",
-                                    "default": "data",
-                                    "description": "The key that defines the context data. (root.CONTEXTKEY.DATAKEY)"
                                 }
                             },
                             "additionalProperties": false,
                             "required": [
-                                "rootKey",
-                                "schemaKey",
-                                "dataKey"
+                                "rootKey"
                             ]
                         },
                         "payload": {

@@ -6,9 +6,9 @@ docker exec clickhouse sh -c "clickhouse-client -u honeypot --password honeypot 
 
 echo "\nSetting up Redpanda...\n";
 rpk topic \
-    create honeypot-invalid \
+    create hpt-invalid \
     --brokers 127.0.0.1:9092;
 
 rpk topic \
-    create honeypot-valid \
+    create hpt-valid \
     --brokers 127.0.0.1:9092;

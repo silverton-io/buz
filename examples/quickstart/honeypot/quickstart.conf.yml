@@ -62,10 +62,8 @@ inputs:
     path: /gen/p
     contexts:
       rootKey: contexts
-      schemaKey: schema
-      dataKey: data
     payload:
-      rootKey: data
+      rootKey: payload
       schemaKey: schema
       dataKey: data
   webhook:

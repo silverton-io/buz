@@ -8,27 +8,8 @@ import (
 )
 
 func BuildEvent(e gjson.Result, conf config.Generic) GenericEvent {
-	var sdContexts []event.SelfDescribingContext
 	var sdPayload event.SelfDescribingPayload
-	eventContexts := e.Get(conf.Contexts.RootKey).Array()
-	if len(eventContexts) == 0 {
-		log.Error().Stack().Msg("no contexts found in generic event for key: " + conf.Contexts.RootKey)
-	} else {
-		for _, context := range eventContexts {
-			contextSchema := context.Get(conf.Contexts.SchemaKey).String()
-			contextPayload := context.Get(conf.Contexts.DataKey).Value()
-			if contextPayload == nil {
-				log.Error().Stack().Msg("no contexts payload found in generic event for key: " + conf.Contexts.RootKey + "." + conf.Contexts.DataKey)
-				log.Debug().Interface("event", e.Value()).Interface("config", conf).Msg("event format does not match config format")
-			} else {
-				context := event.SelfDescribingContext{
-					Schema: contextSchema,
-					Data:   contextPayload.(map[string]interface{}),
-				}
-				sdContexts = append(sdContexts, context)
-			}
-		}
-	}
+	contexts := e.Get(conf.Contexts.RootKey).Value().(map[string]interface{})
 	payload := e.Get(conf.Payload.RootKey)
 	payloadSchema := payload.Get(conf.Payload.SchemaKey).String()
 	payloadData := payload.Get(conf.Payload.DataKey).Value()
@@ -42,7 +23,7 @@ func BuildEvent(e gjson.Result, conf config.Generic) GenericEvent {
 		}
 	}
 	genEvent := GenericEvent{
-		Contexts: sdContexts, // FIXME! These contexts are not validated. And should be.
+		Contexts: contexts, // FIXME - validate these contexts.
 		Payload:  sdPayload,
 	}
 	return genEvent
