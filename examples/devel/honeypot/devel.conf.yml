@@ -147,8 +147,8 @@ sinks:
     deliveryRequired: true
     kafkaBrokers:
       - redpanda-1:29092
-    validTopic: honeypot-valid
-    invalidTopic: honeypot-invalid
+    validTopic: hpt-valid
+    invalidTopic: hpt-invalid
   - name: elk
     type: elasticsearch
     deliveryRequired: true
