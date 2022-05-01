@@ -2,21 +2,15 @@ package sink
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/db"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-
-func generatePgDsn(conf config.Sink) string {
-	// postgresql://[user[:password]@][netloc][:port][/dbname]
-	port := strconv.FormatUint(uint64(conf.PgPort), 10)
-	return "postgresql://" + conf.PgUser + ":" + conf.PgPass + "@" + conf.PgHost + ":" + port + "/" + conf.PgDbName
-}
 
 type PostgresSink struct {
 	id               *uuid.UUID
@@ -47,7 +41,14 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing postgres sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	connString := generatePgDsn(conf)
+	connParams := db.DbConnectionParams{
+		Host: conf.PgHost,
+		Port: conf.PgPort,
+		Db:   conf.PgDbName,
+		User: conf.PgUser,
+		Pass: conf.PgPass,
+	}
+	connString := db.GeneratePostgresDsn(connParams)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
 		log.Error().Err(err).Msg("could not open pg connection")
