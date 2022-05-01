@@ -9,7 +9,11 @@ import (
 
 func BuildEvent(e gjson.Result, conf config.Generic) GenericEvent {
 	var sdPayload event.SelfDescribingPayload
-	contexts := e.Get(conf.Contexts.RootKey).Value().(map[string]interface{})
+	var contexts = make(map[string]interface{})
+	c := e.Get(conf.Contexts.RootKey).Value()
+	if c != nil {
+		contexts = c.(map[string]interface{})
+	}
 	payload := e.Get(conf.Payload.RootKey)
 	payloadSchema := payload.Get(conf.Payload.SchemaKey).String()
 	payloadData := payload.Get(conf.Payload.DataKey).Value()
