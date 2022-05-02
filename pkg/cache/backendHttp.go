@@ -14,12 +14,12 @@ type HttpSchemaCacheBackend struct {
 	path     string
 }
 
-func (b *HttpSchemaCacheBackend) Initialize(conf config.Backend) {
+func (b *HttpSchemaCacheBackend) Initialize(conf config.Backend) error {
 	log.Debug().Msg("initializing http schema cache backend")
 	b.protocol = conf.Type
 	b.host = conf.Host // FIXME! String trailing / if it's present (or validate it upstream)
 	b.path = conf.Path // FIXME! Strip leading / if it's present (or validate it upstream)
-	// Auth? TBD
+	return nil
 }
 
 func (b *HttpSchemaCacheBackend) GetRemote(schema string) (contents []byte, err error) {

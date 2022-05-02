@@ -571,7 +571,8 @@
                                 "s3",
                                 "fs",
                                 "http",
-                                "https"
+                                "https",
+                                "postgres"
                             ]
                         },
                         "path": {
@@ -587,12 +588,41 @@
                         "host": {
                             "type": "string",
                             "description": "The schema cache host, if applicable"
+                        },
+                        "schemaTable": {
+                            "type": "string",
+                            "description": "The database table that stores schemas",
+                            "default": "honeypot_schemas"
+                        },
+                        "pgHost": {
+                            "type": "string",
+                            "description": "The postgres cache backend host",
+                            "default": "localhost"
+                        },
+                        "pgPort": {
+                            "type": "number",
+                            "description": "The postgres cache backend port",
+                            "default": 5432
+                        },
+                        "pgDbName": {
+                            "type": "string",
+                            "description": "The postgres cache backend db name",
+                            "default": "honeypot"
+                        },
+                        "pgUser": {
+                            "type": "string",
+                            "description": "The postgres cache backend user",
+                            "default": "honeypot"
+                        },
+                        "pgPass": {
+                            "type": "string",
+                            "description": "The postgres cache backend password",
+                            "default": "honeypot"
                         }
                     },
                     "additionalProperties": false,
                     "required": [
-                        "type",
-                        "path"
+                        "type"
                     ],
                     "anyOf": [
                         {
@@ -602,7 +632,8 @@
                                 }
                             },
                             "required": [
-                                "bucket"
+                                "bucket",
+                                "path"
                             ]
                         },
                         {
@@ -612,7 +643,8 @@
                                 }
                             },
                             "required": [
-                                "bucket"
+                                "bucket",
+                                "path"
                             ]
                         },
                         {
@@ -622,7 +654,8 @@
                                 }
                             },
                             "required": [
-                                "host"
+                                "host",
+                                "path"
                             ]
                         },
                         {
@@ -632,7 +665,8 @@
                                 }
                             },
                             "required": [
-                                "host"
+                                "host",
+                                "path"
                             ]
                         },
                         {
@@ -641,7 +675,24 @@
                                     "const": "fs"
                                 }
                             },
-                            "required": []
+                            "required": [
+                                "path"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "postgres"
+                                }
+                            },
+                            "required": [
+                                "pgHost",
+                                "pgPort",
+                                "pgDbName",
+                                "pgUser",
+                                "pgPass",
+                                "schemaTable"
+                            ]
                         }
                     ]
                 },

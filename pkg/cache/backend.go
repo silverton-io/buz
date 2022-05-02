@@ -8,17 +8,20 @@ import (
 )
 
 const (
-	GCS   string = "gcs"
-	S3    string = "s3"
-	FS    string = "fs"
-	HTTP  string = "http"
-	HTTPS string = "https"
-	IGLU  string = "iglu"
-	KSR   string = "ksr" // Kafka schema registry
+	GCS         string = "gcs"
+	S3          string = "s3"
+	FS          string = "fs"
+	HTTP        string = "http"
+	HTTPS       string = "https"
+	POSTGRES    string = "postgres"
+	MYSQL       string = "mysql"
+	MATERIALIZE string = "materialize"
+	IGLU        string = "iglu"
+	KSR         string = "ksr" // Kafka schema registry
 )
 
 type SchemaCacheBackend interface {
-	Initialize(config config.Backend)
+	Initialize(config config.Backend) error
 	GetRemote(schema string) (contents []byte, err error)
 	Close()
 }
@@ -43,6 +46,10 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 		return &cacheBackend, nil
 	case HTTPS:
 		cacheBackend := HttpSchemaCacheBackend{}
+		cacheBackend.Initialize(conf)
+		return &cacheBackend, nil
+	case POSTGRES:
+		cacheBackend := PostgresSchemaCacheBackend{}
 		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case IGLU:

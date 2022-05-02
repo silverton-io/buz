@@ -16,14 +16,16 @@ type GcsSchemaCacheBackend struct {
 	client *storage.Client
 }
 
-func (b *GcsSchemaCacheBackend) Initialize(config config.Backend) {
+func (b *GcsSchemaCacheBackend) Initialize(config config.Backend) error {
 	ctx := context.Background()
 	log.Debug().Msg("initializing gcs schema cache backend")
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("could not initialize gcs schema cache backend")
+		log.Error().Err(err).Msg("could not initialize gcs schema cache backend")
+		return err
 	}
 	b.client, b.bucket, b.path = client, config.Bucket, config.Path
+	return nil
 }
 
 func (b *GcsSchemaCacheBackend) GetRemote(schema string) (contents []byte, err error) {

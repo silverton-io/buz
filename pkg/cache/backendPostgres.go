@@ -41,9 +41,14 @@ func (b *PostgresSchemaCacheBackend) Initialize(conf config.Backend) error {
 
 func (b *PostgresSchemaCacheBackend) GetRemote(schema string) (contents []byte, err error) {
 	var s PgSchema
-	res := b.gormDb.Where("name = ?", schema).First(&s)
+	b.gormDb.Table(b.schemaTable).Where("name = ?", schema).First(&s)
+	err = b.gormDb.Error
+	if err != nil {
+		return nil, err
+	}
+	return s.Schema.Bytes, nil
 }
 
 func (b *PostgresSchemaCacheBackend) Close() {
-
+	log.Info().Msg("closing postgres schema cache backend")
 }
