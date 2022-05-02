@@ -14,7 +14,7 @@ type PostgresSchemaCacheBackend struct {
 }
 
 func (b *PostgresSchemaCacheBackend) Initialize(conf config.Backend) error {
-	connParams := db.DbConnectionParams{
+	connParams := db.ConnectionParams{
 		Host: conf.PgHost,
 		Port: conf.PgPort,
 		Db:   conf.PgDbName,
@@ -34,6 +34,7 @@ func (b *PostgresSchemaCacheBackend) Initialize(conf config.Backend) error {
 		err = b.gormDb.Table(b.schemaTable).AutoMigrate(PgSchema{})
 		if err != nil {
 			log.Error().Err(err).Msg("could not create schema table")
+			return err
 		}
 	}
 	return nil
@@ -46,7 +47,7 @@ func (b *PostgresSchemaCacheBackend) GetRemote(schema string) (contents []byte, 
 	if err != nil {
 		return nil, err
 	}
-	return s.Schema.Bytes, nil
+	return s.Contents.Bytes, nil
 }
 
 func (b *PostgresSchemaCacheBackend) Close() {

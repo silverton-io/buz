@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/db"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -30,7 +31,7 @@ func (s *MongodbSink) Name() string {
 }
 
 func (s *MongodbSink) Type() string {
-	return MONGODB
+	return db.MONGODB
 }
 
 func (s *MongodbSink) DeliveryRequired() bool {

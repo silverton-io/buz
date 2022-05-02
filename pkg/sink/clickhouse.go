@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/db"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"gorm.io/driver/clickhouse"
 	"gorm.io/gorm"
@@ -36,7 +37,7 @@ func (s *ClickhouseSink) Name() string {
 }
 
 func (s *ClickhouseSink) Type() string {
-	return CLICKHOUSE
+	return db.CLICKHOUSE
 }
 
 func (s *ClickhouseSink) DeliveryRequired() bool {

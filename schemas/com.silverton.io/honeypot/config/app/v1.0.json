@@ -572,7 +572,8 @@
                                 "fs",
                                 "http",
                                 "https",
-                                "postgres"
+                                "postgres",
+                                "mysql"
                             ]
                         },
                         "path": {
@@ -617,6 +618,31 @@
                         "pgPass": {
                             "type": "string",
                             "description": "The postgres cache backend password",
+                            "default": "honeypot"
+                        },
+                        "mysqlHost": {
+                            "type": "string",
+                            "description": "The mysql cache backend host",
+                            "default": "localhost"
+                        },
+                        "mysqlPort": {
+                            "type": "number",
+                            "description": "The mysql cache backend port",
+                            "default": 3306
+                        },
+                        "mysqlDbName": {
+                            "type": "string",
+                            "description": "The mysql cache backend db name",
+                            "default": "honeypot"
+                        },
+                        "mysqlUser": {
+                            "type": "string",
+                            "description": "The mysql cache backend user",
+                            "default": "honeypot"
+                        },
+                        "mysqlPass": {
+                            "type": "string",
+                            "description": "The mysql cache backend password",
                             "default": "honeypot"
                         }
                     },
@@ -691,6 +717,21 @@
                                 "pgDbName",
                                 "pgUser",
                                 "pgPass",
+                                "schemaTable"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "mysql"
+                                }
+                            },
+                            "required": [
+                                "mysqlHost",
+                                "mysqlPort",
+                                "mysqlDbName",
+                                "mysqlUser",
+                                "mysqlPass",
                                 "schemaTable"
                             ]
                         }

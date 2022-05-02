@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/db"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -36,7 +37,7 @@ func (s *MaterializeSink) Name() string {
 }
 
 func (s *MaterializeSink) Type() string {
-	return MATERIALIZE
+	return db.MATERIALIZE
 }
 
 func (s *MaterializeSink) DeliveryRequired() bool {

@@ -30,7 +30,7 @@ func (s *PostgresSink) Name() string {
 }
 
 func (s *PostgresSink) Type() string {
-	return POSTGRES
+	return db.POSTGRES
 }
 
 func (s *PostgresSink) DeliveryRequired() bool {
@@ -41,7 +41,7 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing postgres sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	connParams := db.DbConnectionParams{
+	connParams := db.ConnectionParams{
 		Host: conf.PgHost,
 		Port: conf.PgPort,
 		Db:   conf.PgDbName,

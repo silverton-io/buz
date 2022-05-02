@@ -2,21 +2,16 @@ package sink
 
 import (
 	"context"
-	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/db"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
-
-func generateMysqlDsn(conf config.Sink) string {
-	port := strconv.FormatUint(uint64(conf.MysqlPort), 10)
-	return conf.MysqlUser + ":" + conf.MysqlPass + "@tcp(" + conf.MysqlHost + ":" + port + ")/" + conf.MysqlDbName
-}
 
 type MysqlSink struct {
 	id               *uuid.UUID
@@ -36,7 +31,7 @@ func (s *MysqlSink) Name() string {
 }
 
 func (s *MysqlSink) Type() string {
-	return MYSQL
+	return db.MYSQL
 }
 
 func (s *MysqlSink) DeliveryRequired() bool {
@@ -47,7 +42,14 @@ func (s *MysqlSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing mysql sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	connString := generateMysqlDsn(conf)
+	connParams := db.ConnectionParams{
+		Host: conf.MysqlHost,
+		Port: conf.MysqlPort,
+		Db:   conf.MysqlDbName,
+		User: conf.MysqlUser,
+		Pass: conf.MysqlPass,
+	}
+	connString := db.GenerateMysqlDsn(connParams)
 	gormDb, err := gorm.Open(mysql.Open(connString), &gorm.Config{})
 	if err != nil {
 		log.Error().Err(err).Msg("could not open mysql connection")

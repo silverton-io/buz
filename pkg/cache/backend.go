@@ -5,19 +5,17 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/db"
 )
 
 const (
-	GCS         string = "gcs"
-	S3          string = "s3"
-	FS          string = "fs"
-	HTTP        string = "http"
-	HTTPS       string = "https"
-	POSTGRES    string = "postgres"
-	MYSQL       string = "mysql"
-	MATERIALIZE string = "materialize"
-	IGLU        string = "iglu"
-	KSR         string = "ksr" // Kafka schema registry
+	GCS   string = "gcs"
+	S3    string = "s3"
+	FS    string = "fs"
+	HTTP  string = "http"
+	HTTPS string = "https"
+	IGLU  string = "iglu"
+	KSR   string = "ksr" // Kafka schema registry
 )
 
 type SchemaCacheBackend interface {
@@ -48,8 +46,12 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 		cacheBackend := HttpSchemaCacheBackend{}
 		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
-	case POSTGRES:
+	case db.POSTGRES:
 		cacheBackend := PostgresSchemaCacheBackend{}
+		cacheBackend.Initialize(conf)
+		return &cacheBackend, nil
+	case db.MYSQL:
+		cacheBackend := MysqlSchemaCacheBackend{}
 		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case IGLU:
