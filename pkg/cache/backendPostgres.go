@@ -31,7 +31,7 @@ func (b *PostgresSchemaCacheBackend) Initialize(conf config.Backend) error {
 	schemaTblExists := b.gormDb.Migrator().HasTable(b.schemaTable)
 	if !schemaTblExists {
 		log.Debug().Msg(b.schemaTable + " table doesn't exist - creating")
-		err = b.gormDb.Table(b.schemaTable).AutoMigrate(PgSchema{})
+		err = b.gormDb.Table(b.schemaTable).AutoMigrate(Schema{})
 		if err != nil {
 			log.Error().Err(err).Msg("could not create schema table")
 			return err
@@ -41,13 +41,13 @@ func (b *PostgresSchemaCacheBackend) Initialize(conf config.Backend) error {
 }
 
 func (b *PostgresSchemaCacheBackend) GetRemote(schema string) (contents []byte, err error) {
-	var s PgSchema
+	var s Schema
 	b.gormDb.Table(b.schemaTable).Where("name = ?", schema).First(&s)
 	err = b.gormDb.Error
 	if err != nil {
 		return nil, err
 	}
-	return s.Contents.Bytes, nil
+	return s.Contents, nil
 }
 
 func (b *PostgresSchemaCacheBackend) Close() {

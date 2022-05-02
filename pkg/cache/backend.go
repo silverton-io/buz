@@ -28,31 +28,24 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 	switch conf.Type {
 	case GCS:
 		cacheBackend := GcsSchemaCacheBackend{}
-		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case S3:
 		cacheBackend := S3SchemaCacheBackend{}
-		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case FS:
 		cacheBackend := FilesystemCacheBackend{}
-		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case HTTP:
 		cacheBackend := HttpSchemaCacheBackend{}
-		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case HTTPS:
 		cacheBackend := HttpSchemaCacheBackend{}
-		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case db.POSTGRES:
 		cacheBackend := PostgresSchemaCacheBackend{}
-		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case db.MYSQL:
 		cacheBackend := MysqlSchemaCacheBackend{}
-		cacheBackend.Initialize(conf)
 		return &cacheBackend, nil
 	case IGLU:
 		e := errors.New("the iglu schema cache backend is not yet available")
@@ -67,4 +60,14 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 		log.Fatal().Stack().Err(e).Msg("unsupported backend")
 		return nil, e
 	}
+}
+
+func InitializeSchemaCacheBackend(conf config.Backend, b SchemaCacheBackend) error {
+	err := b.Initialize(conf)
+	if err != nil {
+		log.Error().Err(err).Msg("could not initialize schema cache backend")
+		return err
+	}
+	log.Info().Msg(conf.Type + " schema cache backend initialized")
+	return nil
 }
