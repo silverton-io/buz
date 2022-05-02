@@ -7,3 +7,4 @@ testprofile.out
 # File sink
 honeypot-valid.json
 honeypot-invalid.json
+notes/*

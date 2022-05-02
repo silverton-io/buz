@@ -47,6 +47,9 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 	case db.MYSQL:
 		cacheBackend := MysqlSchemaCacheBackend{}
 		return &cacheBackend, nil
+	case db.MATERIALIZE:
+		cacheBackend := MaterializeSchemaCacheBackend{}
+		return &cacheBackend, nil
 	case IGLU:
 		e := errors.New("the iglu schema cache backend is not yet available")
 		log.Fatal().Stack().Err(e).Msg("iglu is unsupported")
