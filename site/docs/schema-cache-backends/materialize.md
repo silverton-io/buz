@@ -4,6 +4,6 @@ tags:
   - materialize
 ---
 
-# 🟡 Materialize
+# 🟢 Materialize
 
-The `materialize` schema cache backend is not yet supported.
+The `materialize` schema cache backend is now supported.

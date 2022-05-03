@@ -4,6 +4,6 @@ tags:
   - postgres
 ---
 
-# 🟡 Postgres
+# 🟢 Postgres
 
-The `postgres` schema cache backend is not yet supported.
+The `postgres` schema cache backend is now supported.

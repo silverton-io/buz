@@ -61,6 +61,7 @@ nav:
       - schema-cache-backends/mysql.md
       - schema-cache-backends/postgres.md
       - schema-cache-backends/materialize.md
+      - schema-cache-backends/mongodb.md
       - schema-cache-backends/redis.md
       - schema-cache-backends/iglu.md
       - schema-cache-backends/kafka-registry.md

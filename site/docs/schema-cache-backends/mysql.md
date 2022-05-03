@@ -4,6 +4,6 @@ tags:
   - mysql
 ---
 
-# 🟡 MySQL
+# 🟢 MySQL
 
-The `mysql` schema cache backend is not yet supported.
+The `mysql` schema cache backend is now supported.
