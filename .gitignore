@@ -8,3 +8,4 @@ testprofile.out
 honeypot-valid.json
 honeypot-invalid.json
 notes/*
+*.sql

@@ -34,6 +34,12 @@ type Backend struct {
 	MzDbName string `json:"-"`
 	MzUser   string `json:"-"`
 	MzPass   string `json:"-"`
+	// Clickhouse Database
+	ClickhouseHost   string `json:"-"`
+	ClickhousePort   uint16 `json:"-"`
+	ClickhouseDbName string `json:"-"`
+	ClickhouseUser   string `json:"-"`
+	ClickhousePass   string `json:"-"`
 }
 
 type SchemaDirectory struct {

@@ -1,14 +1,22 @@
+REGISTRY_HOST=localhost
+REGISTRY_DB=honeypot
 REGISTRY_SCHEMA=honeypot
 REGISTRY_TABLE=schemas
 H_USER=honeypot
 H_PASS=honeypot
+# Seed files
+PG_SEED_FILE=pgSeed.sql
+MYSQL_SEED_FILE=mysqlSeed.sql
+CLICKHOUSE_SEED_FILE=clickhouseSeed.sql
+MATERIALIZE_SEED_FILE=materializeSeed.sql
 
 
 echo "\nHoneypotting...\n"
 for run in {1..5}; do printf "🍯" && sleep 1; done
 
 echo "\nSetting up clickhouse...\n"
-docker exec clickhouse sh -c "clickhouse-client -u honeypot --password honeypot -q \"create database honeypot;\""
+# This is required due to the inability to pass env vars to clickhouse img.
+clickhouse client -u $H_USER --password $H_PASS -q \"create database $REGISTRY_DB;\"
 
 echo "\nSetting up Redpanda...\n";
 rpk topic \
@@ -20,23 +28,27 @@ rpk topic \
     --brokers 127.0.0.1:9092;
 
 echo "\nSeeding database schema cache backends...\n"
-echo "deleting all schemas from postgres"
-psql -h 127.0.0.1 -p 5432 -U $H_USER -c "delete from $REGISTRY_TABLE;"
-echo "deleting all schemas from mysql"
-export MYSQL_PWD=honeypot; mysql -h 127.0.0.1 -u$H_USER -e "delete from $REGISTRY_SCHEMA.$REGISTRY_TABLE;"
-echo "deleting all schemas from materialize"
-psql -h 127.0.0.1 -p 6875 -U materialize -c "delete from $REGISTRY_TABLE;"
+echo "delete from $REGISTRY_SCHEMA.$REGISTRY_TABLE;" >> $PG_SEED_FILE;
+echo "delete from $REGISTRY_TABLE;" >> $MATERIALIZE_SEED_FILE;
+echo "delete from $REGISTRY_SCHEMA.$REGISTRY_TABLE;" >> $MYSQL_SEED_FILE;
+echo "alter table $REGISTRY_SCHEMA.$REGISTRY_TABLE delete where 1=1;" >> $CLICKHOUSE_SEED_FILE;
 find schemas -type f | while read fname; do
     SCHEMA=$(echo $fname | sed 's/schemas\///')
     CONTENTS=$(jq -c . $fname)
     # Postgres
-    echo "seeding schema to postgres: $SCHEMA"
     PG_CMD="insert into $REGISTRY_TABLE (created_at, updated_at, name, contents) values (now(), now(), '$SCHEMA','$CONTENTS');"
-    psql -h 127.0.0.1 -p 5432 -U $H_USER -c "$PG_CMD"
-    # Mysql
-    echo "seeding schema to mysql: $SCHEMA"
-    MYSQL_CMD="insert into $REGISTRY_SCHEMA.$REGISTRY_TABLE (created_at, updated_at, name, contents) values (now(), now(), '$SCHEMA','$CONTENTS');"
-    export MYSQL_PWD=honeypot; mysql -h 127.0.0.1 -u$H_USER -e "$MYSQL_CMD"
+    echo $PG_CMD >> $PG_SEED_FILE;
     # Materialize
-    psql -h 127.0.0.1 -p 6875 -U materialize -c "$PG_CMD"
+    echo $PG_CMD >> $MATERIALIZE_SEED_FILE;
+    # Mysql
+    MYSQL_CMD="insert into $REGISTRY_SCHEMA.$REGISTRY_TABLE (created_at, updated_at, name, contents) values (now(), now(), '$SCHEMA','$CONTENTS');"
+    echo $MYSQL_CMD >> $MYSQL_SEED_FILE;
+    # Clickhouse
+    CLICKHOUSE_CMD="insert into $REGISTRY_SCHEMA.$REGISTRY_TABLE (created_at, updated_at, name, contents) values (now(), now(), '$SCHEMA', '$CONTENTS')"
+    echo $CLICKHOUSE_CMD >> $CLICKHOUSE_SEED_FILE;
 done
+
+psql -h $REGISTRY_HOST -p 5432 -U $H_USER -f $PG_SEED_FILE;
+psql -h $REGISTRY_HOST -p 6875 -U $H_USER -f $PG_SEED_FILE;
+export MYSQL_PWD=honeypot; mysql -h $REGISTRY_HOST -u$H_USER < $MYSQL_SEED_FILE;
+clickhouse client -h $REGISTRY_HOST  --port 9000 -u $H_USER --password $H_PASS --queries-file $CLICKHOUSE_SEED_FILE

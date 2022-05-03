@@ -574,7 +574,8 @@
                                 "https",
                                 "postgres",
                                 "mysql",
-                                "materialize"
+                                "materialize",
+                                "clickhouse"
                             ]
                         },
                         "path": {
@@ -594,7 +595,7 @@
                         "registryTable": {
                             "type": "string",
                             "description": "The database table that stores schemas",
-                            "default": "honeypot_schemas"
+                            "default": "schemas"
                         },
                         "pgHost": {
                             "type": "string",
@@ -670,6 +671,31 @@
                             "type": "string",
                             "description": "The materialize cache backend password",
                             "default": ""
+                        },
+                        "clickhouseHost": {
+                            "type": "string",
+                            "description": "The database hostname to write envelopes to if sink type is clickhouse",
+                            "default": "localhost"
+                        },
+                        "clickhousePort": {
+                            "type": "number",
+                            "description": "The database port to write envelopes to if sink type is clickhouse",
+                            "default": 9000
+                        },
+                        "clickhouseDbName": {
+                            "type": "string",
+                            "description": "The database name if sink type is clickhouse",
+                            "default": "honeypot"
+                        },
+                        "clickhouseUser": {
+                            "type": "string",
+                            "description": "The database connection user if sink type is clickhouse",
+                            "default": "honeypot"
+                        },
+                        "clickhousePass": {
+                            "type": "string",
+                            "description": "The database connection password if sink type is clickhouse",
+                            "default": "honeypot"
                         }
                     },
                     "additionalProperties": false,
@@ -773,6 +799,21 @@
                                 "mzDbName",
                                 "mzUser",
                                 "mzPass",
+                                "registryTable"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "clickhouse"
+                                }
+                            },
+                            "required": [
+                                "clickhouseHost",
+                                "clickhousePort",
+                                "clickhouseDbName",
+                                "clickhouseUser",
+                                "clickhousePass",
                                 "registryTable"
                             ]
                         }
