@@ -595,7 +595,7 @@
                         "registryTable": {
                             "type": "string",
                             "description": "The database table that stores schemas",
-                            "default": "schemas"
+                            "default": "registry"
                         },
                         "pgHost": {
                             "type": "string",
