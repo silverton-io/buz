@@ -54,7 +54,7 @@ func (s *MongodbSink) Initialize(conf config.Sink) error {
 	}
 	client, err := mongo.Connect(ctx, &opt)
 	if err != nil {
-		log.Error().Err(err).Msg("could not connect to mongo")
+		log.Error().Err(err).Msg("could not connect to mongodb")
 	}
 	s.client = client
 	vCollection := s.client.Database(conf.MongoDbName).Collection(conf.ValidCollection)

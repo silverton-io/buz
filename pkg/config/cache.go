@@ -40,6 +40,13 @@ type Backend struct {
 	ClickhouseDbName string `json:"-"`
 	ClickhouseUser   string `json:"-"`
 	ClickhousePass   string `json:"-"`
+	// Mongodb
+	MongoHosts         []string `json:"mongoHosts,omitempty"`
+	MongoPort          string   `json:"mongoDbPort,omitempty"`
+	MongoDbName        string   `json:"mongoDbName,omitempty"`
+	MongoUser          string   `json:"-"`
+	MongoPass          string   `json:"-"`
+	RegistryCollection string   `json:"registryCollection"`
 }
 
 type SchemaDirectory struct {
