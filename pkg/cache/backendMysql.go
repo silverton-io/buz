@@ -31,16 +31,8 @@ func (b *MysqlSchemaCacheBackend) Initialize(conf config.Backend) error {
 		return err
 	}
 	b.gormDb, b.registryTable = gormDb, conf.RegistryTable
-	schemaTblExists := b.gormDb.Migrator().HasTable(b.registryTable)
-	if !schemaTblExists {
-		log.Debug().Msg(b.registryTable + " table doesn't exist - creating")
-		err = b.gormDb.Table(b.registryTable).AutoMigrate(RegistryTable{})
-		if err != nil {
-			log.Error().Err(err).Msg("could not create schema table")
-			return err
-		}
-	}
-	return nil
+	ensureErr := db.EnsureTable(b.gormDb, b.registryTable, RegistryTable{})
+	return ensureErr
 }
 
 func (b *MysqlSchemaCacheBackend) GetRemote(schema string) (contents []byte, err error) {

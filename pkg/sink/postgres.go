@@ -54,19 +54,11 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 		log.Error().Err(err).Msg("could not open pg connection")
 		return err
 	}
-	s.gormDb = gormDb
-	s.validTable, s.invalidTable = conf.ValidTable, conf.InvalidTable
+	s.gormDb, s.validTable, s.invalidTable = gormDb, conf.ValidTable, conf.InvalidTable
 	for _, tbl := range []string{s.validTable, s.invalidTable} {
-		tblExists := s.gormDb.Migrator().HasTable(tbl)
-		if !tblExists {
-			log.Debug().Msg(tbl + " table doesn't exist - ensuring")
-			err = s.gormDb.Table(tbl).AutoMigrate(&envelope.PgEnvelope{})
-			if err != nil {
-				log.Error().Err(err).Msg("could not auto migrate table")
-				return err
-			}
-		} else {
-			log.Debug().Msg(tbl + " table already exists - not ensuring")
+		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.PgEnvelope{})
+		if ensureErr != nil {
+			return ensureErr
 		}
 	}
 	return nil
