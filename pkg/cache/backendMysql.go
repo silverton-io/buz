@@ -6,7 +6,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/db"
-	"github.com/silverton-io/honeypot/pkg/util"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -43,7 +42,6 @@ func (b *MysqlSchemaCacheBackend) GetRemote(schema string) (contents []byte, err
 		log.Error().Err(err).Msg("gorm error")
 		return nil, err
 	}
-	util.Pprint(s)
 	contents, err = json.Marshal(s.Contents)
 	if err != nil {
 		log.Error().Err(err).Msg("could not marshal schema contents")
