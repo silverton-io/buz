@@ -66,4 +66,7 @@ type Sink struct {
 	MongoPass         string   `json:"-"`
 	ValidCollection   string   `json:"validCollection,omitempty"`
 	InvalidCollection string   `json:"invalidCollection,omitempty"`
+	// Saas stuff
+	AmplitudeApiKey string `json:"-"`
+	AmplitudeServer string `json:"-"`
 }

@@ -169,11 +169,32 @@ type UserMetadata struct {
 	Fingerprint *string `json:"fingerprint"`
 }
 
-func (e UserMetadata) Value() (driver.Value, error) {
-	b, err := json.Marshal(e)
+func (m *UserMetadata) AsByte() ([]byte, error) {
+	eventBytes, err := json.Marshal(m)
+	if err != nil {
+		return nil, err
+	}
+	return eventBytes, nil
+}
+
+func (u *UserMetadata) AsMap() (map[string]interface{}, error) {
+	var m map[string]interface{}
+	b, err := u.AsByte()
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(b, &m)
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (u UserMetadata) Value() (driver.Value, error) {
+	b, err := json.Marshal(u)
 	return string(b), err
 }
 
-func (e UserMetadata) Scan(input interface{}) error {
-	return json.Unmarshal(input.([]byte), &e)
+func (u UserMetadata) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &u)
 }

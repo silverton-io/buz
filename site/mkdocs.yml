@@ -93,6 +93,7 @@ nav:
       - sinks/blackhole.md
       - sinks/indicative.md
       - sinks/amplitude.md
+      - sinks/mixpanel.md
       - sinks/timescaledb.md
       - sinks/vitess.md
       - sinks/bigquery.md

@@ -16,6 +16,20 @@ const (
 	JSON_CONTENT_TYPE string = "application/json"
 )
 
+func PostPayload(url url.URL, payload interface{}) (resp *http.Response, err error) {
+	data, err := json.Marshal(payload)
+	buff := bytes.NewBuffer(data)
+	if err != nil {
+		log.Error().Err(err).Msg("could not marshal payload")
+	}
+	resp, err = http.Post(url.String(), JSON_CONTENT_TYPE, buff)
+	if err != nil {
+		log.Error().Err(err).Msg("could not post payload")
+		return nil, err
+	}
+	return resp, nil
+}
+
 func PostEvent(url url.URL, payload event.SelfDescribingEvent) (resp *http.Response, err error) {
 	data, err := json.Marshal(payload)
 	buff := bytes.NewBuffer(data)

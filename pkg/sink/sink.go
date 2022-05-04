@@ -24,6 +24,10 @@ const (
 	BLACKHOLE        string = "blackhole"
 	FILE             string = "file"
 	PUBNUB           string = "pubnub"
+	// Saas stuff
+	AMPLITUDE  string = "amplitude"
+	MIXPANEL   string = "mixpanel"
+	INDICATIVE string = "indicative"
 )
 
 type Sink interface {

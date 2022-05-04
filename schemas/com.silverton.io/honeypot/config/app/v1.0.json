@@ -959,7 +959,8 @@
                             "mongodb",
                             "mysql",
                             "materialize",
-                            "clickhouse"
+                            "clickhouse",
+                            "amplitude"
                         ]
                     },
                     "deliveryRequired": {
@@ -1220,6 +1221,20 @@
                         "type": "string",
                         "description": "The mongo database password if sink type is mongodb",
                         "default": "honeypot"
+                    },
+                    "amplitudeApiKey": {
+                        "type": "string",
+                        "description": "API key for the amplitude sink",
+                        "default": "YOUR-API-KEY-HERE"
+                    },
+                    "amplitudeServer": {
+                        "type": "string",
+                        "description": "The amplitude server to sink events to",
+                        "default": "standard",
+                        "enum": [
+                            "standard",
+                            "eu"
+                        ]
                     }
                 },
                 "additionalProperties": false,
@@ -1449,6 +1464,17 @@
                             "mongoDbName",
                             "validCollection",
                             "invalidCollection"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "amplitude"
+                            }
+                        },
+                        "required": [
+                            "amplitudeApiKey",
+                            "amplitudeServer"
                         ]
                     }
                 ]
