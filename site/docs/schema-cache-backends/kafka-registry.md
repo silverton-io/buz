@@ -1,6 +1,6 @@
 ---
 tags:
-  - schema backend
+  - schema cache backend
   - redpanda
   - kafka
   - registry

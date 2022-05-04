@@ -1,6 +1,7 @@
 ---
 tags:
-  - schema backend
+  - schema cache backend
+  - db
   - mysql
 ---
 
