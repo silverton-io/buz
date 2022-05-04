@@ -575,7 +575,8 @@
                                 "postgres",
                                 "mysql",
                                 "materialize",
-                                "clickhouse"
+                                "clickhouse",
+                                "mongodb"
                             ]
                         },
                         "path": {
@@ -595,6 +596,11 @@
                         "registryTable": {
                             "type": "string",
                             "description": "The database table that stores schemas",
+                            "default": "registry"
+                        },
+                        "registryCollection": {
+                            "type": "string",
+                            "description": "The mongodb collection for schemas in the cache backend is mongodb",
                             "default": "registry"
                         },
                         "pgHost": {
@@ -695,6 +701,35 @@
                         "clickhousePass": {
                             "type": "string",
                             "description": "The database connection password if sink type is clickhouse",
+                            "default": "honeypot"
+                        },
+                        "mongoHosts": {
+                            "type": "array",
+                            "description": "A list of mongodb hosts",
+                            "default": [
+                                "mongodb1",
+                                "mongodb2",
+                                "mongodb3"
+                            ]
+                        },
+                        "mongoPort": {
+                            "type": "number",
+                            "description": "The mongo port if sink type is mongodb",
+                            "default": "27017"
+                        },
+                        "mongoDbName": {
+                            "type": "string",
+                            "description": "The mongo database name if sink type is mongodb",
+                            "default": "honeypot"
+                        },
+                        "mongoUser": {
+                            "type": "string",
+                            "description": "The mongo database user if sink type is mongodb",
+                            "default": "honeypot"
+                        },
+                        "mongoPass": {
+                            "type": "string",
+                            "description": "The mongo database password if sink type is mongodb",
                             "default": "honeypot"
                         }
                     },
@@ -815,6 +850,19 @@
                                 "clickhouseUser",
                                 "clickhousePass",
                                 "registryTable"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "mongodb"
+                                }
+                            },
+                            "required": [
+                                "mongoHosts",
+                                "mongoPort",
+                                "mongoDbName",
+                                "registryCollection"
                             ]
                         }
                     ]
@@ -1166,12 +1214,12 @@
                     "mongoUser": {
                         "type": "string",
                         "description": "The mongo database user if sink type is mongodb",
-                        "default": ""
+                        "default": "honeypot"
                     },
                     "mongoPass": {
                         "type": "string",
                         "description": "The mongo database password if sink type is mongodb",
-                        "default": ""
+                        "default": "honeypot"
                     }
                 },
                 "additionalProperties": false,

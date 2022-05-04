@@ -5,9 +5,17 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+type MongoSchemaDocument struct {
+	ID       primitive.ObjectID `bson:"_id"`
+	Name     string             `bson:"name"`
+	Contents string             `bson:"contents"`
+}
 
 type MongodbSchemaCacheBackend struct {
 	client             *mongo.Client
@@ -36,7 +44,20 @@ func (b *MongodbSchemaCacheBackend) Initialize(conf config.Backend) error {
 	return nil
 }
 
-func (b *MongodbSchemaCacheBackend) GetRemote(conf config.Backend) (contents []byte, err error) {}
+func (b *MongodbSchemaCacheBackend) GetRemote(schema string) (contents []byte, err error) {
+	ctx := context.Background()
+	var doc = MongoSchemaDocument{}
+	err = b.registryCollection.FindOne(ctx, bson.M{"name": schema}).Decode(&doc)
+	if err != nil {
+		log.Error().Err(err).Msg("could not decode document")
+		return nil, err
+	}
+	if err != nil {
+		log.Error().Err(err).Msg("could not marshal document")
+		return nil, err
+	}
+	return []byte(doc.Contents), nil
+}
 
 func (b *MongodbSchemaCacheBackend) Close() {
 	log.Info().Msg("closing mongodb schema cache backend")
