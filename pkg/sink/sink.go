@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/db"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"golang.org/x/net/context"
 )
@@ -20,15 +21,9 @@ const (
 	HTTP             string = "http"
 	HTTPS            string = "https"
 	RELAY            string = "relay"
-	ELASTICSEARCH    string = "elasticsearch"
 	BLACKHOLE        string = "blackhole"
 	FILE             string = "file"
-	POSTGRES         string = "postgres"
-	MYSQL            string = "mysql"
-	MATERIALIZE      string = "materialize"
-	CLICKHOUSE       string = "clickhouse"
 	PUBNUB           string = "pubnub"
-	MONGODB          string = "mongodb"
 )
 
 type Sink interface {
@@ -71,7 +66,7 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	case RELAY:
 		sink := RelaySink{}
 		return &sink, nil
-	case ELASTICSEARCH:
+	case db.ELASTICSEARCH:
 		sink := ElasticsearchSink{}
 		return &sink, nil
 	case BLACKHOLE:
@@ -83,19 +78,19 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	case PUBNUB:
 		sink := PubnubSink{}
 		return &sink, nil
-	case POSTGRES:
+	case db.POSTGRES:
 		sink := PostgresSink{}
 		return &sink, nil
-	case MYSQL:
+	case db.MYSQL:
 		sink := MysqlSink{}
 		return &sink, nil
-	case MATERIALIZE:
+	case db.MATERIALIZE:
 		sink := MaterializeSink{}
 		return &sink, nil
-	case CLICKHOUSE:
+	case db.CLICKHOUSE:
 		sink := ClickhouseSink{}
 		return &sink, nil
-	case MONGODB:
+	case db.MONGODB:
 		sink := MongodbSink{}
 		return &sink, nil
 	default:

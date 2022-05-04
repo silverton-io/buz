@@ -1,6 +1,6 @@
 ---
 tags:
-  - schema backend
+  - schema cache backend
   - snowplow
   - iglu
 ---

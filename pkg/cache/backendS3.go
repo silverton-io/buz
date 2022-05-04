@@ -19,16 +19,18 @@ type S3SchemaCacheBackend struct {
 	downloader *manager.Downloader
 }
 
-func (b *S3SchemaCacheBackend) Initialize(conf config.Backend) {
+func (b *S3SchemaCacheBackend) Initialize(conf config.Backend) error {
 	log.Debug().Msg("initializing s3 schema cache backend")
 	ctx := context.Background()
 	cfg, err := awsconf.LoadDefaultConfig(ctx)
 	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("could not load aws config")
+		log.Error().Err(err).Msg("could not load aws config")
+		return err
 	}
 	client := s3.NewFromConfig(cfg)
 	downloader := manager.NewDownloader(client)
 	b.bucket, b.path, b.client, b.downloader = conf.Bucket, conf.Path, client, downloader
+	return nil
 }
 
 func (b *S3SchemaCacheBackend) GetRemote(schema string) (contents []byte, err error) {

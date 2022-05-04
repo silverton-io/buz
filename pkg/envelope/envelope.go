@@ -75,7 +75,7 @@ type MysqlEnvelope struct { // I really hate doing this - should find a better w
 type ClickhouseEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
 	SourceMetadata     `json:"sourceMetadata" gorm:"type:string"`
 	CollectorMetadata  `json:"collectorMetadata" gorm:"type:string"`
-	UserMetadata       `json:"userMetadata" gorm:"type:json"`
+	UserMetadata       `json:"userMetadata" gorm:"type:string"`
 	EventMetadata      `json:"eventMetadata" gorm:"type:string"`
 	RelayMetadata      `json:"relayMetadata" gorm:"type:string"`
 	ValidationMetadata `json:"validationMetadata" gorm:"type:string"`

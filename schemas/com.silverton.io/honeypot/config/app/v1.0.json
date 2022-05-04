@@ -571,7 +571,12 @@
                                 "s3",
                                 "fs",
                                 "http",
-                                "https"
+                                "https",
+                                "postgres",
+                                "mysql",
+                                "materialize",
+                                "clickhouse",
+                                "mongodb"
                             ]
                         },
                         "path": {
@@ -587,12 +592,150 @@
                         "host": {
                             "type": "string",
                             "description": "The schema cache host, if applicable"
+                        },
+                        "registryTable": {
+                            "type": "string",
+                            "description": "The database table that stores schemas",
+                            "default": "registry"
+                        },
+                        "registryCollection": {
+                            "type": "string",
+                            "description": "The mongodb collection for schemas in the cache backend is mongodb",
+                            "default": "registry"
+                        },
+                        "pgHost": {
+                            "type": "string",
+                            "description": "The postgres cache backend host",
+                            "default": "localhost"
+                        },
+                        "pgPort": {
+                            "type": "number",
+                            "description": "The postgres cache backend port",
+                            "default": 5432
+                        },
+                        "pgDbName": {
+                            "type": "string",
+                            "description": "The postgres cache backend db name",
+                            "default": "honeypot"
+                        },
+                        "pgUser": {
+                            "type": "string",
+                            "description": "The postgres cache backend user",
+                            "default": "honeypot"
+                        },
+                        "pgPass": {
+                            "type": "string",
+                            "description": "The postgres cache backend password",
+                            "default": "honeypot"
+                        },
+                        "mysqlHost": {
+                            "type": "string",
+                            "description": "The mysql cache backend host",
+                            "default": "localhost"
+                        },
+                        "mysqlPort": {
+                            "type": "number",
+                            "description": "The mysql cache backend port",
+                            "default": 3306
+                        },
+                        "mysqlDbName": {
+                            "type": "string",
+                            "description": "The mysql cache backend db name",
+                            "default": "honeypot"
+                        },
+                        "mysqlUser": {
+                            "type": "string",
+                            "description": "The mysql cache backend user",
+                            "default": "honeypot"
+                        },
+                        "mysqlPass": {
+                            "type": "string",
+                            "description": "The mysql cache backend password",
+                            "default": "honeypot"
+                        },
+                        "mzHost": {
+                            "type": "string",
+                            "description": "The materialize cache backend host",
+                            "default": "localhost"
+                        },
+                        "mzPort": {
+                            "type": "number",
+                            "description": "The materialize cache backend port",
+                            "default": 6875
+                        },
+                        "mzDbName": {
+                            "type": "string",
+                            "description": "The materialize cache backend db name",
+                            "default": "materialize"
+                        },
+                        "mzUser": {
+                            "type": "string",
+                            "description": "The materialize cache backend user",
+                            "default": "materialize"
+                        },
+                        "mzPass": {
+                            "type": "string",
+                            "description": "The materialize cache backend password",
+                            "default": ""
+                        },
+                        "clickhouseHost": {
+                            "type": "string",
+                            "description": "The database hostname to write envelopes to if sink type is clickhouse",
+                            "default": "localhost"
+                        },
+                        "clickhousePort": {
+                            "type": "number",
+                            "description": "The database port to write envelopes to if sink type is clickhouse",
+                            "default": 9000
+                        },
+                        "clickhouseDbName": {
+                            "type": "string",
+                            "description": "The database name if sink type is clickhouse",
+                            "default": "honeypot"
+                        },
+                        "clickhouseUser": {
+                            "type": "string",
+                            "description": "The database connection user if sink type is clickhouse",
+                            "default": "honeypot"
+                        },
+                        "clickhousePass": {
+                            "type": "string",
+                            "description": "The database connection password if sink type is clickhouse",
+                            "default": "honeypot"
+                        },
+                        "mongoHosts": {
+                            "type": "array",
+                            "description": "A list of mongodb hosts",
+                            "default": [
+                                "mongodb1",
+                                "mongodb2",
+                                "mongodb3"
+                            ]
+                        },
+                        "mongoPort": {
+                            "type": "number",
+                            "description": "The mongo port if sink type is mongodb",
+                            "default": "27017"
+                        },
+                        "mongoDbName": {
+                            "type": "string",
+                            "description": "The mongo database name if sink type is mongodb",
+                            "default": "honeypot"
+                        },
+                        "mongoUser": {
+                            "type": "string",
+                            "description": "The mongo database user if sink type is mongodb",
+                            "default": "honeypot"
+                        },
+                        "mongoPass": {
+                            "type": "string",
+                            "description": "The mongo database password if sink type is mongodb",
+                            "default": "honeypot"
                         }
                     },
                     "additionalProperties": false,
                     "required": [
-                        "type",
-                        "path"
+                        "type"
                     ],
                     "anyOf": [
                         {
@@ -602,7 +745,8 @@
                                 }
                             },
                             "required": [
-                                "bucket"
+                                "bucket",
+                                "path"
                             ]
                         },
                         {
@@ -612,7 +756,8 @@
                                 }
                             },
                             "required": [
-                                "bucket"
+                                "bucket",
+                                "path"
                             ]
                         },
                         {
@@ -622,7 +767,8 @@
                                 }
                             },
                             "required": [
-                                "host"
+                                "host",
+                                "path"
                             ]
                         },
                         {
@@ -632,7 +778,8 @@
                                 }
                             },
                             "required": [
-                                "host"
+                                "host",
+                                "path"
                             ]
                         },
                         {
@@ -641,7 +788,82 @@
                                     "const": "fs"
                                 }
                             },
-                            "required": []
+                            "required": [
+                                "path"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "postgres"
+                                }
+                            },
+                            "required": [
+                                "pgHost",
+                                "pgPort",
+                                "pgDbName",
+                                "pgUser",
+                                "pgPass",
+                                "registryTable"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "mysql"
+                                }
+                            },
+                            "required": [
+                                "mysqlHost",
+                                "mysqlPort",
+                                "mysqlDbName",
+                                "mysqlUser",
+                                "mysqlPass",
+                                "registryTable"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "materialize"
+                                }
+                            },
+                            "required": [
+                                "mzHost",
+                                "mzPort",
+                                "mzDbName",
+                                "mzUser",
+                                "mzPass",
+                                "registryTable"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "clickhouse"
+                                }
+                            },
+                            "required": [
+                                "clickhouseHost",
+                                "clickhousePort",
+                                "clickhouseDbName",
+                                "clickhouseUser",
+                                "clickhousePass",
+                                "registryTable"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "mongodb"
+                                }
+                            },
+                            "required": [
+                                "mongoHosts",
+                                "mongoPort",
+                                "mongoDbName",
+                                "registryCollection"
+                            ]
                         }
                     ]
                 },
@@ -992,12 +1214,12 @@
                     "mongoUser": {
                         "type": "string",
                         "description": "The mongo database user if sink type is mongodb",
-                        "default": ""
+                        "default": "honeypot"
                     },
                     "mongoPass": {
                         "type": "string",
                         "description": "The mongo database password if sink type is mongodb",
-                        "default": ""
+                        "default": "honeypot"
                     }
                 },
                 "additionalProperties": false,

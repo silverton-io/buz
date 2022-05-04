@@ -2,21 +2,15 @@ package sink
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/db"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-
-func generatePgDsn(conf config.Sink) string {
-	// postgresql://[user[:password]@][netloc][:port][/dbname]
-	port := strconv.FormatUint(uint64(conf.PgPort), 10)
-	return "postgresql://" + conf.PgUser + ":" + conf.PgPass + "@" + conf.PgHost + ":" + port + "/" + conf.PgDbName
-}
 
 type PostgresSink struct {
 	id               *uuid.UUID
@@ -36,7 +30,7 @@ func (s *PostgresSink) Name() string {
 }
 
 func (s *PostgresSink) Type() string {
-	return POSTGRES
+	return db.POSTGRES
 }
 
 func (s *PostgresSink) DeliveryRequired() bool {
@@ -47,25 +41,24 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing postgres sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	connString := generatePgDsn(conf)
+	connParams := db.ConnectionParams{
+		Host: conf.PgHost,
+		Port: conf.PgPort,
+		Db:   conf.PgDbName,
+		User: conf.PgUser,
+		Pass: conf.PgPass,
+	}
+	connString := db.GeneratePostgresDsn(connParams)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
 		log.Error().Err(err).Msg("could not open pg connection")
 		return err
 	}
-	s.gormDb = gormDb
-	s.validTable, s.invalidTable = conf.ValidTable, conf.InvalidTable
+	s.gormDb, s.validTable, s.invalidTable = gormDb, conf.ValidTable, conf.InvalidTable
 	for _, tbl := range []string{s.validTable, s.invalidTable} {
-		tblExists := s.gormDb.Migrator().HasTable(tbl)
-		if !tblExists {
-			log.Debug().Msg(tbl + " table doesn't exist - ensuring")
-			err = s.gormDb.Table(tbl).AutoMigrate(&envelope.PgEnvelope{})
-			if err != nil {
-				log.Error().Err(err).Msg("could not auto migrate table")
-				return err
-			}
-		} else {
-			log.Debug().Msg(tbl + " table already exists - not ensuring")
+		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.PgEnvelope{})
+		if ensureErr != nil {
+			return ensureErr
 		}
 	}
 	return nil

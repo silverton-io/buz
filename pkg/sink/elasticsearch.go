@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/db"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 )
 
@@ -31,7 +32,7 @@ func (s *ElasticsearchSink) Name() string {
 }
 
 func (s *ElasticsearchSink) Type() string {
-	return ELASTICSEARCH
+	return db.ELASTICSEARCH
 }
 
 func (s *ElasticsearchSink) DeliveryRequired() bool {

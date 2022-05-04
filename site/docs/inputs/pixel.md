@@ -5,7 +5,7 @@ tags:
   - relay
 ---
 
-# 🟢 Pixel
+# 🟢🎉 Pixel
 
 
 ## Collection Method

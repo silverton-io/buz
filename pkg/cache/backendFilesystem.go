@@ -12,10 +12,11 @@ type FilesystemCacheBackend struct {
 	path string
 }
 
-func (b *FilesystemCacheBackend) Initialize(conf config.Backend) {
+func (b *FilesystemCacheBackend) Initialize(conf config.Backend) error {
 	log.Debug().Msg("initializing filesystem schema cache backend")
 	b.path = conf.Path
 	// No-op
+	return nil
 }
 
 func (b *FilesystemCacheBackend) GetRemote(schema string) (contents []byte, err error) {

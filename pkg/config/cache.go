@@ -6,11 +6,47 @@ type Purge struct {
 }
 
 type Backend struct {
-	Type   string `json:"type"`
-	Region string `json:"region,omitempty"`
+	Type string `json:"type"`
+	Path string `json:"path"`
+	// S3 and Gcs
 	Bucket string `json:"bucket,omitempty"`
-	Host   string `json:"host,omitempty"`
-	Path   string `json:"path"`
+	// Gcs
+	Region string `json:"region,omitempty"`
+	// Http
+	Host string `json:"host,omitempty"`
+	// Db, general
+	RegistryTable string `json:"registryTable"`
+	// Postgres Database
+	PgHost   string `json:"-"`
+	PgPort   uint16 `json:"-"`
+	PgDbName string `json:"-"`
+	PgUser   string `json:"-"`
+	PgPass   string `json:"-"`
+	// Mysql Database
+	MysqlHost   string `json:"-"`
+	MysqlPort   uint16 `json:"-"`
+	MysqlDbName string `json:"-"`
+	MysqlUser   string `json:"-"`
+	MysqlPass   string `json:"-"`
+	// Materialize Database
+	MzHost   string `json:"-"`
+	MzPort   uint16 `json:"-"`
+	MzDbName string `json:"-"`
+	MzUser   string `json:"-"`
+	MzPass   string `json:"-"`
+	// Clickhouse Database
+	ClickhouseHost   string `json:"-"`
+	ClickhousePort   uint16 `json:"-"`
+	ClickhouseDbName string `json:"-"`
+	ClickhouseUser   string `json:"-"`
+	ClickhousePass   string `json:"-"`
+	// Mongodb
+	MongoHosts         []string `json:"mongoHosts,omitempty"`
+	MongoPort          string   `json:"mongoDbPort,omitempty"`
+	MongoDbName        string   `json:"mongoDbName,omitempty"`
+	MongoUser          string   `json:"-"`
+	MongoPass          string   `json:"-"`
+	RegistryCollection string   `json:"registryCollection"`
 }
 
 type SchemaDirectory struct {
