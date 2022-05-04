@@ -9,7 +9,7 @@ tags:
 
 The `fs` cache backend uses jsonschemas stored on the local filesystem to back the in-memory schema cache.
 
-## Sample Filesystem Cache Backend Configuration
+## Sample Filesystem Schema Cache Backend Configuration
 
 ```
 schemaCache:

@@ -61,6 +61,7 @@ nav:
       - schema-cache-backends/mysql.md
       - schema-cache-backends/postgres.md
       - schema-cache-backends/materialize.md
+      - schema-cache-backends/clickhouse.md
       - schema-cache-backends/mongodb.md
       - schema-cache-backends/redis.md
       - schema-cache-backends/iglu.md
@@ -92,6 +93,7 @@ nav:
       - sinks/blackhole.md
       - sinks/indicative.md
       - sinks/amplitude.md
+      - sinks/timescaledb.md
       - sinks/vitess.md
       - sinks/bigquery.md
       - sinks/firebolt.md
