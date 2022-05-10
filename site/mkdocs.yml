@@ -24,6 +24,7 @@ extra:
 nav:
   - index.md
   - why.md
+  - insiders-only-updates.md
   - Quickstart:
       - quickstart/getting-started.md
     # - quickstart/honeypot-and-benthos.md

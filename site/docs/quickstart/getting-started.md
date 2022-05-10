@@ -125,6 +125,12 @@ event | {"app_id":"site","br_colordepth":24,"br_cookies":true,"br_features_direc
 materialize=>
 ```
 
+# Next Steps
+
+We have a lot planned for the coming months. Want to be a part of it?
+
+- Sign up for [Insiders-Only Updates](/insiders-only-updates)
+- Check out the [Honeypot Roadmap](/roadmap/2022)
 
 # Component Overview
 

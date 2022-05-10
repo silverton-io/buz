@@ -70,4 +70,9 @@ Data should be validated and redirected as soon as it enters collection infrastr
 And last but certainly not least, engineers should be able to maintain and advance event collection efforts without complexity or cost explosion.
 
 
+# Would you like to know more?
+
+If you would like to know more or follow the project, **[check out the roadmap](/roadmap/2022)** or sign up for **[Insiders-Only Updates](/insiders-only-updates)**.
+
+
 ![honeypot](img/honeypot.png)
