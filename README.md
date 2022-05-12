@@ -3,7 +3,7 @@
 ![agplv3](https://img.shields.io/badge/license-AGPLv3-brightgreen)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/silverton-io/honeypot)
 
-![Honeypot](site/docs/img/honeypot.png)
+![Honeypot](site/docs/img/eshepherd.jpg)
 
 A lightweight, snowplow-compatible streaming event collection system.
 

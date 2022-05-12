@@ -75,4 +75,4 @@ And last but certainly not least, engineers should be able to maintain and advan
 If you would like to know more or follow the project, **[check out the roadmap](/roadmap/2022)** or sign up for **[Insiders-Only Updates](/insiders-only-updates)**.
 
 
-![honeypot](img/honeypot.png)
+![honeypot](img/eshepherd.jpg)
