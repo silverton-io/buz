@@ -29,8 +29,6 @@ func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent) Envelope {
 			Duid:        e.DomainUserid,
 			Uid:         e.Userid,
 			Fingerprint: e.UserFingerprint,
-			Sid:         e.DomainSessionId,
-			Sidx:        e.DomainSessionIdx,
 		},
 		EventMetadata: EventMetadata{
 			Uuid:     uuid.New(),
@@ -192,28 +190,7 @@ func BuildPixelEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelo
 		log.Error().Err(err).Msg("could not build PixelEvent")
 	}
 	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
-	envelope := Envelope{
-		SourceMetadata: SourceMetadata{
-			Ip: c.ClientIP(),
-		},
-		UserMetadata: UserMetadata{
-			Nuid: &advancingCookieVal,
-		},
-		EventMetadata: EventMetadata{
-			Uuid:     uuid.New(),
-			Protocol: protocol.PIXEL,
-		},
-		CollectorMetadata: CollectorMetadata{
-			Tstamp: time.Now().UTC(),
-		},
-		RelayMetadata: RelayMetadata{
-			IsRelayed: false,
-		},
-		ValidationMetadata: ValidationMetadata{
-			IsValid: true,
-		},
-		Payload: pEvent,
-	}
+	envelope := Envelope{}
 	envelopes = append(envelopes, envelope)
 	return envelopes
 }

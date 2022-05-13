@@ -119,17 +119,17 @@ type Tstamp struct {
 }
 
 type User struct {
-	DomainUserid    *string `json:"domain_userid"`
-	NetworkUserid   *string `json:"network_userid"`
 	Userid          *string `json:"user_id"`
-	UserIpAddress   *string `json:"user_ipaddress"`
 	UserFingerprint *string `json:"user_fingerprint"`
 }
 
 type Device struct {
-	Useragent  *string `json:"useragent"`
-	MacAddress *string `json:"mac_address"`
-	OsTimezone *string `json:"os_timezone"`
+	Useragent     *string `json:"useragent"`
+	MacAddress    *string `json:"mac_address"`
+	OsTimezone    *string `json:"os_timezone"`
+	DomainUserid  *string `json:"domain_userid"`
+	NetworkUserid *string `json:"network_userid"`
+	UserIpAddress *string `json:"user_ipaddress"`
 }
 
 type Browser struct {
@@ -148,16 +148,16 @@ type Browser struct {
 }
 
 type Screen struct {
-	ViewportSize      *string `json:"viewport_size"`
-	BrViewWidth       *int    `json:"br_viewwidth"`
-	BrViewHeight      *int    `json:"br_viewheight"`
-	DocCharset        *string `json:"doc_charset"`
-	DocSize           *string `json:"doc_size"`
-	DocWidth          *int    `json:"doc_width"`
-	DocHeight         *int    `json:"doc_height"`
-	MonitorResolution *string `json:"monitor_resolution"`
-	DvceScreenWidth   *int    `json:"dvce_screenwidth"`
-	DvceScreenHeight  *int    `json:"dvce_screenheight"`
+	ViewportSize         *string `json:"viewport_size"`
+	BrViewWidth          *int    `json:"br_viewwidth"`
+	BrViewHeight         *int    `json:"br_viewheight"`
+	DocCharset           *string `json:"doc_charset"`
+	DocSize              *string `json:"doc_size"`
+	DocWidth             *int    `json:"doc_width"`
+	DocHeight            *int    `json:"doc_height"`
+	DvceScreenResolution *string `json:"screen_resolution"`
+	DvceScreenWidth      *int    `json:"dvce_screenwidth"`
+	DvceScreenHeight     *int    `json:"dvce_screenheight"`
 }
 
 type Session struct {
@@ -257,22 +257,6 @@ func getEventType(param string) string {
 		return AD_IMPRESSION
 	}
 	return UNKNOWN_EVENT
-}
-
-type Page struct {
-	Url      string  `json:"url"`
-	Title    *string `json:"title"`
-	Scheme   string  `json:"scheme"`
-	Host     string  `json:"host"`
-	Port     string  `json:"port"`
-	Path     string  `json:"path"`
-	Query    *string `json:"query"`
-	Fragment *string `json:"fragment"`
-	Medium   *string `json:"medium"`
-	Source   *string `json:"source"`
-	Term     *string `json:"term"`
-	Content  *string `json:"content"`
-	Campaign *string `json:"campaign"`
 }
 
 type DomainLinker struct {

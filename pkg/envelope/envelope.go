@@ -1,11 +1,6 @@
 package envelope
 
 import (
-	"database/sql/driver"
-	"encoding/json"
-	"time"
-
-	"github.com/google/uuid"
 	"github.com/silverton-io/honeypot/pkg/event"
 )
 
@@ -21,159 +16,50 @@ const (
 	INPUT_PROTOCOL            string = "inputProtocol"
 )
 
-type PayloadValidationError struct {
-	Field       string `json:"field"`
-	Description string `json:"description"`
-	ErrorType   string `json:"errorType"`
-}
-
-type ValidationError struct {
-	ErrorType       *string                  `json:"errorType"`
-	ErrorResolution *string                  `json:"errorResolution"`
-	Errors          []PayloadValidationError `json:"payloadValidationErrors"`
-}
-
-func (e *ValidationError) Value() (driver.Value, error) {
-	b, err := json.Marshal(e)
-	return string(b), err
-}
-
-func (e *ValidationError) Scan(input interface{}) error {
-	return json.Unmarshal(input.([]byte), e)
-}
-
 type Envelope struct {
-	SourceMetadata     SourceMetadata     `json:"sourceMetadata" gorm:"type:json"`
-	CollectorMetadata  CollectorMetadata  `json:"collectorMetadata" gorm:"type:json"`
-	UserMetadata       UserMetadata       `json:"userMetadata" gorm:"type:json"`
-	EventMetadata      EventMetadata      `json:"eventMetadata" gorm:"type:json"`
-	RelayMetadata      RelayMetadata      `json:"relayMetadata" gorm:"type:json"`
-	ValidationMetadata ValidationMetadata `json:"validationMetadata" gorm:"type:json"`
-	Payload            event.Event        `json:"payload" gorm:"type:json"`
+	Event          `json:"event" gorm:"type:json"`
+	Pipeline       `json:"pipeline" gorm:"type:json"`
+	Device         `json:"device" gorm:"type:json"`
+	User           `json:"user" gorm:"type:json"`
+	Session        `json:"session" gorm:"type:json"`
+	Page           `json:"page" gorm:"type:json"`
+	ValidationMeta `json:"validationMeta" gorm:"type:json"`
+	Contexts       event.Contexts `json:"contexts" gorm:"type:json"`
+	Payload        event.Event    `json:"payload" gorm:"type:json"`
 }
 
 type PgEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
-	SourceMetadata     `json:"sourceMetadata" gorm:"type:jsonb"`
-	CollectorMetadata  `json:"collectorMetadata" gorm:"type:jsonb"`
-	UserMetadata       `json:"userMetadata" gorm:"type:jsonb"`
-	EventMetadata      `json:"eventMetadata" gorm:"type:jsonb"`
-	RelayMetadata      `json:"relayMetadata" gorm:"type:jsonb"`
-	ValidationMetadata `json:"validationMetadata" gorm:"type:jsonb"`
-	Payload            event.Event `json:"payload" gorm:"type:jsonb"`
+	Event          `json:"event" gorm:"type:jsonb"`
+	Pipeline       `json:"pipeline" gorm:"type:jsonb"`
+	Device         `json:"device" gorm:"type:jsonb"`
+	User           `json:"user" gorm:"type:jsonb"`
+	Session        `json:"session" gorm:"type:jsonb"`
+	Page           `json:"page" gorm:"type:jsonb"`
+	ValidationMeta `json:"validationMeta" gorm:"type:jsonb"`
+	Contexts       event.Contexts `json:"contexts" gorm:"type:jsonb"`
+	Payload        event.Event    `json:"payload" gorm:"type:jsonb"`
 }
 
 type MysqlEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
-	SourceMetadata     `json:"sourceMetadata" gorm:"type:json"`
-	CollectorMetadata  `json:"collectorMetadata" gorm:"type:json"`
-	UserMetadata       `json:"userMetadata" gorm:"type:json"`
-	EventMetadata      `json:"eventMetadata" gorm:"type:json"`
-	RelayMetadata      `json:"relayMetadata" gorm:"type:json"`
-	ValidationMetadata `json:"validationMetadata" gorm:"type:json"`
-	Payload            event.Event `json:"payload" gorm:"type:json"`
+	Event          `json:"event" gorm:"type:json"`
+	Pipeline       `json:"pipeline" gorm:"type:json"`
+	Device         `json:"device" gorm:"type:json"`
+	User           `json:"user" gorm:"type:json"`
+	Session        `json:"session" gorm:"type:json"`
+	Page           `json:"page" gorm:"type:json"`
+	ValidationMeta `json:"validationMeta" gorm:"type:json"`
+	Contexts       event.Contexts `json:"contexts" gorm:"type:json"`
+	Payload        event.Event    `json:"payload" gorm:"type:json"`
 }
 
 type ClickhouseEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
-	SourceMetadata     `json:"sourceMetadata" gorm:"type:string"`
-	CollectorMetadata  `json:"collectorMetadata" gorm:"type:string"`
-	UserMetadata       `json:"userMetadata" gorm:"type:string"`
-	EventMetadata      `json:"eventMetadata" gorm:"type:string"`
-	RelayMetadata      `json:"relayMetadata" gorm:"type:string"`
-	ValidationMetadata `json:"validationMetadata" gorm:"type:string"`
-	Payload            event.Event `json:"payload" gorm:"type:string"`
-}
-
-type EventMetadata struct {
-	Protocol           string    `json:"protocol"`
-	Uuid               uuid.UUID `json:"uuid"`
-	Vendor             string    `json:"vendor,omitempty"`
-	PrimaryNamespace   string    `json:"primaryNamespace,omitempty"`
-	SecondaryNamespace string    `json:"secondaryNamespace,omitempty"`
-	TertiaryNamespace  string    `json:"tertiaryNamespace,omitempty"`
-	Name               string    `json:"name,omitempty"`
-	Version            string    `json:"version,omitempty"`
-	Format             string    `json:"format,omitempty"`
-	Path               string    `json:"path,omitempty"`
-}
-
-func (e EventMetadata) Value() (driver.Value, error) {
-	b, err := json.Marshal(e)
-	return string(b), err
-}
-
-func (e EventMetadata) Scan(input interface{}) error {
-	return json.Unmarshal(input.([]byte), &e)
-}
-
-type SourceMetadata struct {
-	Name string `json:"name,omitempty"`
-	Ip   string `json:"ip"`
-}
-
-func (e SourceMetadata) Value() (driver.Value, error) {
-	b, err := json.Marshal(e)
-	return string(b), err
-}
-
-func (e SourceMetadata) Scan(input interface{}) error {
-	return json.Unmarshal(input.([]byte), &e)
-}
-
-type CollectorMetadata struct {
-	Tstamp time.Time `json:"tstamp"`
-}
-
-func (e CollectorMetadata) Value() (driver.Value, error) {
-	b, err := json.Marshal(e)
-	return string(b), err
-}
-
-func (e CollectorMetadata) Scan(input interface{}) error {
-	return json.Unmarshal(input.([]byte), &e)
-}
-
-type RelayMetadata struct {
-	IsRelayed bool       `json:"isRelayed"`
-	RelayId   *uuid.UUID `json:"relayId"`
-	Tstamp    *time.Time `json:"tstamp"`
-}
-
-func (e RelayMetadata) Value() (driver.Value, error) {
-	b, err := json.Marshal(e)
-	return string(b), err
-}
-
-func (e RelayMetadata) Scan(input interface{}) error {
-	return json.Unmarshal(input.([]byte), &e)
-}
-
-type ValidationMetadata struct {
-	IsValid         bool             `json:"isValid"`
-	ValidationError *ValidationError `json:"validationErrors"`
-}
-
-func (e ValidationMetadata) Value() (driver.Value, error) {
-	b, err := json.Marshal(e)
-	return string(b), err
-}
-
-func (e ValidationMetadata) Scan(input interface{}) error {
-	return json.Unmarshal(input.([]byte), &e)
-}
-
-type UserMetadata struct {
-	Duid        *string `json:"duid"`
-	Nuid        *string `json:"nuid"`
-	Uid         *string `json:"uid"`
-	Sid         *string `json:"sid"`
-	Sidx        *int64  `json:""`
-	Fingerprint *string `json:"fingerprint"`
-}
-
-func (e UserMetadata) Value() (driver.Value, error) {
-	b, err := json.Marshal(e)
-	return string(b), err
-}
-
-func (e UserMetadata) Scan(input interface{}) error {
-	return json.Unmarshal(input.([]byte), &e)
+	Event          `json:"event" gorm:"type:string"`
+	Pipeline       `json:"pipeline" gorm:"type:string"`
+	Device         `json:"device" gorm:"type:string"`
+	User           `json:"user" gorm:"type:string"`
+	Session        `json:"session" gorm:"type:string"`
+	Page           `json:"page" gorm:"type:string"`
+	ValidationMeta `json:"validationMeta" gorm:"type:string"`
+	Contexts       event.Contexts `json:"contexts" gorm:"type:string"`
+	Payload        event.Event    `json:"payload" gorm:"type:string"`
 }
