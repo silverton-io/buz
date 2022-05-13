@@ -24,16 +24,198 @@
                     "type": "boolean",
                     "description": "Whether a user is active"
                 },
-                "app": {},
-                "campaign": {},
-                "device": {},
-                "ip": {},
-                "library": {},
-                "locale": {},
-                "location": {},
-                "network": {},
-                "os": {},
-                "page": {},
+                "app": {
+                    "type": "object",
+                    "description": "Dictionary of information about the current application",
+                    "properties": {
+                        "name": {
+                            "type":"string",
+                            "description": "The name of the application"
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The version of the application"
+                        },
+                        "build": {
+                            "type": "string",
+                            "description": "The build of the application"
+                        }
+                    }
+                },
+                "campaign": {
+                    "type": "object",
+                    "description": "Dictionary of information about the campaign that resulted in the API call",
+                    "properties": {
+                        "name": {
+                            "type":"string",
+                            "description": "The value of the utm campaign param"
+                        },
+                        "source": {
+                            "type": "string",
+                            "description": "The value of the utm source param"
+                        },
+                        "medium": {
+                            "type": "string",
+                            "description": "The value of the utm medium param"
+                        },
+                        "term": {
+                            "type": "string",
+                            "description": "The value of the utm term param"
+                        },
+                        "content": {
+                            "type": "string",
+                            "description": "The value of the utm content param"
+                        }
+                    }
+                },
+                "device": {
+                    "type": "object",
+                    "description": "Dictionary of information about the device",
+                    "properties": {
+                        "id": {
+                            "type": ["string", "null"],
+                            "description": "The device id"
+                        },
+                        "advertisingId": {
+                            "type": ["string", "null"],
+                            "description": "The device ad id"
+                        },
+                        "manufacturer": {
+                            "type": ["string", "null"],
+                            "description": "The device manufacturer"
+                        },
+                        "model": {
+                            "type": ["string", "null"],
+                            "description": "The device model"
+                        },
+                        "name": {
+                            "type": ["string", "null"],
+                            "description": "The device name"
+                        },
+                        "type": {
+                            "type": ["string", "null"],
+                            "description": "The device type"
+                        },
+                        "version": {
+                            "type": ["string", "null"],
+                            "description": "The device version"
+                        }
+                    }
+                },
+                "ip": {
+                    "type": "string",
+                    "description": "Current user IP address."
+                },
+                "library": {
+                    "type": "object",
+                    "description": "Information about the library making the requests to the API",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The library name"
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The library version"
+                        }
+                    }
+                },
+                "locale": {
+                    "type": "string",
+                    "description": "Locale string for the current user, for example en-US"
+                },
+                "location": {
+                    "type": "object",
+                    "description": "Information about current location",
+                    "properties": {
+                        "city": {
+                            "type": ["string", "null"],
+                            "description": "The current city"
+                        },
+                        "country": {
+                            "type": ["string", "null"],
+                            "description": "The current country"
+                        },
+                        "latitude": {
+                            "type": ["number", "null"],
+                            "description": "The current latitude"
+                        },
+                        "longitude": {
+                            "type": ["number", "null"],
+                            "description": "The current longitude"
+                        },
+                        "region": {
+                            "type": ["string", "null"],
+                            "description": "The current region"
+                        },
+                        "speed": {
+                            "type": ["number", "null"],
+                            "description": "The current speed"
+                        }
+                    }
+                },
+                "network": {
+                    "type": "object",
+                    "description": "Information about the current network connection",
+                    "properties": {
+                        "bluetooth": {
+                            "type": ["boolean", "null"],
+                            "description": "Whether or not the connection is via bluetooth"
+                        },
+                        "carrier": {
+                            "type": ["string", "null"],
+                            "description": "The name of the network carrier"
+                        },
+                        "cellular": {
+                            "type": ["boolean", "null"],
+                            "description": "Whether or not the connection is via cellular"
+                        },
+                        "wifi": {
+                            "type": ["boolean", "null"],
+                            "description": "Whether or not the connection is via wifi"
+                        }
+                    }
+                },
+                "os": {
+                    "type": "object",
+                    "description": "Information about the operating system",
+                    "properties": {
+                        "name": {
+                            "type": ["string", "null"],
+                            "description": "The os name"
+                        },
+                        "version": {
+                            "type": ["string", "null"],
+                            "description": "The os version"
+                        }
+                    }
+                },
+                "page": {
+                    "type": "object",
+                    "description": "Information about the current page in the browser",
+                    "properties": {
+                        "path": {
+                            "type": "string",
+                            "description": "The page path"
+                        },
+                        "referrer": {
+                            "type": "string",
+                            "description": "The page referrer"
+                        },
+                        "search": {
+                            "type": "string",
+                            "description": "The page params"
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "The page title"
+                        },
+                        "url": {
+                            "type": "string",
+                            "description": "The page url"
+                        }
+                    }
+                },
                 "referrer": {
                     "type": "object",
                     "description": "Dictionary of information about the way the user was referred to the website or app",
