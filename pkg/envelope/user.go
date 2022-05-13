@@ -6,9 +6,10 @@ import (
 )
 
 type User struct {
-	Id          *string `json:"id,omitempty"`
-	AnonymousId *string `json:"anonymousId,omitempty"`
-	Fingerprint *string `json:"fingerprint,omitempty"`
+	Id          *string                 `json:"id,omitempty"`
+	AnonymousId *string                 `json:"anonymousId,omitempty"`
+	Fingerprint *string                 `json:"fingerprint,omitempty"`
+	Traits      *map[string]interface{} `json:"traits,omitempty"`
 }
 
 func (e User) Value() (driver.Value, error) {
