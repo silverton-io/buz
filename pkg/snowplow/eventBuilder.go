@@ -12,7 +12,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/event"
-	"github.com/silverton-io/honeypot/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
@@ -215,8 +214,8 @@ func setUser(c *gin.Context, e *SnowplowEvent, params map[string]interface{}) {
 	user := User{
 		DomainUserid:  getStringParam(params, "duid"),
 		NetworkUserid: &nuid,
-		Userid:        getStringParam(params, "uid"),
-		UserIpAddress: &sIp,
+		Id:            getStringParam(params, "uid"),
+		IpAddress:     &sIp,
 	}
 	e.User = user
 }
@@ -271,10 +270,10 @@ func setBrowser(e *SnowplowEvent, params map[string]interface{}) {
 
 func setScreen(e *SnowplowEvent, params map[string]interface{}) {
 	s := Screen{
-		DocCharset:        getStringParam(params, "cs"),
-		ViewportSize:      getStringParam(params, "vp"),
-		DocSize:           getStringParam(params, "ds"),
-		MonitorResolution: getStringParam(params, "res"),
+		DocCharset:           getStringParam(params, "cs"),
+		ViewportSize:         getStringParam(params, "vp"),
+		DocSize:              getStringParam(params, "ds"),
+		DvceScreenResolution: getStringParam(params, "res"),
 	}
 	if s.DocSize != nil {
 		docDimension, _ := getDimensions(*s.DocSize)
@@ -284,8 +283,8 @@ func setScreen(e *SnowplowEvent, params map[string]interface{}) {
 		vpDimension, _ := getDimensions(*s.ViewportSize)
 		s.BrViewWidth, s.BrViewHeight = &vpDimension.width, &vpDimension.height
 	}
-	if s.MonitorResolution != nil {
-		monDimension, _ := getDimensions(*s.MonitorResolution)
+	if s.DvceScreenResolution != nil {
+		monDimension, _ := getDimensions(*s.DvceScreenResolution)
 		s.DvceScreenWidth, s.DvceScreenHeight = &monDimension.width, &monDimension.height
 	}
 	e.Screen = s
@@ -360,17 +359,6 @@ func setSelfDescribing(e *SnowplowEvent, params map[string]interface{}) {
 	e.SelfDescribingEvent = getSdPayload(b64EncodedPayload)
 }
 
-func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
-	if conf.Anonymize.Ip && e.UserIpAddress != nil {
-		hashedIp := util.Md5(*e.UserIpAddress)
-		e.UserIpAddress = &hashedIp
-	}
-	if conf.Anonymize.UserId && e.Userid != nil {
-		hashedUserId := util.Md5(*e.Userid)
-		e.Userid = &hashedUserId
-	}
-}
-
 func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Config) SnowplowEvent {
 	event := SnowplowEvent{}
 	setTstamps(&event, params)
@@ -398,6 +386,5 @@ func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, c
 	case SELF_DESCRIBING_EVENT:
 		setSelfDescribing(&event, params)
 	}
-	anonymizeFields(&event, conf.Snowplow)
 	return event
 }

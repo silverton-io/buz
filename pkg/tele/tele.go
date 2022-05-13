@@ -13,9 +13,9 @@ import (
 
 const (
 	DEFAULT_ENDPOINT string = "https://tele.silverton.io/gen/p"
-	STARTUP_1_0      string = "com.silverton.io/honeypot/tele/startup/v1.0.json"
-	HEARTBEAT_1_0    string = "com.silverton.io/honeypot/tele/beat/v1.0.json"
-	SHUTDOWN_1_0     string = "com.silverton.io/honeypot/tele/shutdown/v1.0.json"
+	STARTUP_1_0      string = "io.silverton/honeypot/tele/startup/v1.0.json"
+	HEARTBEAT_1_0    string = "io.silverton/honeypot/tele/beat/v1.0.json"
+	SHUTDOWN_1_0     string = "io.silverton/honeypot/tele/shutdown/v1.0.json"
 )
 
 type startup struct {

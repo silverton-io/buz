@@ -21,27 +21,8 @@ import (
 
 func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent) Envelope {
 	envelope := Envelope{
-		SourceMetadata: SourceMetadata{
-			Ip: c.ClientIP(),
-		},
-		UserMetadata: UserMetadata{
-			Nuid:        e.NetworkUserid,
-			Duid:        e.DomainUserid,
-			Uid:         e.Userid,
-			Fingerprint: e.UserFingerprint,
-		},
-		EventMetadata: EventMetadata{
-			Uuid:     uuid.New(),
-			Protocol: protocol.SNOWPLOW,
-		},
-		CollectorMetadata: CollectorMetadata{
-			Tstamp: time.Now().UTC(),
-		},
-		RelayMetadata: RelayMetadata{
-			IsRelayed: false,
-		},
-		ValidationMetadata: ValidationMetadata{},
-		Payload:            e,
+		Validation: Validation{},
+		Payload:    e,
 	}
 	return envelope
 }
@@ -80,22 +61,26 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
 		genEvent := generic.BuildEvent(e, conf.Generic)
 		envelope := Envelope{
-			SourceMetadata: SourceMetadata{Ip: c.ClientIP()},
-			UserMetadata: UserMetadata{
-				Nuid: &advancingCookieVal,
-			},
-			EventMetadata: EventMetadata{
+			Event: Event{
 				Uuid:     uuid.New(),
 				Protocol: protocol.GENERIC,
 			},
-			CollectorMetadata: CollectorMetadata{
-				Tstamp: time.Now().UTC(),
+			Pipeline: Pipeline{
+				Source: Source{
+					Ip: c.ClientIP(),
+				},
+				Collector: Collector{
+					Tstamp: time.Now().UTC(),
+				},
+				Relay: Relay{
+					Relayed: false,
+				},
 			},
-			RelayMetadata: RelayMetadata{
-				IsRelayed: false,
+			Device: Device{
+				Nuid: &advancingCookieVal,
 			},
-			ValidationMetadata: ValidationMetadata{},
-			Payload:            genEvent,
+			Validation: Validation{},
+			Payload:    genEvent,
 		}
 		envelopes = append(envelopes, envelope)
 	}
@@ -113,24 +98,26 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []E
 	for _, ce := range gjson.ParseBytes(reqBody).Array() {
 		cEvent, _ := cloudevents.BuildEvent(ce)
 		envelope := Envelope{
-			SourceMetadata: SourceMetadata{
-				Ip: c.ClientIP(),
+			Event: Event{
+				Uuid:     uuid.New(),
+				Protocol: protocol.GENERIC,
 			},
-			UserMetadata: UserMetadata{
+			Pipeline: Pipeline{
+				Source: Source{
+					Ip: c.ClientIP(),
+				},
+				Collector: Collector{
+					Tstamp: time.Now().UTC(),
+				},
+				Relay: Relay{
+					Relayed: false,
+				},
+			},
+			Device: Device{
 				Nuid: &advancingCookieVal,
 			},
-			EventMetadata: EventMetadata{
-				Uuid:     uuid.New(),
-				Protocol: protocol.CLOUDEVENTS,
-			},
-			CollectorMetadata: CollectorMetadata{
-				Tstamp: time.Now().UTC(),
-			},
-			RelayMetadata: RelayMetadata{
-				IsRelayed: false,
-			},
-			ValidationMetadata: ValidationMetadata{},
-			Payload:            cEvent,
+			Validation: Validation{},
+			Payload:    cEvent,
 		}
 		envelopes = append(envelopes, envelope)
 	}
@@ -151,26 +138,26 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context, conf config.Config) []Enve
 			log.Error().Stack().Err(err).Msg("could not build WebhookEvent")
 		}
 		envelope := Envelope{
-			SourceMetadata: SourceMetadata{
-				Ip: c.ClientIP(),
+			Event: Event{
+				Uuid:     uuid.New(),
+				Protocol: protocol.GENERIC,
 			},
-			UserMetadata: UserMetadata{
+			Pipeline: Pipeline{
+				Source: Source{
+					Ip: c.ClientIP(),
+				},
+				Collector: Collector{
+					Tstamp: time.Now().UTC(),
+				},
+				Relay: Relay{
+					Relayed: false,
+				},
+			},
+			Device: Device{
 				Nuid: &advancingCookieVal,
 			},
-			EventMetadata: EventMetadata{
-				Uuid:     uuid.New(),
-				Protocol: protocol.WEBHOOK,
-			},
-			CollectorMetadata: CollectorMetadata{
-				Tstamp: time.Now().UTC(),
-			},
-			RelayMetadata: RelayMetadata{
-				IsRelayed: false,
-			},
-			ValidationMetadata: ValidationMetadata{
-				IsValid: true,
-			},
-			Payload: whEvent,
+			Validation: Validation{},
+			Payload:    whEvent,
 		}
 		envelopes = append(envelopes, envelope)
 	}
@@ -190,7 +177,28 @@ func BuildPixelEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelo
 		log.Error().Err(err).Msg("could not build PixelEvent")
 	}
 	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
-	envelope := Envelope{}
+	envelope := Envelope{
+		Event: Event{
+			Uuid:     uuid.New(),
+			Protocol: protocol.GENERIC,
+		},
+		Pipeline: Pipeline{
+			Source: Source{
+				Ip: c.ClientIP(),
+			},
+			Collector: Collector{
+				Tstamp: time.Now().UTC(),
+			},
+			Relay: Relay{
+				Relayed: false,
+			},
+		},
+		Device: Device{
+			Nuid: &advancingCookieVal,
+		},
+		Validation: Validation{},
+		Payload:    pEvent,
+	}
 	envelopes = append(envelopes, envelope)
 	return envelopes
 }
@@ -238,10 +246,10 @@ func BuildRelayEnvelopesFromRequest(c *gin.Context) []Envelope {
 		}
 		uid := uuid.New()
 		now := time.Now().UTC()
-		envelope.RelayMetadata = RelayMetadata{
-			IsRelayed: true,
-			RelayId:   &uid,
-			Tstamp:    &now,
+		envelope.Pipeline.Relay = Relay{
+			Relayed: true,
+			Id:      &uid,
+			Tstamp:  &now,
 		}
 		envelopes = append(envelopes, envelope)
 	}

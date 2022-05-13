@@ -24,9 +24,11 @@ func (p Pipeline) Scan(input interface{}) error {
 }
 
 type Source struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
-	Ip      string `json:"ip"`
+	Ip              string    `json:"ip"`
+	GeneratedTstamp time.Time `json:"generatedTstamp"`
+	SentTstamp      time.Time `json:"sentTstamp"`
+	Name            *string   `json:"name,omitempty"`
+	Version         *string   `json:"version,omitempty"`
 }
 
 func (s Source) Value() (driver.Value, error) {
@@ -52,9 +54,9 @@ func (c Collector) Scan(input interface{}) error {
 }
 
 type Relay struct {
-	IsRelayed bool       `json:"isRelayed"`
-	RelayId   *uuid.UUID `json:"relayId"`
-	Tstamp    *time.Time `json:"tstamp"`
+	Relayed bool       `json:"relayed"`
+	Id      *uuid.UUID `json:"id,omitempty"`
+	Tstamp  *time.Time `json:"tstamp,omitempty"`
 }
 
 func (r Relay) Value() (driver.Value, error) {

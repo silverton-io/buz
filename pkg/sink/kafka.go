@@ -86,16 +86,16 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []
 			return err
 		}
 		headers := []kgo.RecordHeader{
-			{Key: envelope.INPUT_PROTOCOL, Value: []byte(event.EventMetadata.Protocol)},
-			{Key: envelope.EVENT_VENDOR, Value: []byte(event.EventMetadata.Vendor)},
-			{Key: envelope.EVENT_PRIMARY_NAMESPACE, Value: []byte(event.EventMetadata.PrimaryNamespace)},
-			{Key: envelope.EVENT_SECONDARY_NAMESPACE, Value: []byte(event.EventMetadata.SecondaryNamespace)},
-			{Key: envelope.EVENT_TERTIARY_NAMESPACE, Value: []byte(event.EventMetadata.TertiaryNamespace)},
-			{Key: envelope.EVENT_NAME, Value: []byte(event.EventMetadata.Name)},
-			{Key: envelope.EVENT_VERSION, Value: []byte(event.EventMetadata.Version)},
+			{Key: envelope.INPUT_PROTOCOL, Value: []byte(event.Event.Protocol)},
+			{Key: envelope.EVENT_VENDOR, Value: []byte(event.Event.Vendor)},
+			{Key: envelope.EVENT_PRIMARY_NAMESPACE, Value: []byte(event.Event.PrimaryNamespace)},
+			{Key: envelope.EVENT_SECONDARY_NAMESPACE, Value: []byte(event.Event.SecondaryNamespace)},
+			{Key: envelope.EVENT_TERTIARY_NAMESPACE, Value: []byte(event.Event.TertiaryNamespace)},
+			{Key: envelope.EVENT_NAME, Value: []byte(event.Event.Name)},
+			{Key: envelope.EVENT_VERSION, Value: []byte(event.Event.Version)},
 		}
 		record := &kgo.Record{
-			Key:     []byte(event.EventMetadata.Path), // FIXME! Add configurable partition assignment
+			Key:     []byte(event.Event.Path), // FIXME! Add configurable partition assignment
 			Topic:   topic,
 			Value:   payload,
 			Headers: headers,

@@ -1,0 +1,32 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://registry.silverton.io/io.silverton/honeypot/tele/startup/v1.0.json",
+    "title": "io.silverton/honeypot/tele/startup/v1.0.json",
+    "description": "Honeypot startup event",
+	"self": {
+		"vendor": "io.silverton",
+        "primaryNamespace": "honeypot",
+        "secondaryNamespace": "tele",
+		"name": "startup",
+		"format": "jsonschema",
+		"version": "1.0"
+	},
+    "type": "object",
+    "properties": {
+        "config": {
+            "type": "object",
+            "description": "Configuration at time of startup"
+        },
+        "meta": {
+            "type": "object",
+            "description": "Startup metadata"
+        },
+        "time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "TS of the beat"
+        }
+    },
+    "additionalProperties": false,
+    "required": ["meta", "time", "config"]
+}

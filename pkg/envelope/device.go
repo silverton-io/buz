@@ -22,6 +22,7 @@ type Device struct {
 	Os                `json:"os"`
 	Browser           `json:"browser"`
 	Screen            `json:"screen"`
+	Network           `json:"network"`
 }
 
 func (d Device) Value() (driver.Value, error) {

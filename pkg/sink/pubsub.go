@@ -81,13 +81,13 @@ func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, enve
 		msg := &pubsub.Message{
 			Data: payload,
 			Attributes: map[string]string{
-				envelope.INPUT_PROTOCOL:            event.EventMetadata.Protocol,
-				envelope.EVENT_VENDOR:              event.EventMetadata.Vendor,
-				envelope.EVENT_PRIMARY_NAMESPACE:   event.EventMetadata.PrimaryNamespace,
-				envelope.EVENT_SECONDARY_NAMESPACE: event.EventMetadata.SecondaryNamespace,
-				envelope.EVENT_TERTIARY_NAMESPACE:  event.EventMetadata.TertiaryNamespace,
-				envelope.EVENT_NAME:                event.EventMetadata.Name,
-				envelope.EVENT_VERSION:             event.EventMetadata.Version,
+				envelope.INPUT_PROTOCOL:            event.Event.Protocol,
+				envelope.EVENT_VENDOR:              event.Event.Vendor,
+				envelope.EVENT_PRIMARY_NAMESPACE:   event.Event.PrimaryNamespace,
+				envelope.EVENT_SECONDARY_NAMESPACE: event.Event.SecondaryNamespace,
+				envelope.EVENT_TERTIARY_NAMESPACE:  event.Event.TertiaryNamespace,
+				envelope.EVENT_NAME:                event.Event.Name,
+				envelope.EVENT_VERSION:             event.Event.Version,
 			},
 		}
 		result := topic.Publish(ctx, msg)

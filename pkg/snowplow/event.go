@@ -13,15 +13,15 @@ import (
 
 const (
 	PAGE_PING               = "page_ping"
-	PAGE_PING_SCHEMA        = "com.silverton.io/snowplow/page_ping/v1.0.json"
+	PAGE_PING_SCHEMA        = "io.silverton/snowplow/page_ping/v1.0.json"
 	PAGE_VIEW               = "page_view"
-	PAGE_VIEW_SCHEMA        = "com.silverton.io/snowplow/page_view/v1.0.json"
+	PAGE_VIEW_SCHEMA        = "io.silverton/snowplow/page_view/v1.0.json"
 	STRUCT_EVENT            = "struct_event"
-	STRUCT_EVENT_SCHEMA     = "com.silverton.io/snowplow/struct/v1.0.json"
+	STRUCT_EVENT_SCHEMA     = "io.silverton/snowplow/struct/v1.0.json"
 	TRANSACTION             = "transaction"
-	TRANSACTION_SCHEMA      = "com.silverton.io/snowplow/transaction/v1.0.json"
+	TRANSACTION_SCHEMA      = "io.silverton/snowplow/transaction/v1.0.json"
 	TRANSACTION_ITEM        = "transaction_item"
-	TRANSACTION_ITEM_SCHEMA = "com.silverton.io/snowplow/transaction_item/v1.0.json"
+	TRANSACTION_ITEM_SCHEMA = "io.silverton/snowplow/transaction_item/v1.0.json"
 	AD_IMPRESSION           = "ad_impression" // NOTE - already a self-describing event.
 	UNKNOWN_EVENT           = "unknown_event"
 	UNKNOWN_SCHEMA          = "unknown_schema"
@@ -119,8 +119,11 @@ type Tstamp struct {
 }
 
 type User struct {
-	Userid          *string `json:"user_id"`
-	UserFingerprint *string `json:"user_fingerprint"`
+	DomainUserid  *string `json:"domain_userid"`
+	NetworkUserid *string `json:"network_userid"`
+	Id            *string `json:"user_id"`
+	IpAddress     *string `json:"user_ipaddress"`
+	Fingerprint   *string `json:"user_fingerprint"`
 }
 
 type Device struct {
@@ -163,6 +166,22 @@ type Screen struct {
 type Session struct {
 	DomainSessionIdx *int64  `json:"domain_sessionidx"`
 	DomainSessionId  *string `json:"domain_sessionid"`
+}
+
+type Page struct {
+	Url      string  `json:"url"`
+	Title    *string `json:"title"`
+	Scheme   string  `json:"scheme"`
+	Host     string  `json:"host"`
+	Port     string  `json:"port"`
+	Path     string  `json:"path"`
+	Query    *string `json:"query"`
+	Fragment *string `json:"fragment"`
+	Medium   *string `json:"medium"`
+	Source   *string `json:"source"`
+	Term     *string `json:"term"`
+	Content  *string `json:"content"`
+	Campaign *string `json:"campaign"`
 }
 
 type PageViewEvent struct{}

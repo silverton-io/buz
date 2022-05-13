@@ -5,17 +5,17 @@ import (
 	"encoding/json"
 )
 
-type ValidationMeta struct {
-	IsValid         bool             `json:"isValid"`
-	ValidationError *ValidationError `json:"validationErrors"`
+type Validation struct {
+	IsValid bool             `json:"isValid"`
+	Error   *ValidationError `json:"error"`
 }
 
-func (e ValidationMeta) Value() (driver.Value, error) {
+func (e Validation) Value() (driver.Value, error) {
 	b, err := json.Marshal(e)
 	return string(b), err
 }
 
-func (e ValidationMeta) Scan(input interface{}) error {
+func (e Validation) Scan(input interface{}) error {
 	return json.Unmarshal(input.([]byte), &e)
 }
 
