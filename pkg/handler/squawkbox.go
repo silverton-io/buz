@@ -6,10 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/honeypot/pkg/annotator"
 	"github.com/silverton-io/honeypot/pkg/envelope"
+	"github.com/silverton-io/honeypot/pkg/params"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 )
 
-func SquawkboxHandler(h EventHandlerParams, eventProtocol string) gin.HandlerFunc {
+func SquawkboxHandler(h params.Handler, eventProtocol string) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		var envelopes []envelope.Envelope
 		switch eventProtocol {

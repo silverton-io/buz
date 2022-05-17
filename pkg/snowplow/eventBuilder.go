@@ -12,7 +12,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/event"
-	"github.com/silverton-io/honeypot/pkg/handler"
 	"github.com/tidwall/gjson"
 )
 
@@ -346,7 +345,7 @@ func setSelfDescribing(e *SnowplowEvent, params map[string]interface{}) {
 	e.SelfDescribingEvent = getSdPayload(b64EncodedPayload)
 }
 
-func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, h handler.EventHandlerParams) SnowplowEvent {
+func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Config) SnowplowEvent {
 	event := SnowplowEvent{}
 	setTstamps(&event, params)
 	setPlatformMetadata(&event, params, conf)

@@ -8,8 +8,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/cloudevents"
+	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/generic"
-	"github.com/silverton-io/honeypot/pkg/handler"
 	"github.com/silverton-io/honeypot/pkg/pixel"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/snowplow"
@@ -18,7 +18,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent, h handler.EventHandlerParams) Envelope {
+func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent) Envelope {
 
 	envelope := Envelope{
 		EventMeta: EventMeta{
@@ -112,7 +112,7 @@ func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent, h handler.E
 	return envelope
 }
 
-func BuildSnowplowEnvelopesFromRequest(c *gin.Context, h handler.EventHandlerParams) []Envelope {
+func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelope {
 	var envelopes []Envelope
 	if c.Request.Method == "POST" {
 		body, err := ioutil.ReadAll(c.Request.Body)
@@ -122,29 +122,29 @@ func BuildSnowplowEnvelopesFromRequest(c *gin.Context, h handler.EventHandlerPar
 		}
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
-			spEvent := snowplow.BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), h)
-			e := buildSnowplowEnvelope(c, spEvent, h)
+			spEvent := snowplow.BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), conf)
+			e := buildSnowplowEnvelope(c, spEvent)
 			envelopes = append(envelopes, e)
 		}
 	} else {
 		params := util.MapUrlParams(c)
-		spEvent := snowplow.BuildEventFromMappedParams(c, params, h)
-		e := buildSnowplowEnvelope(c, spEvent, h)
+		spEvent := snowplow.BuildEventFromMappedParams(c, params, conf)
+		e := buildSnowplowEnvelope(c, spEvent)
 		envelopes = append(envelopes, e)
 	}
 	return envelopes
 }
 
-func BuildGenericEnvelopesFromRequest(c *gin.Context, h handler.EventHandlerParams) []Envelope {
+func BuildGenericEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelope {
 	var envelopes []Envelope
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not read request body")
 		return envelopes
 	}
-	advancingCookieVal, _ := c.Cookie(h.Config.Cookie.Name)
+	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
-		genEvent := generic.BuildEvent(e, h.Config.Generic)
+		genEvent := generic.BuildEvent(e, conf.Generic)
 		envelope := Envelope{
 			EventMeta: EventMeta{
 				Uuid:     uuid.New(),
@@ -172,14 +172,14 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, h handler.EventHandlerPara
 	return envelopes
 }
 
-func BuildCloudeventEnvelopesFromRequest(c *gin.Context, h handler.EventHandlerParams) []Envelope {
+func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelope {
 	var envelopes []Envelope
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not read request body")
 		return envelopes
 	}
-	advancingCookieVal, _ := c.Cookie(h.Config.Cookie.Name)
+	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
 	for _, ce := range gjson.ParseBytes(reqBody).Array() {
 		cEvent, _ := cloudevents.BuildEvent(ce)
 		envelope := Envelope{
@@ -209,14 +209,14 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, h handler.EventHandlerP
 	return envelopes
 }
 
-func BuildWebhookEnvelopesFromRequest(c *gin.Context, h handler.EventHandlerParams) []Envelope {
+func BuildWebhookEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelope {
 	var envelopes []Envelope
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("could not read request body")
 		return envelopes
 	}
-	advancingCookieVal, _ := c.Cookie(h.Config.Cookie.Name)
+	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
 		whEvent, err := webhook.BuildEvent(c, e)
 		if err != nil {
@@ -249,11 +249,11 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context, h handler.EventHandlerPara
 	return envelopes
 }
 
-func BuildPixelEnvelopesFromRequest(c *gin.Context, h handler.EventHandlerParams) []Envelope {
+func BuildPixelEnvelopesFromRequest(c *gin.Context, conf config.Config) []Envelope {
 	var envelopes []Envelope
 	params := util.MapUrlParams(c)
 	var urlNames = make(map[string]string)
-	for _, i := range h.Config.Pixel.Paths {
+	for _, i := range conf.Pixel.Paths {
 		urlNames[i.Path] = i.Name
 	}
 	name := urlNames[c.Request.URL.Path]
@@ -261,7 +261,7 @@ func BuildPixelEnvelopesFromRequest(c *gin.Context, h handler.EventHandlerParams
 	if err != nil {
 		log.Error().Err(err).Msg("could not build PixelEvent")
 	}
-	advancingCookieVal, _ := c.Cookie(h.Config.Cookie.Name)
+	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
 	envelope := Envelope{
 		EventMeta: EventMeta{
 			Uuid:     uuid.New(),

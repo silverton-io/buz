@@ -1,4 +1,4 @@
-package handler
+package params
 
 import (
 	"github.com/silverton-io/honeypot/pkg/cache"
@@ -7,7 +7,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/tele"
 )
 
-type EventHandlerParams struct {
+type Handler struct {
 	Config   *config.Config
 	Cache    *cache.SchemaCache
 	Manifold *manifold.SimpleManifold

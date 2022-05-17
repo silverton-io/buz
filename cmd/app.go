@@ -18,6 +18,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/handler"
 	"github.com/silverton-io/honeypot/pkg/manifold"
 	"github.com/silverton-io/honeypot/pkg/middleware"
+	"github.com/silverton-io/honeypot/pkg/params"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/sink"
 	"github.com/silverton-io/honeypot/pkg/snowplow"
@@ -37,8 +38,8 @@ type App struct {
 	meta        *tele.Meta
 }
 
-func (a *App) handlerParams() handler.EventHandlerParams {
-	params := handler.EventHandlerParams{
+func (a *App) handlerParams() params.Handler {
+	params := params.Handler{
 		Config:   a.config,
 		Cache:    a.schemaCache,
 		Manifold: a.manifold,

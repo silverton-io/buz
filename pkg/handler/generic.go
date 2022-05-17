@@ -6,10 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/honeypot/pkg/annotator"
 	"github.com/silverton-io/honeypot/pkg/envelope"
+	"github.com/silverton-io/honeypot/pkg/params"
 	"github.com/silverton-io/honeypot/pkg/response"
 )
 
-func GenericHandler(h EventHandlerParams) gin.HandlerFunc {
+func GenericHandler(h params.Handler) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/json" {
 			envelopes := envelope.BuildGenericEnvelopesFromRequest(c, *h.Config)

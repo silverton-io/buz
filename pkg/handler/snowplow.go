@@ -7,12 +7,13 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/annotator"
 	"github.com/silverton-io/honeypot/pkg/envelope"
+	"github.com/silverton-io/honeypot/pkg/params"
 	"github.com/silverton-io/honeypot/pkg/response"
 )
 
-func SnowplowHandler(h EventHandlerParams) gin.HandlerFunc {
+func SnowplowHandler(h params.Handler) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		envelopes := envelope.BuildSnowplowEnvelopesFromRequest(c, h)
+		envelopes := envelope.BuildSnowplowEnvelopesFromRequest(c, *h.Config)
 		annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
 		err := h.Manifold.Distribute(annotatedEnvelopes, h.Meta)
 		if err != nil {

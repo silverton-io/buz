@@ -7,12 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/honeypot/pkg/annotator"
 	"github.com/silverton-io/honeypot/pkg/envelope"
+	"github.com/silverton-io/honeypot/pkg/params"
 	"github.com/silverton-io/honeypot/pkg/response"
 )
 
 const PX string = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAoMBgDTD2qgAAAAASUVORK5CYII="
 
-func PixelHandler(h EventHandlerParams) gin.HandlerFunc {
+func PixelHandler(h params.Handler) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 
 		envelopes := envelope.BuildPixelEnvelopesFromRequest(c, *h.Config)
