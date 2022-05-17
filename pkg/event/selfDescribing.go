@@ -1,5 +1,23 @@
 package event
 
+import (
+	"database/sql/driver"
+	"encoding/json"
+	"strings"
+
+	"github.com/silverton-io/honeypot/pkg/protocol"
+)
+
+//
+func stripColonSeparatedPrefix(schema string) string {
+	colonIdx := strings.Index(schema, ":")
+	if colonIdx == -1 {
+		return schema
+	} else {
+		return schema[colonIdx+1:]
+	}
+}
+
 type SelfDescribingEvent struct {
 	Contexts `json:"contexts"`
 	Payload  SelfDescribingPayload `json:"payload"`
@@ -10,5 +28,53 @@ type SelfDescribingPayload struct {
 	Data   map[string]interface{} `json:"data"`
 }
 
-//
+func (e SelfDescribingPayload) SchemaName() *string {
+	name := stripColonSeparatedPrefix(e.Schema)
+	return &name
+}
+
+func (e SelfDescribingPayload) Protocol() string {
+	return protocol.SNOWPLOW
+}
+
+func (e SelfDescribingPayload) PayloadAsByte() ([]byte, error) {
+	payloadBytes, err := json.Marshal(e.Data)
+	if err != nil {
+		return nil, err
+	}
+	return payloadBytes, nil
+}
+
+func (e SelfDescribingPayload) AsByte() ([]byte, error) {
+	eventBytes, err := json.Marshal(e)
+	if err != nil {
+		return nil, err
+	}
+	return eventBytes, nil
+}
+
+func (e SelfDescribingPayload) AsMap() (map[string]interface{}, error) {
+	var m map[string]interface{}
+	b, err := e.AsByte()
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(b, &m)
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (e SelfDescribingPayload) Value() (driver.Value, error) {
+	b, err := json.Marshal(e)
+	return string(b), err
+}
+
+func (e SelfDescribingPayload) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), &e)
+}
+
+type SelfDescribingContext SelfDescribingPayload
+
 type Contexts map[string]interface{}

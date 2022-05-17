@@ -1,13 +1,10 @@
 package snowplow
 
 import (
-	"database/sql/driver"
-	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/silverton-io/honeypot/pkg/event"
-	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/util"
 )
 
@@ -30,142 +27,113 @@ const (
 )
 
 type SnowplowEvent struct {
-	Tstamp              `json:"tstamp"`
-	PlatformMetadata    `json:"platform_metadata"`
-	Event               `json:"event"`
-	User                `json:"user"`
-	Session             `json:"session"`
-	Page                `json:"page"`
-	Referrer            Page `json:"referrer"`
-	DomainLinker        `json:"domain_linker"`
-	Device              `json:"device"`
-	Browser             `json:"browser"`
-	Screen              `json:"screen"`
-	Contexts            event.Contexts               `json:"contexts"`
-	SelfDescribingEvent *event.SelfDescribingPayload `json:"self_describing_event"`
-	// SelfDescribingMetadata `json:"self_describing_metadata"` // NOTE - maybe put this back someday?
-}
-
-func (e SnowplowEvent) Schema() *string {
-	schema := stripIglu(e.SelfDescribingEvent.Schema)
-	return &schema
-}
-
-func (e SnowplowEvent) Protocol() string {
-	return protocol.SNOWPLOW
-}
-
-func (e SnowplowEvent) PayloadAsByte() ([]byte, error) {
-	payloadBytes, err := json.Marshal(e.SelfDescribingEvent.Data)
-	if err != nil {
-		return nil, err
-	}
-	return payloadBytes, nil
-}
-
-func (e SnowplowEvent) AsByte() ([]byte, error) {
-	eventBytes, err := json.Marshal(e)
-	if err != nil {
-		return nil, err
-	}
-	return eventBytes, nil
-}
-
-func (e SnowplowEvent) AsMap() (map[string]interface{}, error) {
-	var m map[string]interface{}
-	b, err := e.AsByte()
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(b, &m)
-	if err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (e SnowplowEvent) Value() (driver.Value, error) {
-	b, err := json.Marshal(e)
-	return string(b), err
-}
-
-func (e SnowplowEvent) Scan(input interface{}) error {
-	return json.Unmarshal(input.([]byte), &e)
-}
-
-type PlatformMetadata struct {
-	NameTracker      string  `json:"name_tracker"`
-	TrackerVersion   *string `json:"v_tracker"`
-	CollectorVersion *string `json:"v_collector"`
-	EtlVersion       *string `json:"v_etl"`
-}
-
-type Event struct {
-	AppId            string    `json:"app_id"`
-	Platform         string    `json:"platform"`
-	Event            string    `json:"event"`
-	TxnId            *string   `json:"txn_id"` // deprecated
-	EventId          *string   `json:"event_id"`
-	EventFingerprint uuid.UUID `json:"event_fingerprint"`
-}
-
-type Tstamp struct {
-	DvceCreatedTstamp time.Time  `json:"dvce_created_tstamp"`
-	DvceSentTstamp    time.Time  `json:"dvce_sent_tstamp"`
-	TrueTstamp        *time.Time `json:"true_tstamp"`
-	CollectorTstamp   time.Time  `json:"collector_tstamp"`
-	EtlTstamp         time.Time  `json:"etl_tstamp"`
-	DerivedTstamp     time.Time  `json:"derived_tstamp"`
-}
-
-type User struct {
-	DomainUserid  *string `json:"domain_userid"`
-	NetworkUserid *string `json:"network_userid"`
-	Id            *string `json:"user_id"`
-	IpAddress     *string `json:"user_ipaddress"`
-	Fingerprint   *string `json:"user_fingerprint"`
-}
-
-type Device struct {
-	Useragent     *string `json:"useragent"`
-	MacAddress    *string `json:"mac_address"`
-	OsTimezone    *string `json:"os_timezone"`
-	DomainUserid  *string `json:"domain_userid"`
-	NetworkUserid *string `json:"network_userid"`
-	UserIpAddress *string `json:"user_ipaddress"`
-}
-
-type Browser struct {
-	BrCookies              *bool   `json:"br_cookies"`
-	BrLang                 *string `json:"br_lang"`
-	BrFeaturesPdf          *bool   `json:"br_features_pdf"`          // to deprecate
-	BrFeaturesQuicktime    *bool   `json:"br_features_quicktime"`    // to deprecate
-	BrFeaturesRealplayer   *bool   `json:"br_features_realplayer"`   // to deprecate
-	BrFeaturesWindowsmedia *bool   `json:"br_features_windowsmedia"` // to deprecate
-	BrFeaturesDirector     *bool   `json:"br_features_director"`     // to deprecate
-	BrFeaturesFlash        *bool   `json:"br_features_flash"`        // to deprecate
-	BrFeaturesJava         *bool   `json:"br_features_java"`         // to deprecate
-	BrFeaturesGears        *bool   `json:"br_features_gears"`        // to deprecate
-	BrFeaturesSilverlight  *bool   `json:"br_features_silverlight"`  // to deprecate
-	BrColordepth           *int64  `json:"br_colordepth"`
-}
-
-type Screen struct {
-	ViewportSize         *string `json:"viewport_size"`
-	BrViewWidth          *int    `json:"br_viewwidth"`
-	BrViewHeight         *int    `json:"br_viewheight"`
-	DocCharset           *string `json:"doc_charset"`
-	DocSize              *string `json:"doc_size"`
-	DocWidth             *int    `json:"doc_width"`
-	DocHeight            *int    `json:"doc_height"`
-	DvceScreenResolution *string `json:"screen_resolution"`
-	DvceScreenWidth      *int    `json:"dvce_screenwidth"`
-	DvceScreenHeight     *int    `json:"dvce_screenheight"`
-}
-
-type Session struct {
-	DomainSessionIdx *int64  `json:"domain_sessionidx"`
-	DomainSessionId  *string `json:"domain_sessionid"`
+	// Application parameters - https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/snowplow-tracker-protocol/#common-parameters-platform-and-event-independent
+	NameTracker            string                       `json:"name_tracker"`
+	AppId                  string                       `json:"app_id"`
+	Platform               string                       `json:"platform"`
+	EtlTstamp              time.Time                    `json:"etl_tstamp"`
+	DvceCreatedTstamp      time.Time                    `json:"dvce_created_tstamp"`
+	DvceSentTstamp         time.Time                    `json:"dvce_sent_tstamp"`
+	TrueTstamp             *time.Time                   `json:"true_tstamp"`
+	CollectorTstamp        time.Time                    `json:"collector_tstamp"`
+	DerivedTstamp          time.Time                    `json:"derived_tstamp"`
+	OsTimezone             *string                      `json:"os_timezone"`
+	Event                  string                       `json:"event"`
+	TxnId                  *string                      `json:"txn_id"`
+	EventId                *string                      `json:"event_id"`
+	EventFingerprint       uuid.UUID                    `json:"event_fingerprint"`
+	TrackerVersion         *string                      `json:"v_tracker"`
+	CollectorVersion       *string                      `json:"v_collector"`
+	EtlVersion             *string                      `json:"v_etl"`
+	DomainUserid           *string                      `json:"domain_userid"`
+	NetworkUserid          *string                      `json:"network_userid"`
+	Userid                 *string                      `json:"user_id"`
+	DomainSessionIdx       *int64                       `json:"domain_sessionidx"`
+	DomainSessionId        *string                      `json:"domain_sessionid"`
+	UserIpAddress          *string                      `json:"user_ipaddress"`
+	Useragent              *string                      `json:"useragent"`
+	UserFingerprint        *string                      `json:"user_fingerprint"`
+	MacAddress             *string                      `json:"mac_address"`
+	PageUrl                *string                      `json:"page_url"`
+	PageTitle              *string                      `json:"page_title"`
+	PageUrlScheme          *string                      `json:"page_urlscheme"`
+	PageUrlHost            *string                      `json:"page_urlhost"`
+	PageUrlPort            *string                      `json:"page_urlport"`
+	PageUrlPath            *string                      `json:"page_urlpath"`
+	PageUrlQuery           *string                      `json:"page_urlquery"`
+	PageUrlFragment        *string                      `json:"page_urlfragment"`
+	MktMedium              *string                      `json:"mkt_medium"`
+	MktSource              *string                      `json:"mkt_source"`
+	MktTerm                *string                      `json:"mkt_term"`
+	MktContent             *string                      `json:"mkt_content"`
+	MktCampaign            *string                      `json:"mkt_campaign"`
+	PageReferrer           *string                      `json:"page_referrer"`
+	RefrUrlScheme          *string                      `json:"refr_urlscheme"`
+	RefrUrlHost            *string                      `json:"refr_urlhost"`
+	RefrUrlPort            *string                      `json:"refr_urlport"`
+	RefrUrlPath            *string                      `json:"refr_urlpath"`
+	RefrUrlQuery           *string                      `json:"refr_urlquery"`
+	RefrUrlFragment        *string                      `json:"refr_urlfragment"`
+	RefrMedium             *string                      `json:"refr_medium"`
+	RefrSource             *string                      `json:"refr_source"`
+	RefrTerm               *string                      `json:"refr_term"`
+	RefrContent            *string                      `json:"refr_content"`
+	RefrCampaign           *string                      `json:"refr_campaign"`
+	RefrDomainUserId       *string                      `json:"refr_domain_userid"` // FIXME!
+	RefrDomainTstamp       *time.Time                   `json:"refr_domain_tstamp"` // FIXME!
+	BrCookies              *bool                        `json:"br_cookies"`
+	BrLang                 *string                      `json:"br_lang"`
+	BrFeaturesPdf          *bool                        `json:"br_features_pdf"`
+	BrFeaturesQuicktime    *bool                        `json:"br_features_quicktime"`
+	BrFeaturesRealplayer   *bool                        `json:"br_features_realplayer"`
+	BrFeaturesWindowsmedia *bool                        `json:"br_features_windowsmedia"`
+	BrFeaturesDirector     *bool                        `json:"br_features_director"`
+	BrFeaturesFlash        *bool                        `json:"br_features_flash"`
+	BrFeaturesJava         *bool                        `json:"br_features_java"`
+	BrFeaturesGears        *bool                        `json:"br_features_gears"`
+	BrFeaturesSilverlight  *bool                        `json:"br_features_silverlight"`
+	BrColordepth           *int64                       `json:"br_colordepth"`
+	ViewportSize           *string                      `json:"viewport_size"`
+	BrViewWidth            *int                         `json:"br_viewwidth"`
+	BrViewHeight           *int                         `json:"br_viewheight"`
+	DocCharset             *string                      `json:"doc_charset"`
+	DocSize                *string                      `json:"doc_size"`
+	DocWidth               *int                         `json:"doc_width"`
+	DocHeight              *int                         `json:"doc_height"`
+	DvceScreenResolution   *string                      `json:"dvce_screenresolution"`
+	DvceScreenWidth        *int                         `json:"dvce_screenwidth"`
+	DvceScreenHeight       *int                         `json:"dvce_screenheight"`
+	Contexts               *map[string]interface{}      `json:"contexts"`
+	SelfDescribingEvent    *event.SelfDescribingPayload `json:"self_describing_event"`
+	PpXOffsetMin           *int64                       `json:"pp_xoffset_min"`
+	PpXOffsetMax           *int64                       `json:"pp_xoffset_max"`
+	PpYOffsetMin           *int64                       `json:"pp_yoffset_min"`
+	PpYOffsetMax           *int64                       `json:"pp_yoffset_max"`
+	SeCategory             *string                      `json:"se_category"`
+	SeAction               *string                      `json:"se_action"`
+	SeLabel                *string                      `json:"se_label"`
+	SeProperty             *string                      `json:"se_property"`
+	SeValue                *float64                     `json:"se_value"`
+	TrOrderId              *string                      `json:"tr_orderid"`
+	TrAffiliation          *string                      `json:"tr_affiliation"`
+	TrTotal                *float64                     `json:"tr_total"`
+	TrTax                  *float64                     `json:"tr_tax"`
+	TrShipping             *float64                     `json:"tr_shipping"`
+	TrCity                 *string                      `json:"tr_city"`
+	TrState                *string                      `json:"tr_state"`
+	TrCountry              *string                      `json:"tr_country"`
+	TrCurrency             *string                      `json:"tr_currency"`
+	TiOrderId              *string                      `json:"ti_orderid"`
+	TiSku                  *string                      `json:"ti_sku"`
+	TiName                 *string                      `json:"ti_name"`
+	TiCategory             *string                      `json:"ti_category"`
+	TiPrice                *float64                     `json:"ti_price,string"`
+	TiQuantity             *int64                       `json:"ti_quantity"`
+	TiCurrency             *string                      `json:"ti_currency"`
+	EventVendor            *string                      `json:"event_vendor"`
+	EventName              *string                      `json:"event_name"`
+	EventFormat            *string                      `json:"event_format"`
+	EventVersion           *string                      `json:"event_version"`
 }
 
 type Page struct {
@@ -276,11 +244,6 @@ func getEventType(param string) string {
 		return AD_IMPRESSION
 	}
 	return UNKNOWN_EVENT
-}
-
-type DomainLinker struct {
-	RefrDomainUserId *string    `json:"refr_domain_userid"` // FIXME! Domain Linker
-	RefrDomainTstamp *time.Time `json:"refr_domain_tstamp"` // FIXME! Domain Linker
 }
 
 type Dimension struct {

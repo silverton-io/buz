@@ -8,28 +8,25 @@ import (
 type Device struct {
 	Ip                *string `json:"ip"`
 	Useragent         *string `json:"useragent"`
-	Duid              *string `json:"duid"`
-	Nuid              *string `json:"nuid"`
-	Timezone          *string `json:"timezone,omitempty"`
-	Lang              *string `json:"language,omitempty"`
-	Id                *string `json:"id,omitempty"`
-	Idfa              *string `json:"idfa,omitempty"`      // [iOS]
-	Idfv              *string `json:"idfv,omitempty"`      // [iOS]
-	AdId              *string `json:"adId,omitempty"`      // [Android] Google play services advertising id
-	AndroidId         *string `json:"androidId,omitempty"` // [Android] Android id
-	AdTrackingEnabled *bool   `json:"adTrackingEnabled,omitempty"`
-	Manufacturer      *string `json:"manufacturer,omitempty"`
-	Model             *string `json:"model,omitempty"`
-	Name              *string `json:"name,omitempty"`
-	Type              *string `json:"type,omitempty"`
-	Token             *string `json:"token,omitempty"`
-	Os                `json:"os,omitempty"`
-	Browser           `json:"browser,omitempty"`
-	Screen            `json:"screen,omitempty"`
-	Network           `json:"network,omitempty"`
-	App               `json:"app,omitempty"`
-	Location          `json:"location,omitempty"`
-	Traits            *map[string]interface{} `json:"traits,omitempty"`
+	Id                *string `json:"id"`
+	Nid               *string `json:"nid"`
+	Idfa              *string `json:"idfa"`      // [iOS]
+	Idfv              *string `json:"idfv"`      // [iOS]
+	AdId              *string `json:"adId"`      // [Android] Google play services advertising id
+	AndroidId         *string `json:"androidId"` // [Android] Android id
+	AdTrackingEnabled *bool   `json:"adTrackingEnabled"`
+	Manufacturer      *string `json:"manufacturer"`
+	Model             *string `json:"model"`
+	Name              *string `json:"name"`
+	Type              *string `json:"type"`
+	Token             *string `json:"token"`
+	Os                `json:"os"`
+	Browser           `json:"browser"`
+	Screen            `json:"screen"`
+	Network           `json:"network"`
+	App               `json:"app"`
+	Location          `json:"location"`
+	Traits            *map[string]interface{} `json:"traits"`
 }
 
 func (d Device) Value() (driver.Value, error) {
@@ -42,46 +39,48 @@ func (d Device) Scan(input interface{}) error {
 }
 
 type Browser struct {
-	Cookies    *bool  `json:"cookies,omitempty"`
-	ColorDepth *int64 `json:"colorDepth,omitempty"`
+	Lang           *string `json:"language"`
+	Cookies        *bool   `json:"cookies"`
+	ColorDepth     *int64  `json:"colorDepth"`
+	Charset        *string `json:"charset"`
+	ViewportSize   *string `json:"viewportSize"`
+	ViewportWidth  *int    `json:"viewportWidth"`
+	ViewportHeight *int    `json:"viewportHeight"`
+	DocumentSize   *string `json:"documentSize"`
+	DocumentWidth  *int    `json:"documentWidth"`
+	DocumentHeight *int    `json:"documentHeight"`
 }
 
 type Screen struct {
-	ViewportSize     *string `json:"viewportSize,omitempty"`
-	ViewportWidth    *int    `json:"viewportWidth,omitempty"`
-	ViewportHeight   *int    `json:"viewportHeight,omitempty"`
-	Charset          *string `json:"charset,omitempty"`
-	DocumentSize     *string `json:"documentSize,omitempty"`
-	DocumentWidth    *int    `json:"documentWidth,omitempty"`
-	DocumentHeight   *int    `json:"documentHeight,omitempty"`
-	ScreenResolution *string `json:"screenResolution,omitempty"`
-	ScreenWidth      *int    `json:"screenWidth,omitempty"`
-	ScreenHeight     *int    `json:"screenHeight,omitempty"`
+	Resolution *string `json:"screenResolution"`
+	Width      *int    `json:"screenWidth"`
+	Height     *int    `json:"screenHeight"`
 }
 
 type Os struct {
-	Name    *string `json:"name,omitempty"`
-	Version *string `json:"version,omitempty"`
+	Name     *string `json:"name"`
+	Version  *string `json:"version"`
+	Timezone *string `json:"timezone"`
 }
 
 type Network struct {
-	Bluetooth *bool   `json:"bluetooth,omitempty"`
-	Cellular  *bool   `json:"cellular,omitempty"`
-	Wifi      *bool   `json:"wifi,omitempty"`
-	Carrier   *string `json:"carrier,omitempty"`
+	Bluetooth *bool   `json:"bluetooth"`
+	Cellular  *bool   `json:"cellular"`
+	Wifi      *bool   `json:"wifi"`
+	Carrier   *string `json:"carrier"`
 }
 
 type App struct {
-	Name    *string `json:"name,omitempty"`
-	Version *string `json:"version,omitempty"`
-	Build   *string `json:"build,omitempty"`
+	Name    *string `json:"name"`
+	Version *string `json:"version"`
+	Build   *string `json:"build"`
 }
 
 type Location struct {
-	Latitude  *float64 `json:"latitude,omitempty"`
-	Longitude *float64 `json:"longitude,omitempty"`
-	Country   *string  `json:"country,omitempty"`
-	Region    *string  `json:"region,omitempty"`
-	City      *string  `json:"city,omitempty"`
-	Dma       *string  `json:"dma,omitempty"`
+	Latitude  *float64 `json:"latitude"`
+	Longitude *float64 `json:"longitude"`
+	Country   *string  `json:"country"`
+	Region    *string  `json:"region"`
+	City      *string  `json:"city"`
+	Dma       *string  `json:"dma"`
 }

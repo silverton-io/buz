@@ -6,8 +6,9 @@ import (
 )
 
 type Session struct {
-	Sid  *string `json:"sid"`
-	Sidx *int64  `json:"sidx"`
+	Id     *string                 `json:"id"`
+	Idx    *int64                  `json:"idx"`
+	Traits *map[string]interface{} `json:"traits"`
 }
 
 func (e Session) Value() (driver.Value, error) {

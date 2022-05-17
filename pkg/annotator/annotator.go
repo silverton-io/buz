@@ -9,7 +9,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func getMetadataFromSchema(schema []byte) envelope.Event {
+func getMetadataFromSchema(schema []byte) envelope.EventMeta {
 	schemaContents := gjson.ParseBytes(schema)
 	vendor := schemaContents.Get("self.vendor").String()
 	primaryNamespace := schemaContents.Get("self.primaryNamespace").String()
@@ -19,14 +19,14 @@ func getMetadataFromSchema(schema []byte) envelope.Event {
 	version := schemaContents.Get("self.version").String()
 	format := schemaContents.Get("self.format").String()
 	path := schemaContents.Get("title").String()
-	return envelope.Event{
+	return envelope.EventMeta{
 		Vendor:             vendor,
 		PrimaryNamespace:   primaryNamespace,
 		SecondaryNamespace: secondaryNamespace,
 		TertiaryNamespace:  tertiaryNamespace,
 		Name:               name,
 		Version:            version,
-		Format:             format,
+		Format:             &format,
 		Path:               path,
 	}
 }
@@ -35,7 +35,7 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 	var e []envelope.Envelope
 	for _, envelope := range envelopes {
 		log.Debug().Msg("annotating event")
-		switch envelope.Event.Protocol {
+		switch envelope.EventMeta.Protocol {
 		case protocol.PIXEL:
 			e = append(e, envelope)
 		case protocol.WEBHOOK:
@@ -47,13 +47,13 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 			envelope.Validation.IsValid = isValid
 			envelope.Validation.Error = &validationError
 			m := getMetadataFromSchema(schemaContents)
-			envelope.Event.Vendor = m.Vendor
-			envelope.Event.PrimaryNamespace = m.PrimaryNamespace
-			envelope.Event.SecondaryNamespace = m.SecondaryNamespace
-			envelope.Event.TertiaryNamespace = m.TertiaryNamespace
-			envelope.Event.Name = m.Name
-			envelope.Event.Version = m.Version
-			envelope.Event.Path = m.Path
+			envelope.EventMeta.Vendor = m.Vendor
+			envelope.EventMeta.PrimaryNamespace = m.PrimaryNamespace
+			envelope.EventMeta.SecondaryNamespace = m.SecondaryNamespace
+			envelope.EventMeta.TertiaryNamespace = m.TertiaryNamespace
+			envelope.EventMeta.Name = m.Name
+			envelope.EventMeta.Version = m.Version
+			envelope.EventMeta.Path = m.Path
 			e = append(e, envelope)
 		}
 	}

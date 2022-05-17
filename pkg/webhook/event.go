@@ -12,7 +12,7 @@ type WebhookEvent struct {
 	Payload map[string]interface{} `json:"payload"`
 }
 
-func (e WebhookEvent) Schema() *string {
+func (e WebhookEvent) SchemaName() *string {
 	schema := "" // FIXME! Should incoming webhooks have an associated schema? IDK yet.
 	return &schema
 }

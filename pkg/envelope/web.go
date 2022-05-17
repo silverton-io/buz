@@ -12,11 +12,11 @@ type PageAttrs struct {
 	Host     string                  `json:"host"`
 	Port     string                  `json:"port"`
 	Path     string                  `json:"path"`
-	Query    *map[string]interface{} `json:"query,omitempty"`
-	Fragment *string                 `json:"fragment,omitempty"`
-	Medium   *string                 `json:"medium,omitempty"`
-	Source   *string                 `json:"source,omitempty"`
-	Term     *string                 `json:"term,omitempty"`
-	Content  *string                 `json:"content,omitempty"`
-	Campaign *string                 `json:"campaign,omitempty"`
+	Query    *map[string]interface{} `json:"query"`
+	Fragment *string                 `json:"fragment"`
+	Medium   *string                 `json:"medium"`
+	Source   *string                 `json:"source"`
+	Term     *string                 `json:"term"`
+	Content  *string                 `json:"content"`
+	Campaign *string                 `json:"campaign"`
 }

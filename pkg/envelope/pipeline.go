@@ -27,8 +27,8 @@ type Source struct {
 	Ip              string    `json:"ip"`
 	GeneratedTstamp time.Time `json:"generatedTstamp"`
 	SentTstamp      time.Time `json:"sentTstamp"`
-	Name            *string   `json:"name,omitempty"`
-	Version         *string   `json:"version,omitempty"`
+	Name            *string   `json:"name"`
+	Version         *string   `json:"version"`
 }
 
 func (s Source) Value() (driver.Value, error) {
@@ -41,7 +41,9 @@ func (s Source) Scan(input interface{}) error {
 }
 
 type Collector struct {
-	Tstamp time.Time `json:"tstamp"`
+	Tstamp  time.Time `json:"tstamp"`
+	Name    *string   `json:"name"`
+	Version *string   `json:"version"`
 }
 
 func (c Collector) Value() (driver.Value, error) {
@@ -55,8 +57,8 @@ func (c Collector) Scan(input interface{}) error {
 
 type Relay struct {
 	Relayed bool       `json:"relayed"`
-	Id      *uuid.UUID `json:"id,omitempty"`
-	Tstamp  *time.Time `json:"tstamp,omitempty"`
+	Id      *uuid.UUID `json:"id"`
+	Tstamp  *time.Time `json:"tstamp"`
 }
 
 func (r Relay) Value() (driver.Value, error) {

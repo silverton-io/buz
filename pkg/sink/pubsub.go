@@ -76,18 +76,18 @@ func (s *PubsubSink) Initialize(conf config.Sink) error {
 
 func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
-	for _, event := range envelopes {
-		payload, _ := json.Marshal(event)
+	for _, e := range envelopes {
+		payload, _ := json.Marshal(e)
 		msg := &pubsub.Message{
 			Data: payload,
 			Attributes: map[string]string{
-				envelope.INPUT_PROTOCOL:            event.Event.Protocol,
-				envelope.EVENT_VENDOR:              event.Event.Vendor,
-				envelope.EVENT_PRIMARY_NAMESPACE:   event.Event.PrimaryNamespace,
-				envelope.EVENT_SECONDARY_NAMESPACE: event.Event.SecondaryNamespace,
-				envelope.EVENT_TERTIARY_NAMESPACE:  event.Event.TertiaryNamespace,
-				envelope.EVENT_NAME:                event.Event.Name,
-				envelope.EVENT_VERSION:             event.Event.Version,
+				envelope.INPUT_PROTOCOL:            e.EventMeta.Protocol,
+				envelope.EVENT_VENDOR:              e.EventMeta.Vendor,
+				envelope.EVENT_PRIMARY_NAMESPACE:   e.EventMeta.PrimaryNamespace,
+				envelope.EVENT_SECONDARY_NAMESPACE: e.EventMeta.SecondaryNamespace,
+				envelope.EVENT_TERTIARY_NAMESPACE:  e.EventMeta.TertiaryNamespace,
+				envelope.EVENT_NAME:                e.EventMeta.Name,
+				envelope.EVENT_VERSION:             e.EventMeta.Version,
 			},
 		}
 		result := topic.Publish(ctx, msg)

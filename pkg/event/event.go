@@ -3,7 +3,7 @@ package event
 import "database/sql/driver"
 
 type Event interface {
-	Schema() *string
+	SchemaName() *string
 	Protocol() string
 	PayloadAsByte() ([]byte, error)
 	AsByte() ([]byte, error)

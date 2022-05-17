@@ -12,7 +12,7 @@ import (
 
 func SnowplowHandler(h EventHandlerParams) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		envelopes := envelope.BuildSnowplowEnvelopesFromRequest(c, *h.Config)
+		envelopes := envelope.BuildSnowplowEnvelopesFromRequest(c, h)
 		annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
 		err := h.Manifold.Distribute(annotatedEnvelopes, h.Meta)
 		if err != nil {
