@@ -28,7 +28,7 @@ type Envelope struct {
 	Payload    event.Event    `json:"payload" gorm:"type:json"`
 }
 
-type PgEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
+type JsonbEnvelope struct {
 	Event      `json:"event" gorm:"type:jsonb"`
 	Pipeline   `json:"pipeline" gorm:"type:jsonb"`
 	Device     `json:"device" gorm:"type:jsonb"`
@@ -40,19 +40,7 @@ type PgEnvelope struct { // I really hate doing this - should find a better way 
 	Payload    event.Event    `json:"payload" gorm:"type:jsonb"`
 }
 
-type MysqlEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
-	Event      `json:"event" gorm:"type:json"`
-	Pipeline   `json:"pipeline" gorm:"type:json"`
-	Device     `json:"device" gorm:"type:json"`
-	User       `json:"user" gorm:"type:json"`
-	Session    `json:"session" gorm:"type:json"`
-	Page       `json:"page" gorm:"type:json"`
-	Validation `json:"validation" gorm:"type:json"`
-	Contexts   event.Contexts `json:"contexts" gorm:"type:json"`
-	Payload    event.Event    `json:"payload" gorm:"type:json"`
-}
-
-type ClickhouseEnvelope struct { // I really hate doing this - should find a better way to do dialect/db-specific types within the single envelope
+type StringEnvelope struct {
 	Event      `json:"event" gorm:"type:string"`
 	Pipeline   `json:"pipeline" gorm:"type:string"`
 	Device     `json:"device" gorm:"type:string"`

@@ -56,7 +56,7 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 	}
 	s.gormDb, s.validTable, s.invalidTable = gormDb, conf.ValidTable, conf.InvalidTable
 	for _, tbl := range []string{s.validTable, s.invalidTable} {
-		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.PgEnvelope{})
+		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.JsonbEnvelope{})
 		if ensureErr != nil {
 			return ensureErr
 		}
