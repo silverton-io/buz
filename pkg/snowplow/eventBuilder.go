@@ -190,13 +190,8 @@ func setEvent(e *SnowplowEvent, params map[string]interface{}) {
 }
 
 func setUser(c *gin.Context, e *SnowplowEvent, params map[string]interface{}) {
-	nuid := c.GetString("identity")
-	ip, _ := c.RemoteIP()
-	sIp := ip.String()
 	e.DomainUserid = getStringParam(params, "duid")
-	e.NetworkUserid = &nuid
 	e.Userid = getStringParam(params, "uid")
-	e.UserIpAddress = &sIp
 }
 
 func setSession(e *SnowplowEvent, params map[string]interface{}) {

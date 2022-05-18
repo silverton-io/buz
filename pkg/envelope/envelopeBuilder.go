@@ -22,6 +22,7 @@ import (
 )
 
 func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
+	nid := c.GetString("identity")
 	envelope := Envelope{
 		EventMeta: EventMeta{
 			Uuid: uuid.New(),
@@ -38,7 +39,9 @@ func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
 				Relayed: false,
 			},
 		},
-		Device:     Device{},
+		Device: Device{
+			Nid: &nid,
+		},
 		User:       User{},
 		Session:    Session{},
 		Page:       Page{},
@@ -59,7 +62,6 @@ func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent, m *meta.Col
 	n.Device.Ip = e.UserIpAddress
 	n.Device.Useragent = e.Useragent
 	n.Device.Id = e.DomainUserid
-	n.Device.Nid = e.NetworkUserid // FIXME -> Should be propagated within common envelope
 	n.Device.Os = Os{Timezone: e.OsTimezone}
 	n.Device.Browser = Browser{
 		Lang:           e.BrLang,

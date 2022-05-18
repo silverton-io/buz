@@ -5,7 +5,7 @@
 
 ![Honeypot](site/docs/img/honeypot.png)
 
-A lightweight, snowplow-compatible streaming event collection system.
+A lightweight, multi-protocol streaming event collection system.
 
 Honeypot is primarily built for flexibility, scalability, and speed.
 
