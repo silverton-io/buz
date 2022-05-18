@@ -21,6 +21,11 @@
             "type": "object",
             "description": "Application configuration",
             "properties": {
+                "name": {
+                    "type": "string",
+                    "default": "some-collector",
+                    "description": "The name of the honeypot collector"
+                },
                 "env": {
                     "type": "string",
                     "default": "dev",
@@ -95,6 +100,7 @@
             },
             "additionalProperties": false,
             "required": [
+                "name",
                 "env",
                 "mode",
                 "port",

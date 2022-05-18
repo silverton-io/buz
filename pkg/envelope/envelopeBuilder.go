@@ -33,6 +33,7 @@ func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
 			},
 			Collector: Collector{
 				Tstamp:  time.Now().UTC(),
+				Name:    &m.Name,
 				Version: &m.Version,
 			},
 			Relay: Relay{

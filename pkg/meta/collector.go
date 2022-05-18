@@ -9,6 +9,7 @@ import (
 
 type CollectorMeta struct {
 	Version       string    `json:"version"`
+	Name          string    `json:"name"`
 	InstanceId    uuid.UUID `json:"instanceId"`
 	StartTime     time.Time `json:"startTime"`
 	TrackerDomain string    `json:"trackerDomain"`
@@ -23,6 +24,7 @@ func BuildCollectorMeta(version string, conf *config.Config) *CollectorMeta {
 	instanceId := uuid.New()
 	m := CollectorMeta{
 		Version:       version,
+		Name:          conf.App.Name,
 		InstanceId:    instanceId,
 		StartTime:     time.Now().UTC(),
 		TrackerDomain: conf.App.TrackerDomain,

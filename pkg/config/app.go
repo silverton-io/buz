@@ -2,6 +2,7 @@ package config
 
 type App struct {
 	Version       string `json:"version"`
+	Name          string `json:"name"`
 	Env           string `json:"env"`
 	Mode          string `json:"mode"`
 	Port          string `json:"port"`
