@@ -15,11 +15,11 @@ func SquawkboxHandler(h params.Handler, eventProtocol string) gin.HandlerFunc {
 		var envelopes []envelope.Envelope
 		switch eventProtocol {
 		case protocol.SNOWPLOW:
-			envelopes = envelope.BuildSnowplowEnvelopesFromRequest(c, *h.Config)
+			envelopes = envelope.BuildSnowplowEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		case protocol.CLOUDEVENTS:
-			envelopes = envelope.BuildCloudeventEnvelopesFromRequest(c, *h.Config)
+			envelopes = envelope.BuildCloudeventEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		case protocol.GENERIC:
-			envelopes = envelope.BuildGenericEnvelopesFromRequest(c, *h.Config)
+			envelopes = envelope.BuildGenericEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		}
 		annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
 		c.JSON(http.StatusOK, annotatedEnvelopes)

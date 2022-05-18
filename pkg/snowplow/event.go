@@ -60,7 +60,7 @@ type SnowplowEvent struct {
 	PageUrlHost            *string                      `json:"page_urlhost"`
 	PageUrlPort            *string                      `json:"page_urlport"`
 	PageUrlPath            *string                      `json:"page_urlpath"`
-	PageUrlQuery           *string                      `json:"page_urlquery"`
+	PageUrlQuery           *map[string]interface{}      `json:"page_urlquery"`
 	PageUrlFragment        *string                      `json:"page_urlfragment"`
 	MktMedium              *string                      `json:"mkt_medium"`
 	MktSource              *string                      `json:"mkt_source"`
@@ -72,7 +72,7 @@ type SnowplowEvent struct {
 	RefrUrlHost            *string                      `json:"refr_urlhost"`
 	RefrUrlPort            *string                      `json:"refr_urlport"`
 	RefrUrlPath            *string                      `json:"refr_urlpath"`
-	RefrUrlQuery           *string                      `json:"refr_urlquery"`
+	RefrUrlQuery           *map[string]interface{}      `json:"refr_urlquery"`
 	RefrUrlFragment        *string                      `json:"refr_urlfragment"`
 	RefrMedium             *string                      `json:"refr_medium"`
 	RefrSource             *string                      `json:"refr_source"`
@@ -137,19 +137,19 @@ type SnowplowEvent struct {
 }
 
 type Page struct {
-	Url      string  `json:"url"`
-	Title    *string `json:"title"`
-	Scheme   string  `json:"scheme"`
-	Host     string  `json:"host"`
-	Port     string  `json:"port"`
-	Path     string  `json:"path"`
-	Query    *string `json:"query"`
-	Fragment *string `json:"fragment"`
-	Medium   *string `json:"medium"`
-	Source   *string `json:"source"`
-	Term     *string `json:"term"`
-	Content  *string `json:"content"`
-	Campaign *string `json:"campaign"`
+	Url      string                 `json:"url"`
+	Title    *string                `json:"title"`
+	Scheme   string                 `json:"scheme"`
+	Host     string                 `json:"host"`
+	Port     string                 `json:"port"`
+	Path     string                 `json:"path"`
+	Query    map[string]interface{} `json:"query"`
+	Fragment *string                `json:"fragment"`
+	Medium   *string                `json:"medium"`
+	Source   *string                `json:"source"`
+	Term     *string                `json:"term"`
+	Content  *string                `json:"content"`
+	Campaign *string                `json:"campaign"`
 }
 
 type PageViewEvent struct{}

@@ -13,9 +13,9 @@ import (
 func WebhookHandler(h params.Handler) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/json" {
-			envelopes := envelope.BuildWebhookEnvelopesFromRequest(c, *h.Config)
+			envelopes := envelope.BuildWebhookEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 			annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
-			err := h.Manifold.Distribute(annotatedEnvelopes, h.Meta)
+			err := h.Manifold.Distribute(annotatedEnvelopes, *h.ProtocolStats)
 			if err != nil {
 				c.Header("Retry-After", response.RETRY_AFTER_60)
 				c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)

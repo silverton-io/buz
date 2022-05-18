@@ -1,4 +1,4 @@
-package tele
+package stats
 
 import (
 	"sync"

@@ -12,6 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
@@ -130,7 +131,7 @@ func getQueryParam(u url.URL, k string) *string {
 	}
 }
 
-func getPageParam(params map[string]interface{}, k string) (Page, error) {
+func getPageFromParam(params map[string]interface{}, k string) (Page, error) {
 	p := getStringParam(params, k)
 	if p != nil {
 		parsedUrl, err := url.Parse(*p)
@@ -138,10 +139,7 @@ func getPageParam(params map[string]interface{}, k string) (Page, error) {
 			log.Error().Err(err).Interface("url", *p).Msg("could not parse url")
 			return Page{}, err
 		}
-		unescapedQry, err := url.QueryUnescape(parsedUrl.RawQuery)
-		if err != nil {
-			log.Error().Err(err).Interface("query", parsedUrl.RawQuery).Msg("could not unescape query params")
-		}
+		qParams := util.QueryToMap(parsedUrl.Query())
 		frag := parsedUrl.Fragment
 		page := Page{
 			Url:      *p,
@@ -149,7 +147,7 @@ func getPageParam(params map[string]interface{}, k string) (Page, error) {
 			Host:     parsedUrl.Host,
 			Port:     parsedUrl.Port(),
 			Path:     parsedUrl.Path,
-			Query:    &unescapedQry,
+			Query:    qParams,
 			Fragment: &frag,
 			Medium:   getQueryParam(*parsedUrl, "utm_medium"),
 			Source:   getQueryParam(*parsedUrl, "utm_source"),
@@ -194,7 +192,7 @@ func setEvent(e *SnowplowEvent, params map[string]interface{}) {
 func setUser(c *gin.Context, e *SnowplowEvent, params map[string]interface{}) {
 	nuid := c.GetString("identity")
 	ip, _ := c.RemoteIP()
-	sIp := ip.String() // FIXME! Should incorporate other IP sources
+	sIp := ip.String()
 	e.DomainUserid = getStringParam(params, "duid")
 	e.NetworkUserid = &nuid
 	e.Userid = getStringParam(params, "uid")
@@ -209,7 +207,7 @@ func setSession(e *SnowplowEvent, params map[string]interface{}) {
 }
 
 func setPage(e *SnowplowEvent, params map[string]interface{}) {
-	page, _ := getPageParam(params, "url")
+	page, _ := getPageFromParam(params, "url")
 	title := getStringParam(params, "page")
 	page.Title = title
 	e.PageUrl = &page.Url
@@ -218,21 +216,29 @@ func setPage(e *SnowplowEvent, params map[string]interface{}) {
 	e.PageUrlHost = &page.Host
 	e.PageUrlPort = &page.Port
 	e.PageUrlPath = &page.Path
-	e.PageUrlQuery = page.Query
+	e.PageUrlQuery = &page.Query
 	e.PageUrlFragment = page.Fragment
-	// FIXME - mkt params
+	e.MktCampaign = page.Campaign
+	e.MktContent = page.Content
+	e.MktMedium = page.Medium
+	e.MktSource = page.Source
+	e.MktTerm = page.Term
 }
 
 func setReferrer(e *SnowplowEvent, params map[string]interface{}) {
-	referrer, _ := getPageParam(params, "refr")
-	e.PageReferrer = &referrer.Url
-	e.RefrUrlScheme = &referrer.Scheme
-	e.RefrUrlHost = &referrer.Host
-	e.RefrUrlPort = &referrer.Port
-	e.RefrUrlPath = &referrer.Path
-	e.RefrUrlQuery = referrer.Query
-	e.RefrUrlFragment = referrer.Fragment
-	// FIXME - refr params
+	refr, _ := getPageFromParam(params, "refr")
+	e.PageReferrer = &refr.Url
+	e.RefrUrlScheme = &refr.Scheme
+	e.RefrUrlHost = &refr.Host
+	e.RefrUrlPort = &refr.Port
+	e.RefrUrlPath = &refr.Path
+	e.RefrUrlQuery = &refr.Query
+	e.RefrUrlFragment = refr.Fragment
+	e.RefrCampaign = refr.Campaign
+	e.RefrContent = refr.Content
+	e.RefrMedium = refr.Medium
+	e.RefrSource = refr.Source
+	e.RefrTerm = refr.Term
 }
 
 func setDevice(c *gin.Context, e *SnowplowEvent, params map[string]interface{}) {

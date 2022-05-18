@@ -6,7 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/sink"
-	"github.com/silverton-io/honeypot/pkg/tele"
+	"github.com/silverton-io/honeypot/pkg/stats"
 	"github.com/silverton-io/honeypot/pkg/util"
 )
 
@@ -20,7 +20,7 @@ func (m *SimpleManifold) Initialize(sinks *[]sink.Sink) error {
 	return nil
 }
 
-func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope, meta *tele.Meta) error {
+func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope, s stats.ProtocolStats) error {
 	var validEnvelopes []envelope.Envelope
 	var invalidEnvelopes []envelope.Envelope
 
@@ -28,10 +28,10 @@ func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope, meta *tele.Me
 		util.Pprint(e)
 		isValid := e.Validation.IsValid
 		if isValid {
-			meta.ProtocolStats.IncrementValid(&e.EventMeta, 1)
+			s.IncrementValid(&e.EventMeta, 1)
 			validEnvelopes = append(validEnvelopes, e)
 		} else {
-			meta.ProtocolStats.IncrementInvalid(&e.EventMeta, 1)
+			s.IncrementInvalid(&e.EventMeta, 1)
 			invalidEnvelopes = append(invalidEnvelopes, e)
 		}
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/meta"
 	"github.com/silverton-io/honeypot/pkg/request"
 	"github.com/silverton-io/honeypot/pkg/util"
 )
@@ -19,30 +20,30 @@ const (
 )
 
 type startup struct {
-	Meta   *Meta         `json:"meta"`
-	Time   time.Time     `json:"time"`
-	Config config.Config `json:"config"`
+	Meta   *meta.CollectorMeta `json:"meta"`
+	Time   time.Time           `json:"time"`
+	Config config.Config       `json:"config"`
 }
 
 type beat struct {
-	Meta           *Meta     `json:"meta"`
-	Time           time.Time `json:"time"`
-	ElapsedSeconds float64   `json:"elapsedSeconds"`
+	Meta           *meta.CollectorMeta `json:"meta"`
+	Time           time.Time           `json:"time"`
+	ElapsedSeconds float64             `json:"elapsedSeconds"`
 }
 
 type shutdown struct {
-	Meta           *Meta     `json:"meta"`
-	Time           time.Time `json:"time"`
-	ElapsedSeconds float64   `json:"elapsedSeconds"`
+	Meta           *meta.CollectorMeta `json:"meta"`
+	Time           time.Time           `json:"time"`
+	ElapsedSeconds float64             `json:"elapsedSeconds"`
 }
 
-func heartbeat(t time.Ticker, m *Meta) {
+func heartbeat(t time.Ticker, m *meta.CollectorMeta) {
 	for _ = range t.C {
 		log.Trace().Msg("sending heartbeat telemetry")
 		b := beat{
 			Meta:           m,
 			Time:           time.Now().UTC(),
-			ElapsedSeconds: m.elapsed(),
+			ElapsedSeconds: m.Elapsed(),
 		}
 		data := util.StructToMap(b)
 		heartbeatPayload := event.SelfDescribingEvent{
@@ -57,12 +58,12 @@ func heartbeat(t time.Ticker, m *Meta) {
 	}
 }
 
-func Sis(m *Meta) {
+func Sis(m *meta.CollectorMeta) {
 	log.Trace().Msg("sending shutdown telemetry")
 	shutdown := shutdown{
 		Meta:           m,
 		Time:           time.Now().UTC(),
-		ElapsedSeconds: m.elapsed(),
+		ElapsedSeconds: m.Elapsed(),
 	}
 	data := util.StructToMap(shutdown)
 	shutdownPayload := event.SelfDescribingEvent{
@@ -76,7 +77,7 @@ func Sis(m *Meta) {
 	request.PostEvent(*endpoint, shutdownPayload)
 }
 
-func Metry(c *config.Config, m *Meta) {
+func Metry(c *config.Config, m *meta.CollectorMeta) {
 	if c.Tele.Enabled {
 		log.Trace().Msg("sending startup telemetry")
 		startup := startup{
