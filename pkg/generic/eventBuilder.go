@@ -7,7 +7,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func BuildEvent(e gjson.Result, conf config.Generic) GenericEvent {
+func BuildEvent(e gjson.Result, conf config.Generic) (GenericEvent, error) {
 	var sdPayload event.SelfDescribingPayload
 	var contexts = make(map[string]interface{})
 	c := e.Get(conf.Contexts.RootKey).Value()
@@ -27,8 +27,8 @@ func BuildEvent(e gjson.Result, conf config.Generic) GenericEvent {
 		}
 	}
 	genEvent := GenericEvent{
-		Contexts: contexts, // FIXME - validate these contexts.
+		Contexts: contexts, // FIXME - validate these contexts?
 		Payload:  sdPayload,
 	}
-	return genEvent
+	return genEvent, nil
 }

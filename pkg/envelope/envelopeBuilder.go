@@ -154,32 +154,17 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 		log.Error().Stack().Err(err).Msg("could not read request body")
 		return envelopes
 	}
-	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
-		genEvent := generic.BuildEvent(e, conf.Generic)
-		envelope := Envelope{
-			EventMeta: EventMeta{
-				Uuid:     uuid.New(),
-				Protocol: protocol.GENERIC,
-			},
-			Pipeline: Pipeline{
-				Source: Source{
-					Ip: c.ClientIP(),
-				},
-				Collector: Collector{
-					Tstamp: time.Now().UTC(),
-				},
-				Relay: Relay{
-					Relayed: false,
-				},
-			},
-			Device: Device{
-				Nid: &advancingCookieVal,
-			},
-			Validation: Validation{},
-			Payload:    genEvent,
+		n := buildCommonEnvelope(c, m)
+		genEvent, err := generic.BuildEvent(e, conf.Generic)
+		if err != nil {
+			log.Error().Err(err).Msg("could not build generic event")
 		}
-		envelopes = append(envelopes, envelope)
+		// Event meta
+		n.EventMeta.Protocol = protocol.GENERIC
+		// Payload
+		n.Payload = genEvent
+		envelopes = append(envelopes, n)
 	}
 	return envelopes
 }
@@ -191,32 +176,20 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf *config.Config, m 
 		log.Error().Stack().Err(err).Msg("could not read request body")
 		return envelopes
 	}
-	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
 	for _, ce := range gjson.ParseBytes(reqBody).Array() {
-		cEvent, _ := cloudevents.BuildEvent(ce)
-		envelope := Envelope{
-			EventMeta: EventMeta{
-				Uuid:     uuid.New(),
-				Protocol: protocol.GENERIC,
-			},
-			Pipeline: Pipeline{
-				Source: Source{
-					Ip: c.ClientIP(),
-				},
-				Collector: Collector{
-					Tstamp: time.Now().UTC(),
-				},
-				Relay: Relay{
-					Relayed: false,
-				},
-			},
-			Device: Device{
-				Nid: &advancingCookieVal,
-			},
-			Validation: Validation{},
-			Payload:    cEvent,
+		n := buildCommonEnvelope(c, m)
+		cEvent, err := cloudevents.BuildEvent(ce)
+		if err != nil {
+			log.Error().Err(err).Msg("could not build Cloudevent")
 		}
-		envelopes = append(envelopes, envelope)
+		// Event Meta
+		n.EventMeta.Protocol = protocol.CLOUDEVENTS
+		// Source
+		n.Pipeline.Source.GeneratedTstamp = cEvent.Time
+		n.Pipeline.Source.SentTstamp = cEvent.Time
+		// Payload
+		n.Payload = cEvent
+		envelopes = append(envelopes, n)
 	}
 	return envelopes
 }
@@ -228,35 +201,17 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 		log.Error().Stack().Err(err).Msg("could not read request body")
 		return envelopes
 	}
-	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
+		n := buildCommonEnvelope(c, m)
 		whEvent, err := webhook.BuildEvent(c, e)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not build WebhookEvent")
 		}
-		envelope := Envelope{
-			EventMeta: EventMeta{
-				Uuid:     uuid.New(),
-				Protocol: protocol.GENERIC,
-			},
-			Pipeline: Pipeline{
-				Source: Source{
-					Ip: c.ClientIP(),
-				},
-				Collector: Collector{
-					Tstamp: time.Now().UTC(),
-				},
-				Relay: Relay{
-					Relayed: false,
-				},
-			},
-			Device: Device{
-				Nid: &advancingCookieVal,
-			},
-			Validation: Validation{},
-			Payload:    whEvent,
-		}
-		envelopes = append(envelopes, envelope)
+		// Event Meta
+		n.EventMeta.Protocol = protocol.WEBHOOK
+		// Payload
+		n.Payload = whEvent
+		envelopes = append(envelopes, n)
 	}
 	return envelopes
 }
@@ -273,30 +228,12 @@ func BuildPixelEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta
 	if err != nil {
 		log.Error().Err(err).Msg("could not build PixelEvent")
 	}
-	advancingCookieVal, _ := c.Cookie(conf.Cookie.Name)
-	envelope := Envelope{
-		EventMeta: EventMeta{
-			Uuid:     uuid.New(),
-			Protocol: protocol.GENERIC,
-		},
-		Pipeline: Pipeline{
-			Source: Source{
-				Ip: c.ClientIP(),
-			},
-			Collector: Collector{
-				Tstamp: time.Now().UTC(),
-			},
-			Relay: Relay{
-				Relayed: false,
-			},
-		},
-		Device: Device{
-			Nid: &advancingCookieVal,
-		},
-		Validation: Validation{},
-		Payload:    pEvent,
-	}
-	envelopes = append(envelopes, envelope)
+	n := buildCommonEnvelope(c, m)
+	// Event Meta
+	n.EventMeta.Protocol = protocol.PIXEL
+	// Payload
+	n.Payload = pEvent
+	envelopes = append(envelopes, n)
 	return envelopes
 }
 
