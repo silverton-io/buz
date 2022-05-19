@@ -15,7 +15,7 @@ If the `schemaDirectory` is `enabled`, all "currently-cached" schemas are availa
 
 Individual schemas are also available at `/schemas/$NAME/$OF/$SCHEMA`.
 
-For example, if a particular schema had a name of `com.silverton.io/honeypot/tele/beat/v1.0.json` it would be available at `/schemas/com.silverton.io/honeypot/tele/beat/v1.0.json`.
+For example, if a particular schema had a name of `io.silverton/honeypot/tele/beat/v1.0.json` it would be available at `/schemas/io.silverton/honeypot/tele/beat/v1.0.json`.
 
 
 ## Sample Schema Cache Configuration

@@ -11,23 +11,26 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/silverton-io/honeypot/pkg/tele"
+	"github.com/silverton-io/honeypot/pkg/meta"
+	"github.com/silverton-io/honeypot/pkg/stats"
 )
 
 func TestStatsHandler(t *testing.T) {
 	u := uuid.New()
 	now := time.Now().UTC()
-	m := tele.Meta{
+	m := meta.CollectorMeta{
 		Version:       "1.0.x",
 		InstanceId:    u,
 		StartTime:     now,
 		TrackerDomain: "somewhere.net",
 		CookieDomain:  "somewhere.io",
 	}
+	s := stats.ProtocolStats{}
+	s.Build()
 	rec := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(rec)
 
-	handler := StatsHandler(&m)
+	handler := StatsHandler(&m, &s)
 
 	handler(c)
 

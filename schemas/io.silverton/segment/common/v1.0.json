@@ -1,0 +1,313 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://registry.silverton.io/io.silverton/segment/spec/common/v1.0.json",
+    "title": "io.silverton/segment/spec/common/v1.0.json",
+    "description": "Segment common fields spec",
+	"self": {
+		"vendor": "io.silverton",
+        "primaryNamespace": "segment",
+        "secondaryNamespace": "spec",
+		"name": "common",
+		"version": "1.0"
+	},
+    "type": "object",
+    "properties": {
+        "anonymousId": {
+            "type": ["string", "null"],
+            "description": "A pseudo-unique substitute for a User ID, for cases when you don’t have an absolutely unique identifier. A userId or an anonymousId is required. See the Identities docs for more details."
+        },
+        "context": {
+            "type": "object",
+            "description": "Dictionary of extra information that provides useful context about a message, but is not directly related to the API call like ip address or locale See the Context field docs for more details.",
+            "properties": {
+                "active": {
+                    "type": "boolean",
+                    "description": "Whether a user is active"
+                },
+                "app": {
+                    "type": "object",
+                    "description": "Dictionary of information about the current application",
+                    "properties": {
+                        "name": {
+                            "type":"string",
+                            "description": "The name of the application"
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The version of the application"
+                        },
+                        "build": {
+                            "type": "string",
+                            "description": "The build of the application"
+                        }
+                    }
+                },
+                "campaign": {
+                    "type": "object",
+                    "description": "Dictionary of information about the campaign that resulted in the API call",
+                    "properties": {
+                        "name": {
+                            "type":"string",
+                            "description": "The value of the utm campaign param"
+                        },
+                        "source": {
+                            "type": "string",
+                            "description": "The value of the utm source param"
+                        },
+                        "medium": {
+                            "type": "string",
+                            "description": "The value of the utm medium param"
+                        },
+                        "term": {
+                            "type": "string",
+                            "description": "The value of the utm term param"
+                        },
+                        "content": {
+                            "type": "string",
+                            "description": "The value of the utm content param"
+                        }
+                    }
+                },
+                "device": {
+                    "type": "object",
+                    "description": "Dictionary of information about the device",
+                    "properties": {
+                        "id": {
+                            "type": ["string", "null"],
+                            "description": "The device id"
+                        },
+                        "advertisingId": {
+                            "type": ["string", "null"],
+                            "description": "The device ad id"
+                        },
+                        "manufacturer": {
+                            "type": ["string", "null"],
+                            "description": "The device manufacturer"
+                        },
+                        "model": {
+                            "type": ["string", "null"],
+                            "description": "The device model"
+                        },
+                        "name": {
+                            "type": ["string", "null"],
+                            "description": "The device name"
+                        },
+                        "type": {
+                            "type": ["string", "null"],
+                            "description": "The device type"
+                        },
+                        "version": {
+                            "type": ["string", "null"],
+                            "description": "The device version"
+                        }
+                    }
+                },
+                "ip": {
+                    "type": "string",
+                    "description": "Current user IP address."
+                },
+                "library": {
+                    "type": "object",
+                    "description": "Information about the library making the requests to the API",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The library name"
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The library version"
+                        }
+                    }
+                },
+                "locale": {
+                    "type": "string",
+                    "description": "Locale string for the current user, for example en-US"
+                },
+                "location": {
+                    "type": "object",
+                    "description": "Information about current location",
+                    "properties": {
+                        "city": {
+                            "type": ["string", "null"],
+                            "description": "The current city"
+                        },
+                        "country": {
+                            "type": ["string", "null"],
+                            "description": "The current country"
+                        },
+                        "latitude": {
+                            "type": ["number", "null"],
+                            "description": "The current latitude"
+                        },
+                        "longitude": {
+                            "type": ["number", "null"],
+                            "description": "The current longitude"
+                        },
+                        "region": {
+                            "type": ["string", "null"],
+                            "description": "The current region"
+                        },
+                        "speed": {
+                            "type": ["number", "null"],
+                            "description": "The current speed"
+                        }
+                    }
+                },
+                "network": {
+                    "type": "object",
+                    "description": "Information about the current network connection",
+                    "properties": {
+                        "bluetooth": {
+                            "type": ["boolean", "null"],
+                            "description": "Whether or not the connection is via bluetooth"
+                        },
+                        "carrier": {
+                            "type": ["string", "null"],
+                            "description": "The name of the network carrier"
+                        },
+                        "cellular": {
+                            "type": ["boolean", "null"],
+                            "description": "Whether or not the connection is via cellular"
+                        },
+                        "wifi": {
+                            "type": ["boolean", "null"],
+                            "description": "Whether or not the connection is via wifi"
+                        }
+                    }
+                },
+                "os": {
+                    "type": "object",
+                    "description": "Information about the operating system",
+                    "properties": {
+                        "name": {
+                            "type": ["string", "null"],
+                            "description": "The os name"
+                        },
+                        "version": {
+                            "type": ["string", "null"],
+                            "description": "The os version"
+                        }
+                    }
+                },
+                "page": {
+                    "type": "object",
+                    "description": "Information about the current page in the browser",
+                    "properties": {
+                        "path": {
+                            "type": "string",
+                            "description": "The page path"
+                        },
+                        "referrer": {
+                            "type": "string",
+                            "description": "The page referrer"
+                        },
+                        "search": {
+                            "type": "string",
+                            "description": "The page params"
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "The page title"
+                        },
+                        "url": {
+                            "type": "string",
+                            "description": "The page url"
+                        }
+                    }
+                },
+                "referrer": {
+                    "type": "object",
+                    "description": "Dictionary of information about the way the user was referred to the website or app",
+                    "properties": {
+                        "type": {
+                            "type": ["string", "null"],
+                            "description": "The referrer type"
+                        },
+                        "name": {
+                            "type": ["string", "null"],
+                            "description": "The referrer name"
+                        },
+                        "url": {
+                            "type": ["string", "null"],
+                            "description": "The referrer url"
+                        },
+                        "link": {
+                            "type": ["string", "null"],
+                            "description": "The referrer link"
+                        }
+                    }
+                },
+                "screen": {
+                    "type": "object",
+                    "description": "Dictionary of information about the device’s screen",
+                    "properties": {
+                        "density": {
+                            "type": "number",
+                            "description": "The screen density"
+                        },
+                        "height": {
+                            "type": "number",
+                            "description": "The screen height"
+                        },
+                        "width": {
+                            "type": "number",
+                            "description": "The screen width"
+                        }
+                    }
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Timezones are sent as tzdata strings to add user timezone information which might be stripped from the timestamp, for example America/New_York"
+                },
+                "groupId": {
+                    "type": "string",
+                    "description": "Group / Account ID."
+                },
+                "traits":{
+                    "type": "object",
+                    "description": "Dictionary of traits of the current user"
+                },
+                "userAgent": {
+                    "type": "string",
+                    "description": "User agent of the device making the request"
+                }
+            }
+        },
+        "integrations": {
+            "type": "object",
+            "description": "Dictionary of destinations to either enable or disable See the Destinations field docs for more details."
+        },
+        "messageId": {
+            "type": "string",
+            "description": "Automatically collected by Segment, a unique identifier for each message that lets you find an individual message across the API."
+        },
+        "receivedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Automatically set by Segment, the timestamp of when a message is received by Segment It is an ISO-8601 date string. See the Timestamps fields docs for more detail."
+        },
+        "sentAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of when a message is sent to Segment, used for clock skew correction It is set automatically by the Segment tracking libraries. It is an ISO-8601 date string. See the Timestamps fields docs for more detail."
+        },
+        "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the message itself took place, defaulted to the current time by the Segment Tracking API, as a ISO-8601 format date string. If the event just happened, leave it out and we’ll use the server’s time. If you’re importing data from the past, make sure you to provide a timestamp. See the Timestamps fields docs for more detail."
+        },
+        "type": {
+            "type": "string",
+            "description": "Type of message, corresponding to the API method: 'identify', 'group', 'track', 'page', 'screen' or 'alias'."
+        },
+        "userId": {
+            "type": ["string", "null"],
+            "description": "Unique identifier for the user in your database. A userId or an anonymousId is required. See the Identities docs for more details."
+        },
+        "version": {
+            "type": "number",
+            "description": "Version of the Tracking API that received the message, automatically set by Segment."
+        }
+    }
+}

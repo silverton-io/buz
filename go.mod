@@ -15,8 +15,8 @@ require (
 	github.com/elastic/go-elasticsearch/v8 v8.1.0
 	github.com/gin-contrib/timeout v0.0.3
 	github.com/gin-gonic/gin v1.7.7
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/google/uuid v1.3.0
-	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/qri-io/jsonschema v0.2.1
 	github.com/rs/zerolog v1.26.1
 	github.com/spf13/viper v1.10.1
@@ -25,7 +25,13 @@ require (
 	github.com/twmb/franz-go v1.4.0
 	github.com/twmb/franz-go/pkg/kadm v0.0.0-20220301200403-ffaee5b878c6
 	github.com/ulule/limiter/v3 v3.9.0
+	go.mongodb.org/mongo-driver v1.8.4
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f
+	gorm.io/datatypes v1.0.6
+	gorm.io/driver/clickhouse v0.3.1
+	gorm.io/driver/mysql v1.3.3
+	gorm.io/driver/postgres v1.3.4
+	gorm.io/gorm v1.23.5
 )
 
 require (
@@ -47,7 +53,6 @@ require (
 	github.com/aws/smithy-go v1.11.0 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cloudflare/golz4 v0.0.0-20150217214814-ef862a3cdc58 // indirect
-	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/elastic/elastic-transport-go/v8 v8.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
@@ -55,7 +60,6 @@ require (
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
-	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gofrs/uuid v4.2.0+incompatible // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
@@ -66,7 +70,6 @@ require (
 	github.com/hashicorp/go-version v1.4.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
-	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect
 	github.com/jackc/pgconn v1.11.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -107,7 +110,6 @@ require (
 	github.com/xdg-go/scram v1.0.2 // indirect
 	github.com/xdg-go/stringprep v1.0.2 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
-	go.mongodb.org/mongo-driver v1.8.4 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
@@ -123,9 +125,4 @@ require (
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	gorm.io/datatypes v1.0.6 // indirect
-	gorm.io/driver/clickhouse v0.3.1 // indirect
-	gorm.io/driver/mysql v1.3.3 // indirect
-	gorm.io/driver/postgres v1.3.4 // indirect
-	gorm.io/gorm v1.23.5 // indirect
 )

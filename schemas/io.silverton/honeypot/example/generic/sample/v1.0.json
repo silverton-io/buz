@@ -1,0 +1,25 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "http://registry.silverton.io/io.silverton/honeypot/example/generic/sample/v1.0.json",
+	"title": "io.silverton/honeypot/example/generic/sample/v1.0.json",
+	"description": "Schema for testing generic events",
+	"self": {
+		"vendor": "io.silverton",
+        "primaryCategory": "honeypot",
+        "secondaryCategory": "example",
+		"tertiaryCategory": "generic",
+		"name": "sample",
+		"version": "1.0"
+	},
+	"type": "object",
+	"properties": {
+		"id": {
+			"description": "The id",
+			"type": "string",
+			"minLength": 0,
+			"maxLength": 4096
+		}
+	},
+	"required": ["id"],
+	"additionalProperties": false
+}

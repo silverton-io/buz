@@ -80,22 +80,22 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 
 func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
-	for _, event := range envelopes {
-		payload, err := json.Marshal(event)
+	for _, e := range envelopes {
+		payload, err := json.Marshal(e)
 		if err != nil {
 			return err
 		}
 		headers := []kgo.RecordHeader{
-			{Key: envelope.INPUT_PROTOCOL, Value: []byte(event.EventMetadata.Protocol)},
-			{Key: envelope.EVENT_VENDOR, Value: []byte(event.EventMetadata.Vendor)},
-			{Key: envelope.EVENT_PRIMARY_NAMESPACE, Value: []byte(event.EventMetadata.PrimaryNamespace)},
-			{Key: envelope.EVENT_SECONDARY_NAMESPACE, Value: []byte(event.EventMetadata.SecondaryNamespace)},
-			{Key: envelope.EVENT_TERTIARY_NAMESPACE, Value: []byte(event.EventMetadata.TertiaryNamespace)},
-			{Key: envelope.EVENT_NAME, Value: []byte(event.EventMetadata.Name)},
-			{Key: envelope.EVENT_VERSION, Value: []byte(event.EventMetadata.Version)},
+			{Key: envelope.INPUT_PROTOCOL, Value: []byte(e.EventMeta.Protocol)},
+			{Key: envelope.EVENT_VENDOR, Value: []byte(e.EventMeta.Vendor)},
+			{Key: envelope.EVENT_PRIMARY_NAMESPACE, Value: []byte(e.EventMeta.PrimaryNamespace)},
+			{Key: envelope.EVENT_SECONDARY_NAMESPACE, Value: []byte(e.EventMeta.SecondaryNamespace)},
+			{Key: envelope.EVENT_TERTIARY_NAMESPACE, Value: []byte(e.EventMeta.TertiaryNamespace)},
+			{Key: envelope.EVENT_NAME, Value: []byte(e.EventMeta.Name)},
+			{Key: envelope.EVENT_VERSION, Value: []byte(e.EventMeta.Version)},
 		}
 		record := &kgo.Record{
-			Key:     []byte(event.EventMetadata.Path), // FIXME! Add configurable partition assignment
+			Key:     []byte(e.EventMeta.Path), // FIXME! Add configurable partition assignment
 			Topic:   topic,
 			Value:   payload,
 			Headers: headers,

@@ -25,7 +25,7 @@ open http://localhost:8080/;
 sleep 2;
 open http://localhost:8080/schemas;
 sleep 2;
-open http://localhost:8080/schemas/com.silverton.io/snowplow/page_view/v1.0.json;
+open http://localhost:8080/schemas/io.silverton/snowplow/page_view/v1.0.json;
 sleep 2;
 open http://localhost:8081/topics;
 sleep 2;

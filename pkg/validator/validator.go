@@ -5,24 +5,11 @@ import (
 	"github.com/silverton-io/honeypot/pkg/cache"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/event"
-	"github.com/silverton-io/honeypot/pkg/protocol"
-	"github.com/silverton-io/honeypot/pkg/snowplow"
 )
 
 func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, validationError envelope.ValidationError, schema []byte) {
-	schemaName := e.Schema()
-	eventProtocol := e.Protocol()
-	// Short-circuit if the event is an unknown snowplow event
-	if eventProtocol == protocol.SNOWPLOW {
-		if e.(snowplow.SnowplowEvent).Event.Event == snowplow.UNKNOWN_EVENT {
-			validationError := envelope.ValidationError{
-				ErrorType:       &UnknownSnowplowEventType.Type,
-				ErrorResolution: &UnknownSnowplowEventType.Resolution,
-				Errors:          nil,
-			}
-			return false, validationError, nil
-		}
-	}
+	schemaName := e.SchemaName()
+	// FIXME- Short-circuit if the event is an unknown snowplow event
 	if *schemaName == "" {
 		validationError := envelope.ValidationError{
 			ErrorType:       &NoSchemaAssociated.Type,

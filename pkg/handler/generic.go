@@ -6,15 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/honeypot/pkg/annotator"
 	"github.com/silverton-io/honeypot/pkg/envelope"
+	"github.com/silverton-io/honeypot/pkg/params"
 	"github.com/silverton-io/honeypot/pkg/response"
 )
 
-func GenericHandler(h EventHandlerParams) gin.HandlerFunc {
+func GenericHandler(h params.Handler) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/json" {
-			envelopes := envelope.BuildGenericEnvelopesFromRequest(c, *h.Config)
+			envelopes := envelope.BuildGenericEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 			annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
-			err := h.Manifold.Distribute(annotatedEnvelopes, h.Meta)
+			err := h.Manifold.Distribute(annotatedEnvelopes, *h.ProtocolStats)
 			if err != nil {
 				c.Header("Retry-After", response.RETRY_AFTER_60)
 				c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)

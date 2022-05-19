@@ -10,7 +10,7 @@ import (
 
 type GenericEvent event.SelfDescribingEvent
 
-func (e GenericEvent) Schema() *string {
+func (e GenericEvent) SchemaName() *string {
 	return &e.Payload.Schema
 }
 

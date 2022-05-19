@@ -16,13 +16,6 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func stripIglu(schema string) string {
-	if schema[:4] == IGLU {
-		return schema[5:]
-	}
-	return schema
-}
-
 func getStringParam(params map[string]interface{}, k string) *string {
 	v := params[k]
 	if v == nil {
@@ -98,7 +91,7 @@ func getDimensions(dimensionString string) (Dimension, error) {
 	}, nil
 }
 
-func getContexts(b64encodedContexts *string) map[string]interface{} {
+func getContexts(b64encodedContexts *string) *map[string]interface{} {
 	var contexts = make(map[string]interface{})
 	payload, err := b64.RawStdEncoding.DecodeString(*b64encodedContexts)
 	if err != nil {
@@ -107,11 +100,11 @@ func getContexts(b64encodedContexts *string) map[string]interface{} {
 	}
 	contextPayload := gjson.ParseBytes(payload)
 	for _, pl := range contextPayload.Get("data").Array() {
-		schema := stripIglu(pl.Get("schema").String())
+		schema := pl.Get("schema").String()
 		data := pl.Get("data").Value().(map[string]interface{})
 		contexts[schema] = data
 	}
-	return contexts
+	return &contexts
 }
 
 func getSdPayload(b64EncodedPayload *string) *event.SelfDescribingPayload {
@@ -120,7 +113,7 @@ func getSdPayload(b64EncodedPayload *string) *event.SelfDescribingPayload {
 		log.Error().Err(err).Msg("could not decode b64 encoded self describing payload")
 		return nil
 	}
-	schema := stripIglu(gjson.GetBytes(payload, "data.schema").String())
+	schema := gjson.GetBytes(payload, "data.schema").String()
 	p := event.SelfDescribingPayload{
 		Schema: schema,
 		Data:   gjson.GetBytes(payload, "data.data").Value().(map[string]interface{}),
@@ -138,7 +131,7 @@ func getQueryParam(u url.URL, k string) *string {
 	}
 }
 
-func getPageParam(params map[string]interface{}, k string) (Page, error) {
+func getPageFromParam(params map[string]interface{}, k string) (Page, error) {
 	p := getStringParam(params, k)
 	if p != nil {
 		parsedUrl, err := url.Parse(*p)
@@ -146,10 +139,7 @@ func getPageParam(params map[string]interface{}, k string) (Page, error) {
 			log.Error().Err(err).Interface("url", *p).Msg("could not parse url")
 			return Page{}, err
 		}
-		unescapedQry, err := url.QueryUnescape(parsedUrl.RawQuery)
-		if err != nil {
-			log.Error().Err(err).Interface("query", parsedUrl.RawQuery).Msg("could not unescape query params")
-		}
+		qParams := util.QueryToMap(parsedUrl.Query())
 		frag := parsedUrl.Fragment
 		page := Page{
 			Url:      *p,
@@ -157,7 +147,7 @@ func getPageParam(params map[string]interface{}, k string) (Page, error) {
 			Host:     parsedUrl.Host,
 			Port:     parsedUrl.Port(),
 			Path:     parsedUrl.Path,
-			Query:    &unescapedQry,
+			Query:    qParams,
 			Fragment: &frag,
 			Medium:   getQueryParam(*parsedUrl, "utm_medium"),
 			Source:   getQueryParam(*parsedUrl, "utm_source"),
@@ -172,123 +162,119 @@ func getPageParam(params map[string]interface{}, k string) (Page, error) {
 }
 
 func setTstamps(e *SnowplowEvent, params map[string]interface{}) {
-	ts := Tstamp{
-		DvceCreatedTstamp: *getTimeParam(params, "dtm"),
-		DvceSentTstamp:    *getTimeParam(params, "stm"),
-		TrueTstamp:        getTimeParam(params, "ttm"),
-		CollectorTstamp:   time.Now().UTC(),
-		EtlTstamp:         time.Now().UTC(),
-	}
-	timeOnDevice := ts.DvceSentTstamp.Sub(ts.DvceCreatedTstamp)
-	ts.DerivedTstamp = ts.CollectorTstamp.Add(-timeOnDevice)
-	e.Tstamp = ts
+	e.DvceCreatedTstamp = *getTimeParam(params, "dtm")
+	e.DvceSentTstamp = *getTimeParam(params, "stm")
+	e.TrueTstamp = getTimeParam(params, "ttm")
+	e.CollectorTstamp = time.Now().UTC()
+	e.EtlTstamp = time.Now().UTC()
+	timeOnDevice := e.DvceSentTstamp.Sub(e.DvceCreatedTstamp)
+	e.DerivedTstamp = e.CollectorTstamp.Add(-timeOnDevice)
 }
 
 func setPlatformMetadata(e *SnowplowEvent, params map[string]interface{}, conf config.Config) {
-	pm := PlatformMetadata{
-		NameTracker:      *getStringParam(params, "tna"),
-		TrackerVersion:   getStringParam(params, "tv"),
-		CollectorVersion: &conf.App.Version,
-		EtlVersion:       &conf.App.Version,
-	}
-	e.PlatformMetadata = pm
+	e.NameTracker = *getStringParam(params, "tna")
+	e.TrackerVersion = getStringParam(params, "tv")
+	e.CollectorVersion = &conf.App.Version
+	e.EtlVersion = &conf.App.Version
 }
 
 func setEvent(e *SnowplowEvent, params map[string]interface{}) {
 	eName := getStringParam(params, "e")
 	fingerprint := uuid.New()
-	evnt := Event{
-		AppId:            *getStringParam(params, "aid"),
-		Platform:         *getStringParam(params, "p"),
-		Event:            getEventType(*eName),
-		TxnId:            getStringParam(params, "tid"),
-		EventId:          getStringParam(params, "eid"),
-		EventFingerprint: fingerprint,
-	}
-	e.Event = evnt
+	e.AppId = *getStringParam(params, "aid")
+	e.Platform = *getStringParam(params, "p")
+	e.Event = getEventType(*eName)
+	e.TxnId = getStringParam(params, "tid")
+	e.EventId = getStringParam(params, "eid")
+	e.EventFingerprint = fingerprint
 }
 
 func setUser(c *gin.Context, e *SnowplowEvent, params map[string]interface{}) {
-	nuid := c.GetString("identity")
-	ip, _ := c.RemoteIP()
-	sIp := ip.String() // FIXME! Should incorporate other IP sources
-	user := User{
-		DomainUserid:  getStringParam(params, "duid"),
-		NetworkUserid: &nuid,
-		Userid:        getStringParam(params, "uid"),
-		UserIpAddress: &sIp,
-	}
-	e.User = user
+	e.DomainUserid = getStringParam(params, "duid")
+	e.Userid = getStringParam(params, "uid")
 }
 
 func setSession(e *SnowplowEvent, params map[string]interface{}) {
-	s := Session{
-		DomainSessionIdx: getInt64Param(params, "vid"),
-		DomainSessionId:  getStringParam(params, "sid"),
-	}
-	e.Session = s
+	vid := getInt64Param(params, "vid")
+	sid := getStringParam(params, "sid")
+	e.DomainSessionIdx = vid
+	e.DomainSessionId = sid
 }
 
 func setPage(e *SnowplowEvent, params map[string]interface{}) {
-	page, _ := getPageParam(params, "url")
+	page, _ := getPageFromParam(params, "url")
 	title := getStringParam(params, "page")
 	page.Title = title
-	e.Page = page
+	e.PageUrl = &page.Url
+	e.PageTitle = page.Title
+	e.PageUrlScheme = &page.Scheme
+	e.PageUrlHost = &page.Host
+	e.PageUrlPort = &page.Port
+	e.PageUrlPath = &page.Path
+	e.PageUrlQuery = &page.Query
+	e.PageUrlFragment = page.Fragment
+	e.MktCampaign = page.Campaign
+	e.MktContent = page.Content
+	e.MktMedium = page.Medium
+	e.MktSource = page.Source
+	e.MktTerm = page.Term
 }
 
 func setReferrer(e *SnowplowEvent, params map[string]interface{}) {
-	referrer, _ := getPageParam(params, "refr")
-	e.Referrer = referrer
+	refr, _ := getPageFromParam(params, "refr")
+	e.PageReferrer = &refr.Url
+	e.RefrUrlScheme = &refr.Scheme
+	e.RefrUrlHost = &refr.Host
+	e.RefrUrlPort = &refr.Port
+	e.RefrUrlPath = &refr.Path
+	e.RefrUrlQuery = &refr.Query
+	e.RefrUrlFragment = refr.Fragment
+	e.RefrCampaign = refr.Campaign
+	e.RefrContent = refr.Content
+	e.RefrMedium = refr.Medium
+	e.RefrSource = refr.Source
+	e.RefrTerm = refr.Term
 }
 
 func setDevice(c *gin.Context, e *SnowplowEvent, params map[string]interface{}) {
 	useragent := c.Request.UserAgent()
-	d := Device{
-		Useragent:  &useragent,
-		MacAddress: getStringParam(params, "mac"),
-		OsTimezone: getStringParam(params, "tz"),
-	}
-	e.Device = d
+	e.Useragent = &useragent
+	e.MacAddress = getStringParam(params, "mac")
+	e.OsTimezone = getStringParam(params, "tz")
 }
 
 func setBrowser(e *SnowplowEvent, params map[string]interface{}) {
-	b := Browser{
-		BrCookies:              getBoolParam(params, "cookie"),
-		BrLang:                 getStringParam(params, "lang"),
-		BrFeaturesPdf:          getBoolParam(params, "f_pdf"),
-		BrFeaturesQuicktime:    getBoolParam(params, "f_qt"),
-		BrFeaturesRealplayer:   getBoolParam(params, "f_realp"),
-		BrFeaturesWindowsmedia: getBoolParam(params, "f_wma"),
-		BrFeaturesDirector:     getBoolParam(params, "f_dir"),
-		BrFeaturesFlash:        getBoolParam(params, "f_fla"),
-		BrFeaturesJava:         getBoolParam(params, "f_java"),
-		BrFeaturesGears:        getBoolParam(params, "f_gears"),
-		BrFeaturesSilverlight:  getBoolParam(params, "f_ag"),
-		BrColordepth:           getInt64Param(params, "cd"),
-	}
-	e.Browser = b
+	e.BrCookies = getBoolParam(params, "cookie")
+	e.BrLang = getStringParam(params, "lang")
+	e.BrFeaturesPdf = getBoolParam(params, "f_pdf")
+	e.BrFeaturesQuicktime = getBoolParam(params, "f_qt")
+	e.BrFeaturesRealplayer = getBoolParam(params, "f_realp")
+	e.BrFeaturesWindowsmedia = getBoolParam(params, "f_wma")
+	e.BrFeaturesDirector = getBoolParam(params, "f_dir")
+	e.BrFeaturesFlash = getBoolParam(params, "f_fla")
+	e.BrFeaturesJava = getBoolParam(params, "f_java")
+	e.BrFeaturesGears = getBoolParam(params, "f_gears")
+	e.BrFeaturesSilverlight = getBoolParam(params, "f_ag")
+	e.BrColordepth = getInt64Param(params, "cd")
 }
 
 func setScreen(e *SnowplowEvent, params map[string]interface{}) {
-	s := Screen{
-		DocCharset:        getStringParam(params, "cs"),
-		ViewportSize:      getStringParam(params, "vp"),
-		DocSize:           getStringParam(params, "ds"),
-		MonitorResolution: getStringParam(params, "res"),
+	e.DocCharset = getStringParam(params, "cs")
+	e.ViewportSize = getStringParam(params, "vp")
+	e.DvceScreenResolution = getStringParam(params, "res")
+	e.DocSize = getStringParam(params, "ds")
+	if e.DocSize != nil {
+		docDimension, _ := getDimensions(*e.DocSize)
+		e.DocWidth, e.DocHeight = &docDimension.width, &docDimension.height
 	}
-	if s.DocSize != nil {
-		docDimension, _ := getDimensions(*s.DocSize)
-		s.DocWidth, s.DocHeight = &docDimension.width, &docDimension.height
+	if e.ViewportSize != nil {
+		vpDimension, _ := getDimensions(*e.ViewportSize)
+		e.BrViewWidth, e.BrViewHeight = &vpDimension.width, &vpDimension.height
 	}
-	if s.ViewportSize != nil {
-		vpDimension, _ := getDimensions(*s.ViewportSize)
-		s.BrViewWidth, s.BrViewHeight = &vpDimension.width, &vpDimension.height
+	if e.DvceScreenResolution != nil {
+		monDimension, _ := getDimensions(*e.DvceScreenResolution)
+		e.DvceScreenWidth, e.DvceScreenHeight = &monDimension.width, &monDimension.height
 	}
-	if s.MonitorResolution != nil {
-		monDimension, _ := getDimensions(*s.MonitorResolution)
-		s.DvceScreenWidth, s.DvceScreenHeight = &monDimension.width, &monDimension.height
-	}
-	e.Screen = s
 }
 
 func setPageView(e *SnowplowEvent, params map[string]interface{}) {
@@ -360,17 +346,6 @@ func setSelfDescribing(e *SnowplowEvent, params map[string]interface{}) {
 	e.SelfDescribingEvent = getSdPayload(b64EncodedPayload)
 }
 
-func anonymizeFields(e *SnowplowEvent, conf config.Snowplow) {
-	if conf.Anonymize.Ip && e.UserIpAddress != nil {
-		hashedIp := util.Md5(*e.UserIpAddress)
-		e.UserIpAddress = &hashedIp
-	}
-	if conf.Anonymize.UserId && e.Userid != nil {
-		hashedUserId := util.Md5(*e.Userid)
-		e.Userid = &hashedUserId
-	}
-}
-
 func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Config) SnowplowEvent {
 	event := SnowplowEvent{}
 	setTstamps(&event, params)
@@ -384,7 +359,7 @@ func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, c
 	setBrowser(&event, params)
 	setScreen(&event, params)
 	setContexts(&event, params)
-	switch event.Event.Event {
+	switch event.Event {
 	case PAGE_VIEW:
 		setPageView(&event, params)
 	case PAGE_PING:
@@ -398,6 +373,5 @@ func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, c
 	case SELF_DESCRIBING_EVENT:
 		setSelfDescribing(&event, params)
 	}
-	anonymizeFields(&event, conf.Snowplow)
 	return event
 }

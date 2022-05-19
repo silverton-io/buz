@@ -5,7 +5,7 @@
 
 ![Honeypot](site/docs/img/eshepherd.jpg)
 
-A lightweight, snowplow-compatible streaming event collection system.
+A self-contained, multi-protocol streaming event collection system with ambitions to be as boring as [benthos](https://www.benthos.dev/).
 
 Honeypot is primarily built for flexibility, scalability, and speed.
 

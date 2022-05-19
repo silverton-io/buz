@@ -12,7 +12,7 @@ type PixelEvent struct {
 	Payload map[string]interface{} `json:"payload"`
 }
 
-func (e PixelEvent) Schema() *string {
+func (e PixelEvent) SchemaName() *string {
 	schema := "" // FIXME! Should incoming pixels associated schema? IDK yet.
 	return &schema
 }

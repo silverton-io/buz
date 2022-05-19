@@ -1,0 +1,446 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://schemas.silverton.io/io.silverton/honeypot/envelope/v1.0.json",
+    "title": "io.silverton/honeypot/envelope/v1.0.json",
+    "description": "Honeypot envelope",
+    "self": {
+        "vendor": "io.silverton",
+        "primaryNamespace": "honeypot",
+        "secondaryNamespace": "internal",
+        "name": "envelope",
+        "version": "1.0"
+    },
+    "type": "object",
+    "properties": {
+        "eventMeta": {
+            "type": "object",
+            "description": "Event/ payload metadata",
+            "properties": {
+                "protocol": {
+                    "type": "string",
+                    "description": "Protocol of the event"
+                },
+                "uuid": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Unique id of the event"
+                },
+                "vendor": {
+                    "type": "string",
+                    "description": "Event vendor according to associated schema"
+                },
+                "primaryNamespace": {
+                    "type": "string",
+                    "description": "Primary namespace according to associated schema"
+                },
+                "secondaryNamespace": {
+                    "type": "string",
+                    "description": "Secondary namespace according to associated schema"
+                },
+                "tertiaryNamespace": {
+                    "type": "string",
+                    "description": "Tertiary namespace according to associated schema"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the event"
+                },
+                "version": {
+                    "type": "string",
+                    "description": "Version of the event"
+                },
+                "path": {
+                    "type": "string",
+                    "description": "Event schema path"
+                }
+            },
+            "required": ["protocol", "uuid"]
+        },
+        "pipeline": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "source": {
+                    "type": "object",
+                    "description": "Source details",
+                    "properties": {
+                        "generatedTstamp": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Timestamp representing when the event was initially generated"
+                        },
+                        "sentTstamp": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Timestamp representing when the event was sent from the source"
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Collector name according to config"
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "Collector version"
+                        }
+                    },
+                    "required": ["generatedTstamp", "sentTstamp", "name", "version"]
+                },
+                "collector": {
+                    "type": "object",
+                    "description": "Collector details",
+                    "properties": {
+                        "tstamp": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Timestamp representing when the event was collected"
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "The name of the collector"
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The version of the collector"
+                        }
+                    },
+                    "required": ["tstamp", "name", "version"]
+                },
+                "relay": {
+                    "type": "object",
+                    "description": "Relay details",
+                    "properties": {
+                        "tstamp": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Timestamp representing when the event was last relayed"
+                        },
+                        "relayed": {
+                            "type": "boolean",
+                            "description": "Whether or not the event was relayed"
+                        },
+                        "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "Unique id generated at the relay - useful for deduping (if applicable)"
+                        }
+                    },
+                    "required": ["relayed"]
+                }
+            }
+        },
+        "device": {
+            "type": "object",
+            "description": "Device details",
+            "properties": {
+                "ip": {
+                    "type": "string",
+                    "description": "Device ip address"
+                },
+                "useragent": {
+                    "type": "string",
+                    "description": "Device useragent"
+                },
+                "id": {
+                    "type": "string",
+                    "description": "Device id"
+                },
+                "nid": {
+                    "type": "string",
+                    "description": "SS cookie value representing the device id across the tracking network"
+                },
+                "idfa": {
+                    "type": "string",
+                    "description": "idfa, if applicable"
+                },
+                "idfv": {
+                    "type": "string",
+                    "description": "idfv, if applicable"
+                },
+                "adId": {
+                    "type": "string",
+                    "description": "The google play ad id if applicable"
+                },
+                "androidId": {
+                    "type": "string",
+                    "description": "The android id if applicable"
+                },
+                "adTrackingEnabled": {
+                    "type": "boolean",
+                    "description": "Whether or not the device allows ad tracking"
+                },
+                "manufacturer": {
+                    "type": "string",
+                    "description": "The device manufacturer"
+                },
+                "model": {
+                    "type": "string",
+                    "description": "The device model"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The device name"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "The device type"
+                },
+                "token": {
+                    "type": "string",
+                    "description": "The device token"
+                },
+                "os": {
+                    "type": "object",
+                    "description": "Device os details"
+                },
+                "browser": {
+                    "type": "object",
+                    "description": "Device browser details, if applicable"
+                },
+                "screen": {
+                    "type": "object",
+                    "description": "Device screen details"
+                },
+                "network": {
+                    "type": "object",
+                    "description": "Device network details"
+                },
+                "app": {
+                    "type": "object",
+                    "description": "App details, if applicable"
+                },
+                "location": {
+                    "type": "object",
+                    "description": "Device location details"
+                },
+                "traits": {
+                    "type": "object",
+                    "description": "Additional device traits"
+                }
+            },
+            "required": ["ip", "useragent"]
+        },
+        "user": {
+            "type": "object",
+            "description": "User details",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The user's id"
+                },
+                "anonymousId": {
+                    "type": "string",
+                    "description": "The user's anonymous id, if applicable"
+                },
+                "fingerprint": {
+                    "type": "string",
+                    "description": "The user's fingerprint, if applicable"
+                },
+                "traits": {
+                    "type": "object",
+                    "description": "Additional user traits"
+                }
+            }
+        },
+        "session": {
+            "type": "object",
+            "description": "Session details",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "The session id"
+                },
+                "idx": {
+                    "type": "number",
+                    "description": "Number of sessions"
+                },
+                "traits": {
+                    "type": "object",
+                    "description": "Additional session traits"
+                }
+            }
+        },
+        "page": {
+            "type": "object",
+            "description": "Page and referrer details",
+            "properties": {
+                "page": {
+                    "type": "object",
+                    "description": "Ditto",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "Page url"
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "Page title"
+                        },
+                        "scheme": {
+                            "type": "string",
+                            "description": "Page scheme"
+                        },
+                        "host": {
+                            "type": "string",
+                            "description": "Page host"
+                        },
+                        "port": {
+                            "type": "string",
+                            "description": "Page port"
+                        },
+                        "path": {
+                            "type": "string",
+                            "description": "Path"
+                        },
+                        "query": {
+                            "type": "object",
+                            "description": "Query params"
+                        },
+                        "fragment": {
+                            "type": "string",
+                            "description": "Page fragment"
+                        },
+                        "medium": {
+                            "type": "string",
+                            "description": "UTM medium"
+                        },
+                        "source": {
+                            "type": "string",
+                            "description": "UTM source"
+                        },
+                        "term": {
+                            "type": "string",
+                            "description": "UTM term"
+                        },
+                        "content": {
+                            "type": "string",
+                            "description": "UTM content"
+                        },
+                        "campaign": {
+                            "type": "string",
+                            "description": "UTM campaign"
+                        }
+                    }
+                },
+                "referrer": {
+                    "type": "object",
+                    "description": "Referrer details",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "Page url"
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "Page title"
+                        },
+                        "scheme": {
+                            "type": "string",
+                            "description": "Page scheme"
+                        },
+                        "host": {
+                            "type": "string",
+                            "description": "Page host"
+                        },
+                        "port": {
+                            "type": "string",
+                            "description": "Page port"
+                        },
+                        "path": {
+                            "type": "string",
+                            "description": "Path"
+                        },
+                        "query": {
+                            "type": "object",
+                            "description": "Query params"
+                        },
+                        "fragment": {
+                            "type": "string",
+                            "description": "Page fragment"
+                        },
+                        "medium": {
+                            "type": "string",
+                            "description": "UTM medium"
+                        },
+                        "source": {
+                            "type": "string",
+                            "description": "UTM source"
+                        },
+                        "term": {
+                            "type": "string",
+                            "description": "UTM term"
+                        },
+                        "content": {
+                            "type": "string",
+                            "description": "UTM content"
+                        },
+                        "campaign": {
+                            "type": "string",
+                            "description": "UTM campaign"
+                        }
+                    }
+                }
+            }
+        },
+        "annotation": {
+            "type": "object",
+            "description": "Placeholder for future pipeline annotations - currently unused"
+        },
+        "validation": {
+            "type": "object",
+            "description": "Validation details",
+            "properties": {
+                "isValid": {
+                    "type": "boolean",
+                    "description": "Indication of whether or not the payload is valid"
+                },
+                "error": {
+                    "type": "object",
+                    "description": "Validation error and corresponding details",
+                    "properties": {
+                        "errorType": {
+                            "type": "string",
+                            "description": "The type of payload validation error"
+                        },
+                        "errorResolution": {
+                            "type": "string",
+                            "description": "A hint indicating how to resolve the validation error"
+                        },
+                        "errors": {
+                            "type": "array",
+                            "description": "Property-level jsonschema validation errors",
+                            "items": {
+                                "type": "object",
+                                "description": "Errors",
+                                "properties": {
+                                    "field": {
+                                        "type": "string",
+                                        "description": "The offending property"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "description": "Validation error description"
+                                    },
+                                    "errorType": {
+                                        "type": "string",
+                                        "description": "Validation error type"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "contexts": {
+            "type": "object",
+            "description": "Arbitrary event contexts"
+        },
+        "payload": {
+            "type": "object",
+            "description": "Event payload"
+        }
+    },
+    "required": ["eventMeta", "pipeline", "payload"],
+    "additionalProperties": false
+}

@@ -17,10 +17,13 @@ import (
 	"github.com/silverton-io/honeypot/pkg/env"
 	"github.com/silverton-io/honeypot/pkg/handler"
 	"github.com/silverton-io/honeypot/pkg/manifold"
+	"github.com/silverton-io/honeypot/pkg/meta"
 	"github.com/silverton-io/honeypot/pkg/middleware"
+	"github.com/silverton-io/honeypot/pkg/params"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/sink"
 	"github.com/silverton-io/honeypot/pkg/snowplow"
+	"github.com/silverton-io/honeypot/pkg/stats"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/silverton-io/honeypot/pkg/webhook"
 	"github.com/spf13/viper"
@@ -29,20 +32,22 @@ import (
 var VERSION string
 
 type App struct {
-	config      *config.Config
-	engine      *gin.Engine
-	schemaCache *cache.SchemaCache
-	manifold    *manifold.SimpleManifold
-	sinks       []sink.Sink
-	meta        *tele.Meta
+	config        *config.Config
+	engine        *gin.Engine
+	schemaCache   *cache.SchemaCache
+	manifold      *manifold.SimpleManifold
+	sinks         []sink.Sink
+	collectorMeta *meta.CollectorMeta
+	stats         *stats.ProtocolStats
 }
 
-func (a *App) handlerParams() handler.EventHandlerParams {
-	params := handler.EventHandlerParams{
-		Config:   a.config,
-		Cache:    a.schemaCache,
-		Manifold: a.manifold,
-		Meta:     a.meta,
+func (a *App) handlerParams() params.Handler {
+	params := params.Handler{
+		Config:        a.config,
+		Cache:         a.schemaCache,
+		Manifold:      a.manifold,
+		CollectorMeta: a.collectorMeta,
+		ProtocolStats: a.stats,
 	}
 	return params
 }
@@ -71,8 +76,15 @@ func (a *App) configure() {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
 	a.config.App.Version = VERSION
-	meta := tele.BuildMeta(VERSION, a.config)
-	a.meta = meta
+	meta := meta.BuildCollectorMeta(VERSION, a.config)
+	a.collectorMeta = meta
+}
+
+func (a *App) initializeStats() {
+	log.Info().Msg("initializing stats")
+	ps := stats.ProtocolStats{}
+	ps.Build()
+	a.stats = &ps
 }
 
 func (a *App) initializeSchemaCache() {
@@ -161,7 +173,7 @@ func (a *App) initializeStatsRoutes() {
 		} else {
 			statsPath = a.config.App.Stats.Path
 		}
-		a.engine.GET(statsPath, handler.StatsHandler(a.meta))
+		a.engine.GET(statsPath, handler.StatsHandler(a.collectorMeta, a.stats))
 	}
 }
 
@@ -267,6 +279,7 @@ func (a *App) serveStaticIfDev() {
 func (a *App) Initialize() {
 	log.Info().Msg("initializing app")
 	a.configure()
+	a.initializeStats()
 	a.initializeSinks()
 	a.initializeManifold()
 	a.initializeSchemaCache()
@@ -287,7 +300,7 @@ func (a *App) Initialize() {
 
 func (a *App) Run() {
 	log.Info().Interface("config", a.config).Msg("🍯🍯🍯 honeypot is running! 🍯🍯🍯")
-	tele.Metry(a.config, a.meta)
+	tele.Metry(a.config, a.collectorMeta)
 	srv := &http.Server{
 		Addr:    ":" + a.config.App.Port,
 		Handler: a.engine,
@@ -307,5 +320,5 @@ func (a *App) Run() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal().Stack().Err(err).Msg("server forced to shutdown")
 	}
-	tele.Sis(a.meta)
+	tele.Sis(a.collectorMeta)
 }
