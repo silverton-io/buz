@@ -7,7 +7,6 @@ import (
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/sink"
 	"github.com/silverton-io/honeypot/pkg/stats"
-	"github.com/silverton-io/honeypot/pkg/util"
 )
 
 // A stupid-simple manifold with strict guarantees
@@ -25,7 +24,6 @@ func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope, s stats.Proto
 	var invalidEnvelopes []envelope.Envelope
 
 	for _, e := range envelopes {
-		util.Pprint(e)
 		isValid := e.Validation.IsValid
 		if isValid {
 			s.IncrementValid(&e.EventMeta, 1)
