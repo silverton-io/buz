@@ -29,7 +29,9 @@ func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
 		},
 		Pipeline: Pipeline{
 			Source: Source{
-				Ip: c.ClientIP(),
+				Ip:              c.ClientIP(),
+				GeneratedTstamp: time.Now().UTC(),
+				SentTstamp:      time.Now().UTC(),
 			},
 			Collector: Collector{
 				Tstamp:  time.Now().UTC(),
