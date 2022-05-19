@@ -7,7 +7,8 @@
 		"vendor": "io.silverton",
         "primaryNamespace": "honeypot",
         "secondaryNamespace": "example",
-		"name": "getting-started",
+        "tertiaryNamespace": "getting-started",
+		"name": "click",
 		"version": "1.0"
 	},
     "type": "object",

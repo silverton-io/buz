@@ -6,8 +6,8 @@ import (
 )
 
 type Device struct {
-	Ip                *string `json:"ip"`
-	Useragent         *string `json:"useragent"`
+	Ip                string  `json:"ip"`
+	Useragent         string  `json:"useragent"`
 	Id                *string `json:"id"`
 	Nid               *string `json:"nid"`
 	Idfa              *string `json:"idfa"`      // [iOS]

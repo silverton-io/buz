@@ -24,7 +24,6 @@ func (p Pipeline) Scan(input interface{}) error {
 }
 
 type Source struct {
-	Ip              string    `json:"ip"`
 	GeneratedTstamp time.Time `json:"generatedTstamp"`
 	SentTstamp      time.Time `json:"sentTstamp"`
 	Name            *string   `json:"name"`

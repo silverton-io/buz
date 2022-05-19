@@ -29,7 +29,6 @@ func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
 		},
 		Pipeline: Pipeline{
 			Source: Source{
-				Ip:              c.ClientIP(),
 				GeneratedTstamp: time.Now().UTC(),
 				SentTstamp:      time.Now().UTC(),
 			},
@@ -43,7 +42,9 @@ func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
 			},
 		},
 		Device: Device{
-			Nid: &nid,
+			Nid:       &nid,
+			Ip:        c.ClientIP(),
+			Useragent: c.Request.UserAgent(),
 		},
 		User:       User{},
 		Session:    Session{},
