@@ -249,10 +249,9 @@ func (a *App) initializePixelRoutes() {
 
 func (a *App) initializeRelayRoute() {
 	if a.config.Inputs.Relay.Enabled {
-		// FIXME - reinstitute relay
-		// handlerParams := a.handlerParams()
-		// log.Info().Msg("initializing relay route")
-		// a.engine.POST(a.config.Inputs.Relay.Path, handler.RelayHandler(handlerParams))
+		handlerParams := a.handlerParams()
+		log.Info().Msg("initializing relay route")
+		a.engine.POST(a.config.Inputs.Relay.Path, handler.RelayHandler(handlerParams))
 	}
 }
 

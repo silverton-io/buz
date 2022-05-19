@@ -47,7 +47,6 @@ nav:
       - inputs/relay.md
       - inputs/cdc.md
       - inputs/segment.md
-      - inputs/rudderstack.md
       - inputs/opcua.md
       # - inputs/ros.md
       - inputs/mqtt.md
