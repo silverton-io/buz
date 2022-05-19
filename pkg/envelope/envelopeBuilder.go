@@ -164,8 +164,10 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 		}
 		// Event meta
 		n.EventMeta.Protocol = protocol.GENERIC
+		// Context
+		n.Contexts = genEvent.Contexts
 		// Payload
-		n.Payload = genEvent
+		n.Payload = genEvent.Payload
 		envelopes = append(envelopes, n)
 	}
 	return envelopes
