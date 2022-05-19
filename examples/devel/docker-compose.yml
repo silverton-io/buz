@@ -3,7 +3,7 @@ version: "3.9"
 services:
   honeypot:
     container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.9.0
+    image: ghcr.io/silverton-io/honeypot:v0.10.0
     volumes:
       - type: bind
         source: ./honeypot/devel.conf.yml
