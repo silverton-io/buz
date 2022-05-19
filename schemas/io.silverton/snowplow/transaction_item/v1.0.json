@@ -7,7 +7,6 @@
 		"vendor": "io.silverton",
         "primaryNamespace": "snowplow",
 		"name": "transaction_item",
-		"format": "jsonschema",
 		"version": "1.0"
 	},
     "type": "object",

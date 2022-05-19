@@ -8,7 +8,6 @@
         "primaryNamespace": "honeypot",
         "secondaryNamespace": "tele",
 		"name": "shutdown",
-		"format": "jsonschema",
 		"version": "1.0"
 	},
     "type": "object",

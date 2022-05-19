@@ -9,7 +9,6 @@
         "secondaryCategory": "example",
 		"tertiaryCategory": "generic",
 		"name": "sample",
-		"format": "jsonschema",
 		"version": "1.0"
 	},
 	"type": "object",

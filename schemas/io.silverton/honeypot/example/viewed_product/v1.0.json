@@ -8,7 +8,6 @@
         "primaryNamespace": "honeypot",
         "secondaryNamespace": "example",
 		"name": "viewed_product",
-		"format": "jsonschema",
 		"version": "1.0"
 	},
 	"type": "object",

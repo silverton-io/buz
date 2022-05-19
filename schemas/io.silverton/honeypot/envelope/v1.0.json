@@ -1,0 +1,77 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://schemas.silverton.io/io.silverton/honeypot/envelope/v1.0.json",
+    "title": "io.silverton/honeypot/envelope/v1.0.json",
+    "description": "Honeypot envelope",
+    "self": {
+        "vendor": "io.silverton",
+        "primaryNamespace": "honeypot",
+        "secondaryNamespace": "internal",
+        "version": "1.0"
+    },
+    "type": "object",
+    "properties": {
+        "eventMeta": {
+            "type": "object",
+            "description": "Metadata about the event and payload",
+            "properties": {
+                "protocol": {},
+                "uuid": {},
+                "vendor": {},
+                "primaryNamespace": {},
+                "secondaryNamespace": {},
+                "tertiaryNamespace": {},
+                "name": {},
+                "version": {},
+                "path": {}
+            }
+        },
+        "pipeline": {
+            "type": "object",
+            "description": "",
+
+        },
+        "device": {
+            "type": "object",
+            "description": "",
+
+        },
+        "user": {
+            "type": "object",
+            "description": "",
+
+        },
+        "session": {
+            "type": "object",
+            "description": "",
+
+        },
+        "page": {
+            "type": "object",
+            "description": "",
+
+        },
+        "annotation": {
+            "type": "object",
+            "description": "",
+
+        },
+        "validation": {
+            "type": "object",
+            "description": "",
+
+        },
+        "contexts": {
+            "type": "object",
+            "description": "",
+
+        },
+        "payload": {
+            "type": "object",
+            "description": "",
+
+        }
+    },
+    "required": [],
+    "additionalProperties": false
+}

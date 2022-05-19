@@ -7,7 +7,6 @@
         "primaryNamespace": "honeypot",
         "secondaryNamespace": "tele",
 		"name": "meta",
-		"format": "jsonschema",
 		"version": "1.0"
 	},
     "type": "object",

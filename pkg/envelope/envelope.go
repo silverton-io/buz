@@ -17,7 +17,7 @@ const (
 )
 
 type Envelope struct {
-	EventMeta  `json:"event" gorm:"type:json"`
+	EventMeta  `json:"eventMeta" gorm:"type:json"`
 	Pipeline   `json:"pipeline" gorm:"type:json"`
 	Device     `json:"device" gorm:"type:json"`
 	User       `json:"user" gorm:"type:json"`
@@ -30,7 +30,7 @@ type Envelope struct {
 }
 
 type JsonbEnvelope struct {
-	EventMeta  `json:"event" gorm:"type:jsonb"`
+	EventMeta  `json:"eventMeta" gorm:"type:jsonb"`
 	Pipeline   `json:"pipeline" gorm:"type:jsonb"`
 	Device     `json:"device" gorm:"type:jsonb"`
 	User       `json:"user" gorm:"type:jsonb"`
@@ -43,7 +43,7 @@ type JsonbEnvelope struct {
 }
 
 type StringEnvelope struct {
-	EventMeta  `json:"event" gorm:"type:string"`
+	EventMeta  `json:"eventMeta" gorm:"type:string"`
 	Pipeline   `json:"pipeline" gorm:"type:string"`
 	Device     `json:"device" gorm:"type:string"`
 	User       `json:"user" gorm:"type:string"`

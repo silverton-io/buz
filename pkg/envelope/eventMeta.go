@@ -16,7 +16,6 @@ type EventMeta struct {
 	TertiaryNamespace  string    `json:"tertiaryNamespace"`
 	Name               string    `json:"name"`
 	Version            string    `json:"version"`
-	Format             *string   `json:"format"`
 	Path               string    `json:"path"`
 }
 

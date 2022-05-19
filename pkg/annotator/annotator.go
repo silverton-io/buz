@@ -17,7 +17,6 @@ func getMetadataFromSchema(schema []byte) envelope.EventMeta {
 	tertiaryNamespace := schemaContents.Get("self.tertiaryNamespace").String()
 	name := schemaContents.Get("self.name").String()
 	version := schemaContents.Get("self.version").String()
-	format := schemaContents.Get("self.format").String()
 	path := schemaContents.Get("title").String()
 	return envelope.EventMeta{
 		Vendor:             vendor,
@@ -26,7 +25,6 @@ func getMetadataFromSchema(schema []byte) envelope.EventMeta {
 		TertiaryNamespace:  tertiaryNamespace,
 		Name:               name,
 		Version:            version,
-		Format:             &format,
 		Path:               path,
 	}
 }
