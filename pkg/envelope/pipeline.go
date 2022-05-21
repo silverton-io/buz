@@ -9,9 +9,9 @@ import (
 )
 
 type Pipeline struct {
-	Source    `json:"source"`
-	Collector `json:"collector"`
-	Relay     `json:"relay"`
+	Source    `json:"source,omitempty"`
+	Collector `json:"collector,omitempty"`
+	Relay     `json:"relay,omitempty"`
 }
 
 func (p Pipeline) Value() (driver.Value, error) {
@@ -24,10 +24,10 @@ func (p Pipeline) Scan(input interface{}) error {
 }
 
 type Source struct {
-	GeneratedTstamp time.Time `json:"generatedTstamp"`
-	SentTstamp      time.Time `json:"sentTstamp"`
-	Name            *string   `json:"name"`
-	Version         *string   `json:"version"`
+	GeneratedTstamp time.Time `json:"generatedTstamp,omitempty"`
+	SentTstamp      time.Time `json:"sentTstamp,omitempty"`
+	Name            *string   `json:"name,omitempty"`
+	Version         *string   `json:"version,omitempty"`
 }
 
 func (s Source) Value() (driver.Value, error) {
@@ -40,9 +40,9 @@ func (s Source) Scan(input interface{}) error {
 }
 
 type Collector struct {
-	Tstamp  time.Time `json:"tstamp"`
-	Name    *string   `json:"name"`
-	Version *string   `json:"version"`
+	Tstamp  time.Time `json:"tstamp,omitempty"`
+	Name    *string   `json:"name,omitempty"`
+	Version *string   `json:"version,omitempty"`
 }
 
 func (c Collector) Value() (driver.Value, error) {
@@ -55,9 +55,9 @@ func (c Collector) Scan(input interface{}) error {
 }
 
 type Relay struct {
-	Relayed bool       `json:"relayed"`
-	Id      *uuid.UUID `json:"id"`
-	Tstamp  *time.Time `json:"tstamp"`
+	Relayed bool       `json:"relayed,omitempty"`
+	Id      *uuid.UUID `json:"id,omitempty"`
+	Tstamp  *time.Time `json:"tstamp,omitempty"`
 }
 
 func (r Relay) Value() (driver.Value, error) {

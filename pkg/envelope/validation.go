@@ -6,8 +6,8 @@ import (
 )
 
 type Validation struct {
-	IsValid bool             `json:"isValid"`
-	Error   *ValidationError `json:"error"`
+	IsValid bool             `json:"isValid,omitempty"`
+	Error   *ValidationError `json:"error,omitempty"`
 }
 
 func (e Validation) Value() (driver.Value, error) {
@@ -20,15 +20,15 @@ func (e Validation) Scan(input interface{}) error {
 }
 
 type PayloadValidationError struct {
-	Field       string `json:"field"`
-	Description string `json:"description"`
-	ErrorType   string `json:"errorType"`
+	Field       string `json:"field,omitempty"`
+	Description string `json:"description,omitempty"`
+	ErrorType   string `json:"errorType,omitempty"`
 }
 
 type ValidationError struct {
-	ErrorType       *string                  `json:"errorType"`
-	ErrorResolution *string                  `json:"errorResolution"`
-	Errors          []PayloadValidationError `json:"payloadValidationErrors"`
+	ErrorType       *string                  `json:"errorType,omitempty"`
+	ErrorResolution *string                  `json:"errorResolution,omitempty"`
+	Errors          []PayloadValidationError `json:"payloadValidationErrors,omitempty"`
 }
 
 func (e *ValidationError) Value() (driver.Value, error) {

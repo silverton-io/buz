@@ -1188,6 +1188,31 @@
                         "description": "The database connection password if sink type is timescale",
                         "default": "honeypot"
                     },
+                    "questHost": {
+                        "type": "string",
+                        "description": "The database hostname to write envelopes to if sink type is quest",
+                        "default": "localhost"
+                    },
+                    "questPort": {
+                        "type": "number",
+                        "description": "The database port to write envelopes to if sink type is quest",
+                        "default": 8812
+                    },
+                    "questDbName": {
+                        "type": "string",
+                        "description": "The database name if sink type is quest",
+                        "default": "honeypot"
+                    },
+                    "questUser": {
+                        "type": "string",
+                        "description": "The database connection user if sink type is quest",
+                        "default": "admin"
+                    },
+                    "questPass": {
+                        "type": "string",
+                        "description": "The database connection password if sink type is quest",
+                        "default": "quest"
+                    },
                     "clickhouseHost": {
                         "type": "string",
                         "description": "The database hostname to write envelopes to if sink type is clickhouse",

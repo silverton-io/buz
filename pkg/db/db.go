@@ -8,6 +8,7 @@ const (
 	MONGODB       = "mongodb"
 	ELASTICSEARCH = "elasticsearch"
 	TIMESCALE     = "timescale"
+	QUEST         = "quest"
 )
 
 type ConnectionParams struct {

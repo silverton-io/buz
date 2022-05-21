@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type TimescaleSink struct {
+type QuestSink struct {
 	id               *uuid.UUID
 	name             string
 	deliveryRequired bool
@@ -21,37 +21,37 @@ type TimescaleSink struct {
 	invalidTable     string
 }
 
-func (s *TimescaleSink) Id() *uuid.UUID {
+func (s *QuestSink) Id() *uuid.UUID {
 	return s.id
 }
 
-func (s *TimescaleSink) Name() string {
+func (s *QuestSink) Name() string {
 	return s.name
 }
 
-func (s *TimescaleSink) Type() string {
-	return db.TIMESCALE
+func (s *QuestSink) Type() string {
+	return db.QUEST
 }
 
-func (s *TimescaleSink) DeliveryRequired() bool {
+func (s *QuestSink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }
 
-func (s *TimescaleSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing timescale sink")
+func (s *QuestSink) Initialize(conf config.Sink) error {
+	log.Debug().Msg("initializing quest sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	connParams := db.ConnectionParams{
-		Host: conf.TimescaleHost,
-		Port: conf.TimescalePort,
-		Db:   conf.TimescaleDbName,
-		User: conf.TimescaleUser,
-		Pass: conf.TimescalePass,
+		Host: conf.QuestHost,
+		Port: conf.QuestPort,
+		Db:   conf.QuestDbName,
+		User: conf.QuestUser,
+		Pass: conf.QuestPass,
 	}
 	connString := db.GeneratePostgresDsn(connParams)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("could not open timescale connection")
+		log.Error().Err(err).Msg("could not open quest connection")
 		return err
 	}
 	s.gormDb, s.validTable, s.invalidTable = gormDb, conf.ValidTable, conf.InvalidTable
@@ -64,18 +64,18 @@ func (s *TimescaleSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *TimescaleSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *QuestSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.gormDb.Table(s.validTable).Create(envelopes).Error
 	return err
 }
 
-func (s *TimescaleSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *QuestSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
 	return err
 }
 
-func (s *TimescaleSink) Close() {
-	log.Debug().Msg("closing timescale sink")
+func (s *QuestSink) Close() {
+	log.Debug().Msg("closing quest sink")
 	db, _ := s.gormDb.DB()
 	db.Close()
 }
