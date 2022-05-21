@@ -50,12 +50,6 @@ type Sink struct {
 	TimescaleDbName string `json:"-"`
 	TimescaleUser   string `json:"-"`
 	TimescalePass   string `json:"-"`
-	// Quest Database
-	QuestHost   string `json:"-"`
-	QuestPort   uint16 `json:"-"`
-	QuestDbName string `json:"-"`
-	QuestUser   string `json:"-"`
-	QuestPass   string `json:"-"`
 	// Clickhouse Database
 	ClickhouseHost   string `json:"-"`
 	ClickhousePort   uint16 `json:"-"`
