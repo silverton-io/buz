@@ -964,7 +964,8 @@
                             "mongodb",
                             "mysql",
                             "materialize",
-                            "clickhouse"
+                            "clickhouse",
+                            "timescale"
                         ]
                     },
                     "deliveryRequired": {
@@ -1161,6 +1162,31 @@
                         "type": "string",
                         "description": "The database connection password if sink type is materialize",
                         "default": ""
+                    },
+                    "timescaleHost": {
+                        "type": "string",
+                        "description": "The database hostname to write envelopes to if sink type is timescale",
+                        "default": "localhost"
+                    },
+                    "timescalePort": {
+                        "type": "number",
+                        "description": "The database port to write envelopes to if sink type is timescale",
+                        "default": 5433
+                    },
+                    "timescaleDbName": {
+                        "type": "string",
+                        "description": "The database name if sink type is timescale",
+                        "default": "honeypot"
+                    },
+                    "timescaleUser": {
+                        "type": "string",
+                        "description": "The database connection user if sink type is timescale",
+                        "default": "honeypot"
+                    },
+                    "timescalePass": {
+                        "type": "string",
+                        "description": "The database connection password if sink type is timescale",
+                        "default": "honeypot"
                     },
                     "clickhouseHost": {
                         "type": "string",
@@ -1393,6 +1419,22 @@
                             "mzDbName",
                             "mzUser",
                             "mzPass",
+                            "validTable",
+                            "invalidTable"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "timescale"
+                            }
+                        },
+                        "required": [
+                            "timescaleHost",
+                            "timescalePort",
+                            "timescaleDbName",
+                            "timescaleUser",
+                            "timescalePass",
                             "validTable",
                             "invalidTable"
                         ]

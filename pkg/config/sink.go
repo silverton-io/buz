@@ -44,6 +44,12 @@ type Sink struct {
 	MzDbName string `json:"-"`
 	MzUser   string `json:"-"`
 	MzPass   string `json:"-"`
+	// Timescale Database
+	TimescaleHost   string `json:"-"`
+	TimescalePort   uint16 `json:"-"`
+	TimescaleDbName string `json:"-"`
+	TimescaleUser   string `json:"-"`
+	TimescalePass   string `json:"-"`
 	// Clickhouse Database
 	ClickhouseHost   string `json:"-"`
 	ClickhousePort   uint16 `json:"-"`

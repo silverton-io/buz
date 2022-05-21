@@ -93,6 +93,9 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	case db.MONGODB:
 		sink := MongodbSink{}
 		return &sink, nil
+	case db.TIMESCALE:
+		sink := TimescaleSink{}
+		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
 		log.Error().Stack().Err(e).Msg("unsupported sink")

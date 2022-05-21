@@ -46,6 +46,16 @@ services:
       - POSTGRES_USER=honeypot
       - POSTGRES_PASSWORD=honeypot
 
+  timescale:
+    container_name: timescale
+    image: timescale/timescaledb:latest-pg14
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_DB=honeypot
+      - POSTGRES_USER=honeypot
+      - POSTGRES_PASSWORD=honeypot
+
   clickhouse:
     container_name: clickhouse
     image: yandex/clickhouse-server

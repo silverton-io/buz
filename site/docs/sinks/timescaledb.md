@@ -5,7 +5,7 @@ tags:
   - timescale
 ---
 
-# 🟢 Timescale
+# 🟢🎉 Timescale
 
 The Timescale sink writes `valid` and `invalid` events to the configured tables.
 
