@@ -5,7 +5,7 @@ tags:
   - mongodb
 ---
 
-# 🟢🎉 MongoDb
+# 🟢 MongoDb
 
 The `mongodb` schema cache backend leverages schemas stored in a configurable registry collection.
 

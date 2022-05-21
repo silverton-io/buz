@@ -5,7 +5,7 @@ tags:
   - mysql
 ---
 
-# 🟢🎉 MySQL
+# 🟢 MySQL
 
 The `mysql` schema cache backend leverages schemas stored in a configurable registry table.
 

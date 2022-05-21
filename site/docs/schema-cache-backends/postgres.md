@@ -5,7 +5,7 @@ tags:
   - postgres
 ---
 
-# 🟢🎉 Postgres
+# 🟢 Postgres
 
 The `postgres` schema cache backend leverages schemas stored in a configurable registry table.
 

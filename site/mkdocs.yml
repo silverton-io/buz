@@ -86,6 +86,7 @@ nav:
       - sinks/pubnub.md
       - sinks/materialize.md
       - sinks/postgres.md
+      - sinks/timescaledb.md
       - sinks/mysql.md
       - sinks/clickhouse.md
       - sinks/mongodb.md
@@ -93,7 +94,7 @@ nav:
       - sinks/blackhole.md
       - sinks/indicative.md
       - sinks/amplitude.md
-      - sinks/timescaledb.md
+      - sinks/logdna.md
       - sinks/vitess.md
       - sinks/bigquery.md
       - sinks/firebolt.md

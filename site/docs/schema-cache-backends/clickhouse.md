@@ -5,7 +5,7 @@ tags:
   - clickhouse
 ---
 
-# 🟢🎉 Clickhouse
+# 🟢 Clickhouse
 
 The `clickhouse` schema cache backend leverages schemas stored in a configurable registry table.
 
