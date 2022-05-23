@@ -1,0 +1,8 @@
+{
+    "label": "Middleware",
+    "position": 8,
+    "link": {
+        "type": "generated-index",
+        "description": "Honeypot ships with a set of helpful middleware."
+    }
+}

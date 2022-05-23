@@ -1,0 +1,8 @@
+{
+    "label": "Input Protocols",
+    "position": 5,
+    "link": {
+        "type": "generated-index",
+        "description": "Input protocols define how incoming data is structured."
+    }
+}
