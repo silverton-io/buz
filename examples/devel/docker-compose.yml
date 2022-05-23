@@ -1,30 +1,6 @@
 version: "3.9"
 
 services:
-  honeypot:
-    container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.10.1
-    volumes:
-      - type: bind
-        source: ./honeypot/devel.conf.yml
-        target: /etc/honeypot/config.yml
-      - type: bind
-        source: ../../schemas
-        target: /schemas/
-      - type: bind
-        source: ../../site/index.html
-        target: /app/site/index.html
-    environment:
-      - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
-    ports:
-      - 8080:8080
-    deploy:
-      restart_policy:
-        condition: on-failure
-    healthcheck:
-      test: curl -f localhost:8080/health
-      interval: 15s
-
   mysql:
     container_name: mysql
     image: mysql/mysql-server:8.0
@@ -55,15 +31,6 @@ services:
       - POSTGRES_DB=honeypot
       - POSTGRES_USER=honeypot
       - POSTGRES_PASSWORD=honeypot
-
-  quest:
-    container_name: quest
-    image: questdb/questdb
-    ports:
-      - 9002:9000
-      - 9009:9009
-      - 8812:8812
-      - 9003:9003
 
   clickhouse:
     container_name: clickhouse
@@ -172,6 +139,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 50
+
+  nats:
+    image: nats
+    container_name: nats
+    ports:
+      - 4222:4222
+      - 6222:6222
+      - 8222:8222
 
   # kibana:
   #     image: docker.elastic.co/kibana/kibana:8.1.0

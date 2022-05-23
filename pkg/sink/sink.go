@@ -24,6 +24,7 @@ const (
 	BLACKHOLE        string = "blackhole"
 	FILE             string = "file"
 	PUBNUB           string = "pubnub"
+	NATS             string = "nats"
 )
 
 type Sink interface {
