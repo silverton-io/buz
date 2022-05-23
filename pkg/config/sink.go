@@ -15,6 +15,13 @@ type Sink struct {
 	// Relay, HTTP/S, etc
 	ValidUrl   string `json:"validUrl,omitempty"`
 	InvalidUrl string `json:"invalidUrl,omitempty"`
+	// Subject-based
+	ValidSubject   string `json:"validSubject,omitempty"`
+	InvalidSubject string `json:"invalidSubject,omitempty"`
+	// NATS
+	NatsHost string `json:"-"`
+	NatsUser string `json:"-"`
+	NatsPass string `json:"-"`
 	// Elasticsearch
 	ValidIndex            string   `json:"validIndex,omitempty"`
 	InvalidIndex          string   `json:"invalidIndex,omitempty"`

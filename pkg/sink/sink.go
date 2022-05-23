@@ -25,6 +25,7 @@ const (
 	FILE             string = "file"
 	PUBNUB           string = "pubnub"
 	NATS             string = "nats"
+	NATS_JETSTREAM   string = "nats-jetstream"
 )
 
 type Sink interface {
@@ -96,6 +97,9 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		return &sink, nil
 	case db.TIMESCALE:
 		sink := TimescaleSink{}
+		return &sink, nil
+	case NATS:
+		sink := NatsSink{}
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)

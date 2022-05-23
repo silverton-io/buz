@@ -75,6 +75,9 @@ nav:
       - middleware/uid2.md
       - middleware/yeet.md
   - Supported Sinks:
+      - sinks/timescaledb.md
+      - sinks/nats.md
+      - sinks/natsJetstream.md
       - sinks/kafka.md
       - sinks/pubsub.md
       - sinks/kinesis.md
@@ -86,7 +89,6 @@ nav:
       - sinks/pubnub.md
       - sinks/materialize.md
       - sinks/postgres.md
-      - sinks/timescaledb.md
       - sinks/mysql.md
       - sinks/clickhouse.md
       - sinks/mongodb.md
@@ -96,6 +98,7 @@ nav:
       - sinks/amplitude.md
       - sinks/logdna.md
       - sinks/vitess.md
+      - sinks/rabbitmq.md
       - sinks/bigquery.md
       - sinks/firebolt.md
       - sinks/databricks.md

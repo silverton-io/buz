@@ -1,6 +1,7 @@
 ---
 tags:
   - sink
+  - db
   - mysql
 ---
 
@@ -15,7 +16,6 @@ Tables are ensured upon Honeypot startup, so manual creation is not required.
 ## Sample MySQL Sink Configuration
 
 ```
-sinks:
 sinks:
   - name: whoa-nelly
     type: mysql

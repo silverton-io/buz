@@ -1,7 +1,8 @@
 ---
 tags:
   - sink
-  - Clickhouse
+  - db
+  - clickhouse
 ---
 
 # 🟢 Clickhouse
