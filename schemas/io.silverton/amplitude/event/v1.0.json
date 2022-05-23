@@ -5,9 +5,7 @@
     "description": "Amplitude event spec",
 	"self": {
 		"vendor": "io.silverton",
-        "primaryNamespace": "amplitude",
-        "secondaryNamespace": "spec",
-		"name": "event",
+        "namespace": "amplitude.spec.event",
 		"version": "1.0"
 	},
     "type": "object",

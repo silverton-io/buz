@@ -5,10 +5,7 @@
     "description": "A getting started event used to bootstrap and demonstrate validation",
 	"self": {
 		"vendor": "io.silverton",
-        "primaryNamespace": "honeypot",
-        "secondaryNamespace": "example",
-        "tertiaryNamespace": "getting-started",
-		"name": "click",
+        "namespace": "honeypot.example.quickstart.click",
 		"version": "1.0"
 	},
     "type": "object",

@@ -5,9 +5,7 @@
 	"description": "Schema for viewing a product",
 	"self": {
 		"vendor": "io.silverton",
-        "primaryNamespace": "honeypot",
-        "secondaryNamespace": "example",
-		"name": "viewed_product",
+        "namespace": "honeypot.example.productView",
 		"version": "1.0"
 	},
 	"type": "object",
