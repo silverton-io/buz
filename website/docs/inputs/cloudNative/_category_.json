@@ -1,0 +1,8 @@
+{
+    "label": "Cloud Native Inputs",
+    "position": 3,
+    "link": {
+        "type": "generated-index",
+        "description": "Cloud Native Input Protocols"
+    }
+}

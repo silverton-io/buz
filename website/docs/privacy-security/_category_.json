@@ -1,0 +1,8 @@
+{
+    "label": "Security, Privacy, and Governance",
+    "position": 4,
+    "link": {
+        "type": "generated-index",
+        "description": "Data security and privacy are first-class citizens of Honeypot."
+    }
+}

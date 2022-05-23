@@ -1,7 +1,0 @@
----
-tags:
-  - deployment
-  - azure
----
-
-# Azure
