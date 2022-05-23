@@ -2,15 +2,29 @@ name: Deploy Static Documentation Site
 on:
   push:
     branches:
-      - main
+      - docsasaurarorarus
+      # - main
+
 jobs:
   deploy:
+    name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-node@v3
         with:
-          python-version: 3.x
-      - run: pip install mkdocs-material 
-      - run: mkdocs gh-deploy --force
-        working-directory: ./site
+          node-version: 16.x
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        working-directory: ./website
+      - name: Build website
+        run: yarn build
+        working-directory: ./website
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build

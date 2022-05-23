@@ -1,0 +1,8 @@
+{
+    "label": "Data Warehouse Sinks",
+    "position": 5,
+    "link": {
+        "type": "generated-index",
+        "description": "Data Warehouse Sinks"
+    }
+}

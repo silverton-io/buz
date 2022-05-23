@@ -1,0 +1,8 @@
+{
+    "label": "Schema Cache Backends",
+    "position": 3,
+    "link": {
+        "type": "generated-index",
+        "description": "Honeypot supports a number of schema cache backends"
+    }
+}

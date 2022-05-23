@@ -1,0 +1,8 @@
+{
+    "label": "Database Sinks",
+    "position": 4,
+    "link": {
+        "type": "generated-index",
+        "description": "Database sinks"
+    }
+}

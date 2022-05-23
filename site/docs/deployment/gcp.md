@@ -1,7 +1,0 @@
----
-tags:
-  - deployment
-  - GCP
----
-
-# GCP
