@@ -58,4 +58,4 @@ And last but certainly not least, engineers should be able to maintain and advan
 
 # Would you like to know more?
 
-If you would like to know more or follow the project, **[check out the roadmap](/docs/introduction/roadmap)** or sign up for **[Insiders-Only Updates](/docs/insiders-only)**.
+If you would like to know more or follow the project, **[check out the roadmap](/introduction/roadmap)** or sign up for **[Insiders-Only Updates](/insiders-only)**.

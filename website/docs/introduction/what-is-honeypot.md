@@ -14,7 +14,7 @@ Yet uncompromising with its speed, guarantees, and operational flexibility.
 
 
 :::tip Quickstart
-Please see the [Quickstart](/docs/examples/quickstart) to dive head-first into an example of running Honeypot alongside a three-node [Redpanda](https://github.com/redpanda-data/) cluster, [Kowl](https://github.com/cloudhut/kowl/), and [Materialize](https://github.com/MaterializeInc/materialize).
+Please see the [Quickstart](/examples/quickstart) to dive head-first into an example of running Honeypot alongside a three-node [Redpanda](https://github.com/redpanda-data/) cluster, [Kowl](https://github.com/cloudhut/kowl/), and [Materialize](https://github.com/MaterializeInc/materialize).
 :::
 
 

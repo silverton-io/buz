@@ -127,8 +127,8 @@ meta     | {"namespace":"snowplow.pageView","path":"io.silverton/snowplow/page_v
 
 We have a lot planned for the coming months. Want to be a part of it?
 
-- Sign up for **[Insiders-Only Updates](/docs/insiders-only)**
-- Check out the **[Honeypot Roadmap](/docs/introduction/roadmap)**
+- Sign up for **[Insiders-Only Updates](/insiders-only)**
+- Check out the **[Honeypot Roadmap](/introduction/roadmap)**
 
 <!-- 
 

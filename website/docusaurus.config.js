@@ -79,7 +79,7 @@ const config = {
             items: [
               {
                 label: 'Docs',
-                to: 'introduction/what-is-honeypot',
+                to: '/',
               },
             ],
           },
