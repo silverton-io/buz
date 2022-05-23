@@ -5,7 +5,7 @@
     "description": "Honeypot shutdown event",
 	"self": {
 		"vendor": "io.silverton",
-        "namespace": "honeypot.tele.shutdown",
+        "namespace": "honeypot.internal.tele.shutdown",
 		"version": "1.0"
 	},
     "type": "object",

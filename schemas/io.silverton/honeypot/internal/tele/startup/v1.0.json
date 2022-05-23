@@ -5,7 +5,7 @@
     "description": "Honeypot startup event",
 	"self": {
 		"vendor": "io.silverton",
-        "namespace": "honeypot.tele.startup",
+        "namespace": "honeypot.internal.tele.startup",
 		"version": "1.0"
 	},
     "type": "object",

@@ -5,7 +5,7 @@
     "description": "Honeypot heartbeat event",
 	"self": {
 		"vendor": "io.silverton",
-        "namespace": "honeypot.tele.beat",
+        "namespace": "honeypot.internal.tele.beat",
 		"version": "1.0"
 	},
     "type": "object",

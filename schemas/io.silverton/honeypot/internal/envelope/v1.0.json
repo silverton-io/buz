@@ -5,7 +5,7 @@
     "description": "Honeypot envelope",
     "self": {
         "vendor": "io.silverton",
-        "namespace": "honeypot.envelope",
+        "namespace": "honeypot.internal.envelope",
         "version": "1.0"
     },
     "type": "object",

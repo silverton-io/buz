@@ -5,7 +5,7 @@
     "description": "Application configuration",
     "self": {
         "vendor": "io.silverton",
-        "namespace": "honeypot.config.app",
+        "namespace": "honeypot.internal.config.app",
         "version": "1.0"
     },
     "type": "object",
