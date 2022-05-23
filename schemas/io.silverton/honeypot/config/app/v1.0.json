@@ -1537,6 +1537,20 @@
                             "validSubject",
                             "invalidSubject"
                         ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "nats-jetstream"
+                            }
+                        },
+                        "required": [
+                            "natsHost",
+                            "natsUser",
+                            "natsPass",
+                            "validSubject",
+                            "invalidSubject"
+                        ]
                     }
                 ]
             }

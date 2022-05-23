@@ -7,7 +7,7 @@ tags:
 
 # 🟢🎉 NATS
 
-The nats sink writes `valid` and `invalid` events to the configured subjects.
+The NATS sink writes `valid` and `invalid` events to the configured subjects.
 
 It is especially useful if you already have NATS running and want to quickly get started with Honeypot-based event tracking.
 

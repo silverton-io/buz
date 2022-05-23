@@ -1,6 +1,8 @@
 package envelope
 
 import (
+	"encoding/json"
+
 	"github.com/silverton-io/honeypot/pkg/db"
 	"github.com/silverton-io/honeypot/pkg/event"
 )
@@ -29,6 +31,14 @@ type Envelope struct {
 	Validation `json:"validation" gorm:"type:json"`
 	Contexts   event.Contexts `json:"contexts" gorm:"type:json"`
 	Payload    event.Event    `json:"payload" gorm:"type:json"`
+}
+
+func (e *Envelope) AsByte() ([]byte, error) {
+	eBytes, err := json.Marshal(e)
+	if err != nil {
+		return nil, err
+	}
+	return eBytes, nil
 }
 
 type JsonbEnvelope struct {

@@ -77,7 +77,6 @@ nav:
   - Supported Sinks:
       - sinks/timescaledb.md
       - sinks/nats.md
-      - sinks/natsJetstream.md
       - sinks/kafka.md
       - sinks/pubsub.md
       - sinks/kinesis.md
@@ -99,6 +98,8 @@ nav:
       - sinks/logdna.md
       - sinks/vitess.md
       - sinks/rabbitmq.md
+      - sinks/natsJetstream.md
+      - sinks/pulsar.md
       - sinks/bigquery.md
       - sinks/firebolt.md
       - sinks/databricks.md

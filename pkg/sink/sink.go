@@ -101,6 +101,9 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	case NATS:
 		sink := NatsSink{}
 		return &sink, nil
+	// case NATS_JETSTREAM: FIXME - there's something weird with this - lots of timeouts. Will come back to it later.
+	// 	sink := NatsJetstreamSink{}
+	// 	return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
 		log.Error().Stack().Err(e).Msg("unsupported sink")
