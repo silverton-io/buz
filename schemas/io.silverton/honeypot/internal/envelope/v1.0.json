@@ -5,9 +5,7 @@
     "description": "Honeypot envelope",
     "self": {
         "vendor": "io.silverton",
-        "primaryNamespace": "honeypot",
-        "secondaryNamespace": "internal",
-        "name": "envelope",
+        "namespace": "honeypot.internal.envelope",
         "version": "1.0"
     },
     "type": "object",
@@ -18,36 +16,28 @@
             "properties": {
                 "protocol": {
                     "type": "string",
-                    "description": "Protocol of the event"
+                    "description": "Protocol of event"
                 },
                 "uuid": {
                     "type": "string",
                     "format": "uuid",
-                    "description": "Unique id of the event"
+                    "description": "Unique id of event"
                 },
                 "vendor": {
                     "type": "string",
                     "description": "Event vendor according to associated schema"
                 },
-                "primaryNamespace": {
+                "namespace": {
                     "type": "string",
-                    "description": "Primary namespace according to associated schema"
-                },
-                "secondaryNamespace": {
-                    "type": "string",
-                    "description": "Secondary namespace according to associated schema"
-                },
-                "tertiaryNamespace": {
-                    "type": "string",
-                    "description": "Tertiary namespace according to associated schema"
-                },
-                "name": {
-                    "type": "string",
-                    "description": "Name of the event"
+                    "description": "Namespace of event"
                 },
                 "version": {
                     "type": "string",
-                    "description": "Version of the event"
+                    "description": "Version of event"
+                },
+                "format": {
+                    "type": "string",
+                    "description": "Format of event"
                 },
                 "path": {
                     "type": "string",

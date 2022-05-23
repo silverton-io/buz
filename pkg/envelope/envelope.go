@@ -8,15 +8,12 @@ import (
 )
 
 const (
-	EVENT_VENDOR              string = "vendor"
-	EVENT_PRIMARY_NAMESPACE   string = "primaryNamespace"
-	EVENT_SECONDARY_NAMESPACE string = "secondaryNamespace"
-	EVENT_TERTIARY_NAMESPACE  string = "tertiaryNamespace"
-	EVENT_NAME                string = "name"
-	EVENT_VERSION             string = "version"
-	EVENT_FORMAT              string = "format"
-	EVENT_PATH                string = "path"
-	INPUT_PROTOCOL            string = "inputProtocol"
+	VENDOR         string = "vendor"
+	NAMESPACE      string = "namespace"
+	VERSION        string = "version"
+	FORMAT         string = "format"
+	PATH           string = "path"
+	INPUT_PROTOCOL string = "inputProtocol"
 )
 
 type Envelope struct {

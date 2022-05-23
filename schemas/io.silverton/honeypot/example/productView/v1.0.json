@@ -1,13 +1,11 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://registry.silverton.io/io.silverton/honeypot/example/viewed_product/v1.0.json",
-    "title": "io.silverton/honeypot/example/viewed_product/v1.0.json",
-	"description": "Schema for viewing a product",
+    "$id": "https://registry.silverton.io/io.silverton/honeypot/example/productView/v1.0.json",
+    "title": "io.silverton/honeypot/example/productView/v1.0.json",
+	"description": "Schema for product views",
 	"self": {
 		"vendor": "io.silverton",
-        "primaryNamespace": "honeypot",
-        "secondaryNamespace": "example",
-		"name": "viewed_product",
+        "namespace": "honeypot.example.productView",
 		"version": "1.0"
 	},
 	"type": "object",

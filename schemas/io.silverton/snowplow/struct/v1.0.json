@@ -5,8 +5,7 @@
     "description": "Snowplow Struct Event",
 	"self": {
 		"vendor": "io.silverton",
-        "primaryNamespace": "snowplow",
-		"name": "struct",
+        "namespace": "snowplow.structEvent",
 		"version": "1.0"
 	},
     "type": "object",

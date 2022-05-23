@@ -5,8 +5,7 @@
     "description": "Snowplow Page Ping Event",
 	"self": {
 		"vendor": "io.silverton",
-        "primaryNamespace": "snowplow",
-		"name": "page_ping",
+        "namespace": "snowplow.pagePing",
 		"version": "1.0"
 	},
     "type": "object",

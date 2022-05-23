@@ -5,9 +5,7 @@
     "description": "Segment common fields spec",
 	"self": {
 		"vendor": "io.silverton",
-        "primaryNamespace": "segment",
-        "secondaryNamespace": "spec",
-		"name": "common",
+        "namespace": "segment.spec.common",
 		"version": "1.0"
 	},
     "type": "object",

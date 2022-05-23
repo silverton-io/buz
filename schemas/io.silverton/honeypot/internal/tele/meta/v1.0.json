@@ -4,9 +4,7 @@
     "title": "io.silverton/honeypot/tele/meta/v1.0.json",
 	"self": {
 		"vendor": "io.silverton",
-        "primaryNamespace": "honeypot",
-        "secondaryNamespace": "tele",
-		"name": "meta",
+        "namespace": "honeypot.internal.tele.meta",
 		"version": "1.0"
 	},
     "type": "object",

@@ -12,20 +12,16 @@ import (
 func getMetadataFromSchema(schema []byte) envelope.EventMeta {
 	schemaContents := gjson.ParseBytes(schema)
 	vendor := schemaContents.Get("self.vendor").String()
-	primaryNamespace := schemaContents.Get("self.primaryNamespace").String()
-	secondaryNamespace := schemaContents.Get("self.secondaryNamespace").String()
-	tertiaryNamespace := schemaContents.Get("self.tertiaryNamespace").String()
-	name := schemaContents.Get("self.name").String()
+	namespace := schemaContents.Get("self.namespace").String()
 	version := schemaContents.Get("self.version").String()
+	format := schemaContents.Get("self.format").String()
 	path := schemaContents.Get("title").String()
 	return envelope.EventMeta{
-		Vendor:             vendor,
-		PrimaryNamespace:   primaryNamespace,
-		SecondaryNamespace: secondaryNamespace,
-		TertiaryNamespace:  tertiaryNamespace,
-		Name:               name,
-		Version:            version,
-		Path:               path,
+		Vendor:    vendor,
+		Namespace: namespace,
+		Version:   version,
+		Format:    format,
+		Path:      path,
 	}
 }
 
@@ -46,11 +42,9 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 			envelope.Validation.Error = &validationError
 			m := getMetadataFromSchema(schemaContents)
 			envelope.EventMeta.Vendor = m.Vendor
-			envelope.EventMeta.PrimaryNamespace = m.PrimaryNamespace
-			envelope.EventMeta.SecondaryNamespace = m.SecondaryNamespace
-			envelope.EventMeta.TertiaryNamespace = m.TertiaryNamespace
-			envelope.EventMeta.Name = m.Name
+			envelope.EventMeta.Namespace = m.Namespace
 			envelope.EventMeta.Version = m.Version
+			envelope.EventMeta.Format = m.Format
 			envelope.EventMeta.Path = m.Path
 			e = append(e, envelope)
 		}
