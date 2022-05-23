@@ -15,6 +15,7 @@ const config = {
   favicon: 'img/favicon.ico',
   organizationName: 'silverton-io',
   projectName: 'honeypot',
+  deploymentBranch: 'gh-pages',
   trailingSlash: false,
 
   // Even if you don't use internalization, you can use this field to set useful
