@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[3928],{7052:function(t){t.exports=JSON.parse('{"title":"Introduction","description":"Brief Introduction to Honeypot","slug":"/category/introduction","permalink":"/category/introduction","navigation":{"next":{"title":"What is Honeypot?","permalink":"/"}}}')}}]);

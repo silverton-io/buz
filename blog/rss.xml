@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title>Honeypot Blog</title>
+        <link>https://honeypot.silverton.io/blog</link>
+        <description>Honeypot Blog</description>
+        <lastBuildDate>Mon, 23 May 2022 23:14:36 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>en</language>
+        <item>
+            <title><![CDATA[Make It Easy]]></title>
+            <link>https://honeypot.silverton.io/blog/Make It Easy</link>
+            <guid>Make It Easy</guid>
+            <pubDate>Mon, 23 May 2022 23:14:36 GMT</pubDate>
+            <description><![CDATA[Defining, implementing, and evolving events is hard.]]></description>
+            <content:encoded><![CDATA[<p>Defining, implementing, and evolving events is hard.</p><p>Running event collection systems is also hard.</p><p>Honeypot aims to make it easy.</p><p><strong><a href="/">What is Honeypot?</a></strong></p>]]></content:encoded>
+        </item>
+    </channel>
+</rss>
