@@ -16,34 +16,29 @@ const (
 	JSON_CONTENT_TYPE string = "application/json"
 )
 
-func PostEvent(url url.URL, payload event.SelfDescribingEvent) (resp *http.Response, err error) {
+func PostPayload(url url.URL, payload interface{}) (resp *http.Response, err error) {
 	data, err := json.Marshal(payload)
-	buff := bytes.NewBuffer(data)
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not marshal payload")
+		log.Error().Err(err).Msg("could not marshal payload")
 		return nil, err
 	}
-	resp, err = http.Post(url.String(), JSON_CONTENT_TYPE, buff)
+	buf := bytes.NewBuffer(data)
+	resp, err = http.Post(url.String(), JSON_CONTENT_TYPE, buf)
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not post payload")
+		log.Error().Err(err).Msg("could not post payload")
 		return nil, err
 	}
 	return resp, nil
 }
 
+func PostEvent(url url.URL, payload event.SelfDescribingEvent) (resp *http.Response, err error) {
+	resp, err = PostPayload(url, payload)
+	return resp, err
+}
+
 func PostEnvelopes(url url.URL, envelopes []envelope.Envelope) (resp *http.Response, err error) {
-	data, err := json.Marshal(envelopes)
-	buff := bytes.NewBuffer(data)
-	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not marshal envelopes")
-		return nil, err
-	}
-	resp, err = http.Post(url.String(), JSON_CONTENT_TYPE, buff)
-	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not post envelopes")
-		return nil, err
-	}
-	return resp, nil
+	resp, err = PostPayload(url, envelopes)
+	return resp, err
 }
 
 func Get(url url.URL) (body []byte, err error) {

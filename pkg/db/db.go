@@ -7,6 +7,7 @@ const (
 	CLICKHOUSE    = "clickhouse"
 	MONGODB       = "mongodb"
 	ELASTICSEARCH = "elasticsearch"
+	TIMESCALE     = "timescale"
 )
 
 type ConnectionParams struct {

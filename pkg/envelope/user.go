@@ -6,10 +6,10 @@ import (
 )
 
 type User struct {
-	Id          *string                 `json:"id"`
-	AnonymousId *string                 `json:"anonymousId"`
-	Fingerprint *string                 `json:"fingerprint"`
-	Traits      *map[string]interface{} `json:"traits"`
+	Id          *string                 `json:"id,omitempty"`
+	AnonymousId *string                 `json:"anonymousId,omitempty"`
+	Fingerprint *string                 `json:"fingerprint,omitempty"`
+	Traits      *map[string]interface{} `json:"traits,omitempty"`
 }
 
 func (e User) Value() (driver.Value, error) {
@@ -22,11 +22,11 @@ func (e User) Scan(input interface{}) error {
 }
 
 type Team struct {
-	Id   *string `json:"id"`
-	Name *string `json:"name"`
+	Id   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
 }
 
 type Group struct {
-	Id   *string `json:"id"`
-	Name *string `json:"name"`
+	Id   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
 }

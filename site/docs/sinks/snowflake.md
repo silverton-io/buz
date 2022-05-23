@@ -1,6 +1,7 @@
 ---
 tags:
   - sink
+  - dw
   - snowflake
   - databricks
 ---

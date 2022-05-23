@@ -5,7 +5,7 @@ import (
 )
 
 type BasePKeylessModel struct {
-	CreatedAt time.Time  `sql:"index"`
-	UpdatedAt time.Time  `sql:"index"`
-	DeletedAt *time.Time `sql:"index"`
+	CreatedAt time.Time  `json:"-" sql:"index"`
+	UpdatedAt time.Time  `json:"-" sql:"index"`
+	DeletedAt *time.Time `json:"-" sql:"index"`
 }

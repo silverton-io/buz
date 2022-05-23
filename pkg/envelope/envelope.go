@@ -1,6 +1,9 @@
 package envelope
 
 import (
+	"encoding/json"
+
+	"github.com/silverton-io/honeypot/pkg/db"
 	"github.com/silverton-io/honeypot/pkg/event"
 )
 
@@ -17,6 +20,7 @@ const (
 )
 
 type Envelope struct {
+	db.BasePKeylessModel
 	EventMeta  `json:"eventMeta" gorm:"type:json"`
 	Pipeline   `json:"pipeline" gorm:"type:json"`
 	Device     `json:"device" gorm:"type:json"`
@@ -29,7 +33,16 @@ type Envelope struct {
 	Payload    event.Event    `json:"payload" gorm:"type:json"`
 }
 
+func (e *Envelope) AsByte() ([]byte, error) {
+	eBytes, err := json.Marshal(e)
+	if err != nil {
+		return nil, err
+	}
+	return eBytes, nil
+}
+
 type JsonbEnvelope struct {
+	db.BasePKeylessModel
 	EventMeta  `json:"eventMeta" gorm:"type:jsonb"`
 	Pipeline   `json:"pipeline" gorm:"type:jsonb"`
 	Device     `json:"device" gorm:"type:jsonb"`
@@ -43,6 +56,7 @@ type JsonbEnvelope struct {
 }
 
 type StringEnvelope struct {
+	db.BasePKeylessModel
 	EventMeta  `json:"eventMeta" gorm:"type:string"`
 	Pipeline   `json:"pipeline" gorm:"type:string"`
 	Device     `json:"device" gorm:"type:string"`

@@ -1,7 +1,8 @@
 ---
 tags:
-  - collector
-  - cdc
+  - sink
+  - db
+  - vitess
 ---
 
 # 🟡 Vitess

@@ -1,6 +1,7 @@
 ---
 tags:
   - sink
+  - db
   - postgres
 ---
 

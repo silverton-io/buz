@@ -17,7 +17,7 @@ Note! If you don't have `docker` and `docker-compose`, you will need to install 
 
 `rpk` is a nice tool from the fine folks at redpanda.
 
-`psql` is also a nice tool to have if you want to query Materialize.
+`mzcli` and `psql` are nice tools to have if you want to query Materialize.
 
 ## 1. Clone the Honeypot repo
 

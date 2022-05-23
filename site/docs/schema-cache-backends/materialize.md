@@ -5,7 +5,7 @@ tags:
   - materialize
 ---
 
-# 🟢🎉 Materialize
+# 🟢 Materialize
 
 The `materialize` schema cache backend leverages schemas stored in a configurable registry table.
 

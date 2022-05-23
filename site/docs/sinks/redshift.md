@@ -1,7 +1,8 @@
 ---
 tags:
   - sink
-  - Redshift
+  - dw
+  - redshift
 ---
 
 # 🟡 Redshift

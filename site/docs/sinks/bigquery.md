@@ -1,7 +1,8 @@
 ---
 tags:
   - sink
-  - BigQuery
+  - dw
+  - bigquery
 ---
 
 # 🟡 BigQuery

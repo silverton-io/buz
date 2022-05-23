@@ -685,32 +685,32 @@
                         },
                         "clickhouseHost": {
                             "type": "string",
-                            "description": "The database hostname to write envelopes to if sink type is clickhouse",
+                            "description": "The clickhouse cache backend host",
                             "default": "localhost"
                         },
                         "clickhousePort": {
                             "type": "number",
-                            "description": "The database port to write envelopes to if sink type is clickhouse",
+                            "description": "The clickhouse cache backend port",
                             "default": 9000
                         },
                         "clickhouseDbName": {
                             "type": "string",
-                            "description": "The database name if sink type is clickhouse",
+                            "description": "The clickhouse cache backend db",
                             "default": "honeypot"
                         },
                         "clickhouseUser": {
                             "type": "string",
-                            "description": "The database connection user if sink type is clickhouse",
+                            "description": "The clickhouse cache backend user",
                             "default": "honeypot"
                         },
                         "clickhousePass": {
                             "type": "string",
-                            "description": "The database connection password if sink type is clickhouse",
+                            "description": "The clickhouse cache backend pass",
                             "default": "honeypot"
                         },
                         "mongoHosts": {
                             "type": "array",
-                            "description": "A list of mongodb hosts",
+                            "description": "The mongodb cache backend hosts",
                             "default": [
                                 "mongodb1",
                                 "mongodb2",
@@ -719,22 +719,22 @@
                         },
                         "mongoPort": {
                             "type": "number",
-                            "description": "The mongo port if sink type is mongodb",
+                            "description": "The mongodb cache backend port",
                             "default": "27017"
                         },
                         "mongoDbName": {
                             "type": "string",
-                            "description": "The mongo database name if sink type is mongodb",
+                            "description": "The mongodb cache backend db",
                             "default": "honeypot"
                         },
                         "mongoUser": {
                             "type": "string",
-                            "description": "The mongo database user if sink type is mongodb",
+                            "description": "The mongodb cache backend user",
                             "default": "honeypot"
                         },
                         "mongoPass": {
                             "type": "string",
-                            "description": "The mongo database password if sink type is mongodb",
+                            "description": "The mongodb cache backend pass",
                             "default": "honeypot"
                         }
                     },
@@ -964,7 +964,9 @@
                             "mongodb",
                             "mysql",
                             "materialize",
-                            "clickhouse"
+                            "clickhouse",
+                            "timescale",
+                            "nats"
                         ]
                     },
                     "deliveryRequired": {
@@ -1024,7 +1026,7 @@
                     },
                     "validTable": {
                         "type": "string",
-                        "description": "The table to sink valid envelopes to if sink type is postgres",
+                        "description": "The table to sink valid envelopes to if using a db sink",
                         "default": "honeypot_valid"
                     },
                     "validChannel": {
@@ -1036,6 +1038,11 @@
                         "type": "string",
                         "description": "The collection to sink valid envelopes to if sink type is mongodb",
                         "default": "honeypotValid"
+                    },
+                    "validSubject": {
+                        "type": "string",
+                        "description": "The subject to sink valid envelopes to",
+                        "default": "honeypot.valid"
                     },
                     "invalidTopic": {
                         "type": "string",
@@ -1064,7 +1071,7 @@
                     },
                     "invalidTable": {
                         "type": "string",
-                        "description": "The table to sink invalid envelopes to if sink type is postgres",
+                        "description": "The table to sink invalid envelopes to if using a db sink",
                         "default": "honeypot_invalid"
                     },
                     "invalidChannel": {
@@ -1076,6 +1083,11 @@
                         "type": "string",
                         "description": "The collection to sink invalid envelopes to if sink type is mongodb",
                         "default": "honeypotInvalid"
+                    },
+                    "invalidSubject": {
+                        "type": "string",
+                        "description": "The subject to sink invalid envelopes to",
+                        "default": "honeypot.invalid"
                     },
                     "project": {
                         "type": "string",
@@ -1162,6 +1174,31 @@
                         "description": "The database connection password if sink type is materialize",
                         "default": ""
                     },
+                    "timescaleHost": {
+                        "type": "string",
+                        "description": "The database hostname to write envelopes to if sink type is timescale",
+                        "default": "localhost"
+                    },
+                    "timescalePort": {
+                        "type": "number",
+                        "description": "The database port to write envelopes to if sink type is timescale",
+                        "default": 5433
+                    },
+                    "timescaleDbName": {
+                        "type": "string",
+                        "description": "The database name if sink type is timescale",
+                        "default": "honeypot"
+                    },
+                    "timescaleUser": {
+                        "type": "string",
+                        "description": "The database connection user if sink type is timescale",
+                        "default": "honeypot"
+                    },
+                    "timescalePass": {
+                        "type": "string",
+                        "description": "The database connection password if sink type is timescale",
+                        "default": "honeypot"
+                    },
                     "clickhouseHost": {
                         "type": "string",
                         "description": "The database hostname to write envelopes to if sink type is clickhouse",
@@ -1225,6 +1262,21 @@
                         "type": "string",
                         "description": "The mongo database password if sink type is mongodb",
                         "default": "honeypot"
+                    },
+                    "natsHost": {
+                        "type": "string",
+                        "description": "The NATS host",
+                        "default": "nats"
+                    },
+                    "natsUser": {
+                        "type": "string",
+                        "description": "The NATS user",
+                        "default": ""
+                    },
+                    "natsPass": {
+                        "type": "string",
+                        "description": "The NATS password",
+                        "default": ""
                     }
                 },
                 "additionalProperties": false,
@@ -1400,6 +1452,22 @@
                     {
                         "properties": {
                             "type": {
+                                "const": "timescale"
+                            }
+                        },
+                        "required": [
+                            "timescaleHost",
+                            "timescalePort",
+                            "timescaleDbName",
+                            "timescaleUser",
+                            "timescalePass",
+                            "validTable",
+                            "invalidTable"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
                                 "const": "mysql"
                             }
                         },
@@ -1454,6 +1522,34 @@
                             "mongoDbName",
                             "validCollection",
                             "invalidCollection"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "nats"
+                            }
+                        },
+                        "required": [
+                            "natsHost",
+                            "natsUser",
+                            "natsPass",
+                            "validSubject",
+                            "invalidSubject"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "nats-jetstream"
+                            }
+                        },
+                        "required": [
+                            "natsHost",
+                            "natsUser",
+                            "natsPass",
+                            "validSubject",
+                            "invalidSubject"
                         ]
                     }
                 ]

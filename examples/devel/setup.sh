@@ -44,7 +44,7 @@ function seedMysql {
 
 function seedClickhouse {
     echo "seeding clickhouse";
-    clickhouse client -h $REGISTRY_HOST  --port 9000 -u $H_USER --password $H_PASS --queries-file $CLICKHOUSE_SEED_FILE
+    clickhouse client -h $REGISTRY_HOST --port 9000 -u $H_USER --password $H_PASS --queries-file $CLICKHOUSE_SEED_FILE
 }
 
 function buildSeedFiles {

@@ -8,15 +8,15 @@ import (
 )
 
 type EventMeta struct {
-	Protocol           string    `json:"protocol"`
-	Uuid               uuid.UUID `json:"uuid"`
-	Vendor             string    `json:"vendor"`
-	PrimaryNamespace   string    `json:"primaryNamespace"`
-	SecondaryNamespace string    `json:"secondaryNamespace"`
-	TertiaryNamespace  string    `json:"tertiaryNamespace"`
-	Name               string    `json:"name"`
-	Version            string    `json:"version"`
-	Path               string    `json:"path"`
+	Protocol           string    `json:"protocol,omitempty"`
+	Uuid               uuid.UUID `json:"uuid,omitempty"`
+	Vendor             string    `json:"vendor,omitempty"`
+	PrimaryNamespace   string    `json:"primaryNamespace,omitempty"`
+	SecondaryNamespace string    `json:"secondaryNamespace,omitempty"`
+	TertiaryNamespace  string    `json:"tertiaryNamespace,omitempty"`
+	Name               string    `json:"name,omitempty"`
+	Version            string    `json:"version,omitempty"`
+	Path               string    `json:"path,omitempty"`
 }
 
 func (e EventMeta) Value() (driver.Value, error) {

@@ -1,8 +1,8 @@
 ---
 tags:
   - sink
-  - http
-  - https
+  - db
+  - elasticsearch
 ---
 
 # 🟢 Elasticsearch

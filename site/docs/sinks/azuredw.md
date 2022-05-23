@@ -1,7 +1,8 @@
 ---
 tags:
   - sink
-  - Azure Data Warehouse
+  - dw
+  - azure data warehouse
 ---
 
 # 🟡 Azure Data Warehouse
