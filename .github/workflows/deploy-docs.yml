@@ -3,7 +3,8 @@ name: Deploy Static Documentation Site
 on:
   push:
     branches:
-      - main
+      # - main
+      - docsasaurarorarus
     paths:
       - '.github/workflows/deploy.yml'
       - 'website/**'
