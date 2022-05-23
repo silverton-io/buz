@@ -13,4 +13,4 @@ Running event collection systems is also hard.
 Honeypot aims to make it easy.
 
 
-**[What is Honeypot?](/docs/introduction/what-is-honeypot)**
+**[What is Honeypot?](/)**

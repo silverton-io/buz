@@ -30,13 +30,9 @@ const config = {
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
-        // docs: {
-        //   sidebarPath: require.resolve('./sidebars.js'),
-        //   // Please change this to your repo.
-        //   // Remove this to remove the "edit this page" links.
-        //   editUrl:
-        //     'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-        // },
+        docs: {
+          routeBasePath: '/',
+        },
         // blog: {
         //   showReadingTime: true,
         //   // Please change this to your repo.
@@ -83,7 +79,7 @@ const config = {
             items: [
               {
                 label: 'Docs',
-                to: 'docs/introduction/what-is-honeypot',
+                to: 'introduction/what-is-honeypot',
               },
             ],
           },
