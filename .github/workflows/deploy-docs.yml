@@ -1,33 +1,49 @@
 name: Deploy Static Documentation Site
+
 on:
   push:
     branches:
-      - docsasaurarorarus
-      # - main
+      - main
+    paths:
+      - '.github/workflows/deploy.yml'
+      - 'website/**'
 
 jobs:
   deploy:
-    name: Deploy to GitHub Pages
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     defaults:
       run:
-        working-directory: ./website
+        working-directory: website
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
-          cache: yarn
-          cache-dependency-path: ./website/yarn.lock
-          
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+          node-version: '14'
 
-      - name: Build website
-        run: yarn build
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      - name: Deploy to GitHub Pages
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-website-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-website-
+
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+
+      - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
+          publish_dir: ./website/build
