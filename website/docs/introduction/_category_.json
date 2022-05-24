@@ -1,8 +1,4 @@
 {
     "label": "Introduction",
-    "position": 1,
-    "link": {
-        "type": "generated-index",
-        "description": "Brief Introduction to Honeypot"
-    }
+    "position": 1
 }
