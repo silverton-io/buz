@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "http://schemas.silverton.io/io.silverton/honeypot/config/app/v1.0.json",
+    "$id": "http://registry.silverton.io/io.silverton/honeypot/config/app/v1.0.json",
     "title": "io.silverton/honeypot/config/app/v1.0.json",
     "description": "Application configuration",
     "self": {
