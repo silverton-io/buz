@@ -1,8 +1,4 @@
 {
     "label": "Outputs",
-    "position": 3,
-    "link": {
-        "type": "generated-index",
-        "description": "Sinks are where data goes. Honeypot supports event fan-out for maximum operational flexibility."
-    }
+    "position": 3
 }
