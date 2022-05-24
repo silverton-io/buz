@@ -1,0 +1,15 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://schemas.silverton.io/io.silverton/honeypot/internal/event/arbitrary/v1.0.json",
+    "title": "io.silverton/honeypot/internal/event/arbitrary/v1.0.json",
+    "description": "A catchall schema for unnamed events consisting of arbitrary payloads. WILL WORK, NOT RECOMMENDED.",
+    "self": {
+        "vendor": "io.silverton",
+        "namespace": "honeypot.internal.event.arbitrary",
+        "version": "1.0"
+    },
+    "type": "object",
+    "properties": {},
+    "additionalProperties": true,
+    "required": []
+}
