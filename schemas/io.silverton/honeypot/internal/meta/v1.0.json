@@ -5,7 +5,7 @@
     "self": {
         "vendor": "io.silverton",
         "namespace": "honeypot.internal.meta",
-        "version": 1.1,
+        "version": "1.0",
         "format": "json"
     },
     "privacy": {
