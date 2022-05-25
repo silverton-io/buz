@@ -5,12 +5,16 @@
     "self": {
         "vendor": "io.silverton",
         "namespace": "honeypot.internal.meta",
-        "version": 1.0,
+        "version": 1.1,
         "format": "json"
     },
     "privacy": {
-        "pii": [],
+        "isPii": [],
+        "anonymize": [],
         "tokenize": []
+    },
+    "owner": {
+        "team": "honeypot"
     },
     "allOf": [
         {
@@ -30,7 +34,7 @@
                             "description": "The schema namespace"
                         },
                         "version": {
-                            "type": "number",
+                            "type": "string",
                             "description": "The schema version"
                         },
                         "format": {
@@ -52,9 +56,16 @@
                 "privacy": {
                     "type": "object",
                     "properties": {
-                        "pii": {
+                        "isPii": {
                             "type": "array",
-                            "description": "A list of schema fields to be considered PII",
+                            "description": "A list of schema fields that should be considered PII",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "anonymize": {
+                            "type": "array",
+                            "description": "A list of schema fields to anonymize",
                             "items": {
                                 "type": "string"
                             }
@@ -76,7 +87,8 @@
                         }
                     },
                     "required": [
-                        "pii",
+                        "isPii",
+                        "anonymize",
                         "tokenize"
                     ],
                     "additionalProperties": false
@@ -84,24 +96,33 @@
                 "owner": {
                     "type": "object",
                     "properties": {
-                        "name": {
+                        "org": {
                             "type": "string",
-                            "description": "The event owner name"
+                            "description": "The event org owner"
                         },
                         "team": {
                             "type": "string",
                             "description": "The event team owner"
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "The event individual owner"
                         }
                     },
                     "oneOf": [
                         {
                             "required": [
-                                "name"
+                                "org"
                             ]
                         },
                         {
                             "required": [
                                 "team"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "individual"
                             ]
                         }
                     ]

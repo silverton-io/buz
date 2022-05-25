@@ -3,6 +3,6 @@
     "position": 5,
     "link": {
         "type": "generated-index",
-        "description": "Data Warehouse Sinks"
+        "description": "Sink events to data warehouses using these outputs."
     }
 }

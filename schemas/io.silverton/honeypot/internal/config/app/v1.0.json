@@ -1,12 +1,12 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "http://registry.silverton.io/io.silverton/honeypot/config/app/v1.0.json",
-    "title": "io.silverton/honeypot/config/app/v1.0.json",
+    "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
+    "$id": "http://registry.silverton.io/io.silverton/honeypot/internal/config/app/v1.0.json",
+    "title": "io.silverton/honeypot/internal/config/app/v1.0.json",
     "description": "Application configuration",
     "self": {
         "vendor": "io.silverton",
         "namespace": "honeypot.internal.config.app",
-        "version": "1.0"
+        "version": 1.0
     },
     "type": "object",
     "properties": {
