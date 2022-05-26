@@ -1,5 +1,5 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
     "$id": "http://registry.silverton.io/io.silverton/honeypot/tele/shutdown/v1.0.json",
     "title": "io.silverton/honeypot/tele/shutdown/v1.0.json",
     "description": "Honeypot shutdown event",

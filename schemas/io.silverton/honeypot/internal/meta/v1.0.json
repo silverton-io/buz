@@ -1,1 +1,138 @@
-{ "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json", "$id": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json", "description": "The Honeypot Metaschema", "self": { "vendor": "io.silverton", "namespace": "honeypot.internal.meta", "version": 1.0, "format": "json" }, "privacy": { "pii": [], "tokenize": [] }, "allOf": [ { "$ref": "https://json-schema.org/draft/2020-12/schema" }, { "properties": { "self": { "type": "object", "properties": { "vendor": { "type": "string", "description": "The schema vendor" }, "namespace": { "type": "string", "description": "The schema namespace" }, "version": { "type": "number", "description": "The schema version" }, "format": { "type": "string", "description": "The schema format", "default": "json", "enum": ["json"] } }, "required": ["vendor", "namespace", "version"], "additionalProperties": false }, "privacy": { "type": "object", "properties": { "pii": { "type": "array", "description": "A list of schema fields to be considered PII", "items": { "type": "string" } }, "tokenize": { "type": "array", "description": "A list of schema fields to tokenize", "items": { "type": "string" } }, "controller": { "type": "string", "description": "The controller name" }, "subject": { "type": "string", "description": "The subject" } }, "required": ["pii", "tokenize"], "additionalProperties": false }, "owner": { "type": "object", "properties": { "name": { "type": "string", "description": "The event owner name" }, "team": { "type": "string", "description": "The event team owner" } }, "oneOf": [{ "required": ["name"] }, { "required": ["team"] }] } }, "required": ["self", "privacy", "owner"] } ] }
+{
+    "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
+    "$id": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
+    "description": "The Honeypot Metaschema",
+    "self": {
+        "vendor": "io.silverton",
+        "namespace": "honeypot.internal.meta",
+        "version": "1.0",
+        "format": "json"
+    },
+    "privacy": {
+        "isPii": [],
+        "anonymize": [],
+        "tokenize": []
+    },
+    "owner": {
+        "team": "honeypot"
+    },
+    "allOf": [
+        {
+            "$ref": "https://json-schema.org/draft/2020-12/schema"
+        },
+        {
+            "properties": {
+                "self": {
+                    "type": "object",
+                    "properties": {
+                        "vendor": {
+                            "type": "string",
+                            "description": "The schema vendor"
+                        },
+                        "namespace": {
+                            "type": "string",
+                            "description": "The schema namespace"
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The schema version"
+                        },
+                        "format": {
+                            "type": "string",
+                            "description": "The schema format",
+                            "default": "json",
+                            "enum": [
+                                "json"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "vendor",
+                        "namespace",
+                        "version"
+                    ],
+                    "additionalProperties": false
+                },
+                "privacy": {
+                    "type": "object",
+                    "properties": {
+                        "isPii": {
+                            "type": "array",
+                            "description": "A list of schema fields that should be considered PII",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "anonymize": {
+                            "type": "array",
+                            "description": "A list of schema fields to anonymize",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "tokenize": {
+                            "type": "array",
+                            "description": "A list of schema fields to tokenize",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "controller": {
+                            "type": "string",
+                            "description": "The controller name"
+                        },
+                        "subject": {
+                            "type": "string",
+                            "description": "The subject"
+                        }
+                    },
+                    "required": [
+                        "isPii",
+                        "anonymize",
+                        "tokenize"
+                    ],
+                    "additionalProperties": false
+                },
+                "owner": {
+                    "type": "object",
+                    "properties": {
+                        "org": {
+                            "type": "string",
+                            "description": "The event org owner"
+                        },
+                        "team": {
+                            "type": "string",
+                            "description": "The event team owner"
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "The event individual owner"
+                        }
+                    },
+                    "oneOf": [
+                        {
+                            "required": [
+                                "org"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "team"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "individual"
+                            ]
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "self",
+                "privacy",
+                "owner"
+            ]
+        }
+    ]
+}
