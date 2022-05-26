@@ -3,6 +3,11 @@
     "$id": "https://registry.silverton.io/io.silverton/honeypot/example/productView/v1.0.json",
     "title": "io.silverton/honeypot/example/productView/v1.0.json",
 	"description": "Schema for product views",
+    "owner": {
+        "org": "silverton",
+        "team": "honeypot",
+        "individual": "jakthom"
+    },
 	"self": {
 		"vendor": "io.silverton",
         "namespace": "honeypot.example.productView",

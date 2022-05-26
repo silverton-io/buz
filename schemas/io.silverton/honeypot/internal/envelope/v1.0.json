@@ -3,6 +3,14 @@
     "$id": "http://registry.silverton.io/io.silverton/honeypot/envelope/v1.0.json",
     "title": "io.silverton/honeypot/envelope/v1.0.json",
     "description": "Honeypot envelope",
+    "owner": {
+        "org": "silverton",
+        "team": "honeypot",
+        "individual": "jakthom"
+    },
+    "privacy": {
+        "isPii": ["user.id"]
+    },
     "self": {
         "vendor": "io.silverton",
         "namespace": "honeypot.internal.envelope",

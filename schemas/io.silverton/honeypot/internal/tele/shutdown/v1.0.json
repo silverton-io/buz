@@ -3,6 +3,11 @@
     "$id": "http://registry.silverton.io/io.silverton/honeypot/tele/shutdown/v1.0.json",
     "title": "io.silverton/honeypot/tele/shutdown/v1.0.json",
     "description": "Honeypot shutdown event",
+    "owner": {
+        "org": "silverton",
+        "team": "honeypot",
+        "individual": "jakthom"
+    },
 	"self": {
 		"vendor": "io.silverton",
         "namespace": "honeypot.internal.tele.shutdown",

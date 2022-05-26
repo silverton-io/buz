@@ -3,6 +3,11 @@
     "$id": "http://registry.silverton.io/io.silverton/honeypot/example/gettingStarted/v1.0.json",
     "title": "io.silverton/honeypot/example/gettingStarted/v1.0.json",
     "description": "A getting started event used to bootstrap and demonstrate validation",
+    "owner": {
+        "org": "silverton",
+        "team": "honeypot",
+        "individual": "jakthom"
+    },
 	"self": {
 		"vendor": "io.silverton",
         "namespace": "honeypot.example.quickstart.click",

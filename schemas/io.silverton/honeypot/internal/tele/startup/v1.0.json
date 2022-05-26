@@ -3,6 +3,11 @@
     "$id": "http://registry.silverton.io/io.silverton/honeypot/internal/tele/startup/v1.0.json",
     "title": "io.silverton/honeypot/internal/tele/startup/v1.0.json",
     "description": "Honeypot startup event",
+    "owner": {
+        "org": "silverton",
+        "team": "honeypot",
+        "individual": "jakthom"
+    },
 	"self": {
 		"vendor": "io.silverton",
         "namespace": "honeypot.internal.tele.startup",

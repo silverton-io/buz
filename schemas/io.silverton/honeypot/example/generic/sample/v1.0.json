@@ -3,12 +3,14 @@
 	"$id": "http://registry.silverton.io/io.silverton/honeypot/example/generic/sample/v1.0.json",
 	"title": "io.silverton/honeypot/example/generic/sample/v1.0.json",
 	"description": "Schema for testing generic events",
+    "owner": {
+        "org": "silverton",
+        "team": "honeypot",
+        "individual": "jakthom"
+    },
 	"self": {
 		"vendor": "io.silverton",
-        "primaryCategory": "honeypot",
-        "secondaryCategory": "example",
-		"tertiaryCategory": "generic",
-		"name": "sample",
+		"namespace": "honeypot.example.generic.sample",
 		"version": "1.0"
 	},
 	"type": "object",

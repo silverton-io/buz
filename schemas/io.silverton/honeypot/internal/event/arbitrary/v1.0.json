@@ -3,6 +3,11 @@
     "$id": "http://registry.silverton.io/io.silverton/honeypot/internal/event/arbitrary/v1.0.json",
     "title": "io.silverton/honeypot/internal/event/arbitrary/v1.0.json",
     "description": "A catchall schema for unnamed events consisting of arbitrary payloads. WILL WORK - NOT RECOMMENDED.",
+    "owner": {
+        "org": "silverton",
+        "team": "honeypot",
+        "individual": "jakthom"
+    },
     "self": {
         "vendor": "io.silverton",
         "namespace": "honeypot.internal.event.arbitrary",
