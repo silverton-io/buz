@@ -3,6 +3,6 @@
     "position": 2,
     "link": {
         "type": "generated-index",
-        "description": "Honeypot Sinks"
+        "description": "Sink events to various destinations using these outputs."
     }
 }

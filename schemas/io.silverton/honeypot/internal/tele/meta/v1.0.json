@@ -1,7 +1,12 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "http://schemas.silverton.io/io.silverton/honeypot/tele/meta/v1.0.json",
+    "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
+    "$id": "http://registry.silverton.io/io.silverton/honeypot/tele/meta/v1.0.json",
     "title": "io.silverton/honeypot/tele/meta/v1.0.json",
+    "owner": {
+        "org": "silverton",
+        "team": "honeypot",
+        "individual": "jakthom"
+    },
 	"self": {
 		"vendor": "io.silverton",
         "namespace": "honeypot.internal.tele.meta",

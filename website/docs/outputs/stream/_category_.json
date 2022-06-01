@@ -3,6 +3,6 @@
     "position": 3,
     "link": {
         "type": "generated-index",
-        "description": "Streaming Sinks"
+        "description": "Sink events to streaming technologies using these outputs."
     }
 }
