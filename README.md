@@ -4,6 +4,8 @@
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/silverton-io/honeypot)
 
 
+![honeycomb](website/static/img/honeycomb.svg)
+
 A self-contained, multi-protocol streaming event collection system with ambitions to be as boring as [benthos](https://www.benthos.dev/).
 
 
