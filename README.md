@@ -4,6 +4,8 @@
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/silverton-io/honeypot)
 
 
+![honeycomb](website/static/img/honeycomb.svg)
+
 # Event Collection, Validation, and Delivery.
 
 Honeypot is a system for collecting events from various sources, validating data quality, and delivering them to where they need to bee.
