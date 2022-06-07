@@ -17,6 +17,7 @@ const config = {
   projectName: 'honeypot',
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
+  staticDirectories: ['static'],
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
@@ -54,8 +55,8 @@ const config = {
       navbar: {
         title: 'Honeypot',
         logo: {
-          alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          alt: 'Honeypot',
+          src: 'img/honeycomb.svg',
         },
         items: [
           {
