@@ -4,15 +4,13 @@ slug: /
 title: What is Honeypot?
 ---
 
-Honeypot is a system for collecting, validating, and delivering events where you need them to go.
+Honeypot is a system for collecting events from various sources, validating data quality, and delivering them to where they need to bee.
 
-It is designed to be ***easily-configured***, ***easily-deployed***, and ***easily-maintained***.
-
-Yet uncompromising with its speed, guarantees, and operational flexibility. 
+It is designed to be ***easily-configured***, ***easily-deployed***, and ***easily-maintained***. Yet uncompromising with its speed, guarantees, and operational flexibility.
 
 
 :::tip Quickstart
-Please see the [Quickstart](/examples/quickstart) to dive head-first into an example of running Honeypot alongside a three-node [Redpanda](https://github.com/redpanda-data/) cluster, [Kowl](https://github.com/cloudhut/kowl/), and [Materialize](https://github.com/MaterializeInc/materialize).
+To rapidly bootstrap a streaming stack using Honeypot, [Redpanda](https://github.com/redpanda-data/), [Kowl](https://github.com/cloudhut/kowl/), and [Materialize](https://github.com/MaterializeInc/materialize) please see the [Quickstart](/examples/quickstart)!
 :::
 
 
