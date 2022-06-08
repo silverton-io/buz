@@ -2,6 +2,7 @@
 sidebar_position: 1
 slug: /
 title: What is Honeypot?
+hide_table_of_contents: true
 ---
 
 Honeypot is a system for collecting events from various sources, validating data quality, and delivering them to where they need to bee.

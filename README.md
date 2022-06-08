@@ -3,7 +3,7 @@
 ![agplv3](https://img.shields.io/badge/license-AGPLv3-brightgreen)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/silverton-io/honeypot)
 
-![honey](website/static/img/honeycomb.svg)
+![honey](website/static/img/bee2.svg)
 
 # Event Collection, Validation, and Delivery.
 
