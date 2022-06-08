@@ -1,26 +1,23 @@
 ---
 sidebar_position: 1
 slug: /
+title: What is Honeypot?
+hide_table_of_contents: true
 ---
 
-# What is Honeypot?
+Honeypot is a system for collecting events from various sources, validating data quality, and delivering them to where they need to bee.
 
-
-Honeypot is a multi-protocol event collection, validation, and routing system.
-
-It is designed to be ***easily-configured***, ***easily-deployed***, and ***easily-maintained***.
-
-Yet uncompromising with its speed, guarantees, and operational flexibility. 
+It is designed to be ***easily-configured***, ***easily-deployed***, and ***easily-maintained***. Yet uncompromising with its speed, guarantees, and operational flexibility.
 
 
 :::tip Quickstart
-Please see the [Quickstart](/examples/quickstart) to dive head-first into an example of running Honeypot alongside a three-node [Redpanda](https://github.com/redpanda-data/) cluster, [Kowl](https://github.com/cloudhut/kowl/), and [Materialize](https://github.com/MaterializeInc/materialize).
+To rapidly bootstrap a streaming stack using Honeypot, [Redpanda](https://github.com/redpanda-data/), [Kowl](https://github.com/cloudhut/kowl/), and [Materialize](https://github.com/MaterializeInc/materialize) please see the [Quickstart](/examples/quickstart)!
 :::
 
 
 ## Consists of a Single Self-Contained Binary
 
-Event collection infrastructure comes in all shapes and sizes except `a single artifact that can be deployed anywhere`.
+Event collection infrastructure comes in all shapes and sizes except `a single artifact that can be deployed anywhere`. Honeypot changes that.
 
 
 **Honeypot was created from the ground-up to eliminate as many moving pieces as possible without sacrificing quality and transport guarantees.**
@@ -34,9 +31,11 @@ Event collection infrastructure comes in all shapes and sizes except `a single a
 
 
 
-## Supports Multiple Input Protocols
+## Collects Events from One or More Sources
 
-Single-protocol event collection systems result in duplicate infrastructure that does effectively the same thing -> `webhook`, `snowplow`, `segment`, `cloudevents`, etc.
+Most event collection systems are single-protocol, which results in duplicate infrastructure when more than one protocol must be collected  -> `webhook`, `snowplow`, `segment`, `cloudevents`, etc.
+
+This is not the case with Honeypot.
 
 **Honeypot supports a number of common input protocols and will continue to support more.**
 
@@ -75,10 +74,8 @@ Metadata often happens at the end of the pipeline, in the data warehouse. **Not 
 :::
 
 
-## Is Easily Configured
+## Eases Operational Burden
 
 Honeypot is easily configured with a single `yml` file. This file is self-validating and, when using [the vcode yaml plugin](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml), practically writes itself.
 
-:::tip TL;DR
-- You don't need a SaaS product to help you configure your system.
-:::
+It can be rapidly deployed and re-configured, and scales well as needs do.
