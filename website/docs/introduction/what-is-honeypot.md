@@ -2,10 +2,11 @@
 sidebar_position: 1
 slug: /
 title: What is Honeypot?
-hide_table_of_contents: true
 ---
 
-Honeypot is a system for collecting events from various sources, validating data quality, and delivering them to where they need to bee.
+![buzz](../../static/img/buzz.png)
+
+Honeypot is a system for collecting events from various sources, ensuring data quality, and delivering them to where they need to bee.
 
 It is designed to be ***easily-configured***, ***easily-deployed***, and ***easily-maintained***. Yet uncompromising with its speed, guarantees, and operational flexibility.
 
@@ -15,7 +16,7 @@ To rapidly bootstrap a streaming stack using Honeypot, [Redpanda](https://github
 :::
 
 
-## Consists of a Single Self-Contained Binary
+## A Single Self-Contained Binary
 
 Event collection infrastructure comes in all shapes and sizes except `a single artifact that can be deployed anywhere`. Honeypot changes that.
 

@@ -1,6 +1,6 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
-
+const path = require('path');
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
@@ -18,7 +18,9 @@ const config = {
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
   staticDirectories: ['static'],
-
+  plugins: [
+    path.resolve(__dirname, 'plugins', 'snowplow')
+  ],
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
   // to replace "en" with "zh-Hans".
