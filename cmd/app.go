@@ -14,6 +14,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/cache"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/constants"
 	"github.com/silverton-io/honeypot/pkg/env"
 	"github.com/silverton-io/honeypot/pkg/handler"
 	"github.com/silverton-io/honeypot/pkg/manifold"
@@ -232,7 +233,7 @@ func (a *App) initializeWebhookRoutes() {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing webhook routes")
 		a.engine.POST(a.config.Inputs.Webhook.Path, handler.WebhookHandler(handlerParams))
-		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+"hps", handler.WebhookHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+constants.HONEYPOT_SCHEMA_PARAM, handler.WebhookHandler(handlerParams))
 	}
 }
 
@@ -241,7 +242,7 @@ func (a *App) initializePixelRoutes() {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing pixel routes")
 		a.engine.GET(a.config.Inputs.Pixel.Path, handler.PixelHandler(handlerParams))
-		a.engine.GET(a.config.Inputs.Pixel.Path+"/*"+"hps", handler.PixelHandler(handlerParams))
+		a.engine.GET(a.config.Inputs.Pixel.Path+"/*"+constants.HONEYPOT_SCHEMA_PARAM, handler.PixelHandler(handlerParams))
 	}
 }
 
