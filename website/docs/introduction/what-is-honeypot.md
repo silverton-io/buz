@@ -16,7 +16,7 @@ To rapidly bootstrap a streaming stack using Honeypot, [Redpanda](https://github
 :::
 
 
-## A Single Self-Contained Binary
+## Single Self-Contained Binary
 
 Event collection infrastructure comes in all shapes and sizes except `a single artifact that can be deployed anywhere`. Honeypot changes that.
 
