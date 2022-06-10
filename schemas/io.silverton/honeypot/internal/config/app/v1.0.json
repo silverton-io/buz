@@ -382,7 +382,7 @@
                         },
                         "path": {
                             "type": "string",
-                            "default": "/ce/p",
+                            "default": "/cloudevent",
                             "description": "The path by which to process incoming cloudevents payloads"
                         }
                     },
@@ -469,7 +469,7 @@
                         "path": {
                             "type": "string",
                             "description": "The arbitrary webhook route",
-                            "default": "/wb/hk"
+                            "default": "/hook"
                         }
                     },
                     "additionalProperties": false,

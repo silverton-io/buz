@@ -29,13 +29,13 @@ func BuildEvent(c *gin.Context) (event.SelfDescribingPayload, error) {
 			return event.SelfDescribingPayload{}, err
 		}
 		e := event.SelfDescribingPayload{
-			Schema: *schemaName,
+			Schema: schemaName,
 			Data:   payload,
 		}
 		return e, nil
 	}
 	e := event.SelfDescribingPayload{
-		Schema: *schemaName,
+		Schema: schemaName,
 		Data:   params,
 	}
 	return e, nil
