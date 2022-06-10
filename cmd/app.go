@@ -25,7 +25,6 @@ import (
 	"github.com/silverton-io/honeypot/pkg/snowplow"
 	"github.com/silverton-io/honeypot/pkg/stats"
 	"github.com/silverton-io/honeypot/pkg/tele"
-	"github.com/silverton-io/honeypot/pkg/webhook"
 	"github.com/spf13/viper"
 )
 
@@ -233,7 +232,7 @@ func (a *App) initializeWebhookRoutes() {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing webhook routes")
 		a.engine.POST(a.config.Inputs.Webhook.Path, handler.WebhookHandler(handlerParams))
-		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+webhook.WEBHOOK_ID_PARAM, handler.WebhookHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+"hps", handler.WebhookHandler(handlerParams))
 	}
 }
 
@@ -241,9 +240,8 @@ func (a *App) initializePixelRoutes() {
 	if a.config.Inputs.Pixel.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing pixel routes")
-		for _, r := range a.config.Inputs.Pixel.Paths {
-			a.engine.GET(r.Path, handler.PixelHandler(handlerParams))
-		}
+		a.engine.GET(a.config.Inputs.Pixel.Path, handler.PixelHandler(handlerParams))
+		a.engine.GET(a.config.Inputs.Pixel.Path+"/*"+"hps", handler.PixelHandler(handlerParams))
 	}
 }
 
@@ -266,16 +264,6 @@ func (a *App) initializeSquawkboxRoutes() {
 	}
 }
 
-func (a *App) serveStaticIfDev() {
-	if a.config.App.Env == env.DEV_ENVIRONMENT {
-		log.Info().Msg("serving static files")
-		a.engine.StaticFile("/", "./site/index.html")     // Serve a local file to make testing events easier
-		a.engine.StaticFile("/test", "./site/index.html") // Ditto
-	} else {
-		log.Info().Msg("not serving static files")
-	}
-}
-
 func (a *App) Initialize() {
 	log.Info().Msg("initializing app")
 	a.configure()
@@ -295,7 +283,6 @@ func (a *App) Initialize() {
 	a.initializePixelRoutes()
 	a.initializeSquawkboxRoutes()
 	a.initializeRelayRoute()
-	a.serveStaticIfDev()
 }
 
 func (a *App) Run() {

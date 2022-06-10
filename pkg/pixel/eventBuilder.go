@@ -6,14 +6,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/util"
 )
 
 const (
-	B64_ENCODED_PAYLOAD_PARAM = "hbp"
-	ARBITRARY_PIXEL_SCHEMA    = "io.silverton/honeypot/internal/event/pixel/arbitrary/v1.0.json"
+	B64_ENCODED_PAYLOAD_PARAM string = "hbp"
+	ARBITRARY_PIXEL_SCHEMA    string = "io.silverton/honeypot/internal/event/pixel/arbitrary/v1.0.json"
 )
 
-func BuildEvent(c *gin.Context, params map[string]interface{}) (event.SelfDescribingPayload, error) {
+func BuildEvent(c *gin.Context) (event.SelfDescribingPayload, error) {
+	params := util.MapUrlParams(c)
+	schemaName := util.GetSchemaNameFromRequest(c, ARBITRARY_PIXEL_SCHEMA)
 	base64EncodedPayload := params[B64_ENCODED_PAYLOAD_PARAM]
 	if base64EncodedPayload != nil {
 		p, err := b64.RawStdEncoding.DecodeString(base64EncodedPayload.(string))
@@ -26,13 +29,13 @@ func BuildEvent(c *gin.Context, params map[string]interface{}) (event.SelfDescri
 			return event.SelfDescribingPayload{}, err
 		}
 		e := event.SelfDescribingPayload{
-			Schema: ARBITRARY_PIXEL_SCHEMA,
+			Schema: *schemaName,
 			Data:   payload,
 		}
 		return e, nil
 	}
 	e := event.SelfDescribingPayload{
-		Schema: ARBITRARY_PIXEL_SCHEMA,
+		Schema: *schemaName,
 		Data:   params,
 	}
 	return e, nil

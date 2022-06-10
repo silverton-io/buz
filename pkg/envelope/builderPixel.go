@@ -7,15 +7,14 @@ import (
 	"github.com/silverton-io/honeypot/pkg/meta"
 	"github.com/silverton-io/honeypot/pkg/pixel"
 	"github.com/silverton-io/honeypot/pkg/protocol"
-	"github.com/silverton-io/honeypot/pkg/util"
 )
 
+// NOTE - one envelope per request
 func BuildPixelEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []Envelope {
 	var envelopes []Envelope
-	params := util.MapUrlParams(c)
-	pEvent, err := pixel.BuildEvent(c, params)
+	pEvent, err := pixel.BuildEvent(c)
 	if err != nil {
-		log.Error().Err(err).Msg("could not build PixelEvent")
+		log.Error().Err(err).Msg("could not build pixel event")
 	}
 	n := buildCommonEnvelope(c, m)
 	// Event Meta
