@@ -11,7 +11,7 @@ import (
 
 const (
 	B64_ENCODED_PAYLOAD_PARAM string = "hbp"
-	ARBITRARY_PIXEL_SCHEMA    string = "io.silverton/honeypot/internal/event/pixel/arbitrary/v1.0.json"
+	ARBITRARY_PIXEL_SCHEMA    string = "io.silverton/honeypot/pixel/arbitrary/v1.0.json"
 )
 
 func BuildEvent(c *gin.Context) (event.SelfDescribingPayload, error) {
