@@ -1,5 +1,5 @@
 ---
-slug: Make It Easy
+slug: make-it-easy
 title: Make It Easy
 authors: [jake]
 tags: []

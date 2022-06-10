@@ -58,7 +58,7 @@ const config = {
         title: 'Honeypot',
         logo: {
           alt: 'Honeypot',
-          src: 'img/hive.svg',
+          src: 'img/bee2.svg',
           // src: 'img/honeycomb.svg',
         },
         items: [
