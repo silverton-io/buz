@@ -1598,22 +1598,39 @@
                     "type": "object",
                     "description": "Envelope anonymization configuration",
                     "properties": {
-                        "deviceIp": {
-                            "type": "boolean",
-                            "description": "Whether to anonymize the device ip address for all events",
-                            "default": "false"
+                        "device": {
+                            "type": "object",
+                            "description": "Whether or not to anonymize various device fields",
+                            "properties": {
+                                "ip": {
+                                    "type": "boolean",
+                                    "description": "Whether to anonymize the device ip address for all events",
+                                    "default": "false"
+                                },
+                                "useragent": {
+                                    "type": "boolean",
+                                    "description": "Whether to anonymize the device useragent for all events",
+                                    "default": "false"
+                                }
+                            },
+                            "required": ["ip", "useragent"],
+                            "additionalProperties": false
                         },
-                        "deviceUseragent": {
-                            "type": "boolean",
-                            "description": "Whether to anonymize the device useragent for all events",
-                            "default": "false"
-                        },
-                        "userId": {
-                            "type": "boolean",
-                            "description": "Whether to anonymize the user id for all events",
-                            "default": "false"
+                        "user": {
+                            "type": "object",
+                            "description": "Whether or not to anonymize various user fields",
+                            "properties": {
+                                "id": {
+                                    "type": "boolean",
+                                    "description": "Whether to anonymize the user id for all events",
+                                    "default": "false"
+                                }
+                            },
+                            "required": ["id"],
+                            "additionalProperties": false
                         }
-                    }
+                    },
+                    "required": ["device", "user"]
                 },
                 "doNotTrack": {
                     "type": "object",
