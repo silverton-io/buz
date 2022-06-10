@@ -1,8 +1,8 @@
 {
     "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
-    "$id": "http://registry.silverton.io/io.silverton/honeypot/internal/event/arbitrary/v1.0.json",
-    "title": "io.silverton/honeypot/internal/event/arbitrary/v1.0.json",
-    "description": "A catchall schema for unnamed events consisting of arbitrary payloads. WILL WORK - NOT RECOMMENDED.",
+    "$id": "io.silverton/honeypot/hook/arbitrary/v1.0.json",
+    "title": "io.silverton/honeypot/hook/arbitrary/v1.0.json",
+    "description": "A catchall schema for unnamed events consisting of arbitrary webhook payloads.",
     "owner": {
         "org": "silverton",
         "team": "honeypot",
@@ -10,7 +10,7 @@
     },
     "self": {
         "vendor": "io.silverton",
-        "namespace": "honeypot.internal.event.arbitrary",
+        "namespace": "honeypot.hook.arbitrary",
         "version": "1.0"
     },
     "type": "object",

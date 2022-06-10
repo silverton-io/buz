@@ -382,7 +382,7 @@
                         },
                         "path": {
                             "type": "string",
-                            "default": "/ce/p",
+                            "default": "/cloudevent",
                             "description": "The path by which to process incoming cloudevents payloads"
                         }
                     },
@@ -469,7 +469,7 @@
                         "path": {
                             "type": "string",
                             "description": "The arbitrary webhook route",
-                            "default": "/wb/hk"
+                            "default": "/hook"
                         }
                     },
                     "additionalProperties": false,
@@ -487,31 +487,14 @@
                             "description": "Whether or not to enable 1x1 pixels",
                             "default": "true"
                         },
-                        "paths": {
-                            "type": "array",
-                            "description": "Configuration for pixel paths",
-                            "minItems": 1,
-                            "items": {
-                                "type": "object",
-                                "description": "Configuration for a pixel path",
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "default": "default",
-                                        "description": "The pixel path name"
-                                    },
-                                    "path": {
-                                        "type": "string",
-                                        "default": "/pxl/d"
-                                    }
-                                },
-                                "additionalProperties": false,
-                                "required": ["name", "path"]
-                            }
+                        "path": {
+                            "type": "string",
+                            "default": "/pxl",
+                            "description": "The pixel path"
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["enabled", "paths"]
+                    "required": ["enabled", "path"]
                 },
                 "relay": {
                     "type": "object",

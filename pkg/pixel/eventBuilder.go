@@ -5,32 +5,38 @@ import (
 	"encoding/json"
 
 	"github.com/gin-gonic/gin"
+	"github.com/silverton-io/honeypot/pkg/event"
+	"github.com/silverton-io/honeypot/pkg/util"
 )
 
-const UNNAMED_PIXEL_ID = "unnamed"
-const B64_ENCODED_PAYLOAD_PARAM = "hbp"
+const (
+	B64_ENCODED_PAYLOAD_PARAM string = "hbp"
+	ARBITRARY_PIXEL_SCHEMA    string = "io.silverton/honeypot/pixel/arbitrary/v1.0.json"
+)
 
-func BuildEvent(c *gin.Context, name string, params map[string]interface{}) (PixelEvent, error) {
+func BuildEvent(c *gin.Context) (event.SelfDescribingPayload, error) {
+	params := util.MapUrlParams(c)
+	schemaName := util.GetSchemaNameFromRequest(c, ARBITRARY_PIXEL_SCHEMA)
 	base64EncodedPayload := params[B64_ENCODED_PAYLOAD_PARAM]
 	if base64EncodedPayload != nil {
 		p, err := b64.RawStdEncoding.DecodeString(base64EncodedPayload.(string))
 		if err != nil {
-			return PixelEvent{}, err
+			return event.SelfDescribingPayload{}, err
 		}
 		var payload map[string]interface{}
 		err = json.Unmarshal(p, &payload)
 		if err != nil {
-			return PixelEvent{}, err
+			return event.SelfDescribingPayload{}, err
 		}
-		event := PixelEvent{
-			Id:      name,
-			Payload: payload,
+		e := event.SelfDescribingPayload{
+			Schema: schemaName,
+			Data:   payload,
 		}
-		return event, nil
+		return e, nil
 	}
-	event := PixelEvent{
-		Id:      name,
-		Payload: params,
+	e := event.SelfDescribingPayload{
+		Schema: schemaName,
+		Data:   params,
 	}
-	return event, nil
+	return e, nil
 }

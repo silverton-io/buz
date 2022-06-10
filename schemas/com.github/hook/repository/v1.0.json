@@ -1,0 +1,19 @@
+{
+    "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
+    "$id": "com.github/hook/repository/v1.0.json",
+    "title": "com.github/hook/repository/v1.0.json",
+    "description": "Wrapper for repository-level Github hooks",
+    "owner": {
+        "org": "silverton",
+        "team": "honeypot",
+        "individual": "jakthom"
+    },
+    "self": {
+        "vendor": "com.github",
+        "namespace": "hook.repository",
+        "version": "1.0"
+    },
+    "type": "object",
+    "properties": {},
+    "additionalProperties": true
+}

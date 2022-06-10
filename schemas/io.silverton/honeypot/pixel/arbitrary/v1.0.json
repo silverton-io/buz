@@ -1,0 +1,20 @@
+{
+    "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
+    "$id": "io.silverton/honeypot/pixel/arbitrary/v1.0.json",
+    "title": "io.silverton/honeypot/pixel/arbitrary/v1.0.json",
+    "description": "A catchall schema for unnamed events consisting of arbitrary pixel payloads.",
+    "owner": {
+        "org": "silverton",
+        "team": "honeypot",
+        "individual": "jakthom"
+    },
+    "self": {
+        "vendor": "io.silverton",
+        "namespace": "honeypot.pixel.arbitrary",
+        "version": "1.0"
+    },
+    "type": "object",
+    "properties": {},
+    "additionalProperties": true,
+    "required": []
+}

@@ -1,0 +1,19 @@
+{
+    "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
+    "$id": "com.stripe/hook/v1.0.json",
+    "title": "com.stripe/hook/v1.0.json",
+    "description": "Wrapper for Stripe hooks",
+    "owner": {
+        "org": "silverton",
+        "team": "honeypot",
+        "individual": "jakthom"
+    },
+    "self": {
+        "vendor": "com.stripe",
+        "namespace": "hook",
+        "version": "1.0"
+    },
+    "type": "object",
+    "properties": {},
+    "additionalProperties": true
+}

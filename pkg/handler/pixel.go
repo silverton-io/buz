@@ -16,7 +16,6 @@ const PX string = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8X
 
 func PixelHandler(h params.Handler) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-
 		envelopes := envelope.BuildPixelEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
 		anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, h.Config.Privacy)

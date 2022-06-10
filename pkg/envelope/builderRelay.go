@@ -12,18 +12,12 @@ import (
 	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/generic"
 	"github.com/silverton-io/honeypot/pkg/meta"
-	"github.com/silverton-io/honeypot/pkg/pixel"
 	"github.com/silverton-io/honeypot/pkg/protocol"
-	"github.com/silverton-io/honeypot/pkg/webhook"
 	"github.com/tidwall/gjson"
 )
 
 func buildRelayEventFromPayload(proto string, payload []byte) event.Event {
 	switch proto {
-	case protocol.SNOWPLOW:
-		e := event.SelfDescribingPayload{}
-		json.Unmarshal(payload, &e)
-		return e
 	case protocol.CLOUDEVENTS:
 		e := cloudevents.CloudEvent{}
 		json.Unmarshal(payload, &e)
@@ -32,16 +26,11 @@ func buildRelayEventFromPayload(proto string, payload []byte) event.Event {
 		e := generic.GenericEvent{}
 		json.Unmarshal(payload, &e)
 		return e
-	case protocol.WEBHOOK:
-		e := webhook.WebhookEvent{}
-		json.Unmarshal(payload, &e)
-		return e
-	case protocol.PIXEL:
-		e := pixel.PixelEvent{}
+	default:
+		e := event.SelfDescribingPayload{}
 		json.Unmarshal(payload, &e)
 		return e
 	}
-	return nil
 }
 
 func BuildRelayEnvelopesFromRequest(c *gin.Context, m *meta.CollectorMeta) []Envelope {
