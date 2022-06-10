@@ -113,7 +113,7 @@ const config = {
         darkTheme: darkCodeTheme,
       },
       snowplow: {
-        collector: 'localhost:8080',
+        collector: 'tele.silverton.io',
         appId: 'honeypot-docs',
         withCredentials: false
       }
