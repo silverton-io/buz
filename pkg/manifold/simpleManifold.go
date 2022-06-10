@@ -19,7 +19,7 @@ func (m *SimpleManifold) Initialize(sinks *[]sink.Sink) error {
 	return nil
 }
 
-func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope, s stats.ProtocolStats) error {
+func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope, s *stats.ProtocolStats) error {
 	var validEnvelopes []envelope.Envelope
 	var invalidEnvelopes []envelope.Envelope
 

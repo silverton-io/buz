@@ -1627,7 +1627,7 @@
                     }
                 }
             },
-            "required": ["anonymize", "doNotTrack"],
+            "required": ["anonymize"],
             "additionalProperties": false
         }
     },
