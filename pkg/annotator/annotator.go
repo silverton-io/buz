@@ -30,10 +30,6 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 	for _, envelope := range envelopes {
 		log.Debug().Msg("annotating event")
 		switch envelope.EventMeta.Protocol {
-		case protocol.PIXEL:
-			e = append(e, envelope)
-		case protocol.WEBHOOK:
-			e = append(e, envelope)
 		case protocol.RELAY:
 			e = append(e, envelope)
 		default:

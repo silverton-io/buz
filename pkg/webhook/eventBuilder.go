@@ -2,21 +2,16 @@ package webhook
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/tidwall/gjson"
 )
 
-const UNNAMED_WEBHOOK_ID string = "unnamed"
+const ARBITRARY_WEBHOOK_SCHEMA = "io.silverton/honeypot/internal/event/webhook/arbitrary/v1.0.json"
 
-func BuildEvent(c *gin.Context, payload gjson.Result) (WebhookEvent, error) {
-	webhookId := c.Param(WEBHOOK_ID_PARAM)
-	if webhookId == "" || webhookId == "/" {
-		webhookId = UNNAMED_WEBHOOK_ID
-	} else {
-		webhookId = webhookId[1:]
+func BuildEvent(c *gin.Context, payload gjson.Result) (event.SelfDescribingPayload, error) {
+	e := event.SelfDescribingPayload{
+		Schema: ARBITRARY_WEBHOOK_SCHEMA,
+		Data:   payload.Value().(map[string]interface{}),
 	}
-	event := WebhookEvent{
-		Id:      webhookId,
-		Payload: payload.Value().(map[string]interface{}),
-	}
-	return event, nil
+	return e, nil
 }

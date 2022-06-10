@@ -31,7 +31,6 @@ module.exports = function (context) {
                 appId: '${appId}',
                 withCredentials: ${withCredentials}
             });
-            snowplow('trackPageView');
             `
           },
         ],
