@@ -10,7 +10,15 @@ type DoNotTrack struct {
 }
 
 type Anonymize struct {
-	DeviceIp        bool `json:"deviceIp"`
-	DeviceUseragent bool `json:"deviceUseragent"`
-	UserId          bool `json:"userId"`
+	Device `json:"device"`
+	User   `json:"user"`
+}
+
+type Device struct {
+	Ip        bool `json:"ip"`
+	Useragent bool `json:"useragent"`
+}
+
+type User struct {
+	Id bool `json:"id"`
 }

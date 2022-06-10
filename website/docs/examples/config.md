@@ -61,9 +61,6 @@ inputs:
     getPath: /plw/g
     postPath: /plw/p
     redirectPath: /plw/r
-    anonymize:
-      ip: false
-      userId: false
   cloudevents:
     enabled: true
     path: /ce/p
@@ -154,6 +151,14 @@ squawkBox:
   cloudeventsPath: /sqwk/ce
   snowplowPath: /sqwk/sp
   genericPath: /sqwk/gen
+
+privacy:
+  anonymize:
+    device:
+      ip: false
+      useragent: false
+    user:
+      id: false
 
 tele:
   enabled: true

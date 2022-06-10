@@ -37,16 +37,12 @@ const config = {
         docs: {
           routeBasePath: '/',
         },
-        // blog: {
-        //   showReadingTime: true,
-        //   // Please change this to your repo.
-        //   // Remove this to remove the "edit this page" links.
-        //   editUrl:
-        //     'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-        // },
-        // theme: {
-        //   customCss: require.resolve('./src/css/custom.css'),
-        // },
+        blog: {
+          showReadingTime: true
+        },
+        theme: {
+          customCss: require.resolve('./src/css/custom.css'),
+        },
       }),
     ],
   ],
@@ -59,7 +55,6 @@ const config = {
         logo: {
           alt: 'Honeypot',
           src: 'img/bee2.svg',
-          // src: 'img/honeycomb.svg',
         },
         items: [
           {
@@ -117,6 +112,11 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
+      snowplow: {
+        collector: 'tele.silverton.io',
+        appId: 'honeypot-docs',
+        withCredentials: false
+      }
     }),
 };
 
