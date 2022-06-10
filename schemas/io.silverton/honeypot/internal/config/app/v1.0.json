@@ -359,23 +359,7 @@
                             "type": "string",
                             "default": "/plw/r",
                             "description": "The path by which to process redirect-based events"
-                        },
-                        "anonymize": {
-                            "type": "object",
-                            "description": "Snowplow anonymization config",
-                            "properties": {
-                                "ip": {
-                                    "type": "boolean",
-                                    "default": "false",
-                                    "description": "Whether or not to hash the ip address of incoming snowplow events"
-                                },
-                                "userId": {
-                                    "type": "boolean",
-                                    "default": "false",
-                                    "description": "Whether or not to hash the userId of incoming snowplow events"
-                                }
-                            }
-                        }
+                    }
                     },
                     "additionalProperties": false,
                     "required": [
@@ -384,8 +368,7 @@
                         "openRedirectsEnabled",
                         "getPath",
                         "postPath",
-                        "redirectPath",
-                        "anonymize"
+                        "redirectPath"
                     ]
                 },
                 "cloudevents": {
@@ -1606,6 +1589,63 @@
             "required": [
                 "enabled"
             ]
+        },
+        "privacy": {
+            "type": "object",
+            "description": "Privacy configuration",
+            "properties": {
+                "anonymize": {
+                    "type": "object",
+                    "description": "Envelope anonymization configuration",
+                    "properties": {
+                        "device": {
+                            "type": "object",
+                            "description": "Whether or not to anonymize various device fields",
+                            "properties": {
+                                "ip": {
+                                    "type": "boolean",
+                                    "description": "Whether to anonymize the device ip address for all events",
+                                    "default": "false"
+                                },
+                                "useragent": {
+                                    "type": "boolean",
+                                    "description": "Whether to anonymize the device useragent for all events",
+                                    "default": "false"
+                                }
+                            },
+                            "required": ["ip", "useragent"],
+                            "additionalProperties": false
+                        },
+                        "user": {
+                            "type": "object",
+                            "description": "Whether or not to anonymize various user fields",
+                            "properties": {
+                                "id": {
+                                    "type": "boolean",
+                                    "description": "Whether to anonymize the user id for all events",
+                                    "default": "false"
+                                }
+                            },
+                            "required": ["id"],
+                            "additionalProperties": false
+                        }
+                    },
+                    "required": ["device", "user"]
+                },
+                "doNotTrack": {
+                    "type": "object",
+                    "description": "Do not track configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean" ,
+                            "description": "Whether to respect do not track",
+                            "default": "false"
+                        }
+                    }
+                }
+            },
+            "required": ["anonymize"],
+            "additionalProperties": false
         }
     },
     "additionalProperties": false,
@@ -1617,6 +1657,7 @@
         "schemaCache",
         "sinks",
         "squawkBox",
-        "tele"
+        "tele",
+        "privacy"
     ]
 }

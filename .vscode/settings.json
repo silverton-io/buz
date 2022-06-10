@@ -1,5 +1,5 @@
 {
     "yaml.schemas": {
-        "schemas/io.silverton/honeypot/config/app/v1.0.json": "/*conf*.yml"
+        "http://registry.silverton.io/io.silverton/honeypot/internal/config/app/v1.0.json": "/*conf*.yml"
     }
 }

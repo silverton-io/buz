@@ -1,6 +1,6 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
-
+const path = require('path');
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
@@ -18,7 +18,9 @@ const config = {
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
   staticDirectories: ['static'],
-
+  plugins: [
+    path.resolve(__dirname, 'plugins', 'snowplow')
+  ],
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
   // to replace "en" with "zh-Hans".
@@ -35,16 +37,12 @@ const config = {
         docs: {
           routeBasePath: '/',
         },
-        // blog: {
-        //   showReadingTime: true,
-        //   // Please change this to your repo.
-        //   // Remove this to remove the "edit this page" links.
-        //   editUrl:
-        //     'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-        // },
-        // theme: {
-        //   customCss: require.resolve('./src/css/custom.css'),
-        // },
+        blog: {
+          showReadingTime: true
+        },
+        theme: {
+          customCss: require.resolve('./src/css/custom.css'),
+        },
       }),
     ],
   ],
@@ -56,8 +54,7 @@ const config = {
         title: 'Honeypot',
         logo: {
           alt: 'Honeypot',
-          src: 'img/hive.svg',
-          // src: 'img/honeycomb.svg',
+          src: 'img/bee2.svg',
         },
         items: [
           {
@@ -115,6 +112,11 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
+      snowplow: {
+        collector: 'tele.silverton.io',
+        appId: 'honeypot-docs',
+        withCredentials: false
+      }
     }),
 };
 

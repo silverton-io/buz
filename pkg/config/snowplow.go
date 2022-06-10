@@ -1,10 +1,5 @@
 package config
 
-type Anonymize struct {
-	Ip     bool `json:"ip"`
-	UserId bool `json:"userId"`
-}
-
 type Snowplow struct {
 	Enabled               bool   `json:"enabled"`
 	StandardRoutesEnabled bool   `json:"standardRoutesEnabled"`
@@ -12,5 +7,4 @@ type Snowplow struct {
 	GetPath               string `json:"getPath"`
 	PostPath              string `json:"postPath"`
 	RedirectPath          string `json:"redirectPath"`
-	Anonymize             `json:"anonymize"`
 }
