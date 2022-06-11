@@ -51,32 +51,32 @@ func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent, m *meta.Col
 		Idx: e.DomainSessionIdx,
 	}
 	// Page
-	n.Page.Page.Url = *e.PageUrl
-	n.Page.Page.Title = e.PageTitle
-	n.Page.Page.Scheme = *e.PageUrlScheme
-	n.Page.Page.Host = *e.PageUrlHost
-	n.Page.Page.Port = *e.PageUrlPort
-	n.Page.Page.Path = *e.PageUrlPath
-	n.Page.Page.Query = e.PageUrlQuery
-	n.Page.Page.Fragment = e.PageUrlFragment
-	n.Page.Page.Medium = e.MktMedium
-	n.Page.Page.Source = e.MktMedium
-	n.Page.Page.Term = e.MktTerm
-	n.Page.Page.Content = e.MktContent
-	n.Page.Page.Campaign = e.MktCampaign
+	n.Web.Page.Url = *e.PageUrl
+	n.Web.Page.Title = e.PageTitle
+	n.Web.Page.Scheme = *e.PageUrlScheme
+	n.Web.Page.Host = *e.PageUrlHost
+	n.Web.Page.Port = *e.PageUrlPort
+	n.Web.Page.Path = *e.PageUrlPath
+	n.Web.Page.Query = e.PageUrlQuery
+	n.Web.Page.Fragment = e.PageUrlFragment
+	n.Web.Page.Medium = e.MktMedium
+	n.Web.Page.Source = e.MktMedium
+	n.Web.Page.Term = e.MktTerm
+	n.Web.Page.Content = e.MktContent
+	n.Web.Page.Campaign = e.MktCampaign
 	// Page Referrer
-	n.Page.Referrer.Url = *e.PageReferrer
-	n.Page.Referrer.Scheme = *e.RefrUrlScheme
-	n.Page.Referrer.Host = *e.RefrUrlHost
-	n.Page.Referrer.Port = *e.RefrUrlPort
-	n.Page.Referrer.Path = *e.RefrUrlPath
-	n.Page.Referrer.Query = e.RefrUrlQuery
-	n.Page.Referrer.Fragment = e.RefrUrlFragment
-	n.Page.Referrer.Medium = e.RefrMedium
-	n.Page.Referrer.Source = e.RefrSource
-	n.Page.Referrer.Term = e.RefrTerm
-	n.Page.Referrer.Content = e.RefrContent
-	n.Page.Referrer.Campaign = e.RefrCampaign
+	n.Web.Referrer.Url = *e.PageReferrer
+	n.Web.Referrer.Scheme = *e.RefrUrlScheme
+	n.Web.Referrer.Host = *e.RefrUrlHost
+	n.Web.Referrer.Port = *e.RefrUrlPort
+	n.Web.Referrer.Path = *e.RefrUrlPath
+	n.Web.Referrer.Query = e.RefrUrlQuery
+	n.Web.Referrer.Fragment = e.RefrUrlFragment
+	n.Web.Referrer.Medium = e.RefrMedium
+	n.Web.Referrer.Source = e.RefrSource
+	n.Web.Referrer.Term = e.RefrTerm
+	n.Web.Referrer.Content = e.RefrContent
+	n.Web.Referrer.Campaign = e.RefrCampaign
 	// Contexts
 	n.Contexts = *e.Contexts
 	n.Payload = e.SelfDescribingEvent

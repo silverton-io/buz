@@ -258,7 +258,7 @@
                 }
             }
         },
-        "page": {
+        "web": {
             "type": "object",
             "description": "Page and referrer details",
             "properties": {

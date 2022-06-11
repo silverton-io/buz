@@ -38,7 +38,7 @@ func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
 		},
 		User:       User{},
 		Session:    Session{},
-		Page:       Page{},
+		Web:        Web{},
 		Validation: Validation{},
 		Contexts:   event.Contexts{},
 	}
