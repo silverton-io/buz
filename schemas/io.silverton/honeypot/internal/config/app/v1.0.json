@@ -936,7 +936,8 @@
                             "clickhouse",
                             "timescale",
                             "nats",
-                            "indicative"
+                            "indicative",
+                            "amplitude"
                         ]
                     },
                     "deliveryRequired": {
@@ -1252,6 +1253,17 @@
                         "type": "string",
                         "description": "The Indicative API key",
                         "default": "YOUR_KEY_HERE"
+                    },
+                    "amplitudeApiKey": {
+                        "type": "string",
+                        "description": "The Indicative API key",
+                        "default": "YOUR_KEY_HERE"
+                    },
+                    "amplitudeRegion": {
+                        "type": "string",
+                        "description": "The Amplitude region to send events",
+                        "default": "standard",
+                        "enum": ["standard", "eu"]
                     }
                 },
                 "additionalProperties": false,
@@ -1535,6 +1547,17 @@
                         },
                         "required": [
                             "indicativeApiKey"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "amplitude"
+                            }
+                        },
+                        "required": [
+                            "amplitudeApiKey",
+                            "amplitudeRegion"
                         ]
                     }
                 ]

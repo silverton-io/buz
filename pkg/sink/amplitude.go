@@ -5,14 +5,19 @@ import (
 	"net/url"
 
 	"github.com/google/uuid"
+	"github.com/jeremywohl/flatten/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/request"
 )
 
-const AMPLITUDE_NA_ENDPOINT string = "https://api2.amplitude.com/2/httpapi"
-const AMPLITUDE_EU_ENDPOINT string = "https://api.eu.amplitude.com/2/httpapi"
+const (
+	AMPLITUDE_STANDARD_ENDPOINT string = "https://api2.amplitude.com/2/httpapi"
+	AMPLITUDE_EU_ENDPOINT       string = "https://api.eu.amplitude.com/2/httpapi"
+	AMPLITUDE_STANDARD          string = "standard"
+	AMPLITUDE_EU                string = "eu"
+)
 
 type amplitudeEvent struct {
 	UserId             string                 `json:"user_id"`
@@ -90,7 +95,13 @@ func (s *AmplitudeSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("initializing indicative sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	endpoint, err := url.Parse(AMPLITUDE_NA_ENDPOINT)
+	var e string
+	if conf.AmplitudeRegion == AMPLITUDE_EU {
+		e = AMPLITUDE_EU_ENDPOINT
+	} else {
+		e = AMPLITUDE_STANDARD_ENDPOINT
+	}
+	endpoint, err := url.Parse(e)
 	if err != nil {
 		return err
 	}
@@ -101,12 +112,17 @@ func (s *AmplitudeSink) Initialize(conf config.Sink) error {
 func (s *AmplitudeSink) batchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
 	var amplitudeEvents []amplitudeEvent
 	for _, e := range envelopes {
-		payload, _ := e.Payload.AsMap()
+		mappedEnvelope, _ := e.AsMap()
+		flattenedEnvelope, err := flatten.Flatten(mappedEnvelope, "", flatten.DotStyle)
+		if err != nil {
+			log.Error().Err(err).Msg("could not flatten payload")
+			return err
+		}
 		evnt := amplitudeEvent{
 			DeviceId:        *e.Device.Nid,
 			EventType:       e.EventMeta.Namespace,
 			Time:            e.Pipeline.Source.GeneratedTstamp.Unix(),
-			EventProperties: payload,
+			EventProperties: flattenedEnvelope,
 			// UserProperties:  e.User,
 			// Groups:
 			// AppVersion: *e.Pipeline.Source.Version,

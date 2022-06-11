@@ -83,4 +83,5 @@ type Sink struct {
 	IndicativeApiKey string `json:"-"`
 	// Amplitude
 	AmplitudeApiKey string `json:"-"`
+	AmplitudeRegion string `json:"amplitudeRegion"`
 }

@@ -22,7 +22,7 @@ middleware:
     limit: 10
   cookie:
     enabled: true
-    name: nuid
+    name: sp-nuid
     secure: false
     ttlDays: 365
     domain: localhost
