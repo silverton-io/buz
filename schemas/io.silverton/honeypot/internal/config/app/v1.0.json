@@ -1256,7 +1256,7 @@
                     },
                     "amplitudeApiKey": {
                         "type": "string",
-                        "description": "The Indicative API key",
+                        "description": "The Amplitude API key",
                         "default": "YOUR_KEY_HERE"
                     },
                     "amplitudeRegion": {
