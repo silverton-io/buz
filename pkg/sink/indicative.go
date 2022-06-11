@@ -2,16 +2,14 @@ package sink
 
 import (
 	"context"
-	"io"
 	"net/url"
-	"time"
 
 	"github.com/google/uuid"
+	"github.com/jeremywohl/flatten/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/envelope"
 	"github.com/silverton-io/honeypot/pkg/request"
-	"github.com/silverton-io/honeypot/pkg/util"
 )
 
 const INDICATIVE_BATCH_ENDPOINT string = "https://api.indicative.com/service/event/batch"
@@ -20,7 +18,7 @@ type indicativeEvent struct {
 	EventName     string                 `json:"eventName"`
 	EventUniqueId string                 `json:"eventUniqueId"`
 	Properties    map[string]interface{} `json:"properties"`
-	EventTime     time.Time              `json:"eventTime"`
+	EventTime     int64                  `json:"eventTime"`
 }
 
 type indicativeEventBatch struct {
@@ -72,11 +70,15 @@ func (s *IndicativeSink) batchPublish(ctx context.Context, envelopes []envelope.
 			log.Error().Err(err).Msg("could not coerce envelope to map")
 			return err
 		}
+		flattenedPropertyMap, err := flatten.Flatten(propertyMap, "", flatten.UnderscoreStyle) // NOTE! Indicative does not allow nested properties.
+		if err != nil {
+			log.Error().Err(err).Msg("could not flatten properties")
+		}
 		evnt := indicativeEvent{
 			EventName:     e.EventMeta.Namespace,
 			EventUniqueId: e.EventMeta.Uuid.String(),
-			Properties:    propertyMap,
-			EventTime:     e.Source.GeneratedTstamp,
+			Properties:    flattenedPropertyMap,
+			EventTime:     e.Source.GeneratedTstamp.Unix(),
 		}
 		indicativeEvents = append(indicativeEvents, evnt)
 	}
@@ -84,11 +86,7 @@ func (s *IndicativeSink) batchPublish(ctx context.Context, envelopes []envelope.
 		ApiKey: s.apiKey,
 		Events: indicativeEvents,
 	}
-	resp, err := request.PostPayload(s.endpoint, payload)
-	util.Pprint(resp.StatusCode)
-	b, _ := io.ReadAll(resp.Body)
-
-	util.Pprint(string(b))
+	_, err := request.PostPayload(s.endpoint, payload)
 	if err != nil {
 		return err
 	}

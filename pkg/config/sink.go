@@ -80,5 +80,7 @@ type Sink struct {
 	ValidCollection   string   `json:"validCollection,omitempty"`
 	InvalidCollection string   `json:"invalidCollection,omitempty"`
 	// Indicative
-	IndicativeApiKey string `json:"indicativeApiKey,omitempty"`
+	IndicativeApiKey string `json:"-"`
+	// Amplitude
+	AmplitudeApiKey string `json:"-"`
 }
