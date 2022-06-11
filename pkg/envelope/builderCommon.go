@@ -5,12 +5,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/silverton-io/honeypot/pkg/constants"
 	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/meta"
 )
 
 func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
-	nid := c.GetString("identity")
+	nid := c.GetString(constants.IDENTITY)
 	envelope := Envelope{
 		EventMeta: EventMeta{
 			Uuid:      uuid.New(),

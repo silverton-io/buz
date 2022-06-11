@@ -17,6 +17,7 @@ const (
 	STARTUP_1_0      string = "io.silverton/honeypot/internal/tele/startup/v1.0.json"
 	HEARTBEAT_1_0    string = "io.silverton/honeypot/internal/tele/beat/v1.0.json"
 	SHUTDOWN_1_0     string = "io.silverton/honeypot/internal/tele/shutdown/v1.0.json"
+	HEARTBEAT_MS     int    = 1500
 )
 
 type startup struct {
@@ -54,7 +55,10 @@ func heartbeat(t time.Ticker, m *meta.CollectorMeta) {
 			},
 		}
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-		request.PostEvent(*endpoint, heartbeatPayload)
+		_, err := request.PostEvent(*endpoint, heartbeatPayload)
+		if err != nil {
+			log.Error().Err(err).Msg("could not send heartbeat")
+		}
 	}
 }
 
@@ -95,7 +99,7 @@ func Metry(c *config.Config, m *meta.CollectorMeta) {
 		}
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
 		request.PostEvent(*endpoint, startupPayload)
-		ticker := time.NewTicker(time.Duration(15000) * time.Millisecond)
+		ticker := time.NewTicker(time.Duration(HEARTBEAT_MS) * time.Millisecond)
 		go heartbeat(*ticker, m)
 	}
 }
