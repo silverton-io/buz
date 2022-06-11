@@ -16,9 +16,12 @@ func BuildPixelEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta
 	if err != nil {
 		log.Error().Err(err).Msg("could not build pixel event")
 	}
+	context := buildContextFromRequest(c)
 	n := buildCommonEnvelope(c, m)
 	// Event Meta
 	n.EventMeta.Protocol = protocol.PIXEL
+	// Contexts
+	n.Contexts = context
 	// Payload
 	n.Payload = pEvent
 	envelopes = append(envelopes, n)
