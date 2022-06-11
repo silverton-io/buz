@@ -71,7 +71,7 @@ func (s *IndicativeSink) batchPublish(ctx context.Context, envelopes []envelope.
 			log.Error().Err(err).Msg("could not coerce envelope to map")
 			return err
 		}
-		flattenedPropertyMap, err := flatten.Flatten(propertyMap, "", flatten.DotStyle) // NOTE! Indicative does not allow nested properties.
+		flattenedPropertyMap, err := flatten.Flatten(propertyMap, "", flatten.DotStyle)
 		if err != nil {
 			log.Error().Err(err).Msg("could not flatten properties")
 			return err
@@ -107,5 +107,5 @@ func (s *IndicativeSink) BatchPublishInvalid(ctx context.Context, envelopes []en
 
 func (s *IndicativeSink) Close() {
 	log.Debug().Msg("closing indicative sink")
-	// no-opo
+	// no-op
 }
