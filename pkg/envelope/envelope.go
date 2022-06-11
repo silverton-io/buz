@@ -30,6 +30,16 @@ type Envelope struct {
 	Payload    event.Event    `json:"payload" gorm:"type:json"`
 }
 
+func (e *Envelope) AsMap() (map[string]interface{}, error) {
+	var m map[string]interface{}
+	marshaledEnvelope, err := json.Marshal(e)
+	if err != nil {
+		return nil, err
+	}
+	json.Unmarshal(marshaledEnvelope, &m)
+	return m, nil
+}
+
 func (e *Envelope) AsByte() ([]byte, error) {
 	eBytes, err := json.Marshal(e)
 	if err != nil {

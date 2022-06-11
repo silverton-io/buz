@@ -37,8 +37,10 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 			envelope.Validation.IsValid = isValid
 			envelope.Validation.Error = &validationError
 			m := getMetadataFromSchema(schemaContents)
+			if m.Namespace != "" {
+				envelope.EventMeta.Namespace = m.Namespace
+			}
 			envelope.EventMeta.Vendor = m.Vendor
-			envelope.EventMeta.Namespace = m.Namespace
 			envelope.EventMeta.Version = m.Version
 			envelope.EventMeta.Format = m.Format
 			envelope.EventMeta.Path = m.Path

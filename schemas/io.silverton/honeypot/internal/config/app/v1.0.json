@@ -935,7 +935,8 @@
                             "materialize",
                             "clickhouse",
                             "timescale",
-                            "nats"
+                            "nats",
+                            "indicative"
                         ]
                     },
                     "deliveryRequired": {
@@ -1246,6 +1247,11 @@
                         "type": "string",
                         "description": "The NATS password",
                         "default": ""
+                    },
+                    "indicativeApiKey": {
+                        "type": "string",
+                        "description": "The Indicative API key",
+                        "default": "YOUR_KEY_HERE"
                     }
                 },
                 "additionalProperties": false,
@@ -1519,6 +1525,16 @@
                             "natsPass",
                             "validSubject",
                             "invalidSubject"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "indicative"
+                            }
+                        },
+                        "required": [
+                            "indicativeApiKey"
                         ]
                     }
                 ]
