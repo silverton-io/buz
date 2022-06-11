@@ -3,6 +3,7 @@ package sink
 import (
 	"context"
 	"net/url"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jeremywohl/flatten/v2"
@@ -18,7 +19,7 @@ type indicativeEvent struct {
 	EventName     string                 `json:"eventName"`
 	EventUniqueId string                 `json:"eventUniqueId"`
 	Properties    map[string]interface{} `json:"properties"`
-	EventTime     int64                  `json:"eventTime"`
+	EventTime     time.Time              `json:"eventTime"`
 }
 
 type indicativeEventBatch struct {
@@ -78,7 +79,7 @@ func (s *IndicativeSink) batchPublish(ctx context.Context, envelopes []envelope.
 			EventName:     e.EventMeta.Namespace,
 			EventUniqueId: e.EventMeta.Uuid.String(),
 			Properties:    flattenedPropertyMap,
-			EventTime:     e.Source.GeneratedTstamp.Unix(),
+			EventTime:     e.Source.GeneratedTstamp,
 		}
 		indicativeEvents = append(indicativeEvents, evnt)
 	}
