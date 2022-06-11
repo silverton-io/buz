@@ -15,7 +15,7 @@ func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
 	envelope := Envelope{
 		EventMeta: EventMeta{
 			Uuid:      uuid.New(),
-			Namespace: "unknown",
+			Namespace: constants.UNKNOWN,
 		},
 		Pipeline: Pipeline{
 			Source: Source{
