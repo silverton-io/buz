@@ -11,9 +11,9 @@ const ARBITRARY_WEBHOOK_SCHEMA = "io.silverton/honeypot/hook/arbitrary/v1.0.json
 
 func BuildEvent(c *gin.Context, payload gjson.Result) (event.SelfDescribingPayload, error) {
 	schemaName := util.GetSchemaNameFromRequest(c, ARBITRARY_WEBHOOK_SCHEMA)
-	p := event.SelfDescribingPayload{
+	sdp := event.SelfDescribingPayload{
 		Schema: schemaName,
 		Data:   payload.Value().(map[string]interface{}),
 	}
-	return p, nil
+	return sdp, nil
 }
