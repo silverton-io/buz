@@ -5,7 +5,7 @@ import (
 	"github.com/silverton-io/honeypot/pkg/util"
 )
 
-const HTTP_HEADERS_CONTEXT string = "io.silverton/honeypot/internal/context/httpHeaders/v1.0.json"
+const HTTP_HEADERS_CONTEXT string = "io.silverton/honeypot/internal/contexts/httpHeaders/v1.0.json"
 
 func buildContextsFromRequest(c *gin.Context) map[string]interface{} {
 	headers := util.HttpHeadersToMap(c)
