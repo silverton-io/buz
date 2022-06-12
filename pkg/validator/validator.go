@@ -8,8 +8,8 @@ import (
 )
 
 func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, validationError envelope.ValidationError, schema []byte) {
-	// FIXME- Short-circuit if the event is an unknown event
 	schemaName := e.SchemaName()
+	// FIXME- Short-circuit if the event is an unknown event
 	if *schemaName == "" {
 		validationError := envelope.ValidationError{
 			ErrorType:       &NoSchemaAssociated.Type,
