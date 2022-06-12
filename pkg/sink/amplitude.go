@@ -24,36 +24,36 @@ type amplitudeEvent struct {
 	DeviceId           string                 `json:"device_id"`
 	EventType          string                 `json:"event_type"`
 	Time               int64                  `json:"time"`
-	EventProperties    map[string]interface{} `json:"event_properties"`
+	EventProperties    map[string]interface{} `json:"event_properties,omitempty"`
 	UserProperties     map[string]interface{} `json:"user_properties"`
-	Groups             map[string]interface{} `json:"groups"`
-	AppVersion         string                 `json:"app_version"`
-	Platform           string                 `json:"platform"`
-	OsName             string                 `json:"os_name"`
-	OsVersion          string                 `json:"os_version"`
-	DeviceBrand        string                 `json:"device_brand"`
-	DeviceManufacturer string                 `json:"device_manufacturer"`
-	DeviceModel        string                 `json:"device_model"`
-	Carrier            string                 `json:"carrier"`
-	Country            string                 `json:"country"`
-	Region             string                 `json:"region"`
-	City               string                 `json:"city"`
-	Dma                string                 `json:"dma"`
-	Language           string                 `json:"language"`
-	Price              float32                `json:"price"`
-	Quantity           int                    `json:"quantity"`
-	Revenue            float32                `json:"revenue"`
-	ProductId          string                 `json:"productId"`
-	RevenueType        string                 `json:"revenueType"`
-	LocationLat        float32                `json:"location_lat"`
-	LocationLng        float32                `json:"location_lng"`
-	Ip                 string                 `json:"ip"`
-	Idfa               string                 `json:"idfa"`
-	Idfv               string                 `json:"idfv"`
-	Adid               string                 `json:"adid"`
-	AndroidId          string                 `json:"android_id"`
-	EventId            int                    `json:"event_id"`
-	SessionId          uint32                 `json:"session_id"`
+	Groups             map[string]interface{} `json:"groups,omitempty"`
+	AppVersion         *string                `json:"app_version,omitempty"`
+	Platform           *string                `json:"platform,omitempty"`
+	OsName             *string                `json:"os_name,omitempty"`
+	OsVersion          *string                `json:"os_version,omitempty"`
+	DeviceBrand        *string                `json:"device_brand,omitempty"`
+	DeviceManufacturer *string                `json:"device_manufacturer,omitempty"`
+	DeviceModel        *string                `json:"device_model,omitempty"`
+	Carrier            *string                `json:"carrier,omitempty"`
+	Country            *string                `json:"country,omitempty"`
+	Region             *string                `json:"region,omitempty"`
+	City               *string                `json:"city,omitempty"`
+	Dma                *string                `json:"dma,omitempty"`
+	Language           *string                `json:"language,omitempty"`
+	Price              *float32               `json:"price,omitempty"`
+	Quantity           *int                   `json:"quantity,omitempty"`
+	Revenue            *float32               `json:"revenue,omitempty"`
+	ProductId          *string                `json:"productId,omitempty"`
+	RevenueType        *string                `json:"revenueType,omitempty"`
+	LocationLat        *float32               `json:"location_lat,omitempty"`
+	LocationLng        *float32               `json:"location_lng,omitempty"`
+	Ip                 string                 `json:"ip,omitempty"`
+	Idfa               *string                `json:"idfa,omitempty"`
+	Idfv               *string                `json:"idfv,omitempty"`
+	Adid               *string                `json:"adid,omitempty"`
+	AndroidId          *string                `json:"android_id,omitempty"`
+	EventId            int                    `json:"event_id,omitempty"`
+	SessionId          *uint32                `json:"session_id,omitempty"`
 	InsertId           string                 `json:"insert_id"`
 	// TODO
 	// plan
@@ -119,40 +119,11 @@ func (s *AmplitudeSink) batchPublish(ctx context.Context, envelopes []envelope.E
 			return err
 		}
 		evnt := amplitudeEvent{
+			Time:            e.Pipeline.Source.GeneratedTstamp.Unix(),
 			DeviceId:        *e.Device.Nid,
 			EventType:       e.EventMeta.Namespace,
-			Time:            e.Pipeline.Source.GeneratedTstamp.Unix(),
 			EventProperties: flattenedEnvelope,
-			// UserProperties:  e.User,
-			// Groups:
-			// AppVersion: *e.Pipeline.Source.Version,
-			// Platform:   *e.Pipeline.Source.Name, // FIXME
-			// OsName:     *e.Device.Os.Name,
-			// OsVersion:  *e.Device.Os.Version,
-			// DeviceBrand: e.Device.,
-			// DeviceManufacturer: ,
-			// DeviceModel: ,
-			// Carrier: ,
-			// Country: ,
-			// Region: ,
-			// City: ,
-			// Dma: ,
-			// Language: ,
-			// Price: ,
-			// Quantity: ,
-			// Revenue: ,
-			// ProductId: ,
-			// RevenueType: ,
-			// LocationLat: ,
-			// LocationLng: ,
-			// Ip:        e.Device.Ip,
-			// Idfa:      *e.Device.Idfa,
-			// Idfv:      *e.Device.Idfv,
-			// Adid:      *e.Device.AdId,
-			// AndroidId: *e.Device.AndroidId,
-			// EventId: ,
-			// SessionId: ,
-			InsertId: e.EventMeta.Uuid.String(),
+			InsertId:        e.EventMeta.Uuid.String(),
 		}
 		if e.User.Id != nil {
 			evnt.UserId = *e.User.Id

@@ -4,7 +4,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/cache"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/validator"
 	"github.com/tidwall/gjson"
 )
@@ -27,22 +26,17 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 	var e []envelope.Envelope
 	for _, envelope := range envelopes {
 		log.Debug().Msg("annotating event")
-		switch envelope.EventMeta.Protocol {
-		case protocol.RELAY:
-			e = append(e, envelope)
-		default:
-			isValid, validationError, schemaContents := validator.ValidateEnvelopePayload(envelope, cache)
-			envelope.Validation.IsValid = isValid
-			envelope.Validation.Error = &validationError
-			m := getMetadataFromSchema(schemaContents)
-			if m.Namespace != "" {
-				envelope.EventMeta.Namespace = m.Namespace
-			}
-			envelope.EventMeta.Vendor = m.Vendor
-			envelope.EventMeta.Version = m.Version
-			envelope.EventMeta.Format = m.Format
-			e = append(e, envelope)
+		isValid, validationError, schemaContents := validator.ValidateEnvelopePayload(envelope, cache)
+		envelope.Validation.IsValid = isValid
+		envelope.Validation.Error = &validationError
+		m := getMetadataFromSchema(schemaContents)
+		if m.Namespace != "" {
+			envelope.EventMeta.Namespace = m.Namespace
 		}
+		envelope.EventMeta.Vendor = m.Vendor
+		envelope.EventMeta.Version = m.Version
+		envelope.EventMeta.Format = m.Format
+		e = append(e, envelope)
 	}
 	return e
 }
