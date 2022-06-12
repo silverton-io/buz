@@ -495,27 +495,6 @@
                     },
                     "additionalProperties": false,
                     "required": ["enabled", "path"]
-                },
-                "relay": {
-                    "type": "object",
-                    "description": "Relay configuration",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean",
-                            "description": "Whether or not to enable the relay",
-                            "default": "true"
-                        },
-                        "path": {
-                            "type": "string",
-                            "description": "The relay route",
-                            "default": "/relay"
-                        }
-                    },
-                    "additionalProperties": false,
-                    "required": [
-                        "enabled",
-                        "path"
-                    ]
                 }
             },
             "additionalProperties": false,
@@ -524,8 +503,7 @@
                 "cloudevents",
                 "generic",
                 "webhook",
-                "pixel",
-                "relay"
+                "pixel"
             ]
         },
         "schemaCache": {
