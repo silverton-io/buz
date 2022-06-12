@@ -11,7 +11,6 @@ import (
 )
 
 func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
-	nid := c.GetString(constants.IDENTITY)
 	envelope := Envelope{
 		EventMeta: EventMeta{
 			Uuid:      uuid.New(),
@@ -32,7 +31,6 @@ func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
 			},
 		},
 		Device: Device{
-			Nid:       &nid,
 			Ip:        c.ClientIP(),
 			Useragent: c.Request.UserAgent(),
 		},

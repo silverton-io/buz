@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/constants"
 	"github.com/silverton-io/honeypot/pkg/meta"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/snowplow"
@@ -14,6 +15,7 @@ import (
 )
 
 func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent, m *meta.CollectorMeta) Envelope {
+	nid := c.GetString(constants.IDENTITY)
 	n := buildCommonEnvelope(c, m)
 	// Event Meta
 	n.EventMeta.Protocol = protocol.SNOWPLOW
@@ -22,7 +24,8 @@ func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent, m *meta.Col
 	n.Pipeline.Source.GeneratedTstamp = e.DvceCreatedTstamp
 	n.Pipeline.Source.SentTstamp = e.DvceSentTstamp
 	// Device
-	n.Device.Id = e.DomainUserid
+	n.Device.Id = *e.DomainUserid
+	n.Device.Nid = nid
 	n.Device.Os = Os{Timezone: e.OsTimezone}
 	n.Device.Browser = Browser{
 		Lang:           e.BrLang,

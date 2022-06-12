@@ -6,10 +6,10 @@ import (
 )
 
 type Device struct {
-	Ip                string  `json:"ip,omitempty"`
-	Useragent         string  `json:"useragent,omitempty"`
-	Id                *string `json:"id,omitempty"`
-	Nid               *string `json:"nid,omitempty"`
+	Ip                string  `json:"ip"`
+	Useragent         string  `json:"useragent"`
+	Id                string  `json:"id"`
+	Nid               string  `json:"nid"`
 	Idfa              *string `json:"idfa,omitempty"`      // [iOS]
 	Idfv              *string `json:"idfv,omitempty"`      // [iOS]
 	AdId              *string `json:"adId,omitempty"`      // [Android] Google play services advertising id
