@@ -15,13 +15,13 @@ func getMetadataFromSchema(schema []byte) envelope.EventMeta {
 	namespace := schemaContents.Get("self.namespace").String()
 	version := schemaContents.Get("self.version").String()
 	format := schemaContents.Get("self.format").String()
-	path := schemaContents.Get("title").String()
+	title := schemaContents.Get("title").String()
 	return envelope.EventMeta{
 		Vendor:    vendor,
 		Namespace: namespace,
 		Version:   version,
 		Format:    format,
-		Path:      path,
+		Schema:    title,
 	}
 }
 
@@ -43,7 +43,7 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 			envelope.EventMeta.Vendor = m.Vendor
 			envelope.EventMeta.Version = m.Version
 			envelope.EventMeta.Format = m.Format
-			envelope.EventMeta.Path = m.Path
+			envelope.EventMeta.Schema = m.Schema
 			e = append(e, envelope)
 		}
 	}

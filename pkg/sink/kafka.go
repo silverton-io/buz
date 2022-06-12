@@ -93,7 +93,7 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []
 			{Key: envelope.FORMAT, Value: []byte(e.EventMeta.Format)},
 		}
 		record := &kgo.Record{
-			Key:     []byte(e.EventMeta.Path), // FIXME! Add configurable partition assignment
+			Key:     []byte(e.EventMeta.Namespace),
 			Topic:   topic,
 			Value:   payload,
 			Headers: headers,

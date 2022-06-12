@@ -28,17 +28,17 @@ func (ps *ProtocolStats) Build() {
 }
 
 func (ps *ProtocolStats) IncrementValid(event *envelope.EventMeta, count int64) {
-	i := ps.Valid[event.Protocol][event.Path]
+	i := ps.Valid[event.Protocol][event.Namespace]
 	ps.vmu.Lock()
 	defer ps.vmu.Unlock()
-	ps.Valid[event.Protocol][event.Path] = i + count
+	ps.Valid[event.Protocol][event.Namespace] = i + count
 }
 
 func (ps *ProtocolStats) IncrementInvalid(event *envelope.EventMeta, count int64) {
-	i := ps.Invalid[event.Protocol][event.Path]
+	i := ps.Invalid[event.Protocol][event.Namespace]
 	ps.imu.Lock()
 	defer ps.imu.Unlock()
-	ps.Invalid[event.Protocol][event.Path] = i + count
+	ps.Invalid[event.Protocol][event.Namespace] = i + count
 }
 
 func BuildProtocolStats() *ProtocolStats {
