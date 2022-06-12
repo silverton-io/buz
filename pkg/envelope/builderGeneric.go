@@ -31,7 +31,7 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 		// Context
 		n.Contexts = genEvent.Contexts
 		// Payload
-		n.Payload = genEvent.Payload
+		n.Payload = genEvent.Payload.Data
 		envelopes = append(envelopes, n)
 	}
 	return envelopes

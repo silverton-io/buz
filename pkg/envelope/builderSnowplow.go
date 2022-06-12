@@ -80,7 +80,7 @@ func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent, m *meta.Col
 	n.Web.Referrer.Campaign = e.RefrCampaign
 	// Contexts
 	n.Contexts = *e.Contexts
-	n.Payload = e.SelfDescribingEvent
+	n.Payload = e.SelfDescribingEvent.Data
 	return n
 }
 

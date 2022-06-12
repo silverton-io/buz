@@ -32,7 +32,7 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 		// Contexts
 		n.Contexts = contexts
 		// Payload
-		n.Payload = sde
+		n.Payload = sde.Data
 		envelopes = append(envelopes, n)
 	}
 	return envelopes
