@@ -26,7 +26,7 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 	var e []envelope.Envelope
 	for _, envelope := range envelopes {
 		log.Debug().Msg("annotating event")
-		isValid, validationError, schemaContents := validator.ValidateEnvelopePayload(envelope, cache)
+		isValid, validationError, schemaContents := validator.ValidateEvent(envelope.Payload, cache)
 		envelope.Validation.IsValid = isValid
 		envelope.Validation.Error = &validationError
 		m := getMetadataFromSchema(schemaContents)
