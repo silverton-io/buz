@@ -4,13 +4,12 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/honeypot/pkg/cache"
 	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/event"
 )
 
-func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, validationError envelope.ValidationError, schema []byte) {
-	schemaName := e.SchemaName()
+func ValidateEnvelopePayload(e envelope.Envelope, cache *cache.SchemaCache) (isValid bool, validationError envelope.ValidationError, schema []byte) {
+	schemaName := e.EventMeta.Schema
 	// FIXME- Short-circuit if the event is an unknown event
-	if *schemaName == "" {
+	if schemaName == "" {
 		validationError := envelope.ValidationError{
 			ErrorType:       &NoSchemaAssociated.Type,
 			ErrorResolution: &NoSchemaAssociated.Resolution,
@@ -18,7 +17,7 @@ func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, valid
 		}
 		return false, validationError, nil
 	}
-	schemaExists, schemaContents := cache.Get(*schemaName)
+	schemaExists, schemaContents := cache.Get(schemaName)
 	if !schemaExists {
 		validationError := envelope.ValidationError{
 			ErrorType:       &NoSchemaInBackend.Type,
@@ -27,7 +26,7 @@ func ValidateEvent(e event.Event, cache *cache.SchemaCache) (isValid bool, valid
 		}
 		return false, validationError, nil
 	} else {
-		payload, err := e.PayloadAsByte()
+		payload, err := e.Payload.PayloadAsByte()
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not marshal payload")
 			validationError := envelope.ValidationError{

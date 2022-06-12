@@ -31,7 +31,7 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 		case protocol.RELAY:
 			e = append(e, envelope)
 		default:
-			isValid, validationError, schemaContents := validator.ValidateEvent(envelope.Payload, cache)
+			isValid, validationError, schemaContents := validator.ValidateEnvelopePayload(envelope, cache)
 			envelope.Validation.IsValid = isValid
 			envelope.Validation.Error = &validationError
 			m := getMetadataFromSchema(schemaContents)
