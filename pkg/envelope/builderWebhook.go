@@ -22,16 +22,17 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
 		n := buildCommonEnvelope(c, m)
 		contexts := buildContextsFromRequest(c)
-		whEvent, err := webhook.BuildEvent(c, e)
+		sde, err := webhook.BuildEvent(c, e)
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("could not build webhook event")
 		}
 		// Event Meta
 		n.EventMeta.Protocol = protocol.WEBHOOK
+		n.EventMeta.Schema = sde.Schema
 		// Contexts
 		n.Contexts = contexts
 		// Payload
-		n.Payload = whEvent
+		n.Payload = sde
 		envelopes = append(envelopes, n)
 	}
 	return envelopes

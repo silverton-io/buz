@@ -17,6 +17,7 @@ func buildSnowplowEnvelope(c *gin.Context, e snowplow.SnowplowEvent, m *meta.Col
 	n := buildCommonEnvelope(c, m)
 	// Event Meta
 	n.EventMeta.Protocol = protocol.SNOWPLOW
+	n.EventMeta.Schema = *e.SelfDescribingEvent.SchemaName()
 	// Pipeline
 	n.Pipeline.Source.GeneratedTstamp = e.DvceCreatedTstamp
 	n.Pipeline.Source.SentTstamp = e.DvceSentTstamp

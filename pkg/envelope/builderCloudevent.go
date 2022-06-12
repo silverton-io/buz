@@ -27,6 +27,7 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf *config.Config, m 
 		}
 		// Event Meta
 		n.EventMeta.Protocol = protocol.CLOUDEVENTS
+		n.EventMeta.Schema = cEvent.DataSchema
 		// Source
 		n.Pipeline.Source.GeneratedTstamp = cEvent.Time
 		n.Pipeline.Source.SentTstamp = cEvent.Time

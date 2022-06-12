@@ -27,6 +27,7 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 		}
 		// Event meta
 		n.EventMeta.Protocol = protocol.GENERIC
+		n.EventMeta.Schema = genEvent.Payload.Schema
 		// Context
 		n.Contexts = genEvent.Contexts
 		// Payload

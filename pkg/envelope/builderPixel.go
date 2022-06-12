@@ -12,7 +12,7 @@ import (
 // NOTE - one envelope per request
 func BuildPixelEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []Envelope {
 	var envelopes []Envelope
-	pEvent, err := pixel.BuildEvent(c)
+	sde, err := pixel.BuildEvent(c)
 	if err != nil {
 		log.Error().Err(err).Msg("could not build pixel event")
 	}
@@ -20,10 +20,11 @@ func BuildPixelEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta
 	n := buildCommonEnvelope(c, m)
 	// Event Meta
 	n.EventMeta.Protocol = protocol.PIXEL
+	n.EventMeta.Schema = sde.Schema
 	// Contexts
 	n.Contexts = contexts
 	// Payload
-	n.Payload = pEvent
+	n.Payload = sde
 	envelopes = append(envelopes, n)
 	return envelopes
 }
