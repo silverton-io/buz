@@ -23,11 +23,21 @@ type Envelope struct {
 	Device     `json:"device" gorm:"type:json"`
 	User       `json:"user" gorm:"type:json"`
 	Session    `json:"session" gorm:"type:json"`
-	Page       `json:"page" gorm:"type:json"`
+	Web        `json:"web" gorm:"type:json"`
 	Annotation `json:"annotation" gorm:"type:json"`
 	Validation `json:"validation" gorm:"type:json"`
 	Contexts   event.Contexts `json:"contexts" gorm:"type:json"`
-	Payload    event.Event    `json:"payload" gorm:"type:json"`
+	Payload    event.Payload  `json:"payload" gorm:"type:json"`
+}
+
+func (e *Envelope) AsMap() (map[string]interface{}, error) {
+	var m map[string]interface{}
+	marshaledEnvelope, err := json.Marshal(e)
+	if err != nil {
+		return nil, err
+	}
+	json.Unmarshal(marshaledEnvelope, &m)
+	return m, nil
 }
 
 func (e *Envelope) AsByte() ([]byte, error) {
@@ -45,11 +55,11 @@ type JsonbEnvelope struct {
 	Device     `json:"device" gorm:"type:jsonb"`
 	User       `json:"user" gorm:"type:jsonb"`
 	Session    `json:"session" gorm:"type:jsonb"`
-	Page       `json:"page" gorm:"type:jsonb"`
+	Web        `json:"web" gorm:"type:jsonb"`
 	Annotation `json:"annotation" gorm:"type:jsonb"`
 	Validation `json:"validation" gorm:"type:jsonb"`
 	Contexts   event.Contexts `json:"contexts" gorm:"type:jsonb"`
-	Payload    event.Event    `json:"payload" gorm:"type:jsonb"`
+	Payload    event.Payload  `json:"payload" gorm:"type:jsonb"`
 }
 
 type StringEnvelope struct {
@@ -59,9 +69,9 @@ type StringEnvelope struct {
 	Device     `json:"device" gorm:"type:string"`
 	User       `json:"user" gorm:"type:string"`
 	Session    `json:"session" gorm:"type:string"`
-	Page       `json:"page" gorm:"type:string"`
+	Web        `json:"web" gorm:"type:string"`
 	Annotation `json:"annotation" gorm:"type:string"`
 	Validation `json:"validation" gorm:"type:string"`
 	Contexts   event.Contexts `json:"contexts" gorm:"type:string"`
-	Payload    event.Event    `json:"payload" gorm:"type:string"`
+	Payload    event.Payload  `json:"payload" gorm:"type:string"`
 }

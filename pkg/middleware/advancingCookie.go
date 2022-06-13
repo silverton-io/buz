@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/honeypot/pkg/constants"
 )
 
 func AdvancingCookie(conf config.Cookie) gin.HandlerFunc {
@@ -20,10 +21,10 @@ func AdvancingCookie(conf config.Cookie) gin.HandlerFunc {
 				false,
 			)
 		} else {
-			identityCookieValue := uuid.New()
+			identityCookieValue = uuid.New().String()
 			c.SetCookie(
 				conf.Name,
-				identityCookieValue.String(),
+				identityCookieValue,
 				60*60*24*conf.TtlDays,
 				conf.Path,
 				conf.Domain,
@@ -31,7 +32,7 @@ func AdvancingCookie(conf config.Cookie) gin.HandlerFunc {
 				false,
 			)
 		}
-		c.Set("identity", identityCookieValue)
+		c.Set(constants.IDENTITY, identityCookieValue)
 		c.Next()
 	}
 }

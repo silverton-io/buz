@@ -4,8 +4,6 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"strings"
-
-	"github.com/silverton-io/honeypot/pkg/protocol"
 )
 
 //
@@ -31,10 +29,6 @@ type SelfDescribingPayload struct {
 func (e SelfDescribingPayload) SchemaName() *string {
 	name := stripColonSeparatedPrefix(e.Schema)
 	return &name
-}
-
-func (e SelfDescribingPayload) Protocol() string {
-	return protocol.SNOWPLOW
 }
 
 func (e SelfDescribingPayload) PayloadAsByte() ([]byte, error) {

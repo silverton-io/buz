@@ -4,8 +4,6 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"time"
-
-	"github.com/silverton-io/honeypot/pkg/protocol"
 )
 
 type CloudEvent struct { // https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/formats/cloudevents.json
@@ -23,10 +21,6 @@ type CloudEvent struct { // https://github.com/cloudevents/spec/blob/v1.0.2/clou
 
 func (e CloudEvent) SchemaName() *string {
 	return &e.DataSchema
-}
-
-func (e CloudEvent) Protocol() string {
-	return protocol.CLOUDEVENTS
 }
 
 func (e CloudEvent) PayloadAsByte() ([]byte, error) {

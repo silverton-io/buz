@@ -495,27 +495,6 @@
                     },
                     "additionalProperties": false,
                     "required": ["enabled", "path"]
-                },
-                "relay": {
-                    "type": "object",
-                    "description": "Relay configuration",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean",
-                            "description": "Whether or not to enable the relay",
-                            "default": "true"
-                        },
-                        "path": {
-                            "type": "string",
-                            "description": "The relay route",
-                            "default": "/relay"
-                        }
-                    },
-                    "additionalProperties": false,
-                    "required": [
-                        "enabled",
-                        "path"
-                    ]
                 }
             },
             "additionalProperties": false,
@@ -524,8 +503,7 @@
                 "cloudevents",
                 "generic",
                 "webhook",
-                "pixel",
-                "relay"
+                "pixel"
             ]
         },
         "schemaCache": {
@@ -935,7 +913,9 @@
                             "materialize",
                             "clickhouse",
                             "timescale",
-                            "nats"
+                            "nats",
+                            "indicative",
+                            "amplitude"
                         ]
                     },
                     "deliveryRequired": {
@@ -1246,6 +1226,22 @@
                         "type": "string",
                         "description": "The NATS password",
                         "default": ""
+                    },
+                    "indicativeApiKey": {
+                        "type": "string",
+                        "description": "The Indicative API key",
+                        "default": "YOUR_KEY_HERE"
+                    },
+                    "amplitudeApiKey": {
+                        "type": "string",
+                        "description": "The Amplitude API key",
+                        "default": "YOUR_KEY_HERE"
+                    },
+                    "amplitudeRegion": {
+                        "type": "string",
+                        "description": "The Amplitude region to send events",
+                        "default": "standard",
+                        "enum": ["standard", "eu"]
                     }
                 },
                 "additionalProperties": false,
@@ -1519,6 +1515,27 @@
                             "natsPass",
                             "validSubject",
                             "invalidSubject"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "indicative"
+                            }
+                        },
+                        "required": [
+                            "indicativeApiKey"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "amplitude"
+                            }
+                        },
+                        "required": [
+                            "amplitudeApiKey",
+                            "amplitudeRegion"
                         ]
                     }
                 ]

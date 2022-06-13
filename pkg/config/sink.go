@@ -79,4 +79,9 @@ type Sink struct {
 	MongoPass         string   `json:"-"`
 	ValidCollection   string   `json:"validCollection,omitempty"`
 	InvalidCollection string   `json:"invalidCollection,omitempty"`
+	// Indicative
+	IndicativeApiKey string `json:"-"`
+	// Amplitude
+	AmplitudeApiKey string `json:"-"`
+	AmplitudeRegion string `json:"amplitudeRegion"`
 }

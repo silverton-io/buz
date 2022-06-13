@@ -26,6 +26,8 @@ const (
 	PUBNUB           string = "pubnub"
 	NATS             string = "nats"
 	NATS_JETSTREAM   string = "nats-jetstream"
+	INDICATIVE       string = "indicative"
+	AMPLITUDE        string = "amplitude"
 )
 
 type Sink interface {
@@ -100,6 +102,12 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		return &sink, nil
 	case NATS:
 		sink := NatsSink{}
+		return &sink, nil
+	case INDICATIVE:
+		sink := IndicativeSink{}
+		return &sink, nil
+	case AMPLITUDE:
+		sink := AmplitudeSink{}
 		return &sink, nil
 	// case NATS_JETSTREAM: // FIXME - there's something weird with this - lots of timeouts. Will come back to it later.
 	// 	sink := NatsJetstreamSink{}

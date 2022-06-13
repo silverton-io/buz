@@ -14,7 +14,7 @@ type EventMeta struct {
 	Namespace string    `json:"namespace,omitempty"`
 	Version   string    `json:"version,omitempty"`
 	Format    string    `json:"format,omitempty"`
-	Path      string    `json:"path,omitempty"`
+	Schema    string    `json:"schema,omitempty"`
 }
 
 func (e EventMeta) Value() (driver.Value, error) {

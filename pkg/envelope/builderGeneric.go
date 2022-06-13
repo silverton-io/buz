@@ -27,10 +27,11 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 		}
 		// Event meta
 		n.EventMeta.Protocol = protocol.GENERIC
+		n.EventMeta.Schema = genEvent.Payload.Schema
 		// Context
 		n.Contexts = genEvent.Contexts
 		// Payload
-		n.Payload = genEvent.Payload
+		n.Payload = genEvent.Payload.Data
 		envelopes = append(envelopes, n)
 	}
 	return envelopes

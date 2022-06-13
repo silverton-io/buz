@@ -65,12 +65,10 @@ inputs:
       dataKey: data
   webhook:
     enabled: true
-    path: /wb/hk
+    path: /hook
   pixel:
     enabled: true
-    paths:
-      - name: default
-        path: /pxl/d
+    path: /pxl
 
   relay:
     enabled: true

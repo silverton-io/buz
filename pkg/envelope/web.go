@@ -5,17 +5,17 @@ import (
 	"encoding/json"
 )
 
-type Page struct {
+type Web struct {
 	Page     PageAttrs `json:"page"`
 	Referrer PageAttrs `json:"referrer"`
 }
 
-func (p Page) Value() (driver.Value, error) {
+func (p Web) Value() (driver.Value, error) {
 	b, err := json.Marshal(p)
 	return string(b), err
 }
 
-func (p Page) Scan(input interface{}) error {
+func (p Web) Scan(input interface{}) error {
 	return json.Unmarshal(input.([]byte), &p)
 }
 

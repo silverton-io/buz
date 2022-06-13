@@ -246,14 +246,6 @@ func (a *App) initializePixelRoutes() {
 	}
 }
 
-func (a *App) initializeRelayRoute() {
-	if a.config.Inputs.Relay.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("initializing relay route")
-		a.engine.POST(a.config.Inputs.Relay.Path, handler.RelayHandler(handlerParams))
-	}
-}
-
 func (a *App) initializeSquawkboxRoutes() {
 	if a.config.Squawkbox.Enabled {
 		handlerParams := a.handlerParams()
@@ -283,7 +275,6 @@ func (a *App) Initialize() {
 	a.initializeWebhookRoutes()
 	a.initializePixelRoutes()
 	a.initializeSquawkboxRoutes()
-	a.initializeRelayRoute()
 }
 
 func (a *App) Run() {
