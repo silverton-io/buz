@@ -12,8 +12,15 @@ import (
 func AdvancingCookie(conf config.Cookie) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		identityCookieValue, _ := c.Cookie(conf.Name)
-		if identityCookieValue != "" {
+		switch conf.SameSite {
+		case "None":
+			c.SetSameSite(http.SameSiteNoneMode)
+		case "Lax":
 			c.SetSameSite(http.SameSiteLaxMode)
+		case "Strict":
+			c.SetSameSite(http.SameSiteStrictMode)
+		}
+		if identityCookieValue != "" {
 			c.SetCookie(
 				conf.Name,
 				identityCookieValue,
@@ -25,7 +32,6 @@ func AdvancingCookie(conf config.Cookie) gin.HandlerFunc {
 			)
 		} else {
 			identityCookieValue = uuid.New().String()
-			c.SetSameSite(http.SameSiteLaxMode)
 			c.SetCookie(
 				conf.Name,
 				identityCookieValue,
