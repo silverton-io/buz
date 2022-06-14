@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/silverton-io/honeypot/pkg/config"
@@ -10,6 +12,14 @@ import (
 func AdvancingCookie(conf config.Cookie) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		identityCookieValue, _ := c.Cookie(conf.Name)
+		switch conf.SameSite {
+		case "None":
+			c.SetSameSite(http.SameSiteNoneMode)
+		case "Lax":
+			c.SetSameSite(http.SameSiteLaxMode)
+		case "Strict":
+			c.SetSameSite(http.SameSiteStrictMode)
+		}
 		if identityCookieValue != "" {
 			c.SetCookie(
 				conf.Name,
