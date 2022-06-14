@@ -28,6 +28,7 @@ type Cookie struct {
 	Domain   string `json:"domain"`
 	Path     string `json:"path"`
 	SameSite string `json:"sameSite"`
+	Fallback string `json:"fallback"`
 }
 
 type Cors struct {

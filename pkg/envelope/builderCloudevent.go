@@ -20,7 +20,7 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf *config.Config, m 
 		return envelopes
 	}
 	for _, ce := range gjson.ParseBytes(reqBody).Array() {
-		n := buildCommonEnvelope(c, m)
+		n := buildCommonEnvelope(c, conf.Middleware, m)
 		cEvent, err := cloudevents.BuildEvent(ce)
 		if err != nil {
 			log.Error().Err(err).Msg("could not build Cloudevent")

@@ -213,6 +213,11 @@
                                 "Strict",
                                 "None"
                             ]
+                        },
+                        "fallback": {
+                            "type": "string",
+                            "default": "00000000-0000-4000-A000-000000000000",
+                            "description": "The fallback value for the identity cookie"
                         }
                     },
                     "additionalProperties": false,
@@ -223,7 +228,8 @@
                         "ttlDays",
                         "domain",
                         "path",
-                        "sameSite"
+                        "sameSite",
+                        "fallback"
                     ]
                 },
                 "cors": {
