@@ -20,7 +20,7 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 		return envelopes
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
-		n := buildCommonEnvelope(c, m)
+		n := buildCommonEnvelope(c, conf.Middleware, m)
 		genEvent, err := generic.BuildEvent(e, conf.Generic)
 		if err != nil {
 			log.Error().Err(err).Msg("could not build generic event")

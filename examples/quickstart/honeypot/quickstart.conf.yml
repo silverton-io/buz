@@ -20,14 +20,16 @@ middleware:
     enabled: false
     period: S
     limit: 10
-  cookie:
-    enabled: true
-    name: sp-nuid
-    secure: false
-    ttlDays: 365
-    domain: localhost
-    path: /
-    sameSite: Lax
+  identity:
+    cookie:
+      enabled: true
+      name: nuid
+      secure: true
+      ttlDays: 365
+      domain: ""
+      path: /
+      sameSite: Lax
+    fallback: 00000000-0000-4000-A000-000000000000
   cors:
     enabled: true
     allowOrigin:
@@ -53,10 +55,10 @@ inputs:
     redirectPath: /plw/r
   cloudevents:
     enabled: true
-    path: /ce/p
+    path: /cloudevents
   generic:
     enabled: true
-    path: /gen/p
+    path: /generic
     contexts:
       rootKey: contexts
     payload:
@@ -69,10 +71,6 @@ inputs:
   pixel:
     enabled: true
     path: /pxl
-
-  relay:
-    enabled: true
-    path: /relay
 
 schemaCache:
   backend:

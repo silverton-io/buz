@@ -5,12 +5,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/silverton-io/honeypot/pkg/config"
 	"github.com/silverton-io/honeypot/pkg/constants"
 	"github.com/silverton-io/honeypot/pkg/event"
 	"github.com/silverton-io/honeypot/pkg/meta"
+	"github.com/silverton-io/honeypot/pkg/util"
 )
 
-func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
+func buildCommonEnvelope(c *gin.Context, conf config.Middleware, m *meta.CollectorMeta) Envelope {
+	identity := util.GetIdentityOrFallback(c, conf)
 	envelope := Envelope{
 		EventMeta: EventMeta{
 			Uuid:      uuid.New(),
@@ -32,6 +35,7 @@ func buildCommonEnvelope(c *gin.Context, m *meta.CollectorMeta) Envelope {
 		},
 		Device: Device{
 			Ip:        c.ClientIP(),
+			Id:        identity,
 			Useragent: c.Request.UserAgent(),
 		},
 		User:       User{},

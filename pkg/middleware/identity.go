@@ -9,10 +9,10 @@ import (
 	"github.com/silverton-io/honeypot/pkg/constants"
 )
 
-func AdvancingCookie(conf config.Cookie) gin.HandlerFunc {
+func Identity(conf config.Identity) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		identityCookieValue, _ := c.Cookie(conf.Name)
-		switch conf.SameSite {
+		identityCookieValue, _ := c.Cookie(conf.Cookie.Name)
+		switch conf.Cookie.SameSite {
 		case "None":
 			c.SetSameSite(http.SameSiteNoneMode)
 		case "Lax":
@@ -22,23 +22,23 @@ func AdvancingCookie(conf config.Cookie) gin.HandlerFunc {
 		}
 		if identityCookieValue != "" {
 			c.SetCookie(
-				conf.Name,
+				conf.Cookie.Name,
 				identityCookieValue,
-				60*60*24*conf.TtlDays,
-				conf.Path,
-				conf.Domain,
-				conf.Secure,
+				60*60*24*conf.Cookie.TtlDays,
+				conf.Cookie.Path,
+				conf.Cookie.Domain,
+				conf.Cookie.Secure,
 				false,
 			)
 		} else {
 			identityCookieValue = uuid.New().String()
 			c.SetCookie(
-				conf.Name,
+				conf.Cookie.Name,
 				identityCookieValue,
-				60*60*24*conf.TtlDays,
-				conf.Path,
-				conf.Domain,
-				conf.Secure,
+				60*60*24*conf.Cookie.TtlDays,
+				conf.Cookie.Path,
+				conf.Cookie.Domain,
+				conf.Cookie.Secure,
 				false,
 			)
 		}

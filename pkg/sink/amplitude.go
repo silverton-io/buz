@@ -120,7 +120,7 @@ func (s *AmplitudeSink) batchPublish(ctx context.Context, envelopes []envelope.E
 		}
 		evnt := amplitudeEvent{
 			Time:            e.Pipeline.Source.GeneratedTstamp.Unix(),
-			DeviceId:        e.Device.Nid,
+			DeviceId:        e.Device.Id,
 			EventType:       e.EventMeta.Namespace,
 			EventProperties: flattenedEnvelope,
 			InsertId:        e.EventMeta.Uuid.String(),

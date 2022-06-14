@@ -3,7 +3,7 @@ package config
 type Middleware struct {
 	Timeout       `json:"timeout"`
 	RateLimiter   `json:"rateLimiter"`
-	Cookie        `json:"cookie"`
+	Identity      `json:"identity"`
 	Cors          `json:"cors"`
 	RequestLogger `json:"requestLogger"`
 	Yeet          `json:"yeet"`
@@ -20,7 +20,12 @@ type RateLimiter struct {
 	Limit   int64  `json:"limit"`
 }
 
-type Cookie struct {
+type Identity struct {
+	Cookie   IdentityCookie `json:"cookie"`
+	Fallback string         `json:"fallback"`
+}
+
+type IdentityCookie struct {
 	Enabled  bool   `json:"enabled"`
 	Name     string `json:"name"`
 	Secure   bool   `json:"secure"`
