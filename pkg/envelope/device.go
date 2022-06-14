@@ -8,7 +8,7 @@ import (
 type Device struct {
 	Ip                string  `json:"ip"`
 	Useragent         string  `json:"useragent"`
-	Id                string  `json:"id"`                  // Server-side cookie whenever possible
+	Id                string  `json:"id"`                  // Server-side cookie, header, or query params
 	Idfa              *string `json:"idfa,omitempty"`      // [iOS]
 	Idfv              *string `json:"idfv,omitempty"`      // [iOS]
 	AdId              *string `json:"adId,omitempty"`      // [Android] Google play services advertising id
