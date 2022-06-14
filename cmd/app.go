@@ -133,10 +133,6 @@ func (a *App) initializeMiddleware() {
 		limiterMiddleware := middleware.BuildRateLimiterMiddleware(limiter)
 		a.engine.Use(limiterMiddleware)
 	}
-	if a.config.Middleware.Cookie.Enabled {
-		log.Info().Msg("initializing advancing cookie middleware")
-		a.engine.Use(middleware.AdvancingCookie(a.config.Cookie))
-	}
 	if a.config.Middleware.Cors.Enabled {
 		log.Info().Msg("initializing cors middleware")
 		a.engine.Use(middleware.CORS(a.config.Middleware.Cors))
@@ -149,6 +145,8 @@ func (a *App) initializeMiddleware() {
 		log.Info().Msg("initializing yeet middleware")
 		a.engine.Use(middleware.Yeet())
 	}
+	log.Info().Msg("initializing identity middleware")
+	a.engine.Use(middleware.Identity(a.config.Identity))
 }
 
 func (a *App) initializeHealthcheckRoutes() {

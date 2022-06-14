@@ -30,14 +30,16 @@ middleware:
     enabled: false
     period: S
     limit: 10
-  cookie:
-    enabled: true
-    name: nuid
-    secure: false
-    ttlDays: 365
-    domain: localhost
-    path: /
-    sameSite: Lax
+  identity:
+    cookie:
+      enabled: true
+      name: nuid
+      secure: true
+      ttlDays: 365
+      domain: ""
+      path: /
+      sameSite: Lax
+    fallback: 00000000-0000-4000-A000-000000000000
   cors:
     enabled: true
     allowOrigin:
