@@ -28,6 +28,7 @@ middleware:
     domain: localhost
     path: /
     sameSite: Lax
+    fallback: 00000000-0000-4000-A000-000000000000
   cors:
     enabled: true
     allowOrigin:
@@ -53,10 +54,10 @@ inputs:
     redirectPath: /plw/r
   cloudevents:
     enabled: true
-    path: /ce/p
+    path: /cloudevents
   generic:
     enabled: true
-    path: /gen/p
+    path: /generic
     contexts:
       rootKey: contexts
     payload:
@@ -69,10 +70,6 @@ inputs:
   pixel:
     enabled: true
     path: /pxl
-
-  relay:
-    enabled: true
-    path: /relay
 
 schemaCache:
   backend:
