@@ -13,7 +13,7 @@ func CORS(conf config.Cors) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("Access-Control-Allow-Origin", strings.Join(conf.AllowOrigin, ", "))
 		c.Header("Access-Control-Allow-Credentials", strconv.FormatBool(conf.AllowCredentials))
-		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With, Set-Cookie")
 		c.Header("Access-Control-Allow-Methods", strings.Join(conf.AllowMethods, ", "))
 		c.Header("Access-Control-Max-Age", strconv.Itoa(conf.MaxAge))
 
