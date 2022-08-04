@@ -25,6 +25,12 @@ services:
       redpanda-init:
         condition: service_completed_successfully
 
+  sample-ui:
+    container_name: sample-ui
+    image: ghcr.io/silverton-io/sample-tracked-ui:0.1.0
+    ports:
+      - 8081:8080
+
   redpanda-1:
     image: docker.vectorized.io/vectorized/redpanda:v21.11.15 # Note! Use the latest version :)
     container_name: redpanda-1
@@ -136,7 +142,7 @@ services:
     volumes:
     - ./kowl/quickstart.yml:/etc/kowl/config.yml
     ports:
-    - "8081:8081"
+    - "8082:8081"
     entrypoint: ./kowl --config.filepath=/etc/kowl/config.yml
     depends_on:
       redpanda-1:
