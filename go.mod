@@ -1,6 +1,6 @@
 module github.com/silverton-io/honeypot
 
-go 1.18
+go 1.19
 
 require (
 	cloud.google.com/go/pubsub v1.17.1
