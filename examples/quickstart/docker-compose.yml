@@ -27,7 +27,7 @@ services:
 
   sample-ui:
     container_name: sample-ui
-    image: ghcr.io/silverton-io/sample-tracked-ui:0.1.0
+    image: ghcr.io/silverton-io/sample-tracked-ui:0.1.1
     ports:
       - 8081:8080
 
