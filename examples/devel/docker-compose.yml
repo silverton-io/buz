@@ -1,6 +1,12 @@
 version: "3.9"
 
 services:
+  sample-ui:
+    container_name: sample-ui
+    image: ghcr.io/silverton-io/sample-tracked-ui:0.1.0
+    ports:
+      - 8081:8080
+
   mysql:
     container_name: mysql
     image: mysql/mysql-server:8.0
@@ -102,18 +108,18 @@ services:
       interval: 1s
       start_period: 30s
 
-  kowl:
-    image: quay.io/cloudhut/kowl:v1.5.0
-    restart: on-failure
-    container_name: kowl
-    volumes:
-    - ./kowl/devel.yml:/etc/kowl/config.yml
-    ports:
-    - 8081:8081
-    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yml
-    depends_on:
-      redpanda-1:
-        condition: service_healthy
+  # kowl:
+  #   image: quay.io/cloudhut/kowl:v1.5.0
+  #   restart: on-failure
+  #   container_name: kowl
+  #   volumes:
+  #   - ./kowl/devel.yml:/etc/kowl/config.yml
+  #   ports:
+  #   - 8081:8081
+  #   entrypoint: ./kowl --config.filepath=/etc/kowl/config.yml
+  #   depends_on:
+  #     redpanda-1:
+  #       condition: service_healthy
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.1.0

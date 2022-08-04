@@ -255,16 +255,6 @@ func (a *App) initializeSquawkboxRoutes() {
 	}
 }
 
-func (a *App) serveStaticIfDev() {
-	if a.config.App.Env == env.DEV_ENVIRONMENT {
-		log.Info().Msg("serving static files")
-		a.engine.StaticFile("/", "./website/sample.html")     // Serve a local file to make testing events easier
-		a.engine.StaticFile("/test", "./website/sample.html") // Ditto
-	} else {
-		log.Info().Msg("not serving static files")
-	}
-}
-
 func (a *App) Initialize() {
 	log.Info().Msg("initializing app")
 	a.configure()
@@ -283,7 +273,6 @@ func (a *App) Initialize() {
 	a.initializeWebhookRoutes()
 	a.initializePixelRoutes()
 	a.initializeSquawkboxRoutes()
-	a.serveStaticIfDev()
 }
 
 func (a *App) Run() {
