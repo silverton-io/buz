@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://honeypot.silverton.io/blog</id>
     <title>Honeypot Blog</title>
-    <updated>2022-06-14T17:21:10.000Z</updated>
+    <updated>2022-08-04T19:07:29.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://honeypot.silverton.io/blog"/>
     <subtitle>Honeypot Blog</subtitle>
@@ -11,7 +11,7 @@
         <title type="html"><![CDATA[Make It Easy]]></title>
         <id>make-it-easy</id>
         <link href="https://honeypot.silverton.io/blog/make-it-easy"/>
-        <updated>2022-06-14T17:21:10.000Z</updated>
+        <updated>2022-08-04T19:07:29.000Z</updated>
         <summary type="html"><![CDATA[Defining, implementing, and evolving events is hard.]]></summary>
         <content type="html"><![CDATA[<p>Defining, implementing, and evolving events is hard.</p><p>Running event collection systems is also hard.</p><p>Honeypot aims to make it easy.</p><p><strong><a href="/">What is Honeypot?</a></strong></p>]]></content>
         <author>
