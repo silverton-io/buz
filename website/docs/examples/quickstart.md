@@ -77,7 +77,7 @@ CREATE VIEW
 
 ## 4. Send Events to Honeypot
 
-The Honeypot quickstart serves a page that you can use to quickly start firing Snowplow events using the [Snowplow Browser Tracker](https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/javascript-trackers/javascript-tracker/javascript-tracker-v3/) here: [localhost:8080](http://localhost:8080/)
+The Honeypot quickstart serves a page that you can use to quickly start firing Snowplow events using the [Snowplow Browser Tracker](https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/javascript-trackers/javascript-tracker/javascript-tracker-v3/) here: [localhost:8081](http://localhost:8081/)
 
 The following events are tracked on this page:
 
@@ -94,9 +94,9 @@ using both the `GET` and batch `POST` capabilities of the Snowplow tracker.
 
 ## 5. View Events in the Kowl UI
 
-The Quickstart runs Kowl at [localhost:8081](http://localhost:8081).
+The Quickstart runs Kowl at [localhost:8082](http://localhost:8082).
 
-Incoming events can be viewed in Kowl using the [Topic Viewer](http://localhost:8081/topics/hpt-invalid?o=-1&p=-1&q&s=50#messages).
+Incoming events can be viewed in Kowl using the [Topic Viewer](http://localhost:8082/topics/hpt-invalid?o=-1&p=-1&q&s=50#messages).
 
 
 ## 6. Query Real-Time Events using a Streaming Materialized View
