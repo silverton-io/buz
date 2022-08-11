@@ -9,7 +9,7 @@ type Config struct {
 	Middleware  `json:"middleware"`
 	Inputs      `json:"inputs"`
 	SchemaCache `json:"schemaCache"`
-	Manifold    `json:"manifold"`
+	Manifold    `json:"manifold,omitempty"`
 	Sinks       []Sink `json:"sinks"`
 	Squawkbox   `json:"squawkBox"`
 	Privacy     `json:"privacy"`

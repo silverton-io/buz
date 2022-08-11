@@ -27,7 +27,6 @@ import (
 	"github.com/silverton-io/honeypot/pkg/params"
 	"github.com/silverton-io/honeypot/pkg/protocol"
 	"github.com/silverton-io/honeypot/pkg/sink"
-	"github.com/silverton-io/honeypot/pkg/snowplow"
 	"github.com/silverton-io/honeypot/pkg/stats"
 	"github.com/silverton-io/honeypot/pkg/tele"
 	"github.com/spf13/viper"
@@ -153,29 +152,16 @@ func (a *App) initializeMiddleware() {
 	a.engine.Use(middleware.Identity(a.config.Identity))
 }
 
-func (a *App) initializeHealthcheckRoutes() {
-	if a.config.App.Health.Enabled {
-		log.Info().Msg("initializing health check route")
-		var healthPath string
-		if a.config.App.Health.Path == "" {
-			healthPath = "/health"
-		} else {
-			healthPath = a.config.App.Health.Path
-		}
-		a.engine.GET(healthPath, handler.HealthcheckHandler)
-	}
-}
-
-func (a *App) initializeStatsRoutes() {
-	if a.config.App.Stats.Enabled {
-		log.Info().Msg("intializing stats route")
-		var statsPath string
-		if a.config.App.Stats.Path == "" {
-			statsPath = "/stats"
-		} else {
-			statsPath = a.config.App.Stats.Path
-		}
-		a.engine.GET(statsPath, handler.StatsHandler(a.collectorMeta, a.stats))
+func (a *App) initializeOpsRoutes() {
+	log.Info().Msg("initializing health check route")
+	a.engine.GET(constants.HEALTH_PATH, handler.HealthcheckHandler)
+	log.Info().Msg("intializing stats route")
+	a.engine.GET(constants.STATS_PATH, handler.StatsHandler(a.collectorMeta, a.stats))
+	log.Info().Msg("initializing overview routes")
+	a.engine.GET(constants.ROUTE_OVERVIEW_PATH, handler.RouteOverviewHandler(*a.config))
+	if a.config.App.EnableConfigRoute {
+		log.Info().Msg("initializing config overview")
+		a.engine.GET(constants.CONFIG_OVERVIEW_PATH, handler.ConfigOverviewHandler(*a.config))
 	}
 }
 
@@ -196,15 +182,15 @@ func (a *App) initializeSnowplowRoutes() {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("initializing snowplow routes")
 		if a.config.Inputs.Snowplow.StandardRoutesEnabled {
-			log.Info().Msg("initializing standard routes")
-			a.engine.GET(snowplow.DEFAULT_GET_PATH, handler.SnowplowHandler(handlerParams))
-			a.engine.POST(snowplow.DEFAULT_POST_PATH, handler.SnowplowHandler(handlerParams))
+			log.Info().Msg("initializing standard snowplow routes")
+			a.engine.GET(constants.SNOWPLOW_STANDARD_GET_PATH, handler.SnowplowHandler(handlerParams))
+			a.engine.POST(constants.SNOWPLOW_STANDARD_POST_PATH, handler.SnowplowHandler(handlerParams))
 			if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("initializing standard open redirect route")
-				a.engine.GET(snowplow.DEFAULT_REDIRECT_PATH, handler.SnowplowHandler(handlerParams))
+				a.engine.GET(constants.SNOWPLOW_STANDARD_REDIRECT_PATH, handler.SnowplowHandler(handlerParams))
 			}
 		}
-		log.Info().Msg("initializing custom routes")
+		log.Info().Msg("initializing custom snowplow routes")
 		a.engine.GET(a.config.Inputs.Snowplow.GetPath, handler.SnowplowHandler(handlerParams))
 		a.engine.POST(a.config.Inputs.Snowplow.PostPath, handler.SnowplowHandler(handlerParams))
 		if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
@@ -268,8 +254,7 @@ func (a *App) Initialize() {
 	a.initializeSchemaCache()
 	a.initializeRouter()
 	a.initializeMiddleware()
-	a.initializeHealthcheckRoutes()
-	a.initializeStatsRoutes()
+	a.initializeOpsRoutes()
 	a.initializeSchemaCacheRoutes()
 	a.initializeSnowplowRoutes()
 	a.initializeGenericRoutes()

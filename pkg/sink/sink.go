@@ -24,7 +24,6 @@ const (
 	STDOUT           string = "stdout"
 	HTTP             string = "http"
 	HTTPS            string = "https"
-	RELAY            string = "relay"
 	BLACKHOLE        string = "blackhole"
 	FILE             string = "file"
 	PUBNUB           string = "pubnub"
@@ -70,9 +69,6 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		return &sink, nil
 	case HTTPS:
 		sink := HttpSink{}
-		return &sink, nil
-	case RELAY:
-		sink := RelaySink{}
 		return &sink, nil
 	case db.ELASTICSEARCH:
 		sink := ElasticsearchSink{}
