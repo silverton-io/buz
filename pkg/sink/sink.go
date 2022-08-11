@@ -24,7 +24,6 @@ const (
 	STDOUT           string = "stdout"
 	HTTP             string = "http"
 	HTTPS            string = "https"
-	RELAY            string = "relay"
 	BLACKHOLE        string = "blackhole"
 	FILE             string = "file"
 	PUBNUB           string = "pubnub"

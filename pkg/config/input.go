@@ -10,5 +10,4 @@ type Inputs struct {
 	Generic     `json:"generic"`
 	Webhook     `json:"webhook"`
 	Pixel       `json:"pixel"`
-	// Relay       `json:"relay"`
 }

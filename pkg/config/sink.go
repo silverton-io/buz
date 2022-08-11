@@ -32,8 +32,6 @@ type Sink struct {
 	ElasticsearchHosts    []string `json:"elasticsearchHosts,omitempty"`
 	ElasticsearchUsername string   `json:"-"`
 	ElasticsearchPassword string   `json:"-"`
-	// Honeypot relay
-	// RelayUrl string `json:"relayUrl,omitempty"`
 	// File
 	ValidFile   string `json:"validFile,omitempty"`
 	InvalidFile string `json:"invalidFile,omitempty"`
