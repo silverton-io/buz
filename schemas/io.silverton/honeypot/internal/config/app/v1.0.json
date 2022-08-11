@@ -57,47 +57,10 @@
                     "default": "test.silverton.io",
                     "description": "The collector domain"
                 },
-                "health": {
-                    "type": "object",
-                    "description": "Health configuration",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean",
-                            "default": "true",
-                            "description": "Switch to enable or disable health endpoints"
-                        },
-                        "path": {
-                            "type": "string",
-                            "default": "/health",
-                            "description": "The path by which to expose health endpoint"
-                        }
-                    },
-                    "additionalProperties": false,
-                    "required": [
-                        "enabled",
-                        "path"
-                    ]
-                },
-                "stats": {
-                    "type": "object",
-                    "description": "Stats configuration",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean",
-                            "default": "true",
-                            "description": "Switch to enable or disable stats endpoints"
-                        },
-                        "path": {
-                            "type": "string",
-                            "default": "/stats",
-                            "description": "The path by which to expose collector statistics"
-                        }
-                    },
-                    "additionalProperties": false,
-                    "required": [
-                        "enabled",
-                        "path"
-                    ]
+                "enableConfigRoute" : {
+                    "type": "boolean",
+                    "default": "true",
+                    "description": "Whether or not to enable the config route"
                 }
             },
             "additionalProperties": false,
@@ -107,8 +70,7 @@
                 "mode",
                 "port",
                 "trackerDomain",
-                "health",
-                "stats"
+                "enableConfigRoute"
             ]
         },
         "middleware": {
@@ -1644,17 +1606,6 @@
                         }
                     },
                     "required": ["device", "user"]
-                },
-                "doNotTrack": {
-                    "type": "object",
-                    "description": "Do not track configuration",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean" ,
-                            "description": "Whether to respect do not track",
-                            "default": "false"
-                        }
-                    }
                 }
             },
             "required": ["anonymize"],

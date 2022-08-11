@@ -71,9 +71,6 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	case HTTPS:
 		sink := HttpSink{}
 		return &sink, nil
-	case RELAY:
-		sink := RelaySink{}
-		return &sink, nil
 	case db.ELASTICSEARCH:
 		sink := ElasticsearchSink{}
 		return &sink, nil

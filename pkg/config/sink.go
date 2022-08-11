@@ -33,7 +33,7 @@ type Sink struct {
 	ElasticsearchUsername string   `json:"-"`
 	ElasticsearchPassword string   `json:"-"`
 	// Honeypot relay
-	RelayUrl string `json:"relayUrl,omitempty"`
+	// RelayUrl string `json:"relayUrl,omitempty"`
 	// File
 	ValidFile   string `json:"validFile,omitempty"`
 	InvalidFile string `json:"invalidFile,omitempty"`
@@ -87,5 +87,5 @@ type Sink struct {
 	IndicativeApiKey string `json:"-"`
 	// Amplitude
 	AmplitudeApiKey string `json:"-"`
-	AmplitudeRegion string `json:"amplitudeRegion"`
+	AmplitudeRegion string `json:"amplitudeRegion,omitempty"`
 }

@@ -5,12 +5,7 @@
 package config
 
 type Privacy struct {
-	Anonymize  `json:"anonymize"`
-	DoNotTrack `json:"doNotTrack"`
-}
-
-type DoNotTrack struct {
-	Enabled bool `json:"enabled"`
+	Anonymize `json:"anonymize"`
 }
 
 type Anonymize struct {
