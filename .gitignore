@@ -9,4 +9,4 @@ honeypot-valid.json
 honeypot-invalid.json
 notes/*
 *.sql
-examples/quickstart/minio/
+examples/quickstart/minio/*
