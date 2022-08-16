@@ -3,7 +3,7 @@ sidebar_position: 30
 hide_table_of_contents: true
 ---
 
-# Insiders-Only Updates
+# Insiders Only
 
 Do you want to contribute to the project?
 

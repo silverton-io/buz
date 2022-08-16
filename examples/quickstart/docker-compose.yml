@@ -3,7 +3,7 @@ version: "3.9"
 services:
   honeypot:
     container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.11.8
+    image: ghcr.io/silverton-io/honeypot:v0.11.7
     volumes:
       - type: bind
         source: ./honeypot/quickstart.conf.yml
@@ -47,7 +47,7 @@ services:
       retries: 3
 
   redpanda-1:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.15 # Note! Use the latest version :)
+    image: docker.vectorized.io/vectorized/redpanda:latest # Note! Use the latest version :)
     container_name: redpanda-1
     command:
       - redpanda start
@@ -73,7 +73,7 @@ services:
       start_period: 30s
 
   redpanda-2:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.15 # Note! Use the latest version :)
+    image: docker.vectorized.io/vectorized/redpanda:latest # Note! Use the latest version :)
     container_name: redpanda-2
     command:
       - redpanda start
@@ -100,7 +100,7 @@ services:
       start_period: 30s
 
   redpanda-3:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.15 # Note! Use the latest version :)
+    image: docker.vectorized.io/vectorized/redpanda:latest # Note! Use the latest version :)
     container_name: redpanda-3
     command:
       - redpanda start
@@ -127,7 +127,7 @@ services:
       start_period: 30s
 
   redpanda-init:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.15 # Note! Use the latest version :)
+    image: docker.vectorized.io/vectorized/redpanda:latest # Note! Use the latest version :)
     container_name: redpanda-init
     command:
       - cluster metadata --brokers redpanda-1:29092,redpanda-2:29093,redpanda-3:29094

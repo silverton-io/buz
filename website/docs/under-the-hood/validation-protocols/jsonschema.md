@@ -1,4 +1,10 @@
-# Jsonschema
+---
+sidebar_position: 1
+---
+
+# JSON Schema
+
+**🟢 Supported**
 
 ### Jsonschema-based Event Validation
 
