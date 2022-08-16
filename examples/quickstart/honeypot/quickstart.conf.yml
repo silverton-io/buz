@@ -74,14 +74,12 @@ inputs:
 
 schemaCache:
   backend:
-    # type: minio
-    # minioEndpoint: minio:9000
-    # accessKeyId: minioadmin
-    # secretAccessKey: minioadmin
-    # bucket: honeypot-schemas
-    # path: /
-    type: fs
-    path: schemas/
+    type: minio
+    minioEndpoint: minio:9000
+    accessKeyId: minioadmin
+    secretAccessKey: minioadmin
+    bucket: honeypot-schemas
+    path: /
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
   purge:
