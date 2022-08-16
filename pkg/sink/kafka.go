@@ -20,7 +20,7 @@ import (
 
 const (
 	DEFAULT_PARTITIONS         int32 = 3
-	DEFAULT_REPLICATION_FACTOR int16 = 3
+	DEFAULT_REPLICATION_FACTOR int16 = 1 // NOTE! Really not a good default.
 )
 
 type KafkaSink struct {
@@ -78,7 +78,7 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 			log.Info().Msg("🟢 ensuring topic since it doesn't exist: " + d.Name)
 			resp, err := admClient.CreateTopics(ctx, DEFAULT_PARTITIONS, DEFAULT_REPLICATION_FACTOR, nil, d.Name)
 			if err != nil {
-				log.Error().Err(err).Msg("🔴 could not create topic: " + d.Name)
+				log.Fatal().Err(err).Msg("🔴 could not create topic: " + d.Name)
 			}
 			log.Debug().Interface("response", resp).Msg("🟡 topic created: " + d.Name)
 		}
