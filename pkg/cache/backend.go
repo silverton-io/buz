@@ -37,6 +37,9 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 	case S3:
 		cacheBackend := S3SchemaCacheBackend{}
 		return &cacheBackend, nil
+	case MINIO:
+		cacheBackend := MinioSchemaCacheBackend{}
+		return &cacheBackend, nil
 	case FS:
 		cacheBackend := FilesystemCacheBackend{}
 		return &cacheBackend, nil

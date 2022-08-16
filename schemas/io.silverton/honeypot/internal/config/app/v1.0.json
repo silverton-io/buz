@@ -663,17 +663,17 @@
                         "minioEndpoint": {
                             "type": "string",
                             "description": "The minio endpoint",
-                            "default": "some.minio.endpoint"
+                            "default": "localhost:9000"
                         },
                         "accessKeyId": {
                             "type": "string",
                             "description": "The access key id, used for minio and s3",
-                            "default": "someAccessKeyId"
+                            "default": "minioadmin"
                         },
                         "secretAccessKey": {
                             "type": "string",
                             "description": "The secret access key, used for minio and s3",
-                            "default": "someSecretAccessKey"
+                            "default": "minioadmin"
                         }
                     },
                     "additionalProperties": false,
@@ -713,6 +713,7 @@
                                 "minioEndpoint",
                                 "accessKeyId",
                                 "secretAccessKey",
+                                "bucket",
                                 "path"
                             ]
                         },
