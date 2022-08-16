@@ -29,7 +29,7 @@ func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope, s *stats.Prot
 
 	for _, e := range envelopes {
 		isValid := e.Validation.IsValid
-		if isValid {
+		if *isValid {
 			s.IncrementValid(&e.EventMeta, 1)
 			validEnvelopes = append(validEnvelopes, e)
 		} else {

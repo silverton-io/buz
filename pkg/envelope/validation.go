@@ -10,7 +10,7 @@ import (
 )
 
 type Validation struct {
-	IsValid bool             `json:"isValid,omitempty"`
+	IsValid *bool            `json:"isValid,omitempty"`
 	Error   *ValidationError `json:"error,omitempty"`
 }
 
