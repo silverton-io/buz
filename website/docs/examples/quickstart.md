@@ -9,7 +9,7 @@ This quickstart will get you started with Honeypot, a multi-node Redpanda cluste
 # Quickstart (with Docker)
 
 :::danger Note
-If you don't have `docker`, `docker-compose`, and `psql` you will need to install those first.
+If you don't have `docker` and `docker-compose` you will need to install those first.
 :::
 
 
