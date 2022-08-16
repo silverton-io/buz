@@ -21,7 +21,7 @@ type CacheIndex struct {
 
 func CachePurgeHandler(s *cache.SchemaCache) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		log.Debug().Msg("schema cache purged")
+		log.Debug().Msg("🟡 schema cache purged")
 		s.Cache.Clear()
 	}
 	return gin.HandlerFunc(fn)

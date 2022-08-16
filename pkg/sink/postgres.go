@@ -42,7 +42,7 @@ func (s *PostgresSink) DeliveryRequired() bool {
 }
 
 func (s *PostgresSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing postgres sink")
+	log.Debug().Msg("🟡 initializing postgres sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	connParams := db.ConnectionParams{
@@ -79,7 +79,7 @@ func (s *PostgresSink) BatchPublishInvalid(ctx context.Context, envelopes []enve
 }
 
 func (s *PostgresSink) Close() {
-	log.Debug().Msg("closing postgres sink")
+	log.Debug().Msg("🟡 closing postgres sink")
 	db, _ := s.gormDb.DB()
 	db.Close()
 }

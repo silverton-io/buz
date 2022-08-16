@@ -42,7 +42,7 @@ func (s *ClickhouseSink) DeliveryRequired() bool {
 }
 
 func (s *ClickhouseSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing clickhouse sink")
+	log.Debug().Msg("🟡 initializing clickhouse sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	connParams := db.ConnectionParams{
@@ -79,7 +79,7 @@ func (s *ClickhouseSink) BatchPublishInvalid(ctx context.Context, envelopes []en
 }
 
 func (s *ClickhouseSink) Close() {
-	log.Debug().Msg("closing mysql sink")
+	log.Debug().Msg("🟡 closing mysql sink")
 	db, _ := s.gormDb.DB()
 	db.Close()
 }

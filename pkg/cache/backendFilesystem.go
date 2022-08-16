@@ -17,7 +17,7 @@ type FilesystemCacheBackend struct {
 }
 
 func (b *FilesystemCacheBackend) Initialize(conf config.Backend) error {
-	log.Debug().Msg("initializing filesystem schema cache backend")
+	log.Debug().Msg("🟡 initializing filesystem schema cache backend")
 	b.path = conf.Path
 	// No-op
 	return nil
@@ -34,6 +34,6 @@ func (b *FilesystemCacheBackend) GetRemote(schema string) (contents []byte, err 
 }
 
 func (b *FilesystemCacheBackend) Close() {
-	log.Debug().Msg("closing filesystem schema cache backend")
+	log.Debug().Msg("🟡 closing filesystem schema cache backend")
 	// No-op
 }

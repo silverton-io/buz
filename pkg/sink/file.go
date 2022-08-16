@@ -40,7 +40,7 @@ func (s *FileSink) DeliveryRequired() bool {
 }
 
 func (s *FileSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing file sink")
+	log.Debug().Msg("🟡 initializing file sink")
 	s.validFile = conf.ValidFile
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
@@ -56,7 +56,7 @@ func (s *FileSink) batchPublish(ctx context.Context, filePath string, envelopes 
 		return err
 	}
 	for _, envelope := range envelopes {
-		log.Debug().Msg("writing envelope to file " + filePath)
+		log.Debug().Msg("🟡 writing envelope to file " + filePath)
 		b, err := json.Marshal(envelope)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not marshal envelope")
@@ -80,5 +80,5 @@ func (s *FileSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope
 }
 
 func (s *FileSink) Close() {
-	log.Debug().Msg("closing file sink")
+	log.Debug().Msg("🟡 closing file sink")
 }

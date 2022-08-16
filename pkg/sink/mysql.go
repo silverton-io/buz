@@ -43,7 +43,7 @@ func (s *MysqlSink) DeliveryRequired() bool {
 }
 
 func (s *MysqlSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing mysql sink")
+	log.Debug().Msg("🟡 initializing mysql sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	connParams := db.ConnectionParams{
@@ -80,7 +80,7 @@ func (s *MysqlSink) BatchPublishInvalid(ctx context.Context, envelopes []envelop
 }
 
 func (s *MysqlSink) Close() {
-	log.Debug().Msg("closing mysql sink")
+	log.Debug().Msg("🟡 closing mysql sink")
 	db, _ := s.gormDb.DB()
 	db.Close()
 }

@@ -42,7 +42,7 @@ func (s *NatsJetstreamSink) DeliveryRequired() bool {
 }
 
 func (s *NatsJetstreamSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing nats jetstream sink")
+	log.Debug().Msg("🟡 initializing nats jetstream sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	conn, err := nats.Connect(conf.NatsHost, nats.UserInfo(conf.NatsUser, conf.NatsPass))
@@ -95,6 +95,6 @@ func (s *NatsJetstreamSink) BatchPublishInvalid(ctx context.Context, envelopes [
 }
 
 func (s *NatsJetstreamSink) Close() {
-	log.Debug().Msg("closing nats sink")
+	log.Debug().Msg("🟡 closing nats sink")
 	s.conn.Close()
 }

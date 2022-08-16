@@ -23,7 +23,7 @@ func BuildEvent(e gjson.Result, conf config.Generic) (GenericEvent, error) {
 	payloadData := payload.Get(conf.Payload.DataKey).Value()
 	if payloadData == nil {
 		log.Error().Stack().Msg("🔴 no data payload found in generic event for key: " + conf.Payload.RootKey + "." + conf.Payload.DataKey)
-		log.Debug().Interface("event", e.Value()).Interface("config", conf).Msg("event format does not match config format")
+		log.Debug().Interface("event", e.Value()).Interface("config", conf).Msg("🟡 event format does not match config format")
 	} else {
 		sdPayload = event.SelfDescribingPayload{
 			Schema: payloadSchema,

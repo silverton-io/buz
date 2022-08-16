@@ -52,7 +52,7 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	ctx := context.Background()
-	log.Debug().Msg("initializing kafka client")
+	log.Debug().Msg("🟡 initializing kafka client")
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(conf.KafkaBrokers...),
 	)
@@ -60,17 +60,17 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 		log.Debug().Stack().Err(err).Msg("could not create kafka sink client")
 		return err
 	}
-	log.Debug().Msg("pinging kafka brokers")
+	log.Debug().Msg("🟡 pinging kafka brokers")
 	err = client.Ping(ctx)
 	if err != nil {
 		log.Debug().Stack().Err(err).Msg("could not ping kafka sink brokers")
 		return err
 	}
 	admClient := kadm.NewClient(client)
-	log.Debug().Msg("verifying topics exist")
+	log.Debug().Msg("🟡 verifying topics exist")
 	topicDetails, err := admClient.DescribeTopicConfigs(ctx, conf.ValidTopic, conf.InvalidTopic)
 	if err != nil {
-		log.Debug().Stack().Err(err).Msg("could not describe topic configs")
+		log.Error().Err(err).Msg("🔴 could not describe topic configs")
 		return err
 	}
 	for _, d := range topicDetails {
@@ -80,7 +80,7 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 			if err != nil {
 				log.Error().Err(err).Msg("🔴 could not create topic: " + d.Name)
 			}
-			log.Debug().Interface("response", resp).Msg("topic created: " + d.Name)
+			log.Debug().Interface("response", resp).Msg("🟡 topic created: " + d.Name)
 		}
 	}
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, conf.ValidTopic, conf.InvalidTopic
@@ -139,6 +139,6 @@ func (s *KafkaSink) BatchPublishInvalid(ctx context.Context, envelopes []envelop
 }
 
 func (s *KafkaSink) Close() {
-	log.Debug().Msg("closing kafka sink client")
+	log.Debug().Msg("🟡 closing kafka sink client")
 	s.client.Close()
 }

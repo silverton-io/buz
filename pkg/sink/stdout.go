@@ -63,7 +63,7 @@ func (s *StdoutSink) DeliveryRequired() bool {
 }
 
 func (s *StdoutSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing stdout sink")
+	log.Debug().Msg("🟡 initializing stdout sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	return nil
@@ -86,5 +86,5 @@ func (s *StdoutSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes [
 }
 
 func (s *StdoutSink) Close() {
-	log.Debug().Msg("closing stdout sink")
+	log.Debug().Msg("🟡 closing stdout sink")
 }

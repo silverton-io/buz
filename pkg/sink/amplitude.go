@@ -96,7 +96,7 @@ func (s *AmplitudeSink) DeliveryRequired() bool {
 }
 
 func (s *AmplitudeSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing indicative sink")
+	log.Debug().Msg("🟡 initializing indicative sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	var e string
@@ -156,6 +156,6 @@ func (s *AmplitudeSink) BatchPublishInvalid(ctx context.Context, envelopes []env
 }
 
 func (s *AmplitudeSink) Close() {
-	log.Debug().Msg("closing amplitude sink")
+	log.Debug().Msg("🟡 closing amplitude sink")
 	// no-opo
 }

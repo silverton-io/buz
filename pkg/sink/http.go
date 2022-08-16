@@ -40,15 +40,15 @@ func (s *HttpSink) DeliveryRequired() bool {
 }
 
 func (s *HttpSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing http sink")
+	log.Debug().Msg("🟡 initializing http sink")
 	vUrl, vErr := url.Parse(conf.ValidUrl)
 	invUrl, invErr := url.Parse(conf.InvalidUrl)
 	if vErr != nil {
-		log.Debug().Stack().Err(vErr).Msg("validUrl is not a valid url")
+		log.Debug().Err(vErr).Msg("🟡 validUrl is not a valid url")
 		return vErr
 	}
 	if invErr != nil {
-		log.Debug().Stack().Err(invErr).Msg("invalidUrl is not a valid url")
+		log.Debug().Err(invErr).Msg("🟡 invalidUrl is not a valid url")
 		return invErr
 	}
 	id := uuid.New()
@@ -68,5 +68,5 @@ func (s *HttpSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []e
 }
 
 func (s *HttpSink) Close() {
-	log.Debug().Msg("closing http sink") // no-op
+	log.Debug().Msg("🟡 closing http sink") // no-op
 }

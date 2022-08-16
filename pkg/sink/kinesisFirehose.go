@@ -75,7 +75,7 @@ func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, e
 				log.Error().Err(err).Msg("🔴 could not publish event to kinesis firehose")
 				pubErr <- err
 			} else {
-				log.Debug().Msgf("published event " + *output.RecordId + " to stream " + stream)
+				log.Debug().Msgf("🟡 published event " + *output.RecordId + " to stream " + stream)
 				pubErr <- nil
 			}
 		}(pubErr)
@@ -99,5 +99,5 @@ func (s *KinesisFirehoseSink) BatchPublishInvalid(ctx context.Context, envelopes
 }
 
 func (s *KinesisFirehoseSink) Close() {
-	log.Debug().Msg("closing kinesis firehose sink client")
+	log.Debug().Msg("🟡 closing kinesis firehose sink client")
 }

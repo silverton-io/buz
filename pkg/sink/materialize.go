@@ -49,7 +49,7 @@ func (s *MaterializeSink) DeliveryRequired() bool {
 }
 
 func (s *MaterializeSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing materialize sink")
+	log.Debug().Msg("🟡 initializing materialize sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	connString := generateMzDsn(conf)
@@ -80,7 +80,7 @@ func (s *MaterializeSink) BatchPublishInvalid(ctx context.Context, envelopes []e
 }
 
 func (s *MaterializeSink) Close() {
-	log.Debug().Msg("closing postgres sink")
+	log.Debug().Msg("🟡 closing postgres sink")
 	db, _ := s.gormDb.DB()
 	db.Close()
 }

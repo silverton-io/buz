@@ -71,7 +71,7 @@ func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes
 				log.Error().Err(err).Msg("🔴 could not publish event to kinesis")
 				pErr <- err
 			} else {
-				log.Debug().Msgf("published event " + *output.SequenceNumber + " to stream " + stream)
+				log.Debug().Msgf("🟡 published event " + *output.SequenceNumber + " to stream " + stream)
 				pErr <- nil
 			}
 		}(pubErr)
@@ -95,6 +95,6 @@ func (s *KinesisSink) BatchPublishInvalid(ctx context.Context, envelopes []envel
 }
 
 func (s *KinesisSink) Close() {
-	log.Debug().Msg("closing kinesis sink client")
+	log.Debug().Msg("🟡 closing kinesis sink client")
 
 }

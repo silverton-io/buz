@@ -42,7 +42,7 @@ func (s *NatsSink) DeliveryRequired() bool {
 }
 
 func (s *NatsSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing nats sink")
+	log.Debug().Msg("🟡 initializing nats sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	conn, err := nats.Connect(conf.NatsHost, nats.UserInfo(conf.NatsUser, conf.NatsPass))
@@ -80,7 +80,7 @@ func (s *NatsSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope
 }
 
 func (s *NatsSink) Close() {
-	log.Debug().Msg("closing nats sink")
+	log.Debug().Msg("🟡 closing nats sink")
 	s.conn.Close()
 	s.encodedConn.Close()
 }

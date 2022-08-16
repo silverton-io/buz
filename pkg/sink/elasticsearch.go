@@ -72,7 +72,7 @@ func (s *ElasticsearchSink) batchPublish(ctx context.Context, index string, enve
 				log.Error().Interface("envelopeId", envId).Err(err).Msg("🔴 could not publish envelope to elasticsearch")
 				return err
 			} else {
-				log.Debug().Interface("envelopeId", envId).Interface("indexId", index).Msg("published envelope to index")
+				log.Debug().Interface("🟡 envelopeId", envId).Interface("indexId", index).Msg("published envelope to index")
 			}
 			defer wg.Done()
 		}
@@ -92,5 +92,5 @@ func (s *ElasticsearchSink) BatchPublishInvalid(ctx context.Context, invalidEnve
 }
 
 func (s *ElasticsearchSink) Close() {
-	log.Debug().Msg("closing elasticsearch sink client")
+	log.Debug().Msg("🟡 closing elasticsearch sink client")
 }

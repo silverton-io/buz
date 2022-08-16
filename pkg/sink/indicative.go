@@ -56,7 +56,7 @@ func (s *IndicativeSink) DeliveryRequired() bool {
 }
 
 func (s *IndicativeSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing indicative sink")
+	log.Debug().Msg("🟡 initializing indicative sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	endpoint, err := url.Parse(INDICATIVE_BATCH_ENDPOINT)
@@ -110,6 +110,6 @@ func (s *IndicativeSink) BatchPublishInvalid(ctx context.Context, envelopes []en
 }
 
 func (s *IndicativeSink) Close() {
-	log.Debug().Msg("closing indicative sink")
+	log.Debug().Msg("🟡 closing indicative sink")
 	// no-op
 }

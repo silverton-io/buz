@@ -23,7 +23,7 @@ type MinioSchemaCacheBackend struct {
 }
 
 func (b *MinioSchemaCacheBackend) Initialize(conf config.Backend) error {
-	log.Debug().Msg("initializing minio schema cache backend")
+	log.Debug().Msg("🟡 initializing minio schema cache backend")
 	b.endpoint = conf.MinioEndpoint
 	b.accessKeyId = conf.AccessKeyId
 	b.secretAccessKey = conf.SecretAccessKey
@@ -47,7 +47,7 @@ func (b *MinioSchemaCacheBackend) GetRemote(schema string) (contents []byte, err
 	} else {
 		schemaLocation = filepath.Join(b.path, schema)
 	}
-	log.Debug().Msg("getting file from minio backend " + schemaLocation)
+	log.Debug().Msg("🟡 getting file from minio backend " + schemaLocation)
 	obj, err := b.client.GetObject(ctx, b.bucket, schemaLocation, minio.GetObjectOptions{})
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not get file from minio: " + schemaLocation)
@@ -62,5 +62,5 @@ func (b *MinioSchemaCacheBackend) GetRemote(schema string) (contents []byte, err
 }
 
 func (b *MinioSchemaCacheBackend) Close() {
-	log.Debug().Msg("closing minio schema cache backend")
+	log.Debug().Msg("🟡 closing minio schema cache backend")
 }
