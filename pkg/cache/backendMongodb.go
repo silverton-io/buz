@@ -64,5 +64,5 @@ func (b *MongodbSchemaCacheBackend) GetRemote(schema string) (contents []byte, e
 }
 
 func (b *MongodbSchemaCacheBackend) Close() {
-	log.Info().Msg("closing mongodb schema cache backend")
+	log.Info().Msg("🟢 closing mongodb schema cache backend")
 }

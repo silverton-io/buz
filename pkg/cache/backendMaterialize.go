@@ -47,5 +47,5 @@ func (b *MaterializeSchemaCacheBackend) GetRemote(schema string) (contents []byt
 }
 
 func (b *MaterializeSchemaCacheBackend) Close() {
-	log.Info().Msg("closing materialize schema cache backend")
+	log.Info().Msg("🟢 closing materialize schema cache backend")
 }

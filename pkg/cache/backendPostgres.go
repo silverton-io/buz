@@ -47,5 +47,5 @@ func (b *PostgresSchemaCacheBackend) GetRemote(schema string) (contents []byte, 
 }
 
 func (b *PostgresSchemaCacheBackend) Close() {
-	log.Info().Msg("closing postgres schema cache backend")
+	log.Info().Msg("🟢 closing postgres schema cache backend")
 }

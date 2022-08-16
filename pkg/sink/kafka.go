@@ -75,7 +75,7 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 	}
 	for _, d := range topicDetails {
 		if d.Err != nil {
-			log.Info().Msg("ensuring topic since it doesn't exist: " + d.Name)
+			log.Info().Msg("🟢 ensuring topic since it doesn't exist: " + d.Name)
 			resp, err := admClient.CreateTopics(ctx, DEFAULT_PARTITIONS, DEFAULT_REPLICATION_FACTOR, nil, d.Name)
 			if err != nil {
 				log.Error().Err(err).Msg("🔴 could not create topic: " + d.Name)

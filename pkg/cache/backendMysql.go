@@ -54,5 +54,5 @@ func (b *MysqlSchemaCacheBackend) GetRemote(schema string) (contents []byte, err
 }
 
 func (b *MysqlSchemaCacheBackend) Close() {
-	log.Info().Msg("closing mysql schema cache backend")
+	log.Info().Msg("🟢 closing mysql schema cache backend")
 }

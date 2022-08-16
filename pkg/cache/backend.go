@@ -85,6 +85,6 @@ func InitializeSchemaCacheBackend(conf config.Backend, b SchemaCacheBackend) err
 		log.Error().Err(err).Msg("🔴 could not initialize schema cache backend")
 		return err
 	}
-	log.Info().Msg(conf.Type + " schema cache backend initialized")
+	log.Info().Msg(conf.Type + "🟢 schema cache backend initialized")
 	return nil
 }

@@ -125,7 +125,7 @@ func InitializeSink(conf config.Sink, s Sink) error {
 		log.Error().Err(err).Msg("🔴 could not initialize sink")
 		return err
 	}
-	log.Info().Msg(conf.Type + " sink initialized")
+	log.Info().Msg(conf.Type + "🟢 sink initialized")
 	return nil
 }
 

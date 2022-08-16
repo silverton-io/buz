@@ -47,5 +47,5 @@ func (b *ClickhouseSchemaCacheBackend) GetRemote(schema string) (contents []byte
 }
 
 func (b *ClickhouseSchemaCacheBackend) Close() {
-	log.Info().Msg("closing clickhouse schema cache backend")
+	log.Info().Msg("🟢 closing clickhouse schema cache backend")
 }
