@@ -50,7 +50,11 @@ type Backend struct {
 	MongoDbName        string   `json:"mongoDbName,omitempty"`
 	MongoUser          string   `json:"-"`
 	MongoPass          string   `json:"-"`
-	RegistryCollection string   `json:"registryCollection"`
+	RegistryCollection string   `json:"registryCollection,omitempty"`
+	// Minio
+	MinioEndpoint   string `json:"minioEndpoint,omitempty"`
+	AccessKeyId     string `json:"accessKeyId,omitempty"`
+	SecretAccessKey string `json:"secretAccessKey,omitempty"`
 }
 
 type SchemaDirectory struct {

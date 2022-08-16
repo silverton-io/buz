@@ -496,6 +496,7 @@
                             "enum": [
                                 "gcs",
                                 "s3",
+                                "minio",
                                 "fs",
                                 "http",
                                 "https",
@@ -658,6 +659,21 @@
                             "type": "string",
                             "description": "The mongodb cache backend pass",
                             "default": "honeypot"
+                        },
+                        "minioEndpoint": {
+                            "type": "string",
+                            "description": "The minio endpoint",
+                            "default": "some.minio.endpoint"
+                        },
+                        "accessKeyId": {
+                            "type": "string",
+                            "description": "The access key id, used for minio and s3",
+                            "default": "someAccessKeyId"
+                        },
+                        "secretAccessKey": {
+                            "type": "string",
+                            "description": "The secret access key, used for minio and s3",
+                            "default": "someSecretAccessKey"
                         }
                     },
                     "additionalProperties": false,
@@ -684,6 +700,19 @@
                             },
                             "required": [
                                 "bucket",
+                                "path"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "minio"
+                                }
+                            },
+                            "required": [
+                                "minioEndpoint",
+                                "accessKeyId",
+                                "secretAccessKey",
                                 "path"
                             ]
                         },

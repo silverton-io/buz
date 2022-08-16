@@ -15,6 +15,7 @@ import (
 const (
 	GCS   string = "gcs"
 	S3    string = "s3"
+	MINIO string = "minio"
 	FS    string = "fs"
 	HTTP  string = "http"
 	HTTPS string = "https"

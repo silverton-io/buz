@@ -31,6 +31,21 @@ services:
     ports:
       - 8081:8080
 
+  minio:
+    container_name: minio
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - .schemas/:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
   redpanda-1:
     image: docker.vectorized.io/vectorized/redpanda:v21.11.15 # Note! Use the latest version :)
     container_name: redpanda-1
