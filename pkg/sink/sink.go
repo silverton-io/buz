@@ -114,7 +114,7 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	// 	return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
-		log.Error().Stack().Err(e).Msg("unsupported sink")
+		log.Error().Stack().Err(e).Msg("🔴 unsupported sink")
 		return nil, e
 	}
 }
@@ -122,7 +122,7 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 func InitializeSink(conf config.Sink, s Sink) error {
 	err := s.Initialize(conf)
 	if err != nil {
-		log.Debug().Stack().Err(err).Msg("could not initialize sink")
+		log.Error().Err(err).Msg("🔴 could not initialize sink")
 		return err
 	}
 	log.Info().Msg(conf.Type + " sink initialized")
@@ -134,12 +134,12 @@ func BuildAndInitializeSinks(conf []config.Sink) ([]Sink, error) {
 	for _, sConf := range conf {
 		sink, err := BuildSink(sConf)
 		if err != nil {
-			log.Debug().Err(err).Msg("could not build sink")
+			log.Error().Err(err).Msg("🔴 could not build sink")
 			return nil, err
 		}
 		err = InitializeSink(sConf, sink)
 		if err != nil {
-			log.Debug().Err(err).Msg("could not initialize sink")
+			log.Error().Err(err).Msg("🔴 could not initialize sink")
 			return nil, err
 		}
 		sinks = append(sinks, sink)

@@ -72,12 +72,12 @@ func (s *IndicativeSink) batchPublish(ctx context.Context, envelopes []envelope.
 	for _, e := range envelopes {
 		propertyMap, err := e.AsMap()
 		if err != nil {
-			log.Error().Err(err).Msg("could not coerce envelope to map")
+			log.Error().Err(err).Msg("🔴 could not coerce envelope to map")
 			return err
 		}
 		flattenedPropertyMap, err := flatten.Flatten(propertyMap, "", flatten.DotStyle)
 		if err != nil {
-			log.Error().Err(err).Msg("could not flatten properties")
+			log.Error().Err(err).Msg("🔴 could not flatten properties")
 			return err
 		}
 		evnt := indicativeEvent{

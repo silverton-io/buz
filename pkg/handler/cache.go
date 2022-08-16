@@ -57,7 +57,7 @@ func CacheGetHandler(s *cache.SchemaCache) gin.HandlerFunc {
 			var schema interface{}
 			err := json.Unmarshal(cachedSchema, &schema)
 			if err != nil {
-				log.Error().Stack().Err(err).Msg("could not unmarshal cached schema")
+				log.Error().Stack().Err(err).Msg("🔴 could not unmarshal cached schema")
 				c.JSON(http.StatusBadRequest, response.BadRequest)
 				return
 			}

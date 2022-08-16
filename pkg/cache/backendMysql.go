@@ -30,7 +30,7 @@ func (b *MysqlSchemaCacheBackend) Initialize(conf config.Backend) error {
 	connString := db.GenerateMysqlDsn(connParams)
 	gormDb, err := gorm.Open(mysql.Open(connString))
 	if err != nil {
-		log.Error().Err(err).Msg("could not open mysql connection")
+		log.Error().Err(err).Msg("🔴 could not open mysql connection")
 		return err
 	}
 	b.gormDb, b.registryTable = gormDb, conf.RegistryTable
@@ -43,12 +43,12 @@ func (b *MysqlSchemaCacheBackend) GetRemote(schema string) (contents []byte, err
 	b.gormDb.Table(b.registryTable).Where("name = ?", schema).First(&s)
 	err = b.gormDb.Error
 	if err != nil {
-		log.Error().Err(err).Msg("gorm error")
+		log.Error().Err(err).Msg("🔴 gorm error")
 		return nil, err
 	}
 	contents, err = json.Marshal(s.Contents)
 	if err != nil {
-		log.Error().Err(err).Msg("could not marshal schema contents")
+		log.Error().Err(err).Msg("🔴 could not marshal schema contents")
 	}
 	return contents, nil
 }

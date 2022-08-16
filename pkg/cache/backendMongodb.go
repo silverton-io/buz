@@ -40,7 +40,7 @@ func (b *MongodbSchemaCacheBackend) Initialize(conf config.Backend) error {
 	}
 	client, err := mongo.Connect(ctx, &opt)
 	if err != nil {
-		log.Error().Err(err).Msg("could not connect to mongodb")
+		log.Error().Err(err).Msg("🔴 could not connect to mongodb")
 	}
 	b.client = client
 	registryCollection := b.client.Database(conf.MongoDbName).Collection(conf.RegistryCollection)
@@ -53,11 +53,11 @@ func (b *MongodbSchemaCacheBackend) GetRemote(schema string) (contents []byte, e
 	var doc = MongoSchemaDocument{}
 	err = b.registryCollection.FindOne(ctx, bson.M{"name": schema}).Decode(&doc)
 	if err != nil {
-		log.Error().Err(err).Msg("could not decode document")
+		log.Error().Err(err).Msg("🔴 could not decode document")
 		return nil, err
 	}
 	if err != nil {
-		log.Error().Err(err).Msg("could not marshal document")
+		log.Error().Err(err).Msg("🔴 could not marshal document")
 		return nil, err
 	}
 	return []byte(doc.Contents), nil

@@ -18,7 +18,7 @@ func BuildPixelEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta
 	var envelopes []Envelope
 	sde, err := pixel.BuildEvent(c)
 	if err != nil {
-		log.Error().Err(err).Msg("could not build pixel event")
+		log.Error().Err(err).Msg("🔴 could not build pixel event")
 	}
 	contexts := buildContextsFromRequest(c)
 	n := buildCommonEnvelope(c, conf.Middleware, m)

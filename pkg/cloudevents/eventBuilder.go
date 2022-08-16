@@ -17,12 +17,12 @@ func BuildEvent(payload gjson.Result) (CloudEvent, error) {
 
 	pBytes, err := json.Marshal(payload.Value().(map[string]interface{}))
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not marshal cloudevent payload")
+		log.Error().Err(err).Msg("🔴 could not marshal cloudevent payload")
 		return CloudEvent{}, nil
 	}
 	err = json.Unmarshal(pBytes, &event)
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not unmarshal payload to CloudEvent")
+		log.Error().Err(err).Msg("🔴 could not unmarshal payload to CloudEvent")
 		return CloudEvent{}, err
 	}
 	return event, nil

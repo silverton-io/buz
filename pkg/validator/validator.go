@@ -32,7 +32,7 @@ func ValidatePayload(schemaName string, payload event.Payload, cache *cache.Sche
 	} else {
 		payload, err := payload.AsByte()
 		if err != nil {
-			log.Error().Stack().Err(err).Msg("could not marshal payload")
+			log.Error().Stack().Err(err).Msg("🔴 could not marshal payload")
 			validationError := envelope.ValidationError{
 				ErrorType:       &InvalidPayload.Type,
 				ErrorResolution: &InvalidPayload.Resolution,

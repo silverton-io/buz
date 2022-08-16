@@ -63,7 +63,7 @@ func (s *PubnubSink) buildPublishUrl(channel string) *url.URL {
 	p = "https://" + p + "?uuid=" + s.id.String()
 	u, err := url.Parse(p)
 	if err != nil {
-		log.Error().Err(err).Msg("could not parse publish url")
+		log.Error().Err(err).Msg("🔴 could not parse publish url")
 	}
 	return u
 }

@@ -119,7 +119,7 @@ func (s *AmplitudeSink) batchPublish(ctx context.Context, envelopes []envelope.E
 		mappedEnvelope, _ := e.AsMap()
 		flattenedEnvelope, err := flatten.Flatten(mappedEnvelope, "", flatten.DotStyle)
 		if err != nil {
-			log.Error().Err(err).Msg("could not flatten payload")
+			log.Error().Err(err).Msg("🔴 could not flatten payload")
 			return err
 		}
 		evnt := amplitudeEvent{

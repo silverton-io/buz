@@ -47,12 +47,12 @@ func (s *NatsSink) Initialize(conf config.Sink) error {
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	conn, err := nats.Connect(conf.NatsHost, nats.UserInfo(conf.NatsUser, conf.NatsPass))
 	if err != nil {
-		log.Error().Err(err).Msg("could not open nats connection")
+		log.Error().Err(err).Msg("🔴 could not open nats connection")
 		return err
 	}
 	encodedConn, err := nats.NewEncodedConn(conn, nats.JSON_ENCODER)
 	if err != nil {
-		log.Error().Err(err).Msg("could not open encoded connection")
+		log.Error().Err(err).Msg("🔴 could not open encoded connection")
 	}
 	s.conn, s.encodedConn = conn, encodedConn
 	s.validSubject, s.invalidSubject = conf.ValidSubject, conf.InvalidSubject

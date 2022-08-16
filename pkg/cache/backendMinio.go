@@ -32,7 +32,7 @@ func (b *MinioSchemaCacheBackend) Initialize(conf config.Backend) error {
 		Creds: credentials.NewStaticV4(b.accessKeyId, b.secretAccessKey, ""),
 	})
 	if err != nil {
-		log.Error().Err(err).Msg("could not initialize minio client")
+		log.Error().Err(err).Msg("🔴 could not initialize minio client")
 		return err
 	}
 	b.client = client
@@ -50,12 +50,12 @@ func (b *MinioSchemaCacheBackend) GetRemote(schema string) (contents []byte, err
 	log.Debug().Msg("getting file from minio backend " + schemaLocation)
 	obj, err := b.client.GetObject(ctx, b.bucket, schemaLocation, minio.GetObjectOptions{})
 	if err != nil {
-		log.Error().Err(err).Msg("could not get file from minio: " + schemaLocation)
+		log.Error().Err(err).Msg("🔴 could not get file from minio: " + schemaLocation)
 		return nil, err
 	}
 	contents, err = ioutil.ReadAll(obj)
 	if err != nil {
-		log.Error().Err(err).Msg("could not read contents from file: " + schemaLocation)
+		log.Error().Err(err).Msg("🔴 could not read contents from file: " + schemaLocation)
 		return nil, err
 	}
 	return contents, nil

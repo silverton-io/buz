@@ -55,7 +55,7 @@ func (s *ClickhouseSink) Initialize(conf config.Sink) error {
 	connString := db.GenerateClickhouseDsn(connParams)
 	gormDb, err := gorm.Open(clickhouse.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("could not open clickhouse connection")
+		log.Error().Err(err).Msg("🔴 could not open clickhouse connection")
 		return err
 	}
 	s.gormDb, s.validTable, s.invalidTable = gormDb, conf.ValidTable, conf.InvalidTable

@@ -23,7 +23,7 @@ const (
 func PostPayload(url url.URL, payload interface{}) (resp *http.Response, err error) {
 	data, err := json.Marshal(payload)
 	if err != nil {
-		log.Error().Err(err).Msg("could not marshal payload")
+		log.Error().Err(err).Msg("🔴 could not marshal payload")
 		return nil, err
 	}
 	buf := bytes.NewBuffer(data)
@@ -32,12 +32,12 @@ func PostPayload(url url.URL, payload interface{}) (resp *http.Response, err err
 		bodyBytes, err := io.ReadAll(resp.Body)
 		log.Debug().Interface("response", string(bodyBytes)).Interface("url", url.String()).Interface("payload", payload).Msg("non-200 response")
 		if err != nil {
-			log.Error().Err(err).Msg("could not read response body")
+			log.Error().Err(err).Msg("🔴 could not read response body")
 			return nil, err
 		}
 	}
 	if err != nil {
-		log.Error().Err(err).Msg("could not post payload")
+		log.Error().Err(err).Msg("🔴 could not post payload")
 		return nil, err
 	}
 	return resp, nil

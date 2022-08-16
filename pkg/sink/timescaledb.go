@@ -55,7 +55,7 @@ func (s *TimescaleSink) Initialize(conf config.Sink) error {
 	connString := db.GeneratePostgresDsn(connParams)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("could not open timescale connection")
+		log.Error().Err(err).Msg("🔴 could not open timescale connection")
 		return err
 	}
 	s.gormDb, s.validTable, s.invalidTable = gormDb, conf.ValidTable, conf.InvalidTable

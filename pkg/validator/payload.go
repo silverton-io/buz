@@ -20,7 +20,7 @@ func validatePayload(payload []byte, schema []byte) (isValid bool, validationErr
 	s := &jsonschema.Schema{}
 	unmarshalErr := json.Unmarshal(schema, s)
 	if unmarshalErr != nil {
-		log.Error().Stack().Err(unmarshalErr).Msg("failed to unmarshal schema")
+		log.Error().Stack().Err(unmarshalErr).Msg("🔴 failed to unmarshal schema")
 	}
 	validationErrs, vErr := s.ValidateBytes(ctx, payload)
 

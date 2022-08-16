@@ -72,7 +72,7 @@ func getBoolParam(params map[string]interface{}, k string) *bool {
 		val := v.(string)
 		bVal, err := strconv.ParseBool(val)
 		if err != nil {
-			log.Error().Err(err).Msg("could not parse bool param")
+			log.Error().Err(err).Msg("🔴 could not parse bool param")
 		}
 		return &bVal
 	}
@@ -99,7 +99,7 @@ func getContexts(b64encodedContexts *string) *map[string]interface{} {
 	var contexts = make(map[string]interface{})
 	payload, err := b64.RawStdEncoding.DecodeString(*b64encodedContexts)
 	if err != nil {
-		log.Error().Err(err).Msg("could not decode b64 encoded contexts")
+		log.Error().Err(err).Msg("🔴 could not decode b64 encoded contexts")
 		return nil
 	}
 	contextPayload := gjson.ParseBytes(payload)
@@ -114,7 +114,7 @@ func getContexts(b64encodedContexts *string) *map[string]interface{} {
 func getSdPayload(b64EncodedPayload *string) *event.SelfDescribingPayload {
 	payload, err := b64.RawStdEncoding.DecodeString(*b64EncodedPayload)
 	if err != nil {
-		log.Error().Err(err).Msg("could not decode b64 encoded self describing payload")
+		log.Error().Err(err).Msg("🔴 could not decode b64 encoded self describing payload")
 		return nil
 	}
 	schema := gjson.GetBytes(payload, "data.schema").String()
@@ -140,7 +140,7 @@ func getPageFromParam(params map[string]interface{}, k string) (Page, error) {
 	if p != nil {
 		parsedUrl, err := url.Parse(*p)
 		if err != nil {
-			log.Error().Err(err).Interface("url", *p).Msg("could not parse url")
+			log.Error().Err(err).Interface("url", *p).Msg("🔴 could not parse url")
 			return Page{}, err
 		}
 		qParams := util.QueryToMap(parsedUrl.Query())

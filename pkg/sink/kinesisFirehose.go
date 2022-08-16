@@ -72,7 +72,7 @@ func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, e
 			output, err := s.client.PutRecord(ctx, input) // Will want to use `PutRecordBatch`
 			defer wg.Done()
 			if err != nil {
-				log.Error().Stack().Err(err).Msg("could not publish event to kinesis firehose")
+				log.Error().Err(err).Msg("🔴 could not publish event to kinesis firehose")
 				pubErr <- err
 			} else {
 				log.Debug().Msgf("published event " + *output.RecordId + " to stream " + stream)

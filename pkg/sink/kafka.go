@@ -75,11 +75,10 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 	}
 	for _, d := range topicDetails {
 		if d.Err != nil {
-			log.Info().Msg("topic doesn't exist: " + d.Name)
-			log.Info().Msg("ensuring topic...")
+			log.Info().Msg("ensuring topic since it doesn't exist: " + d.Name)
 			resp, err := admClient.CreateTopics(ctx, DEFAULT_PARTITIONS, DEFAULT_REPLICATION_FACTOR, nil, d.Name)
 			if err != nil {
-				log.Error().Err(err).Msg("could not create topic: " + d.Name)
+				log.Error().Err(err).Msg("🔴 could not create topic: " + d.Name)
 			}
 			log.Debug().Interface("response", resp).Msg("topic created: " + d.Name)
 		}
@@ -113,7 +112,7 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []
 		s.client.Produce(ctx, record, func(r *kgo.Record, err error) {
 			defer wg.Done()
 			if err != nil {
-				log.Error().Err(err).Msg("could not publish record")
+				log.Error().Err(err).Msg("🔴 could not publish record")
 				produceErr = err
 			} else {
 				offset := strconv.FormatInt(r.Offset, 10)

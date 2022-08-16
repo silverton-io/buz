@@ -28,7 +28,7 @@ func (b *S3SchemaCacheBackend) Initialize(conf config.Backend) error {
 	ctx := context.Background()
 	cfg, err := awsconf.LoadDefaultConfig(ctx)
 	if err != nil {
-		log.Error().Err(err).Msg("could not load aws config")
+		log.Error().Err(err).Msg("🔴 could not load aws config")
 		return err
 	}
 	client := s3.NewFromConfig(cfg)
@@ -52,7 +52,7 @@ func (b *S3SchemaCacheBackend) GetRemote(schema string) (contents []byte, err er
 		Key:    aws.String(schemaLocation),
 	})
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not get file from s3: " + schemaLocation)
+		log.Error().Err(err).Msg("🔴 could not get file from s3: " + schemaLocation)
 		return nil, err
 	}
 	return buffer.Bytes(), nil

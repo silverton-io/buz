@@ -56,7 +56,7 @@ func (s *MysqlSink) Initialize(conf config.Sink) error {
 	connString := db.GenerateMysqlDsn(connParams)
 	gormDb, err := gorm.Open(mysql.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("could not open mysql connection")
+		log.Error().Err(err).Msg("🔴 could not open mysql connection")
 		return err
 	}
 	s.gormDb, s.validTable, s.invalidTable = gormDb, conf.ValidTable, conf.InvalidTable

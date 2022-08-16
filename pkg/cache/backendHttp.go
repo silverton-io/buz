@@ -30,7 +30,7 @@ func (b *HttpSchemaCacheBackend) GetRemote(schema string) (contents []byte, err 
 	schemaLocation, _ := url.Parse(b.protocol + "://" + b.host + "/" + b.path + "/" + schema) // FIXME!! There's gotta be a better way here.
 	content, err := request.Get(*schemaLocation)
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not get schema from http schema cache backend")
+		log.Error().Err(err).Msg("🔴 could not get schema from http schema cache backend")
 		return nil, err
 	}
 	return content, nil

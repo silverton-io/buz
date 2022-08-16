@@ -47,13 +47,13 @@ func (s *NatsJetstreamSink) Initialize(conf config.Sink) error {
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	conn, err := nats.Connect(conf.NatsHost, nats.UserInfo(conf.NatsUser, conf.NatsPass))
 	if err != nil {
-		log.Error().Err(err).Msg("could not open nats connection")
+		log.Error().Err(err).Msg("🔴 could not open nats connection")
 		return err
 	}
 	js, err := conn.JetStream()
 
 	if err != nil {
-		log.Error().Err(err).Msg("could not use jetstream context")
+		log.Error().Err(err).Msg("🔴 could not use jetstream context")
 		return err
 	}
 
@@ -66,12 +66,12 @@ func (s *NatsJetstreamSink) BatchPublishValid(ctx context.Context, envelopes []e
 	for _, e := range envelopes {
 		contents, err := e.AsByte()
 		if err != nil {
-			log.Error().Err(err).Msg("could not marshal envelope")
+			log.Error().Err(err).Msg("🔴 could not marshal envelope")
 			return err
 		}
 		_, err = s.jetstream.Publish(s.validSubject, contents)
 		if err != nil {
-			log.Error().Err(err).Msg("could not publish valid envelope to jetstream")
+			log.Error().Err(err).Msg("🔴 could not publish valid envelope to jetstream")
 			return err
 		}
 	}
@@ -82,12 +82,12 @@ func (s *NatsJetstreamSink) BatchPublishInvalid(ctx context.Context, envelopes [
 	for _, e := range envelopes {
 		contents, err := e.AsByte()
 		if err != nil {
-			log.Error().Err(err).Msg("could not marshal envelope")
+			log.Error().Err(err).Msg("🔴 could not marshal envelope")
 			return err
 		}
 		_, err = s.jetstream.Publish(s.invalidSubject, contents)
 		if err != nil {
-			log.Error().Err(err).Msg("could not publish invalid envelope to jetstream")
+			log.Error().Err(err).Msg("🔴 could not publish invalid envelope to jetstream")
 			return err
 		}
 	}
