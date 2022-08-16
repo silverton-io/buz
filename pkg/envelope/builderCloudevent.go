@@ -20,14 +20,14 @@ func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf *config.Config, m 
 	var envelopes []Envelope
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not read request body")
+		log.Error().Err(err).Msg("🔴 could not read request body")
 		return envelopes
 	}
 	for _, ce := range gjson.ParseBytes(reqBody).Array() {
 		n := buildCommonEnvelope(c, conf.Middleware, m)
 		cEvent, err := cloudevents.BuildEvent(ce)
 		if err != nil {
-			log.Error().Err(err).Msg("could not build Cloudevent")
+			log.Error().Err(err).Msg("🔴 could not build Cloudevent")
 		}
 		// Event Meta
 		n.EventMeta.Protocol = protocol.CLOUDEVENTS

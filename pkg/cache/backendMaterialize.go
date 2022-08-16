@@ -28,7 +28,7 @@ func (b *MaterializeSchemaCacheBackend) Initialize(conf config.Backend) error {
 	connString := db.GenerateMzDsn(connParams)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("could not open materialize connection")
+		log.Error().Err(err).Msg("🔴 could not open materialize connection")
 		return err
 	}
 	b.gormDb, b.registryTable = gormDb, conf.RegistryTable
@@ -47,5 +47,5 @@ func (b *MaterializeSchemaCacheBackend) GetRemote(schema string) (contents []byt
 }
 
 func (b *MaterializeSchemaCacheBackend) Close() {
-	log.Info().Msg("closing materialize schema cache backend")
+	log.Info().Msg("🟢 closing materialize schema cache backend")
 }

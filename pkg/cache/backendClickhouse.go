@@ -28,7 +28,7 @@ func (b *ClickhouseSchemaCacheBackend) Initialize(conf config.Backend) error {
 	connString := db.GenerateClickhouseDsn(connParams)
 	gormDb, err := gorm.Open(clickhouse.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("could not open clickhouse connection")
+		log.Error().Err(err).Msg("🔴 could not open clickhouse connection")
 		return err
 	}
 	b.gormDb, b.registryTable = gormDb, conf.RegistryTable
@@ -47,5 +47,5 @@ func (b *ClickhouseSchemaCacheBackend) GetRemote(schema string) (contents []byte
 }
 
 func (b *ClickhouseSchemaCacheBackend) Close() {
-	log.Info().Msg("closing clickhouse schema cache backend")
+	log.Info().Msg("🟢 closing clickhouse schema cache backend")
 }

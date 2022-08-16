@@ -62,17 +62,17 @@ func (s *ElasticsearchSink) batchPublish(ctx context.Context, index string, enve
 		eByte, err := json.Marshal(envelope)
 		reader := bytes.NewReader(eByte)
 		if err != nil {
-			log.Error().Stack().Err(err).Msg("could not encode envelope to buffer")
+			log.Error().Err(err).Msg("🔴 could not encode envelope to buffer")
 			return err
 		} else {
 			wg.Add(1)
 			envId := envelope.EventMeta.Uuid.String()
 			_, err := s.client.Create(index, envId, reader)
 			if err != nil {
-				log.Error().Stack().Interface("envelopeId", envId).Err(err).Msg("could not publish envelope to elasticsearch")
+				log.Error().Interface("envelopeId", envId).Err(err).Msg("🔴 could not publish envelope to elasticsearch")
 				return err
 			} else {
-				log.Debug().Interface("envelopeId", envId).Interface("indexId", index).Msg("published envelope to index")
+				log.Debug().Interface("🟡 envelopeId", envId).Interface("indexId", index).Msg("published envelope to index")
 			}
 			defer wg.Done()
 		}
@@ -92,5 +92,5 @@ func (s *ElasticsearchSink) BatchPublishInvalid(ctx context.Context, invalidEnve
 }
 
 func (s *ElasticsearchSink) Close() {
-	log.Debug().Msg("closing elasticsearch sink client")
+	log.Debug().Msg("🟡 closing elasticsearch sink client")
 }

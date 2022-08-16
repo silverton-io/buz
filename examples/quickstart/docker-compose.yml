@@ -3,7 +3,7 @@ version: "3.9"
 services:
   honeypot:
     container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.11.7
+    image: ghcr.io/silverton-io/honeypot:v0.11.8
     volumes:
       - type: bind
         source: ./honeypot/quickstart.conf.yml
@@ -22,8 +22,12 @@ services:
       test: curl -f localhost:8080/health
       interval: 15s
     depends_on:
-      redpanda-init:
-        condition: service_completed_successfully
+      redpanda-1:
+        condition: service_healthy
+      redpanda-2:
+        condition: service_healthy
+      redpanda-3:
+        condition: service_healthy
 
   sample-ui:
     container_name: sample-ui
@@ -31,8 +35,23 @@ services:
     ports:
       - 8081:8080
 
+  minio:
+    container_name: minio
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - ./minio/:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
   redpanda-1:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.15 # Note! Use the latest version :)
+    image: docker.vectorized.io/vectorized/redpanda:latest # Note! Use the latest version :)
     container_name: redpanda-1
     command:
       - redpanda start
@@ -58,7 +77,7 @@ services:
       start_period: 30s
 
   redpanda-2:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.15 # Note! Use the latest version :)
+    image: docker.vectorized.io/vectorized/redpanda:latest # Note! Use the latest version :)
     container_name: redpanda-2
     command:
       - redpanda start
@@ -85,7 +104,7 @@ services:
       start_period: 30s
 
   redpanda-3:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.15 # Note! Use the latest version :)
+    image: docker.vectorized.io/vectorized/redpanda:latest # Note! Use the latest version :)
     container_name: redpanda-3
     command:
       - redpanda start
@@ -111,30 +130,6 @@ services:
       interval: 1s
       start_period: 30s
 
-  redpanda-init:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.15 # Note! Use the latest version :)
-    container_name: redpanda-init
-    command:
-      - cluster metadata --brokers redpanda-1:29092,redpanda-2:29093,redpanda-3:29094
-    depends_on:
-      redpanda-1:
-        condition: service_healthy
-      redpanda-2:
-        condition: service_healthy
-      redpanda-3:
-        condition: service_healthy
-    deploy:
-      restart_policy:
-        condition: on-failure
-
-  materialized:
-    container_name: materialized
-    image: materialize/materialized # Note! Use the latest version :)
-    init: true
-    command: -w2 --disable-telemetry
-    ports:
-      - 6875:6875
-
   kowl:
     image: quay.io/cloudhut/kowl:v1.5.0
     restart: on-failure
@@ -152,6 +147,20 @@ services:
       redpanda-3:
         condition: service_healthy
 
+  materialize:
+    container_name: materialize
+    image: materialize/materialized # Note! Use the latest version :)
+    init: true
+    command: -w2 --disable-telemetry
+    ports:
+      - 6875:6875
+
   mzcli:
     container_name: mzcli
     image: materialize/cli
+    volumes:
+      - ./materialize/:/cmd
+    command: -h materialize -p 6875 -U materialize -f /cmd/create_sources_and_views.sql
+    depends_on:
+      honeypot:
+        condition: service_healthy

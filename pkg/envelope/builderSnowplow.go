@@ -95,7 +95,7 @@ func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *m
 	if c.Request.Method == "POST" {
 		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
-			log.Error().Stack().Err(err).Msg("could not read request body")
+			log.Error().Err(err).Msg("🔴 could not read request body")
 			return envelopes
 		}
 		payloadData := gjson.GetBytes(body, "data")

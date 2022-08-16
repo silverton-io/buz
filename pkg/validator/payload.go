@@ -20,12 +20,12 @@ func validatePayload(payload []byte, schema []byte) (isValid bool, validationErr
 	s := &jsonschema.Schema{}
 	unmarshalErr := json.Unmarshal(schema, s)
 	if unmarshalErr != nil {
-		log.Error().Stack().Err(unmarshalErr).Msg("failed to unmarshal schema")
+		log.Error().Stack().Err(unmarshalErr).Msg("🔴 failed to unmarshal schema")
 	}
 	validationErrs, vErr := s.ValidateBytes(ctx, payload)
 
 	if unmarshalErr != nil || vErr != nil {
-		log.Debug().Msg("event validated in " + time.Now().UTC().Sub(startTime).String())
+		log.Debug().Msg("🟡 event validated in " + time.Now().UTC().Sub(startTime).String())
 		validationError := envelope.ValidationError{
 			ErrorType:       &InvalidSchema.Type,
 			ErrorResolution: &InvalidSchema.Resolution,
@@ -34,7 +34,7 @@ func validatePayload(payload []byte, schema []byte) (isValid bool, validationErr
 		return false, validationError
 	}
 	if len(validationErrs) == 0 {
-		log.Debug().Msg("event validated in " + time.Now().UTC().Sub(startTime).String())
+		log.Debug().Msg("🟡 event validated in " + time.Now().UTC().Sub(startTime).String())
 		return true, envelope.ValidationError{}
 	} else {
 		var payloadValidationErrors []envelope.PayloadValidationError
@@ -51,7 +51,7 @@ func validatePayload(payload []byte, schema []byte) (isValid bool, validationErr
 			ErrorResolution: &InvalidPayload.Resolution,
 			Errors:          payloadValidationErrors,
 		}
-		log.Debug().Msg("event validated in " + time.Now().UTC().Sub(startTime).String())
+		log.Debug().Msg("🟡 event validated in " + time.Now().UTC().Sub(startTime).String())
 		return false, validationError
 	}
 }

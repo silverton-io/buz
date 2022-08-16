@@ -50,7 +50,7 @@ func (s *PubnubSink) DeliveryRequired() bool {
 }
 
 func (s *PubnubSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing pubnub sink")
+	log.Debug().Msg("🟡 initializing pubnub sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	s.validChannel, s.invalidChannel = conf.ValidChannel, conf.InvalidChannel
@@ -63,7 +63,7 @@ func (s *PubnubSink) buildPublishUrl(channel string) *url.URL {
 	p = "https://" + p + "?uuid=" + s.id.String()
 	u, err := url.Parse(p)
 	if err != nil {
-		log.Error().Err(err).Msg("could not parse publish url")
+		log.Error().Err(err).Msg("🔴 could not parse publish url")
 	}
 	return u
 }
@@ -85,5 +85,5 @@ func (s *PubnubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelo
 }
 
 func (s *PubnubSink) Close() {
-	log.Debug().Msg("closing pubnub sink")
+	log.Debug().Msg("🟡 closing pubnub sink")
 }

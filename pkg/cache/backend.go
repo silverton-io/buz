@@ -15,6 +15,7 @@ import (
 const (
 	GCS   string = "gcs"
 	S3    string = "s3"
+	MINIO string = "minio"
 	FS    string = "fs"
 	HTTP  string = "http"
 	HTTPS string = "https"
@@ -35,6 +36,9 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 		return &cacheBackend, nil
 	case S3:
 		cacheBackend := S3SchemaCacheBackend{}
+		return &cacheBackend, nil
+	case MINIO:
+		cacheBackend := MinioSchemaCacheBackend{}
 		return &cacheBackend, nil
 	case FS:
 		cacheBackend := FilesystemCacheBackend{}
@@ -70,7 +74,7 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 		return nil, e
 	default:
 		e := errors.New("unsupported schema cache backend: " + conf.Type)
-		log.Fatal().Stack().Err(e).Msg("unsupported backend")
+		log.Fatal().Stack().Err(e).Msg("🔴 unsupported backend")
 		return nil, e
 	}
 }
@@ -78,9 +82,9 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 func InitializeSchemaCacheBackend(conf config.Backend, b SchemaCacheBackend) error {
 	err := b.Initialize(conf)
 	if err != nil {
-		log.Error().Err(err).Msg("could not initialize schema cache backend")
+		log.Error().Err(err).Msg("🔴 could not initialize schema cache backend")
 		return err
 	}
-	log.Info().Msg(conf.Type + " schema cache backend initialized")
+	log.Info().Msg(conf.Type + "🟢 schema cache backend initialized")
 	return nil
 }

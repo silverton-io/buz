@@ -43,6 +43,7 @@ func (s *MongodbSink) DeliveryRequired() bool {
 }
 
 func (s *MongodbSink) Initialize(conf config.Sink) error {
+	log.Debug().Msg("🟡 initializing mongodb sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	ctx := context.Background()
@@ -58,7 +59,7 @@ func (s *MongodbSink) Initialize(conf config.Sink) error {
 	}
 	client, err := mongo.Connect(ctx, &opt)
 	if err != nil {
-		log.Error().Err(err).Msg("could not connect to mongodb")
+		log.Error().Err(err).Msg("🔴 could not connect to mongodb")
 	}
 	s.client = client
 	vCollection := s.client.Database(conf.MongoDbName).Collection(conf.ValidCollection)
@@ -96,5 +97,5 @@ func (s *MongodbSink) BatchPublishInvalid(ctx context.Context, envelopes []envel
 }
 
 func (s *MongodbSink) Close() {
-	log.Debug().Msg("closing mongodb sink")
+	log.Debug().Msg("🟡 closing mongodb sink")
 }

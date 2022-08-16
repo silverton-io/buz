@@ -9,7 +9,7 @@ This quickstart will get you started with Honeypot, a multi-node Redpanda cluste
 # Quickstart (with Docker)
 
 :::danger Note
-If you don't have `docker`, `docker-compose`, `rpk`, and `psql` you will need to install those first. `mzcli` is also useful.
+If you don't have `docker` and `docker-compose` you will need to install those first.
 :::
 
 
@@ -55,27 +55,8 @@ This step requires [docker-compose](https://docs.docker.com/compose/).
 ~/c/honeypot ❯❯❯
 ```
 
-## 3. Create Kafka Topics, Materialize Sources and Materialized Views
 
-:::danger Note
-This step requires [rpk](https://docs.redpanda.com/docs/quickstart/quick-start-macos/#installing-rpk) and [psql](https://www.postgresql.org/docs/current/app-psql.html).
-:::
-
-**`./examples/quickstart/setup.sh`**
-
-```
-~/c/honeypot ❯❯❯ ./examples/quickstart/setup.sh
-TOPIC        STATUS
-hpt-invalid  OK
-TOPIC      STATUS
-hpt-valid  OK
-CREATE SOURCE
-CREATE SOURCE
-CREATE VIEW
-CREATE VIEW
-```
-
-## 4. Send Events to Honeypot
+## 3. Send Events to Honeypot
 
 The Honeypot quickstart serves a page that you can use to quickly start firing Snowplow events using the [Snowplow Browser Tracker](https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/javascript-trackers/javascript-tracker/javascript-tracker-v3/) here: [localhost:8081](http://localhost:8081/)
 
@@ -92,14 +73,14 @@ The following events are tracked on this page:
 using both the `GET` and batch `POST` capabilities of the Snowplow tracker.
 
 
-## 5. View Events in the Kowl UI
+## 4. View Events in the Kowl UI
 
 The Quickstart runs Kowl at [localhost:8082](http://localhost:8082).
 
 Incoming events can be viewed in Kowl using the [Topic Viewer](http://localhost:8082/topics/hpt-invalid?o=-1&p=-1&q&s=50#messages).
 
 
-## 6. Query Real-Time Events using a Streaming Materialized View
+## 5. Query Real-Time Events using a Streaming Materialized View
 
 Connect to Materialize using `psql`:
 

@@ -50,6 +50,6 @@ func RequestLogger() gin.HandlerFunc {
 			RequestMethod:            c.Request.Method,
 			RequestUri:               c.Request.RequestURI,
 		}
-		log.Info().Interface("request", r).Msg("")
+		log.Info().Interface("🟢 request", r).Msg("")
 	}
 }

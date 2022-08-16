@@ -28,7 +28,7 @@ func (b *PostgresSchemaCacheBackend) Initialize(conf config.Backend) error {
 	connString := db.GeneratePostgresDsn(connParams)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("could not open pg connection")
+		log.Error().Err(err).Msg("🔴 could not open pg connection")
 		return err
 	}
 	b.gormDb, b.registryTable = gormDb, conf.RegistryTable
@@ -47,5 +47,5 @@ func (b *PostgresSchemaCacheBackend) GetRemote(schema string) (contents []byte, 
 }
 
 func (b *PostgresSchemaCacheBackend) Close() {
-	log.Info().Msg("closing postgres schema cache backend")
+	log.Info().Msg("🟢 closing postgres schema cache backend")
 }

@@ -20,7 +20,7 @@ import (
 
 const (
 	DEFAULT_PARTITIONS         int32 = 3
-	DEFAULT_REPLICATION_FACTOR int16 = 3
+	DEFAULT_REPLICATION_FACTOR int16 = 1 // NOTE! Really not a good default.
 )
 
 type KafkaSink struct {
@@ -52,7 +52,7 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	ctx := context.Background()
-	log.Debug().Msg("initializing kafka client")
+	log.Debug().Msg("🟡 initializing kafka client")
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(conf.KafkaBrokers...),
 	)
@@ -60,22 +60,27 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 		log.Debug().Stack().Err(err).Msg("could not create kafka sink client")
 		return err
 	}
-	log.Debug().Msg("pinging kafka brokers")
+	log.Debug().Msg("🟡 pinging kafka brokers")
 	err = client.Ping(ctx)
 	if err != nil {
 		log.Debug().Stack().Err(err).Msg("could not ping kafka sink brokers")
 		return err
 	}
 	admClient := kadm.NewClient(client)
-	log.Debug().Msg("verifying topics exist")
+	log.Debug().Msg("🟡 verifying topics exist")
 	topicDetails, err := admClient.DescribeTopicConfigs(ctx, conf.ValidTopic, conf.InvalidTopic)
 	if err != nil {
-		log.Debug().Stack().Err(err).Msg("could not describe topic configs")
+		log.Error().Err(err).Msg("🔴 could not describe topic configs")
 		return err
 	}
 	for _, d := range topicDetails {
 		if d.Err != nil {
-			log.Fatal().Stack().Err(d.Err).Msg("topic doesn't exist: " + d.Name)
+			log.Info().Msg("🟢 ensuring topic since it doesn't exist: " + d.Name)
+			resp, err := admClient.CreateTopics(ctx, DEFAULT_PARTITIONS, DEFAULT_REPLICATION_FACTOR, nil, d.Name)
+			if err != nil {
+				log.Fatal().Err(err).Msg("🔴 could not create topic: " + d.Name)
+			}
+			log.Debug().Interface("response", resp).Msg("🟡 topic created: " + d.Name)
 		}
 	}
 	s.client, s.validEventsTopic, s.invalidEventsTopic = client, conf.ValidTopic, conf.InvalidTopic
@@ -107,7 +112,7 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []
 		s.client.Produce(ctx, record, func(r *kgo.Record, err error) {
 			defer wg.Done()
 			if err != nil {
-				log.Error().Err(err).Msg("could not publish record")
+				log.Error().Err(err).Msg("🔴 could not publish record")
 				produceErr = err
 			} else {
 				offset := strconv.FormatInt(r.Offset, 10)
@@ -134,6 +139,6 @@ func (s *KafkaSink) BatchPublishInvalid(ctx context.Context, envelopes []envelop
 }
 
 func (s *KafkaSink) Close() {
-	log.Debug().Msg("closing kafka sink client")
+	log.Debug().Msg("🟡 closing kafka sink client")
 	s.client.Close()
 }

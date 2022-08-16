@@ -31,7 +31,7 @@ func SnowplowHandler(h params.Handler) gin.HandlerFunc {
 		if c.Request.Method == http.MethodGet {
 			redirectUrl, _ := c.GetQuery("u")
 			if redirectUrl != "" && h.Config.Snowplow.OpenRedirectsEnabled {
-				log.Info().Msg("redirecting to " + redirectUrl)
+				log.Info().Msg("🟢 redirecting to " + redirectUrl)
 				c.Redirect(http.StatusFound, redirectUrl)
 			}
 		}

@@ -22,10 +22,10 @@ type GcsSchemaCacheBackend struct {
 
 func (b *GcsSchemaCacheBackend) Initialize(config config.Backend) error {
 	ctx := context.Background()
-	log.Debug().Msg("initializing gcs schema cache backend")
+	log.Debug().Msg("🟡 initializing gcs schema cache backend")
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		log.Error().Err(err).Msg("could not initialize gcs schema cache backend")
+		log.Error().Err(err).Msg("🔴 could not initialize gcs schema cache backend")
 		return err
 	}
 	b.client, b.bucket, b.path = client, config.Bucket, config.Path
@@ -40,10 +40,10 @@ func (b *GcsSchemaCacheBackend) GetRemote(schema string) (contents []byte, err e
 	} else {
 		schemaLocation = filepath.Join(b.path, schema)
 	}
-	log.Debug().Msg("getting file from gcs backend " + schemaLocation)
+	log.Debug().Msg("🟡 getting file from gcs backend " + schemaLocation)
 	reader, err := b.client.Bucket(b.bucket).Object(schemaLocation).NewReader(ctx)
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not get file from gcs: " + schemaLocation)
+		log.Error().Err(err).Msg("🔴 could not get file from gcs: " + schemaLocation)
 		return nil, err
 	}
 	data, _ := ioutil.ReadAll(reader)
@@ -51,6 +51,6 @@ func (b *GcsSchemaCacheBackend) GetRemote(schema string) (contents []byte, err e
 }
 
 func (b *GcsSchemaCacheBackend) Close() {
-	log.Debug().Msg("closing gcs schema cache backend")
+	log.Debug().Msg("🟡 closing gcs schema cache backend")
 	b.client.Close()
 }

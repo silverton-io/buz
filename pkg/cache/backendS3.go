@@ -24,11 +24,11 @@ type S3SchemaCacheBackend struct {
 }
 
 func (b *S3SchemaCacheBackend) Initialize(conf config.Backend) error {
-	log.Debug().Msg("initializing s3 schema cache backend")
+	log.Debug().Msg("🟡 initializing s3 schema cache backend")
 	ctx := context.Background()
 	cfg, err := awsconf.LoadDefaultConfig(ctx)
 	if err != nil {
-		log.Error().Err(err).Msg("could not load aws config")
+		log.Error().Err(err).Msg("🔴 could not load aws config")
 		return err
 	}
 	client := s3.NewFromConfig(cfg)
@@ -46,19 +46,19 @@ func (b *S3SchemaCacheBackend) GetRemote(schema string) (contents []byte, err er
 		schemaLocation = filepath.Join(b.path, schema)
 	}
 	buffer := manager.NewWriteAtBuffer([]byte{})
-	log.Debug().Msg("getting file from s3 backend " + schemaLocation)
+	log.Debug().Msg("🟡 getting file from s3 backend " + schemaLocation)
 	_, err = b.downloader.Download(ctx, buffer, &s3.GetObjectInput{
 		Bucket: aws.String(b.bucket),
 		Key:    aws.String(schemaLocation),
 	})
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not get file from s3: " + schemaLocation)
+		log.Error().Err(err).Msg("🔴 could not get file from s3: " + schemaLocation)
 		return nil, err
 	}
 	return buffer.Bytes(), nil
 }
 
 func (b *S3SchemaCacheBackend) Close() {
-	log.Debug().Msg("closing s3 schema cache backend")
+	log.Debug().Msg("🟡 closing s3 schema cache backend")
 	// This is no-op
 }

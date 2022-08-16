@@ -40,7 +40,7 @@ func (s *FileSink) DeliveryRequired() bool {
 }
 
 func (s *FileSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing file sink")
+	log.Debug().Msg("🟡 initializing file sink")
 	s.validFile = conf.ValidFile
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
@@ -52,14 +52,14 @@ func (s *FileSink) batchPublish(ctx context.Context, filePath string, envelopes 
 	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	defer f.Close()
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not open file")
+		log.Error().Err(err).Msg("🔴 could not open file")
 		return err
 	}
 	for _, envelope := range envelopes {
-		log.Debug().Msg("writing envelope to file " + filePath)
+		log.Debug().Msg("🟡 writing envelope to file " + filePath)
 		b, err := json.Marshal(envelope)
 		if err != nil {
-			log.Error().Stack().Err(err).Msg("could not marshal envelope")
+			log.Error().Err(err).Msg("🔴 could not marshal envelope")
 			return err
 		}
 		newline := []byte("\n")
@@ -80,5 +80,5 @@ func (s *FileSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope
 }
 
 func (s *FileSink) Close() {
-	log.Debug().Msg("closing file sink")
+	log.Debug().Msg("🟡 closing file sink")
 }

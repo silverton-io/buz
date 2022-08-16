@@ -61,7 +61,7 @@ func heartbeat(t time.Ticker, m *meta.CollectorMeta) {
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
 		_, err := request.PostEvent(*endpoint, heartbeatPayload)
 		if err != nil {
-			log.Error().Err(err).Msg("could not send heartbeat")
+			log.Error().Err(err).Msg("🔴 could not send heartbeat")
 		}
 	}
 }

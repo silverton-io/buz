@@ -20,7 +20,7 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 	var envelopes []Envelope
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
-		log.Error().Stack().Err(err).Msg("could not read request body")
+		log.Error().Err(err).Msg("🔴 could not read request body")
 		return envelopes
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
@@ -28,7 +28,7 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 		contexts := buildContextsFromRequest(c)
 		sde, err := webhook.BuildEvent(c, e)
 		if err != nil {
-			log.Error().Stack().Err(err).Msg("could not build webhook event")
+			log.Error().Err(err).Msg("🔴 could not build webhook event")
 		}
 		// Event Meta
 		n.EventMeta.Protocol = protocol.WEBHOOK

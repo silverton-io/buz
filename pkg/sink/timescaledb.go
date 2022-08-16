@@ -42,7 +42,7 @@ func (s *TimescaleSink) DeliveryRequired() bool {
 }
 
 func (s *TimescaleSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing timescale sink")
+	log.Debug().Msg("🟡 initializing timescale sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	connParams := db.ConnectionParams{
@@ -55,7 +55,7 @@ func (s *TimescaleSink) Initialize(conf config.Sink) error {
 	connString := db.GeneratePostgresDsn(connParams)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("could not open timescale connection")
+		log.Error().Err(err).Msg("🔴 could not open timescale connection")
 		return err
 	}
 	s.gormDb, s.validTable, s.invalidTable = gormDb, conf.ValidTable, conf.InvalidTable
@@ -79,7 +79,7 @@ func (s *TimescaleSink) BatchPublishInvalid(ctx context.Context, envelopes []env
 }
 
 func (s *TimescaleSink) Close() {
-	log.Debug().Msg("closing timescale sink")
+	log.Debug().Msg("🟡 closing timescale sink")
 	db, _ := s.gormDb.DB()
 	db.Close()
 }

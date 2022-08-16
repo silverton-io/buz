@@ -49,27 +49,27 @@ func (s *PubsubSink) Initialize(conf config.Sink) error {
 	ctx, _ := context.WithTimeout(context.Background(), INIT_TIMEOUT_SECONDS*time.Second)
 	client, err := pubsub.NewClient(ctx, conf.Project)
 	if err != nil {
-		log.Debug().Stack().Err(err).Msg("could not initialize pubsub sink")
+		log.Debug().Err(err).Msg("🟡 could not initialize pubsub sink")
 		return err
 	}
 	validTopic := client.Topic(conf.ValidTopic)
 	invalidTopic := client.Topic(conf.InvalidTopic)
 	vTopicExists, err := validTopic.Exists(ctx)
 	if err != nil {
-		log.Debug().Stack().Err(err).Msg("cannot check valid event topic existence")
+		log.Debug().Err(err).Msg("🟡 cannot check valid event topic existence")
 		return err
 	}
 	if !vTopicExists {
-		log.Debug().Stack().Err(err).Msg("valid event topic doesn't exist in project " + conf.Project)
+		log.Debug().Err(err).Msg("🟡 valid event topic doesn't exist in project " + conf.Project)
 		return err
 	}
 	invTopicExists, err := invalidTopic.Exists(ctx)
 	if err != nil {
-		log.Debug().Stack().Err(err).Msg("cannot check invalid event topic existence")
+		log.Debug().Err(err).Msg("🟡 cannot check invalid event topic existence")
 		return err
 	}
 	if !invTopicExists {
-		log.Debug().Stack().Err(err).Msg("invalid event topic doesn't exist in project " + conf.Project)
+		log.Debug().Err(err).Msg("🟡 invalid event topic doesn't exist in project " + conf.Project)
 		return err
 	}
 	id := uuid.New()
@@ -126,6 +126,6 @@ func (s *PubsubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelo
 }
 
 func (s *PubsubSink) Close() {
-	log.Debug().Msg("closing pubsub sink client")
+	log.Debug().Msg("🟡 closing pubsub sink client")
 	s.client.Close() // Technically does not need to be called since it's available for lifetime
 }

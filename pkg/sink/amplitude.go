@@ -96,7 +96,7 @@ func (s *AmplitudeSink) DeliveryRequired() bool {
 }
 
 func (s *AmplitudeSink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("initializing indicative sink")
+	log.Debug().Msg("🟡 initializing indicative sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	var e string
@@ -119,7 +119,7 @@ func (s *AmplitudeSink) batchPublish(ctx context.Context, envelopes []envelope.E
 		mappedEnvelope, _ := e.AsMap()
 		flattenedEnvelope, err := flatten.Flatten(mappedEnvelope, "", flatten.DotStyle)
 		if err != nil {
-			log.Error().Err(err).Msg("could not flatten payload")
+			log.Error().Err(err).Msg("🔴 could not flatten payload")
 			return err
 		}
 		evnt := amplitudeEvent{
@@ -156,6 +156,6 @@ func (s *AmplitudeSink) BatchPublishInvalid(ctx context.Context, envelopes []env
 }
 
 func (s *AmplitudeSink) Close() {
-	log.Debug().Msg("closing amplitude sink")
+	log.Debug().Msg("🟡 closing amplitude sink")
 	// no-opo
 }

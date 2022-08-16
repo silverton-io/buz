@@ -68,10 +68,10 @@ func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes
 			output, err := s.client.PutRecord(ctx, input) // Will want to use `PutRecordBatch`
 			defer wg.Done()
 			if err != nil {
-				log.Error().Stack().Err(err).Msg("could not publish event to kinesis")
+				log.Error().Err(err).Msg("🔴 could not publish event to kinesis")
 				pErr <- err
 			} else {
-				log.Debug().Msgf("published event " + *output.SequenceNumber + " to stream " + stream)
+				log.Debug().Msgf("🟡 published event " + *output.SequenceNumber + " to stream " + stream)
 				pErr <- nil
 			}
 		}(pubErr)
@@ -95,6 +95,6 @@ func (s *KinesisSink) BatchPublishInvalid(ctx context.Context, envelopes []envel
 }
 
 func (s *KinesisSink) Close() {
-	log.Debug().Msg("closing kinesis sink client")
+	log.Debug().Msg("🟡 closing kinesis sink client")
 
 }
