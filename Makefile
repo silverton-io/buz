@@ -1,11 +1,11 @@
-.PHONY: help build-docker buildx-deploy
+.PHONY: help build-docker buildx-deploy test-cover-pkg
 S=silverton
 REGISTRY:=us-east1-docker.pkg.dev/silverton-io/docker
 VERSION:=$(shell cat .VERSION)
 TEST_PROFILE=testprofile.out
 
 build:
-	go build -ldflags="-X main.VERSION=$(VERSION)" -o honeypot ./cmd/*.go
+	go build -ldflags="-X main.VERSION=$(VERSION)" -o honeypot ./cmd/honeypot/*.go
 
 build-docker: ## Build local honeypot image
 	docker build -f deploy/Dockerfile -t honeypot:$(VERSION) .
