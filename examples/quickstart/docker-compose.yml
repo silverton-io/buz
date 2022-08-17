@@ -3,7 +3,7 @@ version: "3.9"
 services:
   honeypot:
     container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.11.9
+    image: ghcr.io/silverton-io/honeypot:v0.11.10
     volumes:
       - type: bind
         source: ./honeypot/quickstart.conf.yml
@@ -19,7 +19,7 @@ services:
       restart_policy:
         condition: on-failure
     healthcheck:
-      test: curl -f localhost:8080/health
+      test: ./healthcheck --host=localhost --port=8080 --path=/health
       interval: 15s
     depends_on:
       redpanda-1:
