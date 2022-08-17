@@ -3,7 +3,7 @@ version: "3.9"
 services:
   honeypot:
     container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.11.8
+    image: ghcr.io/silverton-io/honeypot:v0.11.9
     volumes:
       - type: bind
         source: ./honeypot/quickstart.conf.yml
@@ -149,9 +149,9 @@ services:
 
   materialize:
     container_name: materialize
-    image: materialize/materialized # Note! Use the latest version :)
+    image: materialize/materialized:v0.26.4
     init: true
-    command: -w2 --disable-telemetry
+    command: -w2 --disable-telemetry --workers 1
     ports:
       - 6875:6875
 
