@@ -7,7 +7,7 @@ COPY . /app/
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-X main.VERSION=$(cat .VERSION)" -o honeypot ./cmd/*.go
 
-FROM busybox
+FROM golang:1.19
 
 LABEL maintainer="Jake Thomas <jake@silverton.io>"
 LABEL org.opencontainers.image.description "A lightweight, Snowplow-compatible streaming event collection system."
