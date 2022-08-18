@@ -11,6 +11,13 @@ build:
 run: ## Run honeypot locally
 	go run -ldflags="-X 'main.VERSION=x.x.dev'" $(HONEYPOT_DIR)
 
+bootstrap-dev: ## Bootstrap development environment
+	curl https://raw.githubusercontent.com/silverton-io/honeypot/main/examples/devel/honeypot/simple.conf.yml -o config.yml;
+	make run
+
+bootstrap-dev-destinations: ## Bootstrap various containerized database/stream systems
+	docker-compose -f examples/devel/docker-compose.yml up -d
+
 build-docker: ## Build local honeypot image
 	docker build -f deploy/Dockerfile -t honeypot:$(VERSION) .
 
