@@ -1,5 +1,0 @@
-# Yeet
-
-**🟡 Unsupported**
-
-Stay tuned.

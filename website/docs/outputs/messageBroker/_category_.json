@@ -1,8 +1,0 @@
-{
-    "label": "Message Broker Sinks",
-    "position": 7,
-    "link": {
-        "type": "generated-index",
-        "description": "Sink events to message brokers using these outputs."
-    }
-}
