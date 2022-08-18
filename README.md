@@ -17,4 +17,4 @@ Quickstart documentation for setting up an end-to-end streaming analytics stack 
 
 # Documentation
 
-Documentation can [be found here](https://honeypot.silverton.io/). It is a WIP!
+Documentation can [be found here](https://honeypot.silverton.io/).
