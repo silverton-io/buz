@@ -1,8 +1,6 @@
 .DS_STORE
 config.yml
 scratch/*
-site/site/*
-static/*
 testprofile.out
 # File sink
 honeypot-valid.json
