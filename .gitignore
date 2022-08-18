@@ -8,3 +8,5 @@ honeypot-invalid.json
 notes/*
 *.sql
 examples/quickstart/minio/*
+*.bin
+*.meta

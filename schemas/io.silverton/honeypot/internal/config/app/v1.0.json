@@ -884,7 +884,7 @@
             "type": "array",
             "description": "Configuration for the sinks",
             "minItems": 1,
-            "maxItems": 7,
+            "maxItems": 8,
             "items": {
                 "type": "object",
                 "description": "Configuration for an individual sink",

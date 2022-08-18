@@ -81,14 +81,6 @@ echo "\nSetting up clickhouse...\n"
 # This is required due to the inability to pass env vars to clickhouse img.
 clickhouse client -u $H_USER --password $H_PASS -q \"create database $REGISTRY_DB;\"
 
-echo "\nSetting up Redpanda...\n";
-rpk topic \
-    create hpt-invalid \
-    --brokers 127.0.0.1:9092;
-
-rpk topic \
-    create hpt-valid \
-    --brokers 127.0.0.1:9092;
 
 cleanSeedFiles;
 buildSeedFiles;
