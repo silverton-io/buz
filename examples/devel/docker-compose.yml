@@ -82,7 +82,7 @@ services:
       - 6875:6875
 
   redpanda-1:
-    image: docker.vectorized.io/vectorized/redpanda:v21.11.15 # Note! Use the latest version :)
+    image: docker.vectorized.io/vectorized/redpanda:latest
     container_name: redpanda-1
     command:
       - redpanda start
