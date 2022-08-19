@@ -1,5 +1,0 @@
-# Redis
-
-**🟡 Unsupported**
-
-Stay Tuned

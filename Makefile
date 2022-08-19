@@ -1,11 +1,22 @@
-.PHONY: help build-docker buildx-deploy
+.PHONY: help run bootstrap bootstrap-destinations build-docker buildx-deploy test-cover-pkg
 S=silverton
 REGISTRY:=us-east1-docker.pkg.dev/silverton-io/docker
 VERSION:=$(shell cat .VERSION)
+HONEYPOT_DIR=./cmd/honeypot/*.go
 TEST_PROFILE=testprofile.out
 
 build:
-	go build -ldflags="-X main.VERSION=$(VERSION)" -o honeypot ./cmd/*.go
+	go build -ldflags="-X main.VERSION=$(VERSION)" -o honeypot $(HONEYPOT_DIR)
+
+run: ## Run honeypot locally
+	go run -ldflags="-X 'main.VERSION=x.x.dev'" $(HONEYPOT_DIR)
+
+bootstrap: ## Bootstrap development environment
+	curl https://raw.githubusercontent.com/silverton-io/honeypot/main/examples/devel/honeypot/simple.conf.yml -o config.yml;
+	make run
+
+bootstrap-destinations: ## Bootstrap various containerized database/stream systems
+	docker-compose -f examples/devel/docker-compose.yml up -d
 
 build-docker: ## Build local honeypot image
 	docker build -f deploy/Dockerfile -t honeypot:$(VERSION) .

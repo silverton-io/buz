@@ -3,7 +3,7 @@
 ![agplv3](https://img.shields.io/badge/license-AGPLv3-brightgreen)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/silverton-io/honeypot)
 
-![honey](website/static/img/buzz.png)
+![honey](img/buzz.png)
 
 # Event Collection, Validation, and Delivery.
 
@@ -17,4 +17,4 @@ Quickstart documentation for setting up an end-to-end streaming analytics stack 
 
 # Documentation
 
-Documentation can [be found here](https://honeypot.silverton.io/). It is a WIP!
+Documentation can [be found here](https://honeypot.silverton.io/).
