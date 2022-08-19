@@ -1,5 +1,22 @@
 version: "3.9"
 
+x-app:
+  &redpanda
+  image: docker.vectorized.io/vectorized/redpanda:latest # Note! Use the latest version :)
+  healthcheck:
+    test: curl -f localhost:9644/v1/status/ready
+    interval: 1s
+    start_period: 30s
+
+x-dependency:
+  &redpanda-dep
+  redpanda-1:
+    condition: service_healthy
+  redpanda-2:
+    condition: service_healthy
+  redpanda-3:
+    condition: service_healthy
+
 services:
   honeypot:
     container_name: honeypot
@@ -22,12 +39,7 @@ services:
       test: ./healthcheck --host=localhost --port=8080 --path=/health
       interval: 15s
     depends_on:
-      redpanda-1:
-        condition: service_healthy
-      redpanda-2:
-        condition: service_healthy
-      redpanda-3:
-        condition: service_healthy
+      << : *redpanda-dep
 
   sample-ui:
     container_name: sample-ui
@@ -51,7 +63,7 @@ services:
       retries: 3
 
   redpanda-1:
-    image: docker.vectorized.io/vectorized/redpanda:latest # Note! Use the latest version :)
+    << : *redpanda
     container_name: redpanda-1
     command:
       - redpanda start
@@ -71,13 +83,9 @@ services:
       - --set redpanda.enable_idempotence=true
     ports:
       - 9092:9092
-    healthcheck:
-      test: curl -f localhost:9644/v1/status/ready
-      interval: 1s
-      start_period: 30s
 
   redpanda-2:
-    image: docker.vectorized.io/vectorized/redpanda:latest # Note! Use the latest version :)
+    << : *redpanda
     container_name: redpanda-2
     command:
       - redpanda start
@@ -98,13 +106,9 @@ services:
       - --set redpanda.enable_idempotence=true
     ports:
       - 9093:9093
-    healthcheck:
-      test: curl -f localhost:9644/v1/status/ready
-      interval: 1s
-      start_period: 30s
 
   redpanda-3:
-    image: docker.vectorized.io/vectorized/redpanda:latest # Note! Use the latest version :)
+    << : *redpanda
     container_name: redpanda-3
     command:
       - redpanda start
@@ -125,10 +129,6 @@ services:
       - --set redpanda.enable_idempotence=true
     ports:
       - 9094:9094
-    healthcheck:
-      test: curl -f localhost:9644/v1/status/ready
-      interval: 1s
-      start_period: 30s
 
   kowl:
     image: quay.io/cloudhut/kowl:v1.5.0
@@ -137,15 +137,10 @@ services:
     volumes:
     - ./kowl/quickstart.yml:/etc/kowl/config.yml
     ports:
-    - "8082:8081"
+    - 8082:8081
     entrypoint: ./kowl --config.filepath=/etc/kowl/config.yml
     depends_on:
-      redpanda-1:
-        condition: service_healthy
-      redpanda-2:
-        condition: service_healthy
-      redpanda-3:
-        condition: service_healthy
+      << : *redpanda-dep
 
   materialize:
     container_name: materialize
@@ -154,6 +149,9 @@ services:
     command: -w2 --disable-telemetry --workers 1
     ports:
       - 6875:6875
+    healthcheck:
+      test: curl -f materialize:6875/status
+      interval: 1s
 
   mzcli:
     container_name: mzcli
@@ -162,5 +160,6 @@ services:
       - ./materialize/:/cmd
     command: -h materialize -p 6875 -U materialize -f /cmd/create_sources_and_views.sql
     depends_on:
-      honeypot:
+      << : *redpanda-dep
+      materialize:
         condition: service_healthy
