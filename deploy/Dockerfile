@@ -21,6 +21,6 @@ COPY --from=build /etc/ssl/certs /etc/ssl/certs
 COPY --from=build /app/examples/quickstart/buz/quickstart.conf.yml /etc/buz/config.yml
 
 EXPOSE 8080
-ENV buz_CONFIG_PATH=/etc/buz/config.yml
+ENV BUZ_CONFIG_PATH=/etc/buz/config.yml
 
 ENTRYPOINT [ "./buz" ]
