@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
-// which may be found at https://github.com/silverton-io/honeypot/blob/main/LICENSE
+// which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package sink
 
@@ -11,8 +11,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/envelope"
+	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/twmb/franz-go/pkg/kadm"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"golang.org/x/net/context"

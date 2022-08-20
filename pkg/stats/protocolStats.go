@@ -1,14 +1,14 @@
 // Copyright (c) 2022 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
-// which may be found at https://github.com/silverton-io/honeypot/blob/main/LICENSE
+// which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package stats
 
 import (
 	"sync"
 
-	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/protocol"
+	"github.com/silverton-io/buz/pkg/envelope"
+	"github.com/silverton-io/buz/pkg/protocol"
 )
 
 type ProtocolStats struct {

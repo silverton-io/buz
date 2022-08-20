@@ -13,10 +13,10 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD=honeypot
-      - MYSQL_DATABASE=honeypot
-      - MYSQL_USER=honeypot
-      - MYSQL_PASSWORD=honeypot
+      - MYSQL_ROOT_PASSWORD=buz
+      - MYSQL_DATABASE=buz
+      - MYSQL_USER=buz
+      - MYSQL_PASSWORD=buz
 
   postgres:
     container_name: postgres
@@ -24,9 +24,9 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_DB=honeypot
-      - POSTGRES_USER=honeypot
-      - POSTGRES_PASSWORD=honeypot
+      - POSTGRES_DB=buz
+      - POSTGRES_USER=buz
+      - POSTGRES_PASSWORD=buz
 
   timescale:
     container_name: timescale
@@ -34,9 +34,9 @@ services:
     ports:
       - 5433:5432
     environment:
-      - POSTGRES_DB=honeypot
-      - POSTGRES_USER=honeypot
-      - POSTGRES_PASSWORD=honeypot
+      - POSTGRES_DB=buz
+      - POSTGRES_USER=buz
+      - POSTGRES_PASSWORD=buz
 
   clickhouse:
     container_name: clickhouse
@@ -57,8 +57,8 @@ services:
     container_name: mongo
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: honeypot
-      MONGO_INITDB_ROOT_PASSWORD: honeypot
+      MONGO_INITDB_ROOT_USERNAME: buz
+      MONGO_INITDB_ROOT_PASSWORD: buz
     ports:
       - 27017:27017
 
@@ -69,9 +69,9 @@ services:
     ports:
       - 8084:8081
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: honeypot
-      ME_CONFIG_MONGODB_ADMINPASSWORD: honeypot
-      ME_CONFIG_MONGODB_URL: mongodb://honeypot:honeypot@mongo:27017/
+      ME_CONFIG_MONGODB_ADMINUSERNAME: buz
+      ME_CONFIG_MONGODB_ADMINPASSWORD: buz
+      ME_CONFIG_MONGODB_URL: mongodb://buz:buz@mongo:27017/
 
   materialized:
     container_name: materialized
@@ -125,7 +125,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.1.0
     container_name: elasticsearch
     environment:
-      - cluster.name=honeypot-cluster
+      - cluster.name=buz-cluster
       - "discovery.type=single-node"
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"

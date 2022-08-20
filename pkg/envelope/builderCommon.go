@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
-// which may be found at https://github.com/silverton-io/honeypot/blob/main/LICENSE
+// which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package envelope
 
@@ -9,11 +9,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/constants"
-	"github.com/silverton-io/honeypot/pkg/event"
-	"github.com/silverton-io/honeypot/pkg/meta"
-	"github.com/silverton-io/honeypot/pkg/util"
+	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/constants"
+	"github.com/silverton-io/buz/pkg/event"
+	"github.com/silverton-io/buz/pkg/meta"
+	"github.com/silverton-io/buz/pkg/util"
 )
 
 func buildCommonEnvelope(c *gin.Context, conf config.Middleware, m *meta.CollectorMeta) Envelope {

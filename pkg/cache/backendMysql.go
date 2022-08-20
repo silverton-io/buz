@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
-// which may be found at https://github.com/silverton-io/honeypot/blob/main/LICENSE
+// which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package cache
 
@@ -8,8 +8,8 @@ import (
 	"encoding/json"
 
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/db"
+	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/db"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

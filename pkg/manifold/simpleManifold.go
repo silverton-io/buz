@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
-// which may be found at https://github.com/silverton-io/honeypot/blob/main/LICENSE
+// which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package manifold
 
@@ -8,9 +8,9 @@ import (
 	"context"
 
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/sink"
-	"github.com/silverton-io/honeypot/pkg/stats"
+	"github.com/silverton-io/buz/pkg/envelope"
+	"github.com/silverton-io/buz/pkg/sink"
+	"github.com/silverton-io/buz/pkg/stats"
 )
 
 // A stupid-simple manifold with strict guarantees

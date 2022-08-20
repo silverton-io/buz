@@ -1,4 +1,4 @@
-name: Publish Honeypot image to ghcr.io
+name: Publish Buz image to ghcr.io
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
         uses: 'google-github-actions/auth@v0'
         with:
           token_format: 'access_token'
-          workload_identity_provider: 'projects/860234713891/locations/global/workloadIdentityPools/honeypot/providers/github'
+          workload_identity_provider: 'projects/860234713891/locations/global/workloadIdentityPools/buz/providers/github'
           service_account: 'honeypot-ci@silverton-io.iam.gserviceaccount.com'
 
       - name: Configure Docker

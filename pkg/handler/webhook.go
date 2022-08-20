@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
-// which may be found at https://github.com/silverton-io/honeypot/blob/main/LICENSE
+// which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package handler
 
@@ -8,11 +8,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/silverton-io/honeypot/pkg/annotator"
-	"github.com/silverton-io/honeypot/pkg/envelope"
-	"github.com/silverton-io/honeypot/pkg/params"
-	"github.com/silverton-io/honeypot/pkg/privacy"
-	"github.com/silverton-io/honeypot/pkg/response"
+	"github.com/silverton-io/buz/pkg/annotator"
+	"github.com/silverton-io/buz/pkg/envelope"
+	"github.com/silverton-io/buz/pkg/params"
+	"github.com/silverton-io/buz/pkg/privacy"
+	"github.com/silverton-io/buz/pkg/response"
 )
 
 func WebhookHandler(h params.Handler) gin.HandlerFunc {

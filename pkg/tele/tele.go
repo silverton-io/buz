@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
-// which may be found at https://github.com/silverton-io/honeypot/blob/main/LICENSE
+// which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package tele
 
@@ -9,18 +9,18 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/event"
-	"github.com/silverton-io/honeypot/pkg/meta"
-	"github.com/silverton-io/honeypot/pkg/request"
-	"github.com/silverton-io/honeypot/pkg/util"
+	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/event"
+	"github.com/silverton-io/buz/pkg/meta"
+	"github.com/silverton-io/buz/pkg/request"
+	"github.com/silverton-io/buz/pkg/util"
 )
 
 const (
 	DEFAULT_ENDPOINT string = "https://tele.silverton.io/gen/p"
-	STARTUP_1_0      string = "io.silverton/honeypot/internal/tele/startup/v1.0.json"
-	HEARTBEAT_1_0    string = "io.silverton/honeypot/internal/tele/beat/v1.0.json"
-	SHUTDOWN_1_0     string = "io.silverton/honeypot/internal/tele/shutdown/v1.0.json"
+	STARTUP_1_0      string = "io.silverton/buz/internal/tele/startup/v1.0.json"
+	HEARTBEAT_1_0    string = "io.silverton/buz/internal/tele/beat/v1.0.json"
+	SHUTDOWN_1_0     string = "io.silverton/buz/internal/tele/shutdown/v1.0.json"
 	HEARTBEAT_MS     int    = 1500
 )
 
