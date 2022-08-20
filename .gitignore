@@ -5,10 +5,9 @@ testprofile.out
 # File sink
 buz-valid.json
 buz-invalid.json
-buz-valid.json
-buz-invalid.json
 notes/*
 *.sql
 examples/quickstart/minio/*
 *.bin
 *.meta
+buz
