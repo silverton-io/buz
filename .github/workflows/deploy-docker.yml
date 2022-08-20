@@ -33,7 +33,7 @@ jobs:
         with:
           token_format: 'access_token'
           workload_identity_provider: 'projects/860234713891/locations/global/workloadIdentityPools/buz/providers/github'
-          service_account: 'buz-ci@silverton-io.iam.gserviceaccount.com'
+          service_account: 'honeypot-ci@silverton-io.iam.gserviceaccount.com'
 
       - name: Configure Docker
         shell: bash
