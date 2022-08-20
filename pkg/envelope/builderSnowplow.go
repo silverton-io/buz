@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
-// which may be found at https://github.com/silverton-io/honeypot/blob/main/LICENSE
+// which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package envelope
 
@@ -9,11 +9,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/meta"
-	"github.com/silverton-io/honeypot/pkg/protocol"
-	"github.com/silverton-io/honeypot/pkg/snowplow"
-	"github.com/silverton-io/honeypot/pkg/util"
+	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/meta"
+	"github.com/silverton-io/buz/pkg/protocol"
+	"github.com/silverton-io/buz/pkg/snowplow"
+	"github.com/silverton-io/buz/pkg/util"
 	"github.com/tidwall/gjson"
 )
 

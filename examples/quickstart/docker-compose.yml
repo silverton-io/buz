@@ -18,18 +18,18 @@ x-dependency:
     condition: service_healthy
 
 services:
-  honeypot:
-    container_name: honeypot
-    image: ghcr.io/silverton-io/honeypot:v0.11.10
+  buz:
+    container_name: buz
+    image: ghcr.io/silverton-io/buz:v0.11.10
     volumes:
       - type: bind
-        source: ./honeypot/quickstart.conf.yml
-        target: /etc/honeypot/config.yml
+        source: ./buz/quickstart.conf.yml
+        target: /etc/buz/config.yml
       - type: bind
         source: ../../schemas
         target: /schemas/
     environment:
-      - HONEYPOT_CONFIG_PATH=/etc/honeypot/config.yml
+      - BUZ_CONFIG_PATH=/etc/buz/config.yml
     ports:
       - 8080:8080
     deploy:

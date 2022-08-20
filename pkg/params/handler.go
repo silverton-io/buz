@@ -1,15 +1,15 @@
 // Copyright (c) 2022 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
-// which may be found at https://github.com/silverton-io/honeypot/blob/main/LICENSE
+// which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package params
 
 import (
-	"github.com/silverton-io/honeypot/pkg/cache"
-	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/manifold"
-	"github.com/silverton-io/honeypot/pkg/meta"
-	"github.com/silverton-io/honeypot/pkg/stats"
+	"github.com/silverton-io/buz/pkg/cache"
+	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/manifold"
+	"github.com/silverton-io/buz/pkg/meta"
+	"github.com/silverton-io/buz/pkg/stats"
 )
 
 type Handler struct {

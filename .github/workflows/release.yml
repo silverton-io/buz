@@ -71,5 +71,5 @@ jobs:
           goarch: ${{ matrix.goarch }}
           build_command: make
           release_tag: ${{ steps.get-version.outputs.content }}
-          binary_name: honeypot
+          binary_name: buz
           extra_files: LICENSE .VERSION

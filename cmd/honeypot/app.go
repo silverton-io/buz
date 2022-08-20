@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
-// which may be found at https://github.com/silverton-io/honeypot/blob/main/LICENSE
+// which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package main
 
@@ -16,19 +16,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/honeypot/pkg/cache"
-	"github.com/silverton-io/honeypot/pkg/config"
-	"github.com/silverton-io/honeypot/pkg/constants"
-	"github.com/silverton-io/honeypot/pkg/env"
-	"github.com/silverton-io/honeypot/pkg/handler"
-	"github.com/silverton-io/honeypot/pkg/manifold"
-	"github.com/silverton-io/honeypot/pkg/meta"
-	"github.com/silverton-io/honeypot/pkg/middleware"
-	"github.com/silverton-io/honeypot/pkg/params"
-	"github.com/silverton-io/honeypot/pkg/protocol"
-	"github.com/silverton-io/honeypot/pkg/sink"
-	"github.com/silverton-io/honeypot/pkg/stats"
-	"github.com/silverton-io/honeypot/pkg/tele"
+	"github.com/silverton-io/buz/pkg/cache"
+	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/constants"
+	"github.com/silverton-io/buz/pkg/handler"
+	"github.com/silverton-io/buz/pkg/manifold"
+	"github.com/silverton-io/buz/pkg/meta"
+	"github.com/silverton-io/buz/pkg/middleware"
+	"github.com/silverton-io/buz/pkg/params"
+	"github.com/silverton-io/buz/pkg/protocol"
+	"github.com/silverton-io/buz/pkg/sink"
+	"github.com/silverton-io/buz/pkg/stats"
+	"github.com/silverton-io/buz/pkg/tele"
 	"github.com/spf13/viper"
 )
 
@@ -60,7 +59,7 @@ func (a *App) configure() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	// Load app config from file
-	conf := os.Getenv(env.HONEYPOT_CONFIG_PATH)
+	conf := os.Getenv(env.buz_CONFIG_PATH)
 	if conf == "" {
 		conf = "config.yml"
 	}
@@ -221,7 +220,7 @@ func (a *App) initializeWebhookRoutes() {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing webhook routes")
 		a.engine.POST(a.config.Inputs.Webhook.Path, handler.WebhookHandler(handlerParams))
-		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+constants.HONEYPOT_SCHEMA_PARAM, handler.WebhookHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+constants.buz_SCHEMA_PARAM, handler.WebhookHandler(handlerParams))
 	}
 }
 
@@ -230,7 +229,7 @@ func (a *App) initializePixelRoutes() {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing pixel routes")
 		a.engine.GET(a.config.Inputs.Pixel.Path, handler.PixelHandler(handlerParams))
-		a.engine.GET(a.config.Inputs.Pixel.Path+"/*"+constants.HONEYPOT_SCHEMA_PARAM, handler.PixelHandler(handlerParams))
+		a.engine.GET(a.config.Inputs.Pixel.Path+"/*"+constants.buz_SCHEMA_PARAM, handler.PixelHandler(handlerParams))
 	}
 }
 
@@ -265,7 +264,7 @@ func (a *App) Initialize() {
 }
 
 func (a *App) Run() {
-	log.Info().Interface("config", a.config).Msg("🍯🍯🍯 honeypot is running! 🍯🍯🍯")
+	log.Info().Interface("config", a.config).Msg("🍯🍯🍯 buz is running! 🍯🍯🍯")
 	tele.Metry(a.config, a.collectorMeta)
 	srv := &http.Server{
 		Addr:    ":" + a.config.App.Port,

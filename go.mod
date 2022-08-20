@@ -1,4 +1,4 @@
-module github.com/silverton-io/honeypot
+module github.com/silverton-io/buz
 
 go 1.19
 

@@ -9,7 +9,7 @@ privacy:
       id: false
 
 app:
-  name: honeypot
+  name: buz
   env: development
   mode: debug
   port: 8080
@@ -89,7 +89,7 @@ schemaCache:
     minioEndpoint: localhost:9000
     accessKeyId: minioadmin
     secretAccessKey: minioadmin
-    bucket: honeypot-schemas
+    bucket: buz-schemas
     path: /
   ttlSeconds: 300
   maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
@@ -108,21 +108,21 @@ sinks:
     deliveryRequired: true
     mysqlHost: mysql
     mysqlPort: 3306
-    mysqlDbName: honeypot
-    mysqlUser: honeypot
-    mysqlPass: honeypot
-    validTable: honeypot_valid
-    invalidTable: honeypot_invalid
+    mysqlDbName: buz
+    mysqlUser: buz
+    mysqlPass: buz
+    validTable: buz_valid
+    invalidTable: buz_invalid
   - name: postgres
     type: postgres
     deliveryRequired: true
     pgHost: postgres
     pgPort: 5432
-    pgDbName: honeypot
-    pgUser: honeypot
-    pgPass: honeypot
-    validTable: honeypot_valid
-    invalidTable: honeypot_invalid
+    pgDbName: buz
+    pgUser: buz
+    pgPass: buz
+    validTable: buz_valid
+    invalidTable: buz_invalid
   - name: materialize
     type: materialize
     deliveryRequired: true
@@ -131,29 +131,29 @@ sinks:
     mzDbName: materialize
     mzUser: materialize
     mzPass: ""
-    validTable: honeypot_valid
-    invalidTable: honeypot_invalid
+    validTable: buz_valid
+    invalidTable: buz_invalid
   - name: clickhouse
     type: clickhouse
     deliveryRequired: true
     clickhouseHost: clickhouse
     clickhousePort: 9000
-    clickhouseDbName: honeypot
-    clickhouseUser: honeypot
-    clickhousePass: honeypot
-    validTable: honeypot_valid
-    invalidTable: honeypot_invalid
+    clickhouseDbName: buz
+    clickhouseUser: buz
+    clickhousePass: buz
+    validTable: buz_valid
+    invalidTable: buz_invalid
   - name: mango
     type: mongodb
     deliveryRequired: true
     mongoHosts:
       - mongo
     mongoPort: 27017
-    mongoDbName: honeypot
-    mongoUser: honeypot
-    mongoPass: honeypot
-    validCollection: honeypotValid
-    invalidCollection: honeypotInvalid
+    mongoDbName: buz
+    mongoUser: buz
+    mongoPass: buz
+    validCollection: buzValid
+    invalidCollection: buzInvalid
   - name: thepanda
     type: kafka
     deliveryRequired: true
@@ -168,8 +168,8 @@ sinks:
       - http://elasticsearch:9200
     elasticsearchUsername: elastic
     elasticsearchPassword: elastic
-    validIndex: honeypot-valid
-    invalidIndex: honeypot-invalid
+    validIndex: buz-valid
+    invalidIndex: buz-invalid
 
 squawkBox:
   enabled: true

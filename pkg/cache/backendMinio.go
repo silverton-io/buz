@@ -8,7 +8,7 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/honeypot/pkg/config"
+	"github.com/silverton-io/buz/pkg/config"
 )
 
 type MinioSchemaCacheBackend struct {

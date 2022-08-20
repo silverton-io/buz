@@ -1,9 +1,9 @@
 REGISTRY_HOST=localhost
-REGISTRY_DB=honeypot
-REGISTRY_SCHEMA=honeypot
+REGISTRY_DB=buz
+REGISTRY_SCHEMA=buz
 REGISTRY_TABLE=registry
-H_USER=honeypot
-H_PASS=honeypot
+H_USER=buz
+H_PASS=buz
 # Seed files
 PG_SEED_FILE=pgSeed.sql
 MYSQL_SEED_FILE=mysqlSeed.sql
@@ -23,8 +23,8 @@ function cleanSeedFiles {
 
 function seedMongo {
     echo "seeding mongodb";
-    mongosh  -u honeypot -p honeypot --authenticationDatabase admin localhost/honeypot --eval "db.registry.drop()";
-    mongoimport --host 127.0.0.1 -u honeypot -p honeypot -d honeypot --authenticationDatabase admin -c registry --file $MONGODB_SEED_FILE;
+    mongosh  -u buz -p buz --authenticationDatabase admin localhost/buz --eval "db.registry.drop()";
+    mongoimport --host 127.0.0.1 -u buz -p buz -d buz --authenticationDatabase admin -c registry --file $MONGODB_SEED_FILE;
 }
 
 function seedPostgres {
@@ -39,7 +39,7 @@ function seedMaterialize {
 
 function seedMysql {
     echo "seeding mysql";
-    export MYSQL_PWD=honeypot; mysql -h 127.0.0.1 -u$H_USER < $MYSQL_SEED_FILE;
+    export MYSQL_PWD=buz; mysql -h 127.0.0.1 -u$H_USER < $MYSQL_SEED_FILE;
 }
 
 function seedClickhouse {
@@ -74,7 +74,7 @@ function buildSeedFiles {
     done
 }
 
-echo "\nHoneypotting...\n"
+echo "\nbuzting...\n"
 for run in {1..5}; do printf "🍯" && sleep 1; done
 
 echo "\nSetting up clickhouse...\n"

@@ -3,8 +3,10 @@ config.yml
 scratch/*
 testprofile.out
 # File sink
-honeypot-valid.json
-honeypot-invalid.json
+buz-valid.json
+buz-invalid.json
+buz-valid.json
+buz-invalid.json
 notes/*
 *.sql
 examples/quickstart/minio/*

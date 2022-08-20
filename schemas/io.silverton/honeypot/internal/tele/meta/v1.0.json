@@ -1,22 +1,22 @@
 {
-    "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
-    "$id": "http://registry.silverton.io/io.silverton/honeypot/tele/meta/v1.0.json",
-    "title": "io.silverton/honeypot/tele/meta/v1.0.json",
+    "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "http://registry.silverton.io/io.silverton/buz/tele/meta/v1.0.json",
+    "title": "io.silverton/buz/tele/meta/v1.0.json",
     "owner": {
         "org": "silverton",
-        "team": "honeypot",
+        "team": "buz",
         "individual": "jakthom"
     },
 	"self": {
 		"vendor": "io.silverton",
-        "namespace": "honeypot.internal.tele.meta",
+        "namespace": "buz.internal.tele.meta",
 		"version": "1.0"
 	},
     "type": "object",
     "properties": {
         "version": {
             "type": "string",
-            "description":"Honeypot version"
+            "description":"Buz version"
         },
         "instanceId": {
             "type": "string",

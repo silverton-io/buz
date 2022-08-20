@@ -1,16 +1,16 @@
 {
-    "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
-    "$id": "https://registry.silverton.io/io.silverton/honeypot/tele/beat/v1.0.json",
-    "title": "io.silverton/honeypot/tele/beat/v1.0.json",
-    "description": "Honeypot heartbeat event",
+    "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "https://registry.silverton.io/io.silverton/buz/tele/beat/v1.0.json",
+    "title": "io.silverton/buz/tele/beat/v1.0.json",
+    "description": "Buz heartbeat event",
     "owner": {
         "org": "silverton",
-        "team": "honeypot",
+        "team": "buz",
         "individual": "jakthom"
     },
 	"self": {
 		"vendor": "io.silverton",
-        "namespace": "honeypot.internal.tele.beat",
+        "namespace": "buz.internal.tele.beat",
 		"version": "1.0"
 	},
     "type": "object",

@@ -9,7 +9,7 @@ privacy:
       id: false
 
 app:
-  name: honeypot
+  name: buz
   env: development
   mode: debug
   port: 8080
@@ -102,8 +102,8 @@ sinks:
   - name: file
     type: file
     deliveryRequired: true
-    validFile: honeypot-valid.json
-    invalidFile: honeypot-invalid.json
+    validFile: buz-valid.json
+    invalidFile: buz-invalid.json
 
 squawkBox:
   enabled: true

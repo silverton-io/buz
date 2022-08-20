@@ -1,11 +1,11 @@
 {
-    "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
-    "$id": "http://registry.silverton.io/io.silverton/honeypot/envelope/v1.0.json",
-    "title": "io.silverton/honeypot/envelope/v1.0.json",
-    "description": "Honeypot envelope",
+    "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "http://registry.silverton.io/io.silverton/buz/envelope/v1.0.json",
+    "title": "io.silverton/buz/envelope/v1.0.json",
+    "description": "Buz envelope",
     "owner": {
         "org": "silverton",
-        "team": "honeypot",
+        "team": "buz",
         "individual": "jakthom"
     },
     "privacy": {
@@ -13,7 +13,7 @@
     },
     "self": {
         "vendor": "io.silverton",
-        "namespace": "honeypot.internal.envelope",
+        "namespace": "buz.internal.envelope",
         "version": "1.0"
     },
     "type": "object",

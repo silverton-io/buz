@@ -2,29 +2,29 @@
 S=silverton
 REGISTRY:=us-east1-docker.pkg.dev/silverton-io/docker
 VERSION:=$(shell cat .VERSION)
-HONEYPOT_DIR=./cmd/honeypot/*.go
+BUZ_DIR=./cmd/buz/*.go
 TEST_PROFILE=testprofile.out
 
 build:
-	go build -ldflags="-X main.VERSION=$(VERSION)" -o honeypot $(HONEYPOT_DIR)
+	go build -ldflags="-X main.VERSION=$(VERSION)" -o buz $(BUZ_DIR)
 
-run: ## Run honeypot locally
-	go run -ldflags="-X 'main.VERSION=x.x.dev'" $(HONEYPOT_DIR)
+run: ## Run buz locally
+	go run -ldflags="-X 'main.VERSION=x.x.dev'" $(BUZ_DIR)
 
 bootstrap: ## Bootstrap development environment
-	curl https://raw.githubusercontent.com/silverton-io/honeypot/main/examples/devel/honeypot/simple.conf.yml -o config.yml;
+	curl https://raw.githubusercontent.com/silverton-io/buz/main/examples/devel/buz/simple.conf.yml -o config.yml;
 	make run
 
 bootstrap-destinations: ## Bootstrap various containerized database/stream systems
 	docker-compose -f examples/devel/docker-compose.yml up -d
 
-build-docker: ## Build local honeypot image
-	docker build -f deploy/Dockerfile -t honeypot:$(VERSION) .
+build-docker: ## Build local buz image
+	docker build -f deploy/Dockerfile -t buz:$(VERSION) .
 
-buildx-deploy: ## Build multi-platform honeypot image and push it to edge repo
+buildx-deploy: ## Build multi-platform buz image and push it to edge repo
 	docker buildx create --name $(S) || true;
 	docker buildx use $(S)
-	docker buildx build --platform linux/arm64,linux/amd64 -f deploy/Dockerfile -t $(REGISTRY)/honeypot:$(VERSION)-edge . --push
+	docker buildx build --platform linux/arm64,linux/amd64 -f deploy/Dockerfile -t $(REGISTRY)/buz:$(VERSION)-edge . --push
 
 test-cover-pkg: ## Run tests against pkg, output test profile, and open profile in browser
 	go test ./pkg/... -v -coverprofile=$(TEST_PROFILE) || true

@@ -1,16 +1,16 @@
 {
-    "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
-    "$id": "http://registry.silverton.io/io.silverton/honeypot/internal/config/app/v1.0.json",
-    "title": "io.silverton/honeypot/internal/config/app/v1.0.json",
+    "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "http://registry.silverton.io/io.silverton/buz/internal/config/app/v1.0.json",
+    "title": "io.silverton/buz/internal/config/app/v1.0.json",
     "description": "Application configuration",
     "owner": {
         "org": "silverton",
-        "team": "honeypot",
+        "team": "buz",
         "individual": "jakthom"
     },
     "self": {
         "vendor": "io.silverton",
-        "namespace": "honeypot.internal.config.app",
+        "namespace": "buz.internal.config.app",
         "version": "1.0"
     },
     "type": "object",
@@ -26,7 +26,7 @@
                 "name": {
                     "type": "string",
                     "default": "some-collector",
-                    "description": "The name of the honeypot collector"
+                    "description": "The name of the buz collector"
                 },
                 "env": {
                     "type": "string",
@@ -514,7 +514,7 @@
                         },
                         "bucket": {
                             "type": "string",
-                            "default": "honeypot-schemas",
+                            "default": "buz-schemas",
                             "description": "The schema cache bucket, if applicable"
                         },
                         "host": {
@@ -544,17 +544,17 @@
                         "pgDbName": {
                             "type": "string",
                             "description": "The postgres cache backend db name",
-                            "default": "honeypot"
+                            "default": "buz"
                         },
                         "pgUser": {
                             "type": "string",
                             "description": "The postgres cache backend user",
-                            "default": "honeypot"
+                            "default": "buz"
                         },
                         "pgPass": {
                             "type": "string",
                             "description": "The postgres cache backend password",
-                            "default": "honeypot"
+                            "default": "buz"
                         },
                         "mysqlHost": {
                             "type": "string",
@@ -569,17 +569,17 @@
                         "mysqlDbName": {
                             "type": "string",
                             "description": "The mysql cache backend db name",
-                            "default": "honeypot"
+                            "default": "buz"
                         },
                         "mysqlUser": {
                             "type": "string",
                             "description": "The mysql cache backend user",
-                            "default": "honeypot"
+                            "default": "buz"
                         },
                         "mysqlPass": {
                             "type": "string",
                             "description": "The mysql cache backend password",
-                            "default": "honeypot"
+                            "default": "buz"
                         },
                         "mzHost": {
                             "type": "string",
@@ -619,17 +619,17 @@
                         "clickhouseDbName": {
                             "type": "string",
                             "description": "The clickhouse cache backend db",
-                            "default": "honeypot"
+                            "default": "buz"
                         },
                         "clickhouseUser": {
                             "type": "string",
                             "description": "The clickhouse cache backend user",
-                            "default": "honeypot"
+                            "default": "buz"
                         },
                         "clickhousePass": {
                             "type": "string",
                             "description": "The clickhouse cache backend pass",
-                            "default": "honeypot"
+                            "default": "buz"
                         },
                         "mongoHosts": {
                             "type": "array",
@@ -648,17 +648,17 @@
                         "mongoDbName": {
                             "type": "string",
                             "description": "The mongodb cache backend db",
-                            "default": "honeypot"
+                            "default": "buz"
                         },
                         "mongoUser": {
                             "type": "string",
                             "description": "The mongodb cache backend user",
-                            "default": "honeypot"
+                            "default": "buz"
                         },
                         "mongoPass": {
                             "type": "string",
                             "description": "The mongodb cache backend pass",
-                            "default": "honeypot"
+                            "default": "buz"
                         },
                         "minioEndpoint": {
                             "type": "string",
@@ -955,12 +955,12 @@
                     },
                     "validTopic": {
                         "type": "string",
-                        "default": "honeypot-valid",
+                        "default": "buz-valid",
                         "description": "The name of the valid event topic"
                     },
                     "validStream": {
                         "type": "string",
-                        "default": "honeypot-valid",
+                        "default": "buz-valid",
                         "description": "The name of the valid event stream, if sink type is kinesis"
                     },
                     "validUrl": {
@@ -971,41 +971,41 @@
                     "validIndex": {
                         "type": "string",
                         "description": "The index to sink valid envelopes to if sink type is elasticsearch",
-                        "default": "honeypot-valid"
+                        "default": "buz-valid"
                     },
                     "validFile": {
                         "type": "string",
                         "description": "The file to sink valid envelopes to if sink type is file",
-                        "default": "honeypot-valid.json"
+                        "default": "buz-valid.json"
                     },
                     "validTable": {
                         "type": "string",
                         "description": "The table to sink valid envelopes to if using a db sink",
-                        "default": "honeypot_valid"
+                        "default": "buz_valid"
                     },
                     "validChannel": {
                         "type": "string",
                         "description": "The channel to sink valid envelopes to if sink type is pubnub",
-                        "default": "honeypot-valid"
+                        "default": "buz-valid"
                     },
                     "validCollection": {
                         "type": "string",
                         "description": "The collection to sink valid envelopes to if sink type is mongodb",
-                        "default": "honeypotValid"
+                        "default": "buzValid"
                     },
                     "validSubject": {
                         "type": "string",
                         "description": "The subject to sink valid envelopes to",
-                        "default": "honeypot.valid"
+                        "default": "buz.valid"
                     },
                     "invalidTopic": {
                         "type": "string",
                         "description": "The name of the invalid event topic",
-                        "default": "honeypot-invalid"
+                        "default": "buz-invalid"
                     },
                     "invalidStream": {
                         "type": "string",
-                        "default": "honeypot-invalid",
+                        "default": "buz-invalid",
                         "description": "The name of the invalid event stream, if sink type is kinesis"
                     },
                     "invalidUrl": {
@@ -1016,42 +1016,42 @@
                     "invalidIndex": {
                         "type": "string",
                         "description": "The index to sink invalid envelopes to if sink type is elasticsearch",
-                        "default": "honeypot-invalid"
+                        "default": "buz-invalid"
                     },
                     "invalidFile": {
                         "type": "string",
                         "description": "The file to sink invalid envelopes to if sink type is file",
-                        "default": "honeypot-invalid.json"
+                        "default": "buz-invalid.json"
                     },
                     "invalidTable": {
                         "type": "string",
                         "description": "The table to sink invalid envelopes to if using a db sink",
-                        "default": "honeypot_invalid"
+                        "default": "buz_invalid"
                     },
                     "invalidChannel": {
                         "type": "string",
                         "description": "The channel to sink invalid envelopes to if sink type is pubnub",
-                        "default": "honeypot-invalid"
+                        "default": "buz-invalid"
                     },
                     "invalidCollection": {
                         "type": "string",
                         "description": "The collection to sink invalid envelopes to if sink type is mongodb",
-                        "default": "honeypotInvalid"
+                        "default": "buzInvalid"
                     },
                     "invalidSubject": {
                         "type": "string",
                         "description": "The subject to sink invalid envelopes to",
-                        "default": "honeypot.invalid"
+                        "default": "buz.invalid"
                     },
                     "project": {
                         "type": "string",
-                        "default": "honeypot-gcp-project",
+                        "default": "buz-gcp-project",
                         "description": "The name of the GCP project, if sink type is pubsub"
                     },
                     "relayUrl": {
                         "type": "string",
                         "description": "The url to relay envelopes to, if sink type is relay",
-                        "default": "https://another-honeypot.net/relay"
+                        "default": "https://another-buz.net/relay"
                     },
                     "pgHost": {
                         "type": "string",
@@ -1066,17 +1066,17 @@
                     "pgDbName": {
                         "type": "string",
                         "description": "The database name if sink type is postgres",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "pgUser": {
                         "type": "string",
                         "description": "The database connection user if sink type is postgres",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "pgPass": {
                         "type": "string",
                         "description": "The database connection password if sink type is postgres",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "mysqlHost": {
                         "type": "string",
@@ -1091,17 +1091,17 @@
                     "mysqlDbName": {
                         "type": "string",
                         "description": "The database name if sink type is mysql",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "mysqlUser": {
                         "type": "string",
                         "description": "The database connection user if sink type is mysql",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "mysqlPass": {
                         "type": "string",
                         "description": "The database connection password if sink type is mysql",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "mzHost": {
                         "type": "string",
@@ -1141,17 +1141,17 @@
                     "timescaleDbName": {
                         "type": "string",
                         "description": "The database name if sink type is timescale",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "timescaleUser": {
                         "type": "string",
                         "description": "The database connection user if sink type is timescale",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "timescalePass": {
                         "type": "string",
                         "description": "The database connection password if sink type is timescale",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "clickhouseHost": {
                         "type": "string",
@@ -1166,17 +1166,17 @@
                     "clickhouseDbName": {
                         "type": "string",
                         "description": "The database name if sink type is clickhouse",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "clickhouseUser": {
                         "type": "string",
                         "description": "The database connection user if sink type is clickhouse",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "clickhousePass": {
                         "type": "string",
                         "description": "The database connection password if sink type is clickhouse",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "pubnubPubKey": {
                         "type": "string",
@@ -1205,17 +1205,17 @@
                     "mongoDbName": {
                         "type": "string",
                         "description": "The mongo database name if sink type is mongodb",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "mongoUser": {
                         "type": "string",
                         "description": "The mongo database user if sink type is mongodb",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "mongoPass": {
                         "type": "string",
                         "description": "The mongo database password if sink type is mongodb",
-                        "default": "honeypot"
+                        "default": "buz"
                     },
                     "natsHost": {
                         "type": "string",

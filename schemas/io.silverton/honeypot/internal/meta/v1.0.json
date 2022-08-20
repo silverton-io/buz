@@ -1,17 +1,17 @@
 {
-  "$schema": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
-  "$id": "http://registry.silverton.io/io.silverton/honeypot/internal/meta/v1.0.json",
-  "description": "The Honeypot Metaschema",
+  "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
+  "$id": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
+  "description": "The Buz Metaschema",
   "self": {
-    "vendor": "io.silverton",
-    "namespace": "honeypot.internal.meta",
+    "vendor": "buz",
+    "namespace": "internal.meta",
     "version": "1.0",
     "format": "json"
   },
   "privacy": {},
   "owner": {
     "org": "silverton",
-    "team": "honeypot",
+    "team": "buz",
     "individual": "jakthom"
   },
   "allOf": [
