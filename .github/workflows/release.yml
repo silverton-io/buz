@@ -65,7 +65,7 @@ jobs:
 
       - name: Run test
         run: |
-          ls -lha
+          ls -lha cmd/
 
       - name: Release Binaries
         uses: wangyoucao577/go-release-action@v1.25
