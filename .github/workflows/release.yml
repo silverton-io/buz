@@ -3,7 +3,7 @@ name: Releaser
 on:
   push:
     branches:
-      - main
+      - test-releaser
 
 jobs:
   cut-release:

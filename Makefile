@@ -2,7 +2,7 @@
 S=silverton
 REGISTRY:=us-east1-docker.pkg.dev/silverton-io/docker
 VERSION:=$(shell cat .VERSION)
-BUZ_DIR=./cmd/buz/*.go
+BUZ_DIR=cmd/buz/*.go
 TEST_PROFILE=testprofile.out
 
 build:
