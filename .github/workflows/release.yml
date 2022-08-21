@@ -3,7 +3,7 @@ name: Releaser
 on:
   push:
     branches:
-      - test-releaser
+      - main
 
 jobs:
   cut-release:
@@ -62,10 +62,6 @@ jobs:
         uses: juliangruber/read-file-action@v1
         with:
           path: ./.VERSION
-
-      - name: Run test
-        run: |
-          ls -lha cmd/
 
       - name: Release Binaries
         uses: wangyoucao577/go-release-action@v1.25
