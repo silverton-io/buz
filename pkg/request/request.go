@@ -28,6 +28,9 @@ func PostPayload(url url.URL, payload interface{}) (resp *http.Response, err err
 	}
 	buf := bytes.NewBuffer(data)
 	resp, err = http.Post(url.String(), JSON_CONTENT_TYPE, buf)
+	if resp == nil {
+		return resp, nil
+	}
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, err := io.ReadAll(resp.Body)
 		log.Debug().Interface("response", string(bodyBytes)).Interface("url", url.String()).Interface("payload", payload).Msg("🟡 non-200 response")
