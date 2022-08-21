@@ -63,6 +63,10 @@ jobs:
         with:
           path: ./.VERSION
 
+      - name: Run test
+        run: |
+          ls -lha
+
       - name: Release Binaries
         uses: wangyoucao577/go-release-action@v1.25
         with:
