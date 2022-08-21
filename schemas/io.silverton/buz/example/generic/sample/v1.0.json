@@ -1,0 +1,27 @@
+{
+	"$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
+	"$id": "http://registry.silverton.io/io.silverton/buz/example/generic/sample/v1.0.json",
+	"title": "io.silverton/buz/example/generic/sample/v1.0.json",
+	"description": "Schema for testing generic events",
+    "owner": {
+        "org": "silverton",
+        "team": "buz",
+        "individual": "jakthom"
+    },
+	"self": {
+		"vendor": "io.silverton",
+		"namespace": "buz.example.generic.sample",
+		"version": "1.0"
+	},
+	"type": "object",
+	"properties": {
+		"id": {
+			"description": "The id",
+			"type": "string",
+			"minLength": 0,
+			"maxLength": 4096
+		}
+	},
+	"required": ["id"],
+	"additionalProperties": false
+}

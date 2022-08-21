@@ -1,0 +1,1657 @@
+{
+    "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "http://registry.silverton.io/io.silverton/buz/internal/config/app/v1.0.json",
+    "title": "io.silverton/buz/internal/config/app/v1.0.json",
+    "description": "Application configuration",
+    "owner": {
+        "org": "silverton",
+        "team": "buz",
+        "individual": "jakthom"
+    },
+    "self": {
+        "vendor": "io.silverton",
+        "namespace": "buz.internal.config.app",
+        "version": "1.0"
+    },
+    "type": "object",
+    "properties": {
+        "version": {
+            "type": "number",
+            "description": "The config version"
+        },
+        "app": {
+            "type": "object",
+            "description": "Application configuration",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "default": "some-collector",
+                    "description": "The name of the buz collector"
+                },
+                "env": {
+                    "type": "string",
+                    "default": "dev",
+                    "description": "Collector environment",
+                    "enum": [
+                        "development",
+                        "staging",
+                        "production"
+                    ]
+                },
+                "mode": {
+                    "type": "string",
+                    "default": "debug",
+                    "description": "Collector mode",
+                    "enum": [
+                        "release",
+                        "debug"
+                    ]
+                },
+                "port": {
+                    "type": "integer",
+                    "default": "8081",
+                    "description": "Collector port"
+                },
+                "trackerDomain": {
+                    "type": "string",
+                    "default": "test.silverton.io",
+                    "description": "The collector domain"
+                },
+                "enableConfigRoute" : {
+                    "type": "boolean",
+                    "default": "true",
+                    "description": "Whether or not to enable the config route"
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "name",
+                "env",
+                "mode",
+                "port",
+                "trackerDomain",
+                "enableConfigRoute"
+            ]
+        },
+        "middleware": {
+            "type": "object",
+            "description": "Middleware configuration",
+            "properties": {
+                "timeout": {
+                    "type": "object",
+                    "description": "Request timeout configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "false",
+                            "description": "Whether or not to time out all requests after a specified period of time"
+                        },
+                        "ms": {
+                            "type": "integer",
+                            "default": "2000",
+                            "description": "Time out request and return a 4xx status code if this number of milliseconds is exceeded"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "enabled",
+                        "ms"
+                    ]
+                },
+                "rateLimiter": {
+                    "type": "object",
+                    "description": "Rate limiter configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "false",
+                            "description": "Whether or not to enable the rate limiter"
+                        },
+                        "period": {
+                            "type": "string",
+                            "default": "S",
+                            "description": "The period by which to limit requests",
+                            "enum": [
+                                "MS",
+                                "S",
+                                "M",
+                                "H",
+                                "D"
+                            ]
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "default": "10",
+                            "description": "The number of requests allowed within the specified period"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "enabled",
+                        "period",
+                        "limit"
+                    ]
+                },
+                "identity": {
+                    "type": "object",
+                    "description": "Identity middleware config",
+                    "properties": {
+                        "cookie": {
+                            "type": "object",
+                            "description": "Server-set cookie configuration",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean",
+                                    "default": "true",
+                                    "description": "Whether or not to activate the server-side id cookie"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "default": "nuid",
+                                    "description": "The name of the id cookie"
+                                },
+                                "secure": {
+                                    "type": "boolean",
+                                    "default": "true",
+                                    "description": "Secure cookie?"
+                                },
+                                "ttlDays": {
+                                    "type": "integer",
+                                    "default": "365",
+                                    "description": "The number of days to persist the id cookie"
+                                },
+                                "domain": {
+                                    "type": "string",
+                                    "default": "silverton.io",
+                                    "description": "The id cookie domain"
+                                },
+                                "path": {
+                                    "type": "string",
+                                    "default": "/",
+                                    "description": "The id cookie path"
+                                },
+                                "sameSite": {
+                                    "type": "string",
+                                    "default": "Lax",
+                                    "description": "The sameSite attribute of the id cookie",
+                                    "enum": [
+                                        "Lax",
+                                        "Strict",
+                                        "None"
+                                    ]
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                                "enabled",
+                                "name",
+                                "secure",
+                                "ttlDays",
+                                "domain",
+                                "path",
+                                "sameSite"
+                            ]
+                        },
+                        "fallback": {
+                            "type": "string",
+                            "default": "00000000-0000-4000-A000-000000000000",
+                            "description": "The identity fallback"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["cookie", "fallback"]
+                },
+                "cors": {
+                    "type": "object",
+                    "description": "CORS configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to activate the CORS middleware"
+                        },
+                        "allowOrigin": {
+                            "type": "array",
+                            "default": [
+                                "*"
+                            ],
+                            "description": "A list of origins to allow CORS",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "allowCredentials": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "CORS allow credentials"
+                        },
+                        "allowMethods": {
+                            "type": "array",
+                            "default": [
+                                "GET",
+                                "POST",
+                                "OPTIONS"
+                            ],
+                            "description": "HTTP methods to allow CORS",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "OPTIONS",
+                                    "GET",
+                                    "POST"
+                                ]
+                            }
+                        },
+                        "maxAge": {
+                            "type": "integer",
+                            "default": "86400",
+                            "description": "Preflight request cache duration"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "enabled",
+                        "allowOrigin",
+                        "allowCredentials",
+                        "allowMethods",
+                        "maxAge"
+                    ]
+                },
+                "requestLogger": {
+                    "type": "object",
+                    "description": "Request logger configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to activate the json request logging middleware"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "enabled"
+                    ]
+                },
+                "yeet": {
+                    "type": "object",
+                    "description": "Yeet configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "false",
+                            "description": "Whether or not to activate the yeet middleware"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "enabled"
+                    ]
+                }
+            },
+            "required": [
+                "timeout",
+                "rateLimiter",
+                "identity",
+                "cors",
+                "requestLogger",
+                "yeet"
+            ]
+        },
+        "inputs": {
+            "type": "object",
+            "description": "Input configuration",
+            "properties": {
+                "snowplow": {
+                    "type": "object",
+                    "description": "Snowplow collector configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to activate snowplow tracking"
+                        },
+                        "standardRoutesEnabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether to not to activate the standard snowplow routes"
+                        },
+                        "openRedirectsEnabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to activate redirect-based tracking"
+                        },
+                        "getPath": {
+                            "type": "string",
+                            "default": "/plw/g",
+                            "description": "The path by which to process get-based events"
+                        },
+                        "postPath": {
+                            "type": "string",
+                            "default": "/plw/p",
+                            "description": "The path by which to process post-based events"
+                        },
+                        "redirectPath": {
+                            "type": "string",
+                            "default": "/plw/r",
+                            "description": "The path by which to process redirect-based events"
+                    }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "enabled",
+                        "standardRoutesEnabled",
+                        "openRedirectsEnabled",
+                        "getPath",
+                        "postPath",
+                        "redirectPath"
+                    ]
+                },
+                "cloudevents": {
+                    "type": "object",
+                    "description": "CloudEvents collector configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to activate cloudevents tracking"
+                        },
+                        "path": {
+                            "type": "string",
+                            "default": "/cloudevent",
+                            "description": "The path by which to process incoming cloudevents payloads"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "enabled",
+                        "path"
+                    ]
+                },
+                "generic": {
+                    "type": "object",
+                    "description": "Generic self-describing events collector configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to activate generic self-describing event tracking"
+                        },
+                        "path": {
+                            "type": "string",
+                            "default": "/gen/bp",
+                            "description": "The path by which to process incoming self describing payloads"
+                        },
+                        "contexts": {
+                            "type": "object",
+                            "description": "Self describing events context config",
+                            "properties": {
+                                "rootKey": {
+                                    "type": "string",
+                                    "default": "contexts",
+                                    "description": "The root json key that defines event contexts"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                                "rootKey"
+                            ]
+                        },
+                        "payload": {
+                            "type": "object",
+                            "description": "Self describing events payload data config",
+                            "properties": {
+                                "rootKey": {
+                                    "type": "string",
+                                    "default": "data",
+                                    "description": "The root json key that defines payload data. (root.PAYLOADKEY)"
+                                },
+                                "schemaKey": {
+                                    "type": "string",
+                                    "default": "schema",
+                                    "description": "The key that defines the payload schema. (root.PAYLOADKEY.SCHEMAKEY)"
+                                },
+                                "dataKey": {
+                                    "type": "string",
+                                    "default": "data",
+                                    "description": "The key that defines the payload data. (root.PAYLOADKEY.DATAKEY)"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                                "rootKey",
+                                "schemaKey",
+                                "dataKey"
+                            ]
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "enabled",
+                        "path",
+                        "contexts",
+                        "payload"
+                    ]
+                },
+                "webhook": {
+                    "type": "object",
+                    "description": "Arbitrary webhook configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "Whether or not to enable arbitrary webhooks",
+                            "default": "true"
+                        },
+                        "path": {
+                            "type": "string",
+                            "description": "The arbitrary webhook route",
+                            "default": "/hook"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "enabled",
+                        "path"
+                    ]
+                },
+                "pixel": {
+                    "type": "object",
+                    "description": "Pixel configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "Whether or not to enable 1x1 pixels",
+                            "default": "true"
+                        },
+                        "path": {
+                            "type": "string",
+                            "default": "/pxl",
+                            "description": "The pixel path"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["enabled", "path"]
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "snowplow",
+                "cloudevents",
+                "generic",
+                "webhook",
+                "pixel"
+            ]
+        },
+        "schemaCache": {
+            "type": "object",
+            "description": "Schema cache configuration",
+            "properties": {
+                "backend": {
+                    "type": "object",
+                    "description": "Cache backend configuration",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "default": "s3",
+                            "description": "The type of schema cache backend",
+                            "enum": [
+                                "gcs",
+                                "s3",
+                                "minio",
+                                "fs",
+                                "http",
+                                "https",
+                                "postgres",
+                                "mysql",
+                                "materialize",
+                                "clickhouse",
+                                "mongodb"
+                            ]
+                        },
+                        "path": {
+                            "type": "string",
+                            "default": "/",
+                            "description": "The root path of the schema cache backend"
+                        },
+                        "bucket": {
+                            "type": "string",
+                            "default": "buz-schemas",
+                            "description": "The schema cache bucket, if applicable"
+                        },
+                        "host": {
+                            "type": "string",
+                            "description": "The schema cache host, if applicable"
+                        },
+                        "registryTable": {
+                            "type": "string",
+                            "description": "The database table that stores schemas",
+                            "default": "registry"
+                        },
+                        "registryCollection": {
+                            "type": "string",
+                            "description": "The mongodb collection for schemas in the cache backend is mongodb",
+                            "default": "registry"
+                        },
+                        "pgHost": {
+                            "type": "string",
+                            "description": "The postgres cache backend host",
+                            "default": "localhost"
+                        },
+                        "pgPort": {
+                            "type": "number",
+                            "description": "The postgres cache backend port",
+                            "default": 5432
+                        },
+                        "pgDbName": {
+                            "type": "string",
+                            "description": "The postgres cache backend db name",
+                            "default": "buz"
+                        },
+                        "pgUser": {
+                            "type": "string",
+                            "description": "The postgres cache backend user",
+                            "default": "buz"
+                        },
+                        "pgPass": {
+                            "type": "string",
+                            "description": "The postgres cache backend password",
+                            "default": "buz"
+                        },
+                        "mysqlHost": {
+                            "type": "string",
+                            "description": "The mysql cache backend host",
+                            "default": "localhost"
+                        },
+                        "mysqlPort": {
+                            "type": "number",
+                            "description": "The mysql cache backend port",
+                            "default": 3306
+                        },
+                        "mysqlDbName": {
+                            "type": "string",
+                            "description": "The mysql cache backend db name",
+                            "default": "buz"
+                        },
+                        "mysqlUser": {
+                            "type": "string",
+                            "description": "The mysql cache backend user",
+                            "default": "buz"
+                        },
+                        "mysqlPass": {
+                            "type": "string",
+                            "description": "The mysql cache backend password",
+                            "default": "buz"
+                        },
+                        "mzHost": {
+                            "type": "string",
+                            "description": "The materialize cache backend host",
+                            "default": "localhost"
+                        },
+                        "mzPort": {
+                            "type": "number",
+                            "description": "The materialize cache backend port",
+                            "default": 6875
+                        },
+                        "mzDbName": {
+                            "type": "string",
+                            "description": "The materialize cache backend db name",
+                            "default": "materialize"
+                        },
+                        "mzUser": {
+                            "type": "string",
+                            "description": "The materialize cache backend user",
+                            "default": "materialize"
+                        },
+                        "mzPass": {
+                            "type": "string",
+                            "description": "The materialize cache backend password",
+                            "default": ""
+                        },
+                        "clickhouseHost": {
+                            "type": "string",
+                            "description": "The clickhouse cache backend host",
+                            "default": "localhost"
+                        },
+                        "clickhousePort": {
+                            "type": "number",
+                            "description": "The clickhouse cache backend port",
+                            "default": 9000
+                        },
+                        "clickhouseDbName": {
+                            "type": "string",
+                            "description": "The clickhouse cache backend db",
+                            "default": "buz"
+                        },
+                        "clickhouseUser": {
+                            "type": "string",
+                            "description": "The clickhouse cache backend user",
+                            "default": "buz"
+                        },
+                        "clickhousePass": {
+                            "type": "string",
+                            "description": "The clickhouse cache backend pass",
+                            "default": "buz"
+                        },
+                        "mongoHosts": {
+                            "type": "array",
+                            "description": "The mongodb cache backend hosts",
+                            "default": [
+                                "mongodb1",
+                                "mongodb2",
+                                "mongodb3"
+                            ]
+                        },
+                        "mongoPort": {
+                            "type": "number",
+                            "description": "The mongodb cache backend port",
+                            "default": "27017"
+                        },
+                        "mongoDbName": {
+                            "type": "string",
+                            "description": "The mongodb cache backend db",
+                            "default": "buz"
+                        },
+                        "mongoUser": {
+                            "type": "string",
+                            "description": "The mongodb cache backend user",
+                            "default": "buz"
+                        },
+                        "mongoPass": {
+                            "type": "string",
+                            "description": "The mongodb cache backend pass",
+                            "default": "buz"
+                        },
+                        "minioEndpoint": {
+                            "type": "string",
+                            "description": "The minio endpoint",
+                            "default": "localhost:9000"
+                        },
+                        "accessKeyId": {
+                            "type": "string",
+                            "description": "The access key id, used for minio and s3",
+                            "default": "minioadmin"
+                        },
+                        "secretAccessKey": {
+                            "type": "string",
+                            "description": "The secret access key, used for minio and s3",
+                            "default": "minioadmin"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "type"
+                    ],
+                    "anyOf": [
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "gcs"
+                                }
+                            },
+                            "required": [
+                                "bucket",
+                                "path"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "s3"
+                                }
+                            },
+                            "required": [
+                                "bucket",
+                                "path"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "minio"
+                                }
+                            },
+                            "required": [
+                                "minioEndpoint",
+                                "accessKeyId",
+                                "secretAccessKey",
+                                "bucket",
+                                "path"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "http"
+                                }
+                            },
+                            "required": [
+                                "host",
+                                "path"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "https"
+                                }
+                            },
+                            "required": [
+                                "host",
+                                "path"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "fs"
+                                }
+                            },
+                            "required": [
+                                "path"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "postgres"
+                                }
+                            },
+                            "required": [
+                                "pgHost",
+                                "pgPort",
+                                "pgDbName",
+                                "pgUser",
+                                "pgPass",
+                                "registryTable"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "mysql"
+                                }
+                            },
+                            "required": [
+                                "mysqlHost",
+                                "mysqlPort",
+                                "mysqlDbName",
+                                "mysqlUser",
+                                "mysqlPass",
+                                "registryTable"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "materialize"
+                                }
+                            },
+                            "required": [
+                                "mzHost",
+                                "mzPort",
+                                "mzDbName",
+                                "mzUser",
+                                "mzPass",
+                                "registryTable"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "clickhouse"
+                                }
+                            },
+                            "required": [
+                                "clickhouseHost",
+                                "clickhousePort",
+                                "clickhouseDbName",
+                                "clickhouseUser",
+                                "clickhousePass",
+                                "registryTable"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "const": "mongodb"
+                                }
+                            },
+                            "required": [
+                                "mongoHosts",
+                                "mongoPort",
+                                "mongoDbName",
+                                "registryCollection"
+                            ]
+                        }
+                    ]
+                },
+                "ttlSeconds": {
+                    "type": "integer",
+                    "default": "300",
+                    "description": "The number of seconds to cache schemas for"
+                },
+                "maxSizeBytes": {
+                    "type": "integer",
+                    "default": "104857600",
+                    "description": "The max schema cache size, in bytes"
+                },
+                "purge": {
+                    "type": "object",
+                    "description": "Cache purge configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "false",
+                            "description": "Whether or not to enable schema cache purge endpoints"
+                        },
+                        "path": {
+                            "type": "string",
+                            "default": "/c/purge",
+                            "description": "The path by which to purge the schema cache"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "enabled",
+                        "path"
+                    ]
+                },
+                "schemaDirectory": {
+                    "type": "object",
+                    "description": "Schema endpoint configuration",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Whether or not to enable schema cache endpoints"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                        "enabled"
+                    ]
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "backend",
+                "ttlSeconds",
+                "maxSizeBytes",
+                "purge",
+                "schemaDirectory"
+            ]
+        },
+        "sinks": {
+            "type": "array",
+            "description": "Configuration for the sinks",
+            "minItems": 1,
+            "maxItems": 8,
+            "items": {
+                "type": "object",
+                "description": "Configuration for an individual sink",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "default": "SINK-NAME",
+                        "description": "The sink name"
+                    },
+                    "type": {
+                        "type": "string",
+                        "default": "pubsub",
+                        "description": "The sink configuration",
+                        "enum": [
+                            "kafka",
+                            "redpanda",
+                            "pubsub",
+                            "kinesis",
+                            "kinesis-firehose",
+                            "stdout",
+                            "http",
+                            "https",
+                            "relay",
+                            "elasticsearch",
+                            "blackhole",
+                            "file",
+                            "postgres",
+                            "pubnub",
+                            "mongodb",
+                            "mysql",
+                            "materialize",
+                            "clickhouse",
+                            "timescale",
+                            "nats",
+                            "indicative",
+                            "amplitude"
+                        ]
+                    },
+                    "deliveryRequired": {
+                        "type": "boolean",
+                        "default": "true"
+                    },
+                    "kafkaBrokers": {
+                        "type": "array",
+                        "description": "A list of kafka brokers (HOST:PORT), if sink type is kafka",
+                        "default": [
+                            "BROKER1:9092",
+                            "BROKER2:9092",
+                            "BROKER3:9092"
+                        ]
+                    },
+                    "elasticsearchHosts": {
+                        "type": "array",
+                        "description": "A list of elasticsearch hosts, if sink type is elasticsearch",
+                        "default": [
+                            "http://es1:9200"
+                        ]
+                    },
+                    "elasticsearchUsername": {
+                        "type": "string",
+                        "description": "The elasticsearch username, if sink type is elasticsearch",
+                        "default": "elastic"
+                    },
+                    "elasticsearchPassword": {
+                        "type": "string",
+                        "description": "The elasticsearch password, if sink type is elasticsearch",
+                        "default": "elastic"
+                    },
+                    "validTopic": {
+                        "type": "string",
+                        "default": "buz-valid",
+                        "description": "The name of the valid event topic"
+                    },
+                    "validStream": {
+                        "type": "string",
+                        "default": "buz-valid",
+                        "description": "The name of the valid event stream, if sink type is kinesis"
+                    },
+                    "validUrl": {
+                        "type": "string",
+                        "description": "The url to sink valid envelopes to if sink type is http or https",
+                        "default": "https://your-endpoint.net/valid-events-here"
+                    },
+                    "validIndex": {
+                        "type": "string",
+                        "description": "The index to sink valid envelopes to if sink type is elasticsearch",
+                        "default": "buz-valid"
+                    },
+                    "validFile": {
+                        "type": "string",
+                        "description": "The file to sink valid envelopes to if sink type is file",
+                        "default": "buz-valid.json"
+                    },
+                    "validTable": {
+                        "type": "string",
+                        "description": "The table to sink valid envelopes to if using a db sink",
+                        "default": "buz_valid"
+                    },
+                    "validChannel": {
+                        "type": "string",
+                        "description": "The channel to sink valid envelopes to if sink type is pubnub",
+                        "default": "buz-valid"
+                    },
+                    "validCollection": {
+                        "type": "string",
+                        "description": "The collection to sink valid envelopes to if sink type is mongodb",
+                        "default": "buzValid"
+                    },
+                    "validSubject": {
+                        "type": "string",
+                        "description": "The subject to sink valid envelopes to",
+                        "default": "buz.valid"
+                    },
+                    "invalidTopic": {
+                        "type": "string",
+                        "description": "The name of the invalid event topic",
+                        "default": "buz-invalid"
+                    },
+                    "invalidStream": {
+                        "type": "string",
+                        "default": "buz-invalid",
+                        "description": "The name of the invalid event stream, if sink type is kinesis"
+                    },
+                    "invalidUrl": {
+                        "type": "string",
+                        "description": "The url to sink invalid envelopes if sink type is http or https",
+                        "default": "https://your-endpoint.net/invalid-events-here"
+                    },
+                    "invalidIndex": {
+                        "type": "string",
+                        "description": "The index to sink invalid envelopes to if sink type is elasticsearch",
+                        "default": "buz-invalid"
+                    },
+                    "invalidFile": {
+                        "type": "string",
+                        "description": "The file to sink invalid envelopes to if sink type is file",
+                        "default": "buz-invalid.json"
+                    },
+                    "invalidTable": {
+                        "type": "string",
+                        "description": "The table to sink invalid envelopes to if using a db sink",
+                        "default": "buz_invalid"
+                    },
+                    "invalidChannel": {
+                        "type": "string",
+                        "description": "The channel to sink invalid envelopes to if sink type is pubnub",
+                        "default": "buz-invalid"
+                    },
+                    "invalidCollection": {
+                        "type": "string",
+                        "description": "The collection to sink invalid envelopes to if sink type is mongodb",
+                        "default": "buzInvalid"
+                    },
+                    "invalidSubject": {
+                        "type": "string",
+                        "description": "The subject to sink invalid envelopes to",
+                        "default": "buz.invalid"
+                    },
+                    "project": {
+                        "type": "string",
+                        "default": "buz-gcp-project",
+                        "description": "The name of the GCP project, if sink type is pubsub"
+                    },
+                    "relayUrl": {
+                        "type": "string",
+                        "description": "The url to relay envelopes to, if sink type is relay",
+                        "default": "https://another-buz.net/relay"
+                    },
+                    "pgHost": {
+                        "type": "string",
+                        "description": "The database hostname to write envelopes to if sink type is postgres",
+                        "default": "localhost"
+                    },
+                    "pgPort": {
+                        "type": "number",
+                        "description": "The database port to write envelopes to if sink type is postgres",
+                        "default": 5432
+                    },
+                    "pgDbName": {
+                        "type": "string",
+                        "description": "The database name if sink type is postgres",
+                        "default": "buz"
+                    },
+                    "pgUser": {
+                        "type": "string",
+                        "description": "The database connection user if sink type is postgres",
+                        "default": "buz"
+                    },
+                    "pgPass": {
+                        "type": "string",
+                        "description": "The database connection password if sink type is postgres",
+                        "default": "buz"
+                    },
+                    "mysqlHost": {
+                        "type": "string",
+                        "description": "The database hostname to write envelopes to if sink type is mysql",
+                        "default": "localhost"
+                    },
+                    "mysqlPort": {
+                        "type": "number",
+                        "description": "The database port to write envelopes to if sink type is mysql",
+                        "default": 3306
+                    },
+                    "mysqlDbName": {
+                        "type": "string",
+                        "description": "The database name if sink type is mysql",
+                        "default": "buz"
+                    },
+                    "mysqlUser": {
+                        "type": "string",
+                        "description": "The database connection user if sink type is mysql",
+                        "default": "buz"
+                    },
+                    "mysqlPass": {
+                        "type": "string",
+                        "description": "The database connection password if sink type is mysql",
+                        "default": "buz"
+                    },
+                    "mzHost": {
+                        "type": "string",
+                        "description": "The database hostname to write envelopes to if sink type is materialize",
+                        "default": "localhost"
+                    },
+                    "mzPort": {
+                        "type": "number",
+                        "description": "The database port to write envelopes to if sink type is materialize",
+                        "default": 6875
+                    },
+                    "mzDbName": {
+                        "type": "string",
+                        "description": "The database name if sink type is materialize",
+                        "default": "materialize"
+                    },
+                    "mzUser": {
+                        "type": "string",
+                        "description": "The database connection user if sink type is materialize",
+                        "default": "materialize"
+                    },
+                    "mzPass": {
+                        "type": "string",
+                        "description": "The database connection password if sink type is materialize",
+                        "default": ""
+                    },
+                    "timescaleHost": {
+                        "type": "string",
+                        "description": "The database hostname to write envelopes to if sink type is timescale",
+                        "default": "localhost"
+                    },
+                    "timescalePort": {
+                        "type": "number",
+                        "description": "The database port to write envelopes to if sink type is timescale",
+                        "default": 5433
+                    },
+                    "timescaleDbName": {
+                        "type": "string",
+                        "description": "The database name if sink type is timescale",
+                        "default": "buz"
+                    },
+                    "timescaleUser": {
+                        "type": "string",
+                        "description": "The database connection user if sink type is timescale",
+                        "default": "buz"
+                    },
+                    "timescalePass": {
+                        "type": "string",
+                        "description": "The database connection password if sink type is timescale",
+                        "default": "buz"
+                    },
+                    "clickhouseHost": {
+                        "type": "string",
+                        "description": "The database hostname to write envelopes to if sink type is clickhouse",
+                        "default": "localhost"
+                    },
+                    "clickhousePort": {
+                        "type": "number",
+                        "description": "The database port to write envelopes to if sink type is clickhouse",
+                        "default": 9000
+                    },
+                    "clickhouseDbName": {
+                        "type": "string",
+                        "description": "The database name if sink type is clickhouse",
+                        "default": "buz"
+                    },
+                    "clickhouseUser": {
+                        "type": "string",
+                        "description": "The database connection user if sink type is clickhouse",
+                        "default": "buz"
+                    },
+                    "clickhousePass": {
+                        "type": "string",
+                        "description": "The database connection password if sink type is clickhouse",
+                        "default": "buz"
+                    },
+                    "pubnubPubKey": {
+                        "type": "string",
+                        "description": "The pubnub pub key",
+                        "default": "YOUR-PUB-KEY"
+                    },
+                    "pubnubSubKey": {
+                        "type": "string",
+                        "description": "The pubnub sub key",
+                        "default": "YOUR-SUB-KEY"
+                    },
+                    "mongoHosts": {
+                        "type": "array",
+                        "description": "A list of mongodb hosts",
+                        "default": [
+                            "mongodb1",
+                            "mongodb2",
+                            "mongodb3"
+                        ]
+                    },
+                    "mongoPort": {
+                        "type": "number",
+                        "description": "The mongo port if sink type is mongodb",
+                        "default": "27017"
+                    },
+                    "mongoDbName": {
+                        "type": "string",
+                        "description": "The mongo database name if sink type is mongodb",
+                        "default": "buz"
+                    },
+                    "mongoUser": {
+                        "type": "string",
+                        "description": "The mongo database user if sink type is mongodb",
+                        "default": "buz"
+                    },
+                    "mongoPass": {
+                        "type": "string",
+                        "description": "The mongo database password if sink type is mongodb",
+                        "default": "buz"
+                    },
+                    "natsHost": {
+                        "type": "string",
+                        "description": "The NATS host",
+                        "default": "nats"
+                    },
+                    "natsUser": {
+                        "type": "string",
+                        "description": "The NATS user",
+                        "default": ""
+                    },
+                    "natsPass": {
+                        "type": "string",
+                        "description": "The NATS password",
+                        "default": ""
+                    },
+                    "indicativeApiKey": {
+                        "type": "string",
+                        "description": "The Indicative API key",
+                        "default": "YOUR_KEY_HERE"
+                    },
+                    "amplitudeApiKey": {
+                        "type": "string",
+                        "description": "The Amplitude API key",
+                        "default": "YOUR_KEY_HERE"
+                    },
+                    "amplitudeRegion": {
+                        "type": "string",
+                        "description": "The Amplitude region to send events",
+                        "default": "standard",
+                        "enum": ["standard", "eu"]
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "name",
+                    "type",
+                    "deliveryRequired"
+                ],
+                "anyOf": [
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "stdout"
+                            }
+                        },
+                        "required": []
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "kafka"
+                            }
+                        },
+                        "required": [
+                            "kafkaBrokers",
+                            "validTopic",
+                            "invalidTopic"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "redpanda"
+                            }
+                        },
+                        "required": [
+                            "kafkaBrokers",
+                            "validTopic",
+                            "invalidTopic"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "pubsub"
+                            }
+                        },
+                        "required": [
+                            "project",
+                            "validTopic",
+                            "invalidTopic"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "kinesis"
+                            }
+                        },
+                        "required": [
+                            "validStream",
+                            "invalidStream"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "kinesis-firehose"
+                            }
+                        },
+                        "required": [
+                            "validStream",
+                            "invalidStream"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "http"
+                            }
+                        },
+                        "required": [
+                            "validUrl",
+                            "invalidUrl"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "https"
+                            }
+                        },
+                        "required": [
+                            "validUrl",
+                            "invalidUrl"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "relay"
+                            }
+                        },
+                        "required": [
+                            "relayUrl"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "elasticsearch"
+                            }
+                        },
+                        "required": [
+                            "elasticsearchHosts",
+                            "elasticsearchUsername",
+                            "elasticsearchPassword",
+                            "validIndex",
+                            "invalidIndex"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "blackhole"
+                            }
+                        },
+                        "required": []
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "file"
+                            }
+                        },
+                        "required": [
+                            "validFile",
+                            "invalidFile"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "postgres"
+                            }
+                        },
+                        "required": [
+                            "pgHost",
+                            "pgPort",
+                            "pgDbName",
+                            "pgUser",
+                            "pgPass",
+                            "validTable",
+                            "invalidTable"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "materialize"
+                            }
+                        },
+                        "required": [
+                            "mzHost",
+                            "mzPort",
+                            "mzDbName",
+                            "mzUser",
+                            "mzPass",
+                            "validTable",
+                            "invalidTable"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "timescale"
+                            }
+                        },
+                        "required": [
+                            "timescaleHost",
+                            "timescalePort",
+                            "timescaleDbName",
+                            "timescaleUser",
+                            "timescalePass",
+                            "validTable",
+                            "invalidTable"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "mysql"
+                            }
+                        },
+                        "required": [
+                            "mysqlHost",
+                            "mysqlPort",
+                            "mysqlDbName",
+                            "mysqlUser",
+                            "mysqlPass",
+                            "validTable",
+                            "invalidTable"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "clickhouse"
+                            }
+                        },
+                        "required": [
+                            "clickhouseHost",
+                            "clickhousePort",
+                            "clickhouseDbName",
+                            "clickhouseUser",
+                            "clickhousePass",
+                            "validTable",
+                            "invalidTable"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "pubnub"
+                            }
+                        },
+                        "required": [
+                            "validChannel",
+                            "invalidChannel",
+                            "pubnubPubKey",
+                            "pubnubSubKey"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "mongodb"
+                            }
+                        },
+                        "required": [
+                            "mongoHosts",
+                            "mongoPort",
+                            "mongoDbName",
+                            "validCollection",
+                            "invalidCollection"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "nats"
+                            }
+                        },
+                        "required": [
+                            "natsHost",
+                            "natsUser",
+                            "natsPass",
+                            "validSubject",
+                            "invalidSubject"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "nats-jetstream"
+                            }
+                        },
+                        "required": [
+                            "natsHost",
+                            "natsUser",
+                            "natsPass",
+                            "validSubject",
+                            "invalidSubject"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "indicative"
+                            }
+                        },
+                        "required": [
+                            "indicativeApiKey"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "amplitude"
+                            }
+                        },
+                        "required": [
+                            "amplitudeApiKey",
+                            "amplitudeRegion"
+                        ]
+                    }
+                ]
+            }
+        },
+        "squawkBox": {
+            "type": "object",
+            "description": "Squawkbox configuration",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether or not to enable the squawkbox",
+                    "default": "true"
+                },
+                "cloudeventsPath": {
+                    "type": "string",
+                    "description": "Path for the cloudevents squawkbox",
+                    "default": "/sqwk/ce"
+                },
+                "snowplowPath": {
+                    "type": "string",
+                    "description": "Path for the snowplow squawkbox",
+                    "default": "/sqwk/sp"
+                },
+                "genericPath": {
+                    "type": "string",
+                    "description": "Path for the generic self-describing events squawkbox",
+                    "default": "/sqwk/gen"
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "enabled",
+                "cloudeventsPath",
+                "snowplowPath",
+                "genericPath"
+            ]
+        },
+        "tele": {
+            "type": "object",
+            "description": "Tele configuration",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether or not to enable telemetry",
+                    "default": "true"
+                },
+                "host": {}
+            },
+            "additionalProperties": false,
+            "required": [
+                "enabled"
+            ]
+        },
+        "privacy": {
+            "type": "object",
+            "description": "Privacy configuration",
+            "properties": {
+                "anonymize": {
+                    "type": "object",
+                    "description": "Envelope anonymization configuration",
+                    "properties": {
+                        "device": {
+                            "type": "object",
+                            "description": "Whether or not to anonymize various device fields",
+                            "properties": {
+                                "ip": {
+                                    "type": "boolean",
+                                    "description": "Whether to anonymize the device ip address for all events",
+                                    "default": "false"
+                                },
+                                "useragent": {
+                                    "type": "boolean",
+                                    "description": "Whether to anonymize the device useragent for all events",
+                                    "default": "false"
+                                }
+                            },
+                            "required": ["ip", "useragent"],
+                            "additionalProperties": false
+                        },
+                        "user": {
+                            "type": "object",
+                            "description": "Whether or not to anonymize various user fields",
+                            "properties": {
+                                "id": {
+                                    "type": "boolean",
+                                    "description": "Whether to anonymize the user id for all events",
+                                    "default": "false"
+                                }
+                            },
+                            "required": ["id"],
+                            "additionalProperties": false
+                        }
+                    },
+                    "required": ["device", "user"]
+                }
+            },
+            "required": ["anonymize"],
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "version",
+        "app",
+        "middleware",
+        "inputs",
+        "schemaCache",
+        "sinks",
+        "squawkBox",
+        "tele",
+        "privacy"
+    ]
+}
