@@ -1,0 +1,66 @@
+{
+    "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "http://registry.silverton.io/io.silverton/buz/tele/meta/v1.0.json",
+    "title": "io.silverton/buz/tele/meta/v1.0.json",
+    "owner": {
+        "org": "silverton",
+        "team": "buz",
+        "individual": "jakthom"
+    },
+	"self": {
+		"vendor": "io.silverton",
+        "namespace": "buz.internal.tele.meta",
+		"version": "1.0"
+	},
+    "type": "object",
+    "properties": {
+        "version": {
+            "type": "string",
+            "description":"Buz version"
+        },
+        "instanceId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The instance uuid"
+        },
+        "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "TS of when the instance was started"
+        },
+        "trackerDomain": {
+            "type": "string",
+            "description": "The configured tracker domain"
+        },
+        "cookieDomain": {
+            "type": "string",
+            "description": "The configured cookie domain"
+        },
+        "validSnowplowEventsProcessed": {
+            "type": "integer",
+            "description": "The number of valid snowplow events processed"
+        },
+        "invalidSnowplowEventsProcessed": {
+            "type": "integer",
+            "description": "The number of invalid snowplow events processed"
+        },
+        "validGenericEventsProcessed": {
+            "type": "integer",
+            "description": "The number of valid generic self-describing events processed"
+        },
+        "invalidGenericEventsProcessed": {
+            "type": "integer",
+            "description": "The number of invalid generic self-describing events processed"
+        },
+        "validCloudEventsProcessed": {
+            "type": "integer",
+            "description": "The number of valid cloudevents processed"
+        },
+        "invalidCloudEventsProcessed": {
+            "type": "integer",
+            "description": "The number of invalid cloudevents processed"
+        }
+    },
+    "additionalProperties": false,
+    "required": ["version", "instanceId", "startTime", "trackerDomain", "cookieDomain", "validSnowplowEventsProcessed", "invalidSnowplowEventsProcessed", "validGenericEventsProcessed", "invalidGenericEventsProcessed", "validCloudEventsProcessed", "invalidCloudEventsProcessed"]
+}

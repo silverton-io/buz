@@ -1,0 +1,32 @@
+{
+    "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "https://registry.silverton.io/io.silverton/buz/tele/beat/v1.0.json",
+    "title": "io.silverton/buz/tele/beat/v1.0.json",
+    "description": "Buz heartbeat event",
+    "owner": {
+        "org": "silverton",
+        "team": "buz",
+        "individual": "jakthom"
+    },
+	"self": {
+		"vendor": "io.silverton",
+        "namespace": "buz.internal.tele.beat",
+		"version": "1.0"
+	},
+    "type": "object",
+    "properties": {
+        "meta": {
+            "type": "object",
+            "description": "Metadata about a beat"
+        },
+        "time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "TS of the beat"
+        },
+        "elapsedSeconds": {
+            "type": "number",
+            "description": "The number of elapsed seconds since startup"
+        }
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "io.silverton/buz/internal/contexts/httpHeaders/v1.0.json",
+    "title":"io.silverton/buz/internal/contexts/httpHeaders/v1.0.json",
+    "description": "HTTP headers context",
+    "owner": {
+        "org": "silverton",
+        "team": "buz",
+        "individual": "jakthom"
+    },
+    "self": {
+        "vendor": "io.silverton",
+        "namespace": "buz.internal.contexts.httpHeaders",
+        "version": "1.0"
+    },
+    "type": "object",
+    "properties": {},
+    "additionalProperties": true
+}
