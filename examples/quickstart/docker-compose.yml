@@ -115,15 +115,14 @@ services:
     ports:
       - 9094:9094
 
-  kowl:
-    image: quay.io/cloudhut/kowl:v1.5.0
+  console:
+    image: docker.redpanda.com/vectorized/console:latest
     restart: on-failure
-    container_name: kowl
-    volumes:
-    - ./kowl/quickstart.yml:/etc/kowl/config.yml
+    container_name: console
+    environment:
+      - KAFKA_BROKERS=redpanda-1:29092,redpanda-2:29093,redpanda-3:29094
     ports:
-    - 8082:8081
-    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yml
+    - 8082:8080
     depends_on:
       << : *redpanda-dep
 
