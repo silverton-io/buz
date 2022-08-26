@@ -1,7 +1,7 @@
 {
-    "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
-    "$id": "io.silverton/buz/pixel/arbitrary/v1.0.json",
-    "title": "io.silverton/buz/pixel/arbitrary/v1.0.json",
+    "$schema": "https://registry.buz.dev/dev.buz/buz/internal/meta/v1.0.json",
+    "$id": "https://registry.buz.dev/dev.buz/buz/pixel/arbitrary/v1.0.json",
+    "title": "dev.buz/buz/pixel/arbitrary/v1.0.json",
     "description": "A catchall schema for unnamed events consisting of arbitrary pixel payloads.",
     "owner": {
         "org": "silverton",
@@ -9,7 +9,7 @@
         "individual": "jakthom"
     },
     "self": {
-        "vendor": "io.silverton",
+        "vendor": "dev.buz",
         "namespace": "buz.pixel.arbitrary",
         "version": "1.0"
     },

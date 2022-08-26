@@ -1,7 +1,7 @@
 {
-    "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
-    "$id": "http://registry.silverton.io/io.silverton/buz/tele/shutdown/v1.0.json",
-    "title": "io.silverton/buz/tele/shutdown/v1.0.json",
+    "$schema": "https://registry.buz.dev/dev.buz/buz/internal/meta/v1.0.json",
+    "$id": "https://registry.buz.dev/dev.buz/buz/internal/tele/shutdown/v1.0.json",
+    "title": "dev.buz/buz/internal/tele/shutdown/v1.0.json",
     "description": "Buz shutdown event",
     "owner": {
         "org": "silverton",
@@ -9,7 +9,7 @@
         "individual": "jakthom"
     },
 	"self": {
-		"vendor": "io.silverton",
+		"vendor": "dev.buz",
         "namespace": "buz.internal.tele.shutdown",
 		"version": "1.0"
 	},

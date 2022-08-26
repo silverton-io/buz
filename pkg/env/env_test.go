@@ -4,26 +4,12 @@
 
 package env
 
-import "testing"
+import (
+	"testing"
 
-func TestEnviron(t *testing.T) {
-	want_dev := "development"
-	want_stg := "staging"
-	want_prd := "production"
-	if DEV_ENVIRONMENT != want_dev {
-		t.Fatalf(`DEV_ENVIRONMENT is %v, want %v`, DEV_ENVIRONMENT, want_dev)
-	}
-	if STG_ENVIRONMENT != want_stg {
-		t.Fatalf(`STG_ENVIRONMENT is %v, want %v`, STG_ENVIRONMENT, want_stg)
-	}
-	if PROD_ENVIRONMENT != want_prd {
-		t.Fatalf(`PROD_ENVIRONMENT is %v, want %v`, PROD_ENVIRONMENT, want_prd)
-	}
-}
+	"github.com/stretchr/testify/assert"
+)
 
 func TestConfigPath(t *testing.T) {
-	want := "HONEYPOT_CONFIG_PATH"
-	if HONEYPOT_CONFIG_PATH != want {
-		t.Fatalf(`HONEYPOT_CONFIG_PATH is %v, want %v`, HONEYPOT_CONFIG_PATH, want)
-	}
+	assert.Equal(t, BUZ_CONFIG_PATH, "BUZ_CONFIG_PATH")
 }
