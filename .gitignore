@@ -10,3 +10,8 @@ notes/*
 examples/quickstart/minio/*
 *.bin
 *.meta
+
+# Terraform
+.terraform
+.terraform.lock.hcl
+terraform.*
