@@ -2,7 +2,7 @@ package cache
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"path/filepath"
 
 	"github.com/minio/minio-go/v7"
@@ -53,7 +53,7 @@ func (b *MinioSchemaCacheBackend) GetRemote(schema string) (contents []byte, err
 		log.Error().Err(err).Msg("🔴 could not get file from minio: " + schemaLocation)
 		return nil, err
 	}
-	contents, err = ioutil.ReadAll(obj)
+	contents, err = io.ReadAll(obj)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not read contents from file: " + schemaLocation)
 		return nil, err

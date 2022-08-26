@@ -5,7 +5,7 @@
 package envelope
 
 import (
-	"io/ioutil"
+	"io"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -93,7 +93,7 @@ func buildSnowplowEnvelope(c *gin.Context, conf *config.Config, e snowplow.Snowp
 func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []Envelope {
 	var envelopes []Envelope
 	if c.Request.Method == "POST" {
-		body, err := ioutil.ReadAll(c.Request.Body)
+		body, err := io.ReadAll(c.Request.Body)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not read request body")
 			return envelopes
