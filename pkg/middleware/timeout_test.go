@@ -6,7 +6,7 @@ package middleware
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -57,7 +57,7 @@ func TestTimeout(t *testing.T) {
 			t.Fatalf(`got status code %v, want %v`, resp.StatusCode, tc.wantCode)
 		}
 		defer resp.Body.Close()
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		bodyEquiv := reflect.DeepEqual(body, tc.wantResponse)
 		if !bodyEquiv {
 			t.Fatalf(`got response %v, want %v`, body, tc.wantResponse)

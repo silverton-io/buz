@@ -6,7 +6,7 @@ package cache
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"path/filepath"
 
 	"cloud.google.com/go/storage"
@@ -46,7 +46,7 @@ func (b *GcsSchemaCacheBackend) GetRemote(schema string) (contents []byte, err e
 		log.Error().Err(err).Msg("🔴 could not get file from gcs: " + schemaLocation)
 		return nil, err
 	}
-	data, _ := ioutil.ReadAll(reader)
+	data, _ := io.ReadAll(reader)
 	return data, nil
 }
 

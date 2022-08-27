@@ -5,7 +5,7 @@
 package cache
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/rs/zerolog/log"
@@ -25,7 +25,7 @@ func (b *FilesystemCacheBackend) Initialize(conf config.Backend) error {
 
 func (b *FilesystemCacheBackend) GetRemote(schema string) (contents []byte, err error) {
 	schemaLocation := filepath.Join(b.path, schema)
-	content, err := ioutil.ReadFile(schemaLocation)
+	content, err := os.ReadFile(schemaLocation)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not get schema from filesystem schema cache backend: " + schemaLocation)
 		return nil, err

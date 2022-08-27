@@ -6,7 +6,7 @@ package handler
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -43,7 +43,7 @@ func TestStatsHandler(t *testing.T) {
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf(`StatsHandler returned %d, want %d`, resp.StatusCode, http.StatusOK)
 	}
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("Could not read response: %v", err)
 	}

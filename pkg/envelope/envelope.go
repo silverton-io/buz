@@ -40,7 +40,9 @@ func (e *Envelope) AsMap() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	json.Unmarshal(marshaledEnvelope, &m)
+	if err := json.Unmarshal(marshaledEnvelope, &m); err != nil {
+		return nil, err
+	}
 	return m, nil
 }
 

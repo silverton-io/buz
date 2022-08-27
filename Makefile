@@ -26,6 +26,9 @@ buildx-deploy: ## Build multi-platform buz image and push it to edge repo
 	docker buildx use $(S)
 	docker buildx build --platform linux/arm64,linux/amd64 -f deploy/Dockerfile -t $(REGISTRY)/buz:$(VERSION)-edge . --push
 
+lint: ## Lint go code
+	@golangci-lint run --config .golangci.yml
+
 test-cover-pkg: ## Run tests against pkg, output test profile, and open profile in browser
 	go test ./pkg/... -v -coverprofile=$(TEST_PROFILE) || true
 	go tool cover -html=$(TEST_PROFILE) || true

@@ -29,8 +29,8 @@ type PubnubSink struct {
 	invalidChannel   string
 	pubKey           string
 	subKey           string
-	store            int
-	callback         string
+	store            int    // nolint: unused
+	callback         string // nolint: unused
 }
 
 func (s *PubnubSink) Id() *uuid.UUID {
