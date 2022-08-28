@@ -22,8 +22,8 @@ func TestEnviron(t *testing.T) {
 }
 
 func TestConfigPath(t *testing.T) {
-	want := "HONEYPOT_CONFIG_PATH"
-	if HONEYPOT_CONFIG_PATH != want {
-		t.Fatalf(`HONEYPOT_CONFIG_PATH is %v, want %v`, HONEYPOT_CONFIG_PATH, want)
+	want := "BUZ_CONFIG_PATH"
+	if BUZ_CONFIG_PATH != want {
+		t.Fatalf(`BUZ_CONFIG_PATH is %v, want %v`, BUZ_CONFIG_PATH, want)
 	}
 }

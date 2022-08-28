@@ -47,12 +47,16 @@ func TestStatsHandler(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Could not read response: %v", err)
 	}
-	marshaledMeta, err := json.Marshal(m)
-	if err != nil {
-		t.Fatalf(`Could not marshal meta`)
+	expectedResponse := StatsResponse{
+		CollectorMeta: &m,
+		Stats:         &s,
 	}
-	equiv := reflect.DeepEqual(b, marshaledMeta)
+	expected, err := json.Marshal(expectedResponse)
+	if err != nil {
+		t.Fatalf(`Could not marshal expected response`)
+	}
+	equiv := reflect.DeepEqual(b, expected)
 	if !equiv {
-		t.Fatalf(`StatsHandler returned %v, want %v`, b, marshaledMeta)
+		t.Fatalf(`StatsHandler returned %v, want %v`, b, expected)
 	}
 }
