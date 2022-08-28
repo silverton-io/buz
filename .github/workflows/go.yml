@@ -17,6 +17,21 @@ jobs:
         with:
           go-version: 1.19
       - uses: actions/checkout@v3
+      - name: determine go cache paths
+        id: go-cache-path
+        run: |
+          echo "::set-output name=build::$(go env GOCACHE)"
+          echo "::set-output name=module::$(go env GOMODCACHE)"
+        shell: bash
+      - name: setup go cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ steps.go-cache-path.outputs.build }}
+            ${{ steps.go-cache-path.outputs.module }}
+          key: ${{ runner.os }}-go-buz-cache-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-buz-cache-
       - name: build
         run: make build
       - name: test
