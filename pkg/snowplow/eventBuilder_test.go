@@ -84,7 +84,7 @@ func TestGetContexts(t *testing.T) {
 		expectedContexts[schema] = data
 	}
 	actualContexts := getContexts(&b64contexts)
-	assert.Equal(t, expectedContexts, actualContexts)
+	assert.Equal(t, &expectedContexts, actualContexts)
 }
 
 func TestGetSdPayload(t *testing.T) {

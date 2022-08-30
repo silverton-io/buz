@@ -10,3 +10,4 @@ notes/*
 examples/quickstart/minio/*
 *.bin
 *.meta
+build/buz
