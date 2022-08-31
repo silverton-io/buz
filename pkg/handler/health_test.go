@@ -6,7 +6,7 @@ package handler
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -28,7 +28,7 @@ func TestHealthcheckHandler(t *testing.T) {
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf(`HealthcheckHandler returned status code %v, want %v`, resp.StatusCode, http.StatusOK)
 	}
-	b, _ := ioutil.ReadAll(resp.Body)
+	b, _ := io.ReadAll(resp.Body)
 	marshaledB, _ := json.Marshal(response.Ok)
 	equiv := reflect.DeepEqual(b, marshaledB)
 	if !equiv {

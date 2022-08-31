@@ -43,7 +43,7 @@ type shutdown struct {
 }
 
 func heartbeat(t time.Ticker, m *meta.CollectorMeta) {
-	for _ = range t.C {
+	for range t.C {
 		log.Trace().Msg("sending heartbeat telemetry")
 		b := beat{
 			Meta:           m,
@@ -82,7 +82,10 @@ func Sis(m *meta.CollectorMeta) {
 		},
 	}
 	endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-	request.PostEvent(*endpoint, shutdownPayload)
+	_, err := request.PostEvent(*endpoint, shutdownPayload)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func Metry(c *config.Config, m *meta.CollectorMeta) {
@@ -102,7 +105,10 @@ func Metry(c *config.Config, m *meta.CollectorMeta) {
 			},
 		}
 		endpoint, _ := url.Parse(DEFAULT_ENDPOINT)
-		request.PostEvent(*endpoint, startupPayload)
+		_, err := request.PostEvent(*endpoint, startupPayload)
+		if err != nil {
+			panic(err)
+		}
 		ticker := time.NewTicker(time.Duration(HEARTBEAT_MS) * time.Millisecond)
 		go heartbeat(*ticker, m)
 	}

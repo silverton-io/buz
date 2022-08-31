@@ -6,7 +6,7 @@ package handler
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -43,16 +43,20 @@ func TestStatsHandler(t *testing.T) {
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf(`StatsHandler returned %d, want %d`, resp.StatusCode, http.StatusOK)
 	}
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("Could not read response: %v", err)
 	}
-	marshaledMeta, err := json.Marshal(m)
-	if err != nil {
-		t.Fatalf(`Could not marshal meta`)
+	expectedResponse := StatsResponse{
+		CollectorMeta: &m,
+		Stats:         &s,
 	}
-	equiv := reflect.DeepEqual(b, marshaledMeta)
+	expected, err := json.Marshal(expectedResponse)
+	if err != nil {
+		t.Fatalf(`Could not marshal expected response`)
+	}
+	equiv := reflect.DeepEqual(b, expected)
 	if !equiv {
-		t.Fatalf(`StatsHandler returned %v, want %v`, b, marshaledMeta)
+		t.Fatalf(`StatsHandler returned %v, want %v`, b, expected)
 	}
 }

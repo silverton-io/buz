@@ -6,7 +6,7 @@ package request
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -35,7 +35,7 @@ func TestPostEvent(t *testing.T) {
 		if d != u {
 			t.Fatalf(`posted payload to url %v, want %v`, d, u)
 		}
-		sentPayload, _ := ioutil.ReadAll(r.Body)
+		sentPayload, _ := io.ReadAll(r.Body)
 		payloadsEquiv := reflect.DeepEqual(sentPayload, marshaledPayload)
 		if !payloadsEquiv {
 			t.Fatalf(`posted body %v, want %v`, sentPayload, marshaledPayload)

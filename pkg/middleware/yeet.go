@@ -6,6 +6,7 @@ package middleware
 
 import "github.com/gin-gonic/gin"
 
+// nolint: unused
 type yeet struct {
 	Msg string
 }

@@ -5,7 +5,7 @@
 package envelope
 
 import (
-	"io/ioutil"
+	"io"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -18,7 +18,7 @@ import (
 
 func BuildGenericEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []Envelope {
 	var envelopes []Envelope
-	reqBody, err := ioutil.ReadAll(c.Request.Body)
+	reqBody, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not read request body")
 		return envelopes

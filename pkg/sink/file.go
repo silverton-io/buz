@@ -50,7 +50,7 @@ func (s *FileSink) Initialize(conf config.Sink) error {
 
 func (s *FileSink) batchPublish(ctx context.Context, filePath string, envelopes []envelope.Envelope) error {
 	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	defer f.Close()
+	defer f.Close() // nolint
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not open file")
 		return err
@@ -64,7 +64,9 @@ func (s *FileSink) batchPublish(ctx context.Context, filePath string, envelopes 
 		}
 		newline := []byte("\n")
 		b = append(b, newline...)
-		f.Write(b)
+		if _, err := f.Write(b); err != nil {
+			return err
+		}
 	}
 	return nil
 }

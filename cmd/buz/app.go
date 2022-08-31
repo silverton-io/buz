@@ -68,12 +68,13 @@ func (a *App) configure() {
 	viper.SetConfigFile(conf)
 	viper.SetConfigType("yaml")
 	err := viper.ReadInConfig()
-
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not read config")
 	}
 	a.config = &config.Config{}
-	viper.Unmarshal(a.config)
+	if err := viper.Unmarshal(a.config); err != nil {
+		log.Fatal().Stack().Err(err).Msg("could not unmarshal config")
+	}
 	gin.SetMode(a.config.App.Mode)
 	if gin.IsDebugging() {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
@@ -93,7 +94,9 @@ func (a *App) initializeStats() {
 func (a *App) initializeSchemaCache() {
 	log.Info().Msg("🟢 initializing schema cache")
 	cache := cache.SchemaCache{}
-	cache.Initialize(a.config.SchemaCache)
+	if err := cache.Initialize(a.config.SchemaCache); err != nil {
+		panic(err)
+	}
 	a.schemaCache = &cache
 }
 
@@ -119,7 +122,9 @@ func (a *App) initializeManifold() {
 func (a *App) initializeRouter() {
 	log.Info().Msg("🟢 initializing router")
 	a.engine = gin.New()
-	a.engine.SetTrustedProxies(nil)
+	if err := a.engine.SetTrustedProxies(nil); err != nil {
+		panic(err)
+	}
 	a.engine.RedirectTrailingSlash = false
 }
 

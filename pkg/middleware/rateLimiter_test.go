@@ -6,7 +6,7 @@ package middleware
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -45,7 +45,7 @@ func TestOnLimitReachedHandler(t *testing.T) {
 
 	onLimitReachedHandler(c)
 
-	body, _ := ioutil.ReadAll(rec.Body)
+	body, _ := io.ReadAll(rec.Body)
 	wantBody, _ := json.Marshal(response.RateLimitExceeded)
 	assert.Equal(t, http.StatusTooManyRequests, rec.Result().StatusCode)
 	assert.Equal(t, wantBody, body)
