@@ -132,3 +132,33 @@ resource "google_cloud_run_service" "buz" {
     google_pubsub_topic.valid_topic
   ]
 }
+
+data "google_iam_policy" "noauth" {
+  binding {
+    role = "roles/run.invoker"
+    members = [
+      "allUsers",
+    ]
+  }
+}
+
+resource "google_cloud_run_service_iam_policy" "noauth" {
+  location = google_cloud_run_service.buz.location
+  project  = google_cloud_run_service.buz.project
+  service  = google_cloud_run_service.buz.name
+
+  policy_data = data.google_iam_policy.noauth.policy_data
+}
+
+resource "google_cloud_run_domain_mapping" "buz" {
+  location = "us-central1"
+  name     = local.domain
+
+  metadata {
+    namespace = data.google_project.project.project_id
+  }
+
+  spec {
+    route_name = google_cloud_run_service.buz.name
+  }
+}
