@@ -1,6 +1,11 @@
 locals {
-  buz_sha               = "sha256:1083c0333c284dfa16dd7cc621f90b8a1197fe4d9905237e41f2f1a495481d92"
   buz_config_path       = "HONEYPOT_CONFIG_PATH"
   buz_config_path_value = "/etc/buz"
-  domain                = "honey.buz.dev"
+  activate_apis = [
+    "artifactregistry.googleapis.com",
+    "run.googleapis.com",
+    "secretmanager.googleapis.com"
+  ]
+  domainParts  = split(".", var.buz_domain)
+  cookieDomain = join(".", slice(local.domainParts, 1, length(local.domainParts))) # Assumes Buz is running on a subdomain and the cookie should be on root
 }
