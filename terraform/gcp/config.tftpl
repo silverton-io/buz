@@ -1,11 +1,11 @@
 version: 1.1
 
 app:
-  name: gcp-sample
-  env: development
+  name: ${system}
+  env: ${env}
   mode: debug
   port: 8080
-  trackerDomain: gcp.sample # FIXME
+  trackerDomain: ${trackerDomain}
   enableConfigRoute: true
 
 middleware:
@@ -22,14 +22,14 @@ middleware:
       name: nuid
       secure: true
       ttlDays: 365
-      domain: .gcp.sample # FIXME
+      domain: .${cookieDomain}
       path: /
       sameSite: None
     fallback: 00000000-0000-4000-A000-000000000000
   cors:
     enabled: true
     allowOrigin:
-      - "*" # FIXME
+      - "*"
     allowCredentials: true
     allowMethods:
       - POST
@@ -71,16 +71,16 @@ inputs:
 schemaCache:
   backend:
     type: gcs
-    bucket: buz-schemas-640041769530
+    bucket: ${schemaBucket}
     path: /
 
 sinks:
   - name: primary
     type: pubsub
     deliveryRequired: true
-    validTopic: buz-valid
-    invalidTopic: buz-invalid
-    project: silverton-docs # FIXME
+    validTopic: ${validTopic}
+    invalidTopic: ${invalidTopic}
+    project: ${project}
   - name: secondary
     type: stdout
     deliveryRequired: true

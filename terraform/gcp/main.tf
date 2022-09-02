@@ -1,10 +1,3 @@
-locals {
-  activate_apis = [
-    "artifactregistry.googleapis.com",
-    "run.googleapis.com",
-    "secretmanager.googleapis.com"
-  ]
-}
 
 data "google_project" "project" {}
 
@@ -23,15 +16,15 @@ resource "google_storage_bucket" "buz_schemas" {
 }
 
 resource "google_pubsub_topic" "valid_topic" {
-  name = "buz-valid"
+  name = "${var.system}-${var.valid_topic_name}"
 }
 
 resource "google_pubsub_topic" "invalid_topic" {
-  name = "buz-invalid"
+  name = "${var.system}-${var.invalid_topic_name}"
 }
 
 resource "google_secret_manager_secret" "buz_config" {
-  secret_id = "buz-config"
+  secret_id = "${var.system}-config"
 
   replication {
     user_managed {
@@ -47,17 +40,45 @@ resource "google_secret_manager_secret" "buz_config" {
 }
 
 resource "google_secret_manager_secret_version" "buz_config" {
-  secret      = google_secret_manager_secret.buz_config.id
-  secret_data = file("gcp.yml")
+  secret = google_secret_manager_secret.buz_config.id
+  secret_data = templatefile("config.tftpl", {
+    project       = var.gcp_project,
+    system        = var.system,
+    env           = var.env,
+    trackerDomain = var.buz_domain,
+    cookieDomain  = local.cookie_domain,
+    schemaBucket  = google_storage_bucket.buz_schemas.name,
+    validTopic    = google_pubsub_topic.valid_topic.name,
+    invalidTopic  = google_pubsub_topic.invalid_topic.name,
+  })
 }
 
 resource "google_artifact_registry_repository" "buz_repository" {
   location      = var.gcp_region
-  repository_id = "buz-repository"
+  repository_id = "${var.system}-repository"
   format        = "DOCKER"
 
   depends_on = [
     google_project_service.project_services
+  ]
+}
+
+resource "null_resource" "configure_docker" {
+  provisioner "local-exec" {
+    command = "gcloud auth configure-docker ${local.artifact_registry_location} -y"
+  }
+  depends_on = [
+    google_artifact_registry_repository.buz_repository
+  ]
+}
+
+resource "null_resource" "pull_and_push_image" {
+  provisioner "local-exec" {
+    command = "docker pull ${local.buz_source_image} --platform=linux/amd64 && docker tag ${local.buz_source_image} ${local.buz_image} && docker push ${local.buz_image}"
+  }
+  depends_on = [
+    google_artifact_registry_repository.buz_repository,
+    null_resource.configure_docker
   ]
 }
 
@@ -79,7 +100,7 @@ resource "google_project_iam_binding" "buz_config_secret_access" {
 }
 
 resource "google_cloud_run_service" "buz" {
-  name     = "buz"
+  name     = var.system
   location = var.gcp_region
 
   template {
@@ -88,7 +109,7 @@ resource "google_cloud_run_service" "buz" {
       container_concurrency = 80
 
       volumes {
-        name = "buz-config"
+        name = "${var.system}-config"
         secret {
           secret_name = google_secret_manager_secret.buz_config.secret_id
           items {
@@ -99,7 +120,7 @@ resource "google_cloud_run_service" "buz" {
       }
 
       containers {
-        image = "${var.gcp_region}-docker.pkg.dev/${var.gcp_project}/buz-repository/buz@${local.buz_sha}"
+        image = local.buz_image
 
         resources {
           limits = {
@@ -113,13 +134,13 @@ resource "google_cloud_run_service" "buz" {
         }
 
         env {
-          name  = local.buz_config_path
-          value = local.buz_config_path_value
+          name  = local.buz_config_var
+          value = local.buz_config_path
         }
 
         volume_mounts {
-          name       = "buz-config"
-          mount_path = local.buz_config_path_value
+          name       = "${var.system}-config"
+          mount_path = local.buz_config_path
         }
       }
     }
@@ -129,7 +150,8 @@ resource "google_cloud_run_service" "buz" {
     google_project_service.project_services,
     google_storage_bucket.buz_schemas,
     google_pubsub_topic.invalid_topic,
-    google_pubsub_topic.valid_topic
+    google_pubsub_topic.valid_topic,
+    null_resource.pull_and_push_image,
   ]
 }
 
@@ -151,8 +173,8 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
 }
 
 resource "google_cloud_run_domain_mapping" "buz" {
-  location = "us-central1"
-  name     = local.domain
+  location = var.gcp_region
+  name     = var.buz_domain
 
   metadata {
     namespace = data.google_project.project.project_id

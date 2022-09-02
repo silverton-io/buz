@@ -1,6 +1,16 @@
 locals {
-  buz_sha               = "sha256:1083c0333c284dfa16dd7cc621f90b8a1197fe4d9905237e41f2f1a495481d92"
-  buz_config_path       = "HONEYPOT_CONFIG_PATH"
-  buz_config_path_value = "/etc/buz"
-  domain                = "honey.buz.dev"
+  buz_config_var  = "HONEYPOT_CONFIG_PATH"
+  buz_config_path = "/etc/buz"
+  activate_apis = [
+    "artifactregistry.googleapis.com",
+    "run.googleapis.com",
+    "secretmanager.googleapis.com"
+  ]
+  domain_parts                 = split(".", var.buz_domain)
+  cookie_domain                = join(".", slice(local.domain_parts, 1, length(local.domain_parts))) # Assumes Buz is running on a subdomain and the cookie should be on root
+  artifact_registry_location   = "${var.gcp_region}-docker.pkg.dev"
+  artifact_registry_root       = "${local.artifact_registry_location}/${var.gcp_project}"
+  artifact_registry_repository = "${var.system}-repository"
+  buz_source_image             = "ghcr.io/silverton-io/buz:${var.buz_version}"
+  buz_image                    = "${local.artifact_registry_root}/${local.artifact_registry_repository}/buz:${var.buz_version}"
 }

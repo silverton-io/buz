@@ -1,34 +1,33 @@
 # Terraform GCP
 Deploy Buz to Google Cloud via Terraform.
 
-1. Create a file in this directory `terraform.tfvars`. Set the `gcp_project` and optionally set `gcp_region`.
-```
-gcp_project = "my-project-23456"
-gcp_region  = "us-central1" #default value
-```
+## Prerequisites
 
-2. In the command line authenticate GCP
+You will need `terraform` and `gcloud`.
+
+## Spinning up Buz
+
+**Auth Gcloud**
+
 ```
 gcloud auth application-default login
 ```
 
-3. Create the artifact registry
-```
-terraform plan -target=google_artifact_registry_repository.buz_repository
-```
 
-4. After your registry has been created. Upload the appropriate buz image
-```
-gcloud auth configure-docker us-central1-docker.pkg.dev
+**Apply Terraform**
 
-docker pull ghcr.io/silverton-io/buz:v0.11.11@sha256:130ed9421579125e4f38089e4c2d1e07038fb26591a15082010a52b95f3a5dda # amd64
-
-docker tag ghcr.io/silverton-io/buz:v0.11.11@sha256:130ed9421579125e4f38089e4c2d1e07038fb26591a15082010a52b95f3a5dda us-central1-docker.pkg.dev/{YOUR PROJECT NAME}/buz-repository/buz:v0.11.11
-
-docker push us-central1-docker.pkg.dev/{YOUR PROJECT NAME}/buz-repository/buz:v0.11.11
-```
-
-5. Deploy the rest of the buz stack
 ```
 terraform apply
+```
+
+**[Optional] - Create and populate terraform.tfvars**
+
+If you don't want to pass terraform variables interactively, you can optionally create a `terraform.tfvars` file in this directory and populate it:
+
+```
+gcp_project = "my-project-23456"
+gcp_region  = "us-central1"
+system      = "buz"
+buz_domain  = "track.yourdomain.com"
+buz_version = "v0.11.11"
 ```
