@@ -7,5 +7,5 @@ import (
 )
 
 func TestContextConstants(t *testing.T) {
-	assert.Equal(t, IDENTITY, "identity")
+	assert.Equal(t, "identity", IDENTITY)
 }

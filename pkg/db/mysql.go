@@ -6,6 +6,7 @@ package db
 
 import "strconv"
 
+// GenerateMysqlDsn generates a Mysql Dsn from the provided connection params
 func GenerateMysqlDsn(params ConnectionParams) string {
 	port := strconv.FormatUint(uint64(params.Port), 10)
 	return params.User + ":" + params.Pass + "@tcp(" + params.Host + ":" + port + ")/" + params.Db + "?parseTime=true"

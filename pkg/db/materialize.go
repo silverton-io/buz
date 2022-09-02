@@ -4,7 +4,7 @@
 
 package db
 
+// GenerateMzDsn generates a Materialize dsn from the provided connection params
 func GenerateMzDsn(params ConnectionParams) string {
-	// postgresql://[user[:password]@][netloc][:port][/dbname]
 	return GeneratePostgresDsn(params)
 }

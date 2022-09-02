@@ -11,7 +11,7 @@ import (
 )
 
 func TestBuzConstants(t *testing.T) {
-	assert.Equal(t, BUZ_SCHEMA_PARAM, "hps")
-	assert.Equal(t, BUZ_BASE64_ENCODED_PAYLOAD_PARAM, "hpbp")
-	assert.Equal(t, UNKNOWN, "unknown")
+	assert.Equal(t, "hps", BUZ_SCHEMA_PARAM)
+	assert.Equal(t, "hpbp", BUZ_BASE64_ENCODED_PAYLOAD_PARAM)
+	assert.Equal(t, "unknown", UNKNOWN)
 }

@@ -6,6 +6,7 @@ package db
 
 import "strconv"
 
+// GeneratePostgresDsn generates a dsn from the provided connection params
 func GeneratePostgresDsn(params ConnectionParams) string {
 	// postgresql://[user[:password]@][netloc][:port][/dbname]
 	p := strconv.FormatUint(uint64(params.Port), 10)
