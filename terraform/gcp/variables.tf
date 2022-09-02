@@ -11,9 +11,8 @@ variable "gcp_region" {
 }
 
 variable "system" {
-  description = "The name of the Buz implementation"
+  description = "The name of the Buz implementation. \n\nExample: buz"
   type        = string
-  default     = "buzzy"
 }
 
 variable "env" {
@@ -23,15 +22,13 @@ variable "env" {
 }
 
 variable "buz_domain" {
-  description = "The domain or subdomain to map Buz to"
+  description = "The subdomain to map Buz to. \n\nExample: track.yourdomain.com"
   type        = string
-  default     = "b.buz.dev"
 }
 
 variable "buz_version" {
-  description = "The version of Buz to run"
+  description = "The version of Buz to run. \n\nExample: v0.11.11"
   type        = string
-  default     = "v0.11.11"
 }
 
 variable "valid_topic_name" {

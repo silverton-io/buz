@@ -63,12 +63,21 @@ resource "google_artifact_registry_repository" "buz_repository" {
   ]
 }
 
-resource "null_resource" "pull_and_push_image" {
+resource "null_resource" "configure_docker" {
   provisioner "local-exec" {
-    command = "docker pull ${local.buz_source_image} && docker tag ${local.buz_source_image} ${local.buz_image} && docker push ${local.buz_image}"
+    command = "gcloud auth configure-docker ${local.artifact_registry_location} -y"
   }
   depends_on = [
     google_artifact_registry_repository.buz_repository
+  ]
+}
+
+resource "null_resource" "pull_and_push_image" {
+  provisioner "local-exec" {
+    command = "docker pull ${local.buz_source_image} --platform=linux/amd64 && docker tag ${local.buz_source_image} ${local.buz_image} && docker push ${local.buz_image}"
+  }
+  depends_on = [
+    null_resource.configure_docker
   ]
 }
 
