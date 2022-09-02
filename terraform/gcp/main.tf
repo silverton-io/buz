@@ -77,6 +77,7 @@ resource "null_resource" "pull_and_push_image" {
     command = "docker pull ${local.buz_source_image} --platform=linux/amd64 && docker tag ${local.buz_source_image} ${local.buz_image} && docker push ${local.buz_image}"
   }
   depends_on = [
+    google_artifact_registry_repository.buz_repository,
     null_resource.configure_docker
   ]
 }
