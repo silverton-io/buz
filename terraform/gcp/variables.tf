@@ -1,6 +1,7 @@
 variable "gcp_project" {
   description = "GCloud Project ID"
   type        = string
+  default     = "silvertonio"
 }
 
 variable "gcp_region" {
@@ -24,12 +25,13 @@ variable "env" {
 variable "buz_domain" {
   description = "The domain or subdomain to map Buz to"
   type        = string
+  default     = "b.buz.dev"
 }
 
-variable "buz_image_sha" {
-  description = "The Buz image SHA"
+variable "buz_version" {
+  description = "The version of Buz to run"
   type        = string
-  default     = "sha256:1083c0333c284dfa16dd7cc621f90b8a1197fe4d9905237e41f2f1a495481d92"
+  default     = "v0.11.11"
 }
 
 variable "valid_topic_name" {

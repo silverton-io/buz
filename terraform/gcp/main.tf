@@ -46,7 +46,7 @@ resource "google_secret_manager_secret_version" "buz_config" {
     system        = var.system,
     env           = var.env,
     trackerDomain = var.buz_domain,
-    cookieDomain  = local.cookieDomain,
+    cookieDomain  = local.cookie_domain,
     schemaBucket  = google_storage_bucket.buz_schemas.name,
     validTopic    = google_pubsub_topic.valid_topic.name,
     invalidTopic  = google_pubsub_topic.invalid_topic.name,
@@ -60,6 +60,15 @@ resource "google_artifact_registry_repository" "buz_repository" {
 
   depends_on = [
     google_project_service.project_services
+  ]
+}
+
+resource "null_resource" "pull_and_push_image" {
+  provisioner "local-exec" {
+    command = "docker pull ${local.buz_source_image} && docker tag ${local.buz_source_image} ${local.buz_image} && docker push ${local.buz_image}"
+  }
+  depends_on = [
+    google_artifact_registry_repository.buz_repository
   ]
 }
 
@@ -101,7 +110,7 @@ resource "google_cloud_run_service" "buz" {
       }
 
       containers {
-        image = "${var.gcp_region}-docker.pkg.dev/${var.gcp_project}/${var.system}-repository/buz@${var.buz_image_sha}"
+        image = local.buz_image
 
         resources {
           limits = {
@@ -115,13 +124,13 @@ resource "google_cloud_run_service" "buz" {
         }
 
         env {
-          name  = local.buz_config_path
-          value = local.buz_config_path_value
+          name  = local.buz_config_var
+          value = local.buz_config_path
         }
 
         volume_mounts {
           name       = "${var.system}-config"
-          mount_path = local.buz_config_path_value
+          mount_path = local.buz_config_path
         }
       }
     }
@@ -131,7 +140,8 @@ resource "google_cloud_run_service" "buz" {
     google_project_service.project_services,
     google_storage_bucket.buz_schemas,
     google_pubsub_topic.invalid_topic,
-    google_pubsub_topic.valid_topic
+    google_pubsub_topic.valid_topic,
+    null_resource.pull_and_push_image,
   ]
 }
 
