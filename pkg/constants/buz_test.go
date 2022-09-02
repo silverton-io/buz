@@ -3,3 +3,15 @@
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package constants
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestBuzConstants(t *testing.T) {
+	assert.Equal(t, BUZ_SCHEMA_PARAM, "hps")
+	assert.Equal(t, BUZ_BASE64_ENCODED_PAYLOAD_PARAM, "hpbp")
+	assert.Equal(t, UNKNOWN, "unknown")
+}
