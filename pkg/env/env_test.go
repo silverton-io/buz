@@ -4,11 +4,12 @@
 
 package env
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestConfigPath(t *testing.T) {
-	want := "BUZ_CONFIG_PATH"
-	if BUZ_CONFIG_PATH != want {
-		t.Fatalf(`BUZ_CONFIG_PATH is %v, want %v`, BUZ_CONFIG_PATH, want)
-	}
+	assert.Equal(t, "BUZ_CONFIG_PATH", BUZ_CONFIG_PATH)
 }

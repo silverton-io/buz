@@ -28,3 +28,16 @@ func TestMapParams(t *testing.T) {
 	params := MapUrlParams(c)
 	assert.Equal(t, params, want)
 }
+
+func TestQueryToMap(t *testing.T) {
+	params := map[string][]string{
+		"p1": {"v1", "v2"},
+		"p2": {"v2"},
+	}
+	expected := map[string]interface{}{
+		"p1": "v1",
+		"p2": "v2",
+	}
+	mapped := QueryToMap(params)
+	assert.Equal(t, expected, mapped)
+}
