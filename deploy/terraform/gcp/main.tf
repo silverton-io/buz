@@ -11,7 +11,7 @@ resource "google_project_service" "project_services" {
 
 resource "google_storage_bucket" "schemas" {
   name          = local.schema_bucket
-  location      = "US"
+  location      = var.schema_bucket_location
   force_destroy = true
 }
 
@@ -45,6 +45,7 @@ resource "google_secret_manager_secret_version" "buz_config" {
     project       = var.gcp_project,
     system        = var.system,
     env           = var.env,
+    port          = var.buz_service_container_port
     trackerDomain = var.buz_domain,
     cookieDomain  = local.cookie_domain,
     schemaBucket  = local.schema_bucket,
@@ -55,7 +56,7 @@ resource "google_secret_manager_secret_version" "buz_config" {
 
 resource "google_artifact_registry_repository" "buz_repository" {
   location      = var.gcp_region
-  repository_id = "${local.system_env_base}repository"
+  repository_id = local.artifact_repository
   format        = "DOCKER"
 
   depends_on = [
@@ -101,8 +102,8 @@ resource "google_cloud_run_service" "buz" {
 
   template {
     spec {
-      timeout_seconds       = 300
-      container_concurrency = 80
+      timeout_seconds       = var.buz_service_timeout_seconds
+      container_concurrency = var.buz_service_container_concurrency
 
       volumes {
         name = local.config
@@ -120,13 +121,13 @@ resource "google_cloud_run_service" "buz" {
 
         resources {
           limits = {
-            cpu    = "1"
-            memory = "512Mi"
+            cpu    = var.buz_service_cpu_limit
+            memory = var.buz_service_memory_limit
           }
         }
 
         ports {
-          container_port = 8080
+          container_port = var.buz_service_container_port
         }
 
         env {

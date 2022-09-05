@@ -10,6 +10,7 @@ locals {
   cookie_domain   = join(".", slice(local.domain_parts, 1, length(local.domain_parts))) # Assumes Buz is running on a subdomain and the cookie should be on root
   system_env_base = "${var.system}-${var.env}-"
   # Image
+  artifact_repository          = "${local.system_env_base}repository"
   artifact_registry_location   = "${var.gcp_region}-docker.pkg.dev"
   artifact_registry_root       = "${local.artifact_registry_location}/${var.gcp_project}"
   artifact_registry_repository = "${local.system_env_base}repository"

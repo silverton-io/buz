@@ -29,6 +29,42 @@ variable "buz_version" {
   type        = string
 }
 
+variable "buz_service_timeout_seconds" {
+  description = "The service timeout in seconds"
+  type        = number
+  default     = 300 # Cloud Run default
+}
+
+variable "buz_service_container_concurrency" {
+  description = "The service container concurrency"
+  type        = number
+  default     = 80 # Cloud Run default
+}
+
+variable "buz_service_cpu_limit" {
+  description = "The service cpu limit"
+  type        = string
+  default     = "1" # Cloud Run default
+}
+
+variable "buz_service_memory_limit" {
+  description = "The service memory limit"
+  type        = string
+  default     = "512Mi" # Cloud Run default
+}
+
+variable "buz_service_container_port" {
+  description = "The service container port"
+  type        = number
+  default     = 8080
+}
+
+variable "schema_bucket_location" {
+  description = "The GCS schema bucket location"
+  type        = string
+  default     = "US"
+}
+
 variable "schema_bucket_name" {
   description = "The name of the GCS bucket for schemas. \n\nPLEASE NOTE! Buckets are globally unique so you may need to be creative."
   type        = string
