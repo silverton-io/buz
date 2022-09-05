@@ -9,22 +9,22 @@ resource "google_project_service" "project_services" {
   disable_dependent_services = true
 }
 
-resource "google_storage_bucket" "buz_schemas" {
-  name          = "buz-schemas-${data.google_project.project.number}"
-  location      = "US"
+resource "google_storage_bucket" "schemas" {
+  name          = local.schema_bucket
+  location      = var.schema_bucket_location
   force_destroy = true
 }
 
 resource "google_pubsub_topic" "valid_topic" {
-  name = "${var.system}-${var.valid_topic_name}"
+  name = local.valid_topic
 }
 
 resource "google_pubsub_topic" "invalid_topic" {
-  name = "${var.system}-${var.invalid_topic_name}"
+  name = local.invalid_topic
 }
 
 resource "google_secret_manager_secret" "buz_config" {
-  secret_id = "${var.system}-config"
+  secret_id = local.config
 
   replication {
     user_managed {
@@ -45,17 +45,18 @@ resource "google_secret_manager_secret_version" "buz_config" {
     project       = var.gcp_project,
     system        = var.system,
     env           = var.env,
+    port          = var.buz_service_container_port
     trackerDomain = var.buz_domain,
     cookieDomain  = local.cookie_domain,
-    schemaBucket  = google_storage_bucket.buz_schemas.name,
-    validTopic    = google_pubsub_topic.valid_topic.name,
-    invalidTopic  = google_pubsub_topic.invalid_topic.name,
+    schemaBucket  = local.schema_bucket,
+    validTopic    = local.valid_topic,
+    invalidTopic  = local.invalid_topic,
   })
 }
 
 resource "google_artifact_registry_repository" "buz_repository" {
   location      = var.gcp_region
-  repository_id = "${var.system}-repository"
+  repository_id = local.artifact_repository
   format        = "DOCKER"
 
   depends_on = [
@@ -65,7 +66,7 @@ resource "google_artifact_registry_repository" "buz_repository" {
 
 resource "null_resource" "configure_docker" {
   provisioner "local-exec" {
-    command = "gcloud auth configure-docker ${local.artifact_registry_location} -y"
+    command = "gcloud auth configure-docker ${local.artifact_registry_location}"
   }
   depends_on = [
     google_artifact_registry_repository.buz_repository
@@ -89,27 +90,23 @@ resource "google_project_iam_binding" "buz_config_secret_access" {
     "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
   ]
 
-  # condition {
-  #   title      = "buz-config-secret-access"
-  #   expression = "resource.name == \"buz-config\""
-  # }
-
   depends_on = [
     google_secret_manager_secret_version.buz_config
   ]
 }
 
 resource "google_cloud_run_service" "buz" {
-  name     = var.system
-  location = var.gcp_region
+  name                       = var.system
+  location                   = var.gcp_region
+  autogenerate_revision_name = true
 
   template {
     spec {
-      timeout_seconds       = 300
-      container_concurrency = 80
+      timeout_seconds       = var.buz_service_timeout_seconds
+      container_concurrency = var.buz_service_container_concurrency
 
       volumes {
-        name = "${var.system}-config"
+        name = local.config
         secret {
           secret_name = google_secret_manager_secret.buz_config.secret_id
           items {
@@ -124,13 +121,13 @@ resource "google_cloud_run_service" "buz" {
 
         resources {
           limits = {
-            cpu    = "1"
-            memory = "512Mi"
+            cpu    = var.buz_service_cpu_limit
+            memory = var.buz_service_memory_limit
           }
         }
 
         ports {
-          container_port = 8080
+          container_port = var.buz_service_container_port
         }
 
         env {
@@ -139,7 +136,7 @@ resource "google_cloud_run_service" "buz" {
         }
 
         volume_mounts {
-          name       = "${var.system}-config"
+          name       = local.config
           mount_path = local.buz_config_path
         }
       }
@@ -148,7 +145,7 @@ resource "google_cloud_run_service" "buz" {
 
   depends_on = [
     google_project_service.project_services,
-    google_storage_bucket.buz_schemas,
+    google_storage_bucket.schemas,
     google_pubsub_topic.invalid_topic,
     google_pubsub_topic.valid_topic,
     null_resource.pull_and_push_image,
