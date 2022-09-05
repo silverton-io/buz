@@ -1,7 +1,6 @@
 variable "gcp_project" {
   description = "GCloud Project ID"
   type        = string
-  default     = "silvertonio"
 }
 
 variable "gcp_region" {
@@ -16,9 +15,8 @@ variable "system" {
 }
 
 variable "env" {
-  description = "The name of the Buz environment"
+  description = "The name of the Buz environment. \n\nExample: dev/stg/prd"
   type        = string
-  default     = "dev"
 }
 
 variable "buz_domain" {
@@ -28,6 +26,11 @@ variable "buz_domain" {
 
 variable "buz_version" {
   description = "The version of Buz to run. \n\nExample: v0.11.11"
+  type        = string
+}
+
+variable "schema_bucket_name" {
+  description = "The name of the GCS bucket for schemas. \n\nPLEASE NOTE! Buckets are globally unique so you may need to be creative."
   type        = string
 }
 
