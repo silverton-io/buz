@@ -160,7 +160,7 @@ func (a *App) initializeMiddleware() {
 func (a *App) initializeOpsRoutes() {
 	log.Info().Msg("🟢 initializing health check route")
 	a.engine.GET(constants.HEALTH_PATH, handler.HealthcheckHandler)
-	log.Info().Msg("🟢 intializing stats route")
+	log.Info().Msg("🟢 initializing stats route")
 	a.engine.GET(constants.STATS_PATH, handler.StatsHandler(a.collectorMeta, a.stats))
 	log.Info().Msg("🟢 initializing overview routes")
 	a.engine.GET(constants.ROUTE_OVERVIEW_PATH, handler.RouteOverviewHandler(*a.config))
