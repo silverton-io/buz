@@ -17,11 +17,11 @@ import (
 )
 
 const (
-	DEFAULT_ENDPOINT string = "https://tele.silverton.io/gen/p"
+	DEFAULT_ENDPOINT string = "https://tele.buz.dev/self-describing"
 	STARTUP_1_0      string = "io.silverton/buz/internal/tele/startup/v1.0.json"
 	HEARTBEAT_1_0    string = "io.silverton/buz/internal/tele/beat/v1.0.json"
 	SHUTDOWN_1_0     string = "io.silverton/buz/internal/tele/shutdown/v1.0.json"
-	HEARTBEAT_MS     int    = 1500
+	HEARTBEAT_MS     int    = 60000
 )
 
 type startup struct {

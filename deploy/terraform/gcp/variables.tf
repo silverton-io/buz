@@ -25,7 +25,7 @@ variable "buz_domain" {
 }
 
 variable "buz_version" {
-  description = "The version of Buz to run. \n\nExample: v0.11.11"
+  description = "The version of Buz to run. \n\nExample: v0.11.12"
   type        = string
 }
 
