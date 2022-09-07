@@ -15,12 +15,26 @@ resource "google_storage_bucket" "schemas" {
   force_destroy = true
 }
 
+resource "google_pubsub_schema" "envelope" {
+  name = "buz-envelope"
+  type = "AVRO"
+  definition = file("../../../schemas/io.silverton/buz/internal/envelope/v1.0.avsc")
+}
+
 resource "google_pubsub_topic" "valid_topic" {
   name = local.valid_topic
+  schema_settings {
+    schema = "projects/${var.gcp_project}/schemas/${google_pubsub_schema.envelope.name}"
+    encoding = "JSON"
+  }
 }
 
 resource "google_pubsub_topic" "invalid_topic" {
   name = local.invalid_topic
+  schema_settings {
+    schema = "projects/${var.gcp_project}/schemas/${google_pubsub_schema.envelope.name}"
+    encoding = "JSON"
+  }
 }
 
 resource "google_secret_manager_secret" "buz_config" {
@@ -186,4 +200,61 @@ resource "google_cloud_run_domain_mapping" "buz" {
   spec {
     route_name = google_cloud_run_service.buz.name
   }
+}
+
+############################################################################
+# Bigquery
+############################################################################
+
+resource "google_project_iam_member" "bigquery_viewer" {
+  project = data.google_project.project.project_id
+  role   = "roles/bigquery.metadataViewer"
+  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
+}
+
+resource "google_project_iam_member" "bigquery_editor" {
+  project = data.google_project.project.project_id
+  role   = "roles/bigquery.dataEditor"
+  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
+}
+
+resource "google_bigquery_dataset" "buz" {
+  dataset_id    = var.bigquery_dataset_name
+  friendly_name = var.bigquery_dataset_name
+  description   = "A dataset for Buz events"
+  location      = var.bigquery_location
+}
+
+resource "google_bigquery_table" "events" {
+  table_id = var.bigquery_valid_events_table_name
+  dataset_id = google_bigquery_dataset.buz.dataset_id
+  schema = file("schema.json")
+}
+
+resource "google_bigquery_table" "invalid_events" {
+  table_id = var.bigquery_invalid_events_table_name
+  dataset_id = google_bigquery_dataset.buz.dataset_id
+  schema = file("schema.json")
+}
+
+resource "google_pubsub_subscription" "events" {
+  name = local.valid_events_subscription
+  topic = local.valid_topic
+  bigquery_config {
+    table = local.events_table_fqn
+    use_topic_schema = true
+    write_metadata = true
+  }
+  depends_on = [google_project_iam_member.bigquery_viewer, google_project_iam_member.bigquery_editor]
+}
+
+resource "google_pubsub_subscription" "invalid_events" {
+  name = local.invalid_events_subscription
+  topic = local.invalid_topic
+  bigquery_config {
+    table = local.invalid_events_table_fqn
+    use_topic_schema = true
+    write_metadata = true
+  }
+  depends_on = [google_project_iam_member.bigquery_viewer, google_project_iam_member.bigquery_editor]
 }

@@ -1,0 +1,542 @@
+{
+    "namespace": "buz.internal.envelope",
+    "type": "record",
+    "name": "envelope",
+    "fields": [
+        {
+            "name": "eventMeta",
+            "type": {
+                "name": "eventMeta",
+                "type": "record",
+                "fields": [
+                    {
+                        "name": "protocol",
+                        "doc": "Protocol of event",
+                        "type": "string"
+                    },
+                    {
+                        "name": "uuid",
+                        "doc": "Unique id of event",
+                        "type": "string"
+                    },
+                    {
+                        "name": "vendor",
+                        "doc": "Event vendor according to associated schema",
+                        "type": "string"
+                    },
+                    {
+                        "name": "namespace",
+                        "doc": "Namespace of event",
+                        "type": "string"
+                    },
+                    {
+                        "name": "version",
+                        "doc": "Version of event",
+                        "type": "string"
+                    },
+                    {
+                        "name": "format",
+                        "doc": "Format of event",
+                        "type": "string"
+                    },
+                    {
+                        "name": "path",
+                        "doc": "Event schema path",
+                        "type": ["string", "null"]
+                    }
+                ]
+            }
+        },
+        {
+            "name": "pipeline",
+            "type": {
+                "name": "pipeline",
+                "type": "record",
+                "doc": "Pipeline metadata",
+                "fields": [
+                    {
+                        "name": "source",
+                        "type": {
+                            "name": "source",
+                            "type": "record",
+                            "fields": [
+                                {
+                                    "name": "generatedTstamp",
+                                    "doc": "Timestamp representing when the event was initially generated",
+                                    "type": ["long", "null"],
+                                    "logicalType": "timestamp-millis"
+                                },
+                                {
+                                    "name": "sentTstamp",
+                                    "doc": "Timestamp representing when the event was sent from the source",
+                                    "type": ["long", "null"],
+                                    "logicalType": "timestamp-millis"
+                                },
+                                {
+                                    "name": "name",
+                                    "doc": "Source name",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "version",
+                                    "doc": "Source version",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "collector",
+                        "type": {
+                            "name": "collector",
+                            "type": "record",
+                            "fields": [
+                                {
+                                    "name": "tstamp",
+                                    "doc": "Timestamp representing when event was collected",
+                                    "type": "long",
+                                    "logicalType": "timestamp-millis"
+                                },
+                                {
+                                    "name": "name",
+                                    "doc": "Name of the collector",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "version",
+                                    "doc": "Version of the collector",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "device",
+            "doc": "Device details",
+            "type": {
+                "name": "device",
+                "type": "record",
+                "fields": [
+                    {
+                        "name": "ip",
+                        "doc": "Device ip address",
+                        "type": "string"
+                    },
+                    {
+                        "name": "useragent",
+                        "doc": "Device useragent",
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "doc": "Device id",
+                        "type": ["string", "null"]
+                    },
+                    {
+                        "name": "nid",
+                        "doc": "SS cookie value representing the device id across the network",
+                        "type": ["string", "null"]
+                    },
+                    {
+                        "name": "idfa",
+                        "doc": "idfa, if applicable",
+                        "type": ["string", "null"]
+                    },
+                    {
+                        "name": "idfv",
+                        "doc": "idfv, if applicable",
+                        "type": ["string", "null"]
+                    },
+                    {
+                        "name": "adId",
+                        "doc": "The google play ad id if applicable",
+                        "type": ["string", "null"]
+                    },
+                    {
+                        "name": "androidId",
+                        "doc": "The android id if applicable",
+                        "type": ["string", "null"]
+                    },
+                    {
+                        "name": "adTrackingEnabled",
+                        "doc": "Whether or not the device allows ad tracking",
+                        "type": ["boolean", "null"]
+                    },
+                    {
+                        "name": "manufacturer",
+                        "doc": "The device manufacturer",
+                        "type": ["string", "null"]
+                    },
+                    {
+                        "name": "model",
+                        "doc": "The device model",
+                        "type": ["string", "null"]
+                    },
+                    {
+                        "name": "name",
+                        "doc": "The device name",
+                        "type": ["string", "null"]
+                    },
+                    {
+                        "name": "type",
+                        "doc": "The device type",
+                        "type": ["string", "null"]
+                    },
+                    {
+                        "name": "token",
+                        "doc": "The device token",
+                        "type": ["string", "null"]
+                    },
+                    {
+                        "name": "os",
+                        "doc": "Os details",
+                        "type": ["string", "null"],
+                        "db": "object"
+                    },
+                    {
+                        "name": "browser",
+                        "doc": "Browser details",
+                        "type": ["string", "null"],
+                        "db": "object"
+                    },
+                    {
+                        "name": "screen",
+                        "doc": "Screen details",
+                        "type": ["string", "null"],
+                        "db": "object"
+                    },
+                    {
+                        "name": "network",
+                        "doc": "Network details",
+                        "type": ["string", "null"],
+                        "db": "object"
+                    },
+                    {
+                        "name": "app",
+                        "doc": "App details",
+                        "type": ["string", "null"],
+                        "db": "object"
+                    },
+                    {
+                        "name": "location",
+                        "doc": "Location details",
+                        "type": ["string", "null"],
+                        "db": "object"
+                    },
+                    {
+                        "name": "traits",
+                        "doc": "Additional device traits",
+                        "type": ["string", "null"],
+                        "db": "object"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "user",
+            "type": {
+                "name": "user",
+                "doc": "User details",
+                "type": "record",
+                "fields": [
+                    {
+                        "name": "id",
+                        "doc": "The user's id",
+                        "type": "string"
+                    },
+                    {
+                        "name": "anonymousId",
+                        "doc": "The user's anonymousId, if applicable",
+                        "type": "string"
+                    },
+                    {
+                        "name": "fingerprint",
+                        "doc": "The user's fingerprint, if applicable",
+                        "type": "string"
+                    },
+                    {
+                        "name": "traits",
+                        "doc": "Additional user traits",
+                        "type": "string",
+                        "db": "object"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "session",
+            "type": {
+                "name": "session",
+                "doc": "Session details",
+                "type": "record",
+                "fields": [
+                    {
+                        "name": "id",
+                        "doc": "The session id",
+                        "type": "string"
+                    },
+                    {
+                        "name": "idx",
+                        "doc": "Number of sessions",
+                        "type": "int"
+                    },
+                    {
+                        "name": "traits",
+                        "doc": "Additional session traits",
+                        "type": "string",
+                        "db": "object"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "web",
+            "type": {
+                "name": "web",
+                "doc": "Page and referrer details",
+                "type": "record",
+                "fields": [
+                    {
+                        "name": "page",
+                        "doc": "Page details",
+                        "type": {
+                            "name": "page",
+                            "type": "record",
+                            "fields": [
+                                {
+                                    "name": "url",
+                                    "doc": "Page url",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "title",
+                                    "doc": "Page title",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "scheme",
+                                    "doc": "Page scheme",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "host",
+                                    "doc": "Page host",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "port",
+                                    "doc": "Page port",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "path",
+                                    "doc": "Page path",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "query",
+                                    "doc": "Page query",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "fragment",
+                                    "doc": "Page fragment",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "medium",
+                                    "doc": "Page medium",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "source",
+                                    "doc": "Page source",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "term",
+                                    "doc": "Page term",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "content",
+                                    "doc": "Page content",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "campaign",
+                                    "doc": "Page campaign",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "referrer",
+                        "type": {
+                            "name": "referrer",
+                            "type": "record",
+                            "fields": [
+                                {
+                                    "name": "url",
+                                    "doc": "Referrer url",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "title",
+                                    "doc": "Referrer title",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "scheme",
+                                    "doc": "Referrer scheme",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "host",
+                                    "doc": "Referrer host",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "port",
+                                    "doc": "Referrer port",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "path",
+                                    "doc": "Referrer path",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "query",
+                                    "doc": "Referrer query",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "fragment",
+                                    "doc": "Referrer fragment",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "medium",
+                                    "doc": "Referrer medium",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "source",
+                                    "doc": "Referrer source",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "term",
+                                    "doc": "Referrer term",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "content",
+                                    "doc": "Referrer content",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "campaign",
+                                    "doc": "Referrer campaign",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "annotations",
+            "doc": "Placeholder for future pipeline annotations - currently unused",
+            "type": "string",
+            "db": "object"
+        },
+        {
+            "name": "enrichments",
+            "doc": "Placeholder for future pipeline enrichments - currently unused",
+            "type": "string",
+            "db": "object"
+        },
+        {
+            "name": "validation",
+            "type": {
+                "name": "validation",
+                "doc": "Validation details",
+                "type": "record",
+                "fields": [
+                    {
+                        "name": "isValid",
+                        "doc": "Whether or not the payload is valid",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "error",
+                        "doc": "Validation error and corresponding details",
+                        "type": {
+                            "name": "error",
+                            "type": "record",
+                            "fields": [
+                                {
+                                    "name": "errorType",
+                                    "doc": "The type of payload validation error",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "errorResolution",
+                                    "doc": "A hint indicating how to resolve the validation error",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "errors",
+                                    "doc": "Validation errors",
+                                    "type": {
+                                        "type": "array",
+                                        "items": {
+                                            "name": "validationError",
+                                            "type": "record",
+                                            "fields": [
+                                                {
+                                                    "name": "field",
+                                                    "doc": "The offending property",
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "name": "description",
+                                                    "doc": "Validation error description",
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "name": "errorType",
+                                                    "doc": "Validation error type",
+                                                    "type": "string"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "contexts",
+            "doc": "Arbitrary event contexts",
+            "type": "string",
+            "db": "object"
+        },
+        {
+            "name": "payload",
+            "doc": "The event payload",
+            "type": "string",
+            "db": "object"
+        }
+    ]
+}

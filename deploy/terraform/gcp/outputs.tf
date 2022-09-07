@@ -33,3 +33,15 @@ output "buz_service_id" {
 output "buz_service_status" {
   value = google_cloud_run_service.buz.status
 }
+
+output "bigquery_dataset" {
+  value = var.bigquery_dataset_name
+}
+
+output "bigquery_valid_events_table" {
+  value = var.bigquery_valid_events_table_name
+}
+
+output "bigquery_invalid_events_table" {
+  value = var.bigquery_invalid_events_table_name
+}

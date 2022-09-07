@@ -38,7 +38,7 @@ variable "buz_service_timeout_seconds" {
 variable "buz_service_container_concurrency" {
   description = "The service container concurrency"
   type        = number
-  default     = 80 # Cloud Run default
+  default     = 200
 }
 
 variable "buz_service_cpu_limit" {
@@ -73,11 +73,35 @@ variable "schema_bucket_name" {
 variable "valid_topic_name" {
   description = "The name of the Pub/Sub topic for valid events"
   type        = string
-  default     = "valid-events"
+  default     = "events"
 }
 
 variable "invalid_topic_name" {
   description = "The name of the Pub/Sub topic for invalid events"
   type        = string
   default     = "invalid-events"
+}
+
+variable "bigquery_location" {
+  description = "The location to store data in BigQuery"
+  type        = string
+  default     = "US"
+}
+
+variable "bigquery_dataset_name" {
+  description = "The name of the Bigquery dataset"
+  type        = string
+  default     = "buz"
+}
+
+variable "bigquery_invalid_events_table_name" {
+  description = "The name of the Bigquery invalid events table"
+  type        = string
+  default     = "invalid_events"
+}
+
+variable "bigquery_valid_events_table_name" {
+  description = "The name of the Bigquery valid events table"
+  type        = string
+  default     = "events"
 }
