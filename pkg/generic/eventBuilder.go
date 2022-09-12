@@ -13,8 +13,8 @@ import (
 
 func BuildEvent(e gjson.Result, conf config.Generic) (GenericEvent, error) {
 	var sdPayload event.SelfDescribingPayload
-	var contexts = make(map[string]interface{})
 	c := e.Get(conf.Contexts.RootKey).Value()
+	var contexts map[string]interface{}
 	if c != nil {
 		contexts = c.(map[string]interface{})
 	}

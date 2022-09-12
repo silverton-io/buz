@@ -15,8 +15,13 @@ locals {
   artifact_registry_repository = "${local.system_env_base}repository"
   buz_source_image             = "ghcr.io/silverton-io/buz:${var.buz_version}"
   buz_image                    = "${local.artifact_registry_root}/${local.artifact_registry_repository}/buz:${var.buz_version}"
+  service_name                 = "${local.system_env_base}-collector"
   config                       = "${local.system_env_base}config"
   schema_bucket                = "${local.system_env_base}${var.schema_bucket_name}"
   invalid_topic                = "${local.system_env_base}${var.invalid_topic_name}"
   valid_topic                  = "${local.system_env_base}${var.valid_topic_name}"
+  valid_events_subscription = "${local.system_env_base}-events"
+  invalid_events_subscription = "${local.system_env_base}-invalid-events"
+  events_table_fqn = "${var.gcp_project}.${var.bigquery_dataset_name}.${var.bigquery_valid_events_table_name}"
+  invalid_events_table_fqn = "${var.gcp_project}.${var.bigquery_dataset_name}.${var.bigquery_invalid_events_table_name}"
 }

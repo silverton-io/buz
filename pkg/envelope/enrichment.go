@@ -5,4 +5,4 @@
 package envelope
 
 // Reserving this for future use.
-type Annotations struct{}
+type Enrichments struct{}

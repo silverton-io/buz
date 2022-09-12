@@ -34,7 +34,7 @@ func BuildWebhookEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 		n.EventMeta.Protocol = protocol.WEBHOOK
 		n.EventMeta.Schema = sde.Schema
 		// Contexts
-		n.Contexts = contexts
+		n.Contexts = &contexts
 		// Payload
 		n.Payload = sde.Data
 		envelopes = append(envelopes, n)

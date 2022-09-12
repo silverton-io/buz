@@ -3,7 +3,7 @@ version: 1.1
 app:
   name: ${system}
   env: ${env}
-  mode: debug
+  mode: release
   port: ${port}
   trackerDomain: ${trackerDomain}
   enableConfigRoute: true
@@ -81,9 +81,6 @@ sinks:
     validTopic: ${validTopic}
     invalidTopic: ${invalidTopic}
     project: ${project}
-  - name: secondary
-    type: stdout
-    deliveryRequired: true
 
 squawkBox:
   enabled: true

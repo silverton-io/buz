@@ -56,7 +56,7 @@
         },
         "pipeline": {
             "type": "object",
-            "description": "",
+            "description": "Pipeline metadata",
             "properties": {
                 "source": {
                     "type": "object",
@@ -74,11 +74,11 @@
                         },
                         "name": {
                             "type": "string",
-                            "description": "Collector name according to config"
+                            "description": "Source name"
                         },
                         "version": {
                             "type": "string",
-                            "description": "Collector version"
+                            "description": "Source version"
                         }
                     },
                     "required": ["generatedTstamp", "sentTstamp", "name", "version"]
@@ -102,27 +102,6 @@
                         }
                     },
                     "required": ["tstamp", "name", "version"]
-                },
-                "relay": {
-                    "type": "object",
-                    "description": "Relay details",
-                    "properties": {
-                        "tstamp": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "Timestamp representing when the event was last relayed"
-                        },
-                        "relayed": {
-                            "type": "boolean",
-                            "description": "Whether or not the event was relayed"
-                        },
-                        "id": {
-                            "type": "string",
-                            "format": "uuid",
-                            "description": "Unique id generated at the relay - useful for deduping (if applicable)"
-                        }
-                    },
-                    "required": ["relayed"]
                 }
             }
         },
@@ -264,7 +243,7 @@
             "properties": {
                 "page": {
                     "type": "object",
-                    "description": "Ditto",
+                    "description": "Page details",
                     "properties": {
                         "url": {
                             "type": "string",
@@ -326,27 +305,27 @@
                     "properties": {
                         "url": {
                             "type": "string",
-                            "description": "Page url"
+                            "description": "Referrer url"
                         },
                         "title": {
                             "type": "string",
-                            "description": "Page title"
+                            "description": "Referrer title"
                         },
                         "scheme": {
                             "type": "string",
-                            "description": "Page scheme"
+                            "description": "Referrer scheme"
                         },
                         "host": {
                             "type": "string",
-                            "description": "Page host"
+                            "description": "Referrer host"
                         },
                         "port": {
                             "type": "string",
-                            "description": "Page port"
+                            "description": "Referrer port"
                         },
                         "path": {
                             "type": "string",
-                            "description": "Path"
+                            "description": "Referrer Path"
                         },
                         "query": {
                             "type": "object",
@@ -354,35 +333,39 @@
                         },
                         "fragment": {
                             "type": "string",
-                            "description": "Page fragment"
+                            "description": "Referrer fragment"
                         },
                         "medium": {
                             "type": "string",
-                            "description": "UTM medium"
+                            "description": "Referrer UTM medium"
                         },
                         "source": {
                             "type": "string",
-                            "description": "UTM source"
+                            "description": "Referrer UTM source"
                         },
                         "term": {
                             "type": "string",
-                            "description": "UTM term"
+                            "description": "Referrer UTM term"
                         },
                         "content": {
                             "type": "string",
-                            "description": "UTM content"
+                            "description": "Referrer UTM content"
                         },
                         "campaign": {
                             "type": "string",
-                            "description": "UTM campaign"
+                            "description": "Referrer UTM campaign"
                         }
                     }
                 }
             }
         },
-        "annotation": {
+        "annotations": {
             "type": "object",
             "description": "Placeholder for future pipeline annotations - currently unused"
+        },
+        "enrichments": {
+            "type": "object",
+            "description": "Placeholder for future pipeline enrichments - currently unused"
         },
         "validation": {
             "type": "object",
@@ -390,7 +373,7 @@
             "properties": {
                 "isValid": {
                     "type": "boolean",
-                    "description": "Indication of whether or not the payload is valid"
+                    "description": "Whether or not the payload is valid"
                 },
                 "error": {
                     "type": "object",
@@ -406,7 +389,7 @@
                         },
                         "errors": {
                             "type": "array",
-                            "description": "Property-level jsonschema validation errors",
+                            "description": "Validation errors",
                             "items": {
                                 "type": "object",
                                 "description": "Errors",

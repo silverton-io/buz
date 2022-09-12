@@ -20,8 +20,8 @@ func stripColonSeparatedPrefix(schema string) string {
 }
 
 type SelfDescribingEvent struct {
-	Contexts `json:"contexts"`
-	Payload  SelfDescribingPayload `json:"payload"`
+	Contexts map[string]interface{} `json:"contexts"`
+	Payload  SelfDescribingPayload  `json:"payload"`
 }
 
 type SelfDescribingPayload struct {
@@ -73,5 +73,3 @@ func (e SelfDescribingPayload) Scan(input interface{}) error {
 }
 
 type SelfDescribingContext SelfDescribingPayload
-
-type Contexts map[string]interface{}

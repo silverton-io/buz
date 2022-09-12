@@ -31,8 +31,10 @@ func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelop
 	for _, envelope := range envelopes {
 		log.Debug().Msg("🟡 annotating event")
 		isValid, validationError, schemaContents := validator.ValidatePayload(envelope.EventMeta.Schema, envelope.Payload, cache)
-		envelope.Validation.Error = &validationError
 		envelope.Validation.IsValid = &isValid
+		if !isValid {
+			envelope.Validation.Error = &validationError
+		}
 		m := getMetadataFromSchema(schemaContents)
 		if m.Namespace != "" {
 			envelope.EventMeta.Namespace = m.Namespace

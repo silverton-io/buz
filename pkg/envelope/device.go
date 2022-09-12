@@ -23,13 +23,13 @@ type Device struct {
 	Name              *string `json:"name,omitempty"`
 	Type              *string `json:"type,omitempty"`
 	Token             *string `json:"token,omitempty"`
-	Os                `json:"os,omitempty"`
-	Browser           `json:"browser,omitempty"`
-	Screen            `json:"screen,omitempty"`
-	Network           `json:"network,omitempty"`
-	App               `json:"app,omitempty"`
-	Location          `json:"location,omitempty"`
-	Traits            *map[string]interface{} `json:"traits,omitempty"`
+	*Os               `json:"os"`
+	*Browser          `json:"browser"`
+	*Screen           `json:"screen"`
+	*Network          `json:"network"`
+	*App              `json:"app"`
+	*Location         `json:"location"`
+	Traits            map[string]interface{} `json:"traits"`
 }
 
 func (d Device) Value() (driver.Value, error) {

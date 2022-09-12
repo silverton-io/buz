@@ -29,8 +29,8 @@ func buildSnowplowEnvelope(c *gin.Context, conf *config.Config, e snowplow.Snowp
 	if e.DomainUserid != nil {
 		n.Device.Id = *e.DomainUserid
 	}
-	n.Device.Os = Os{Timezone: e.OsTimezone}
-	n.Device.Browser = Browser{
+	n.Device.Os = &Os{Timezone: e.OsTimezone}
+	n.Device.Browser = &Browser{
 		Lang:           e.BrLang,
 		Cookies:        e.BrCookies,
 		ColorDepth:     e.BrColordepth,
@@ -42,22 +42,26 @@ func buildSnowplowEnvelope(c *gin.Context, conf *config.Config, e snowplow.Snowp
 		DocumentHeight: e.DocHeight,
 		DocumentWidth:  e.DocWidth,
 	}
-	n.Device.Screen = Screen{
+	n.Device.Screen = &Screen{
 		Resolution: e.DvceScreenResolution,
 		Height:     e.DvceScreenHeight,
 		Width:      e.DvceScreenWidth,
 	}
 	// User
-	n.User = User{
+	n.User = &User{
 		Id:          e.Userid,
 		Fingerprint: e.UserFingerprint,
 	}
 	// Session
-	n.Session = Session{
+	n.Session = &Session{
 		Id:  e.DomainSessionId,
 		Idx: e.DomainSessionIdx,
 	}
 	// Page
+	n.Web = &Web{
+		Page:     PageAttrs{},
+		Referrer: PageAttrs{},
+	}
 	n.Web.Page.Url = *e.PageUrl
 	n.Web.Page.Title = e.PageTitle
 	n.Web.Page.Scheme = *e.PageUrlScheme
@@ -85,7 +89,7 @@ func buildSnowplowEnvelope(c *gin.Context, conf *config.Config, e snowplow.Snowp
 	n.Web.Referrer.Content = e.RefrContent
 	n.Web.Referrer.Campaign = e.RefrCampaign
 	// Contexts
-	n.Contexts = *e.Contexts
+	n.Contexts = e.Contexts
 	n.Payload = e.SelfDescribingEvent.Data
 	return n
 }
