@@ -15,4 +15,5 @@ func TestInputConst(t *testing.T) {
 	assert.Equal(t, "generic", GENERIC)
 	assert.Equal(t, "cloudevents", CLOUDEVENTS)
 	assert.Equal(t, "webhook", WEBHOOK)
+	assert.Equal(t, "pixel", PIXEL)
 }

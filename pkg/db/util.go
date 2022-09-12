@@ -9,6 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
+// EnsureTable creates a table according to the specified model if it
+// does not already exist.
 func EnsureTable(gormDb *gorm.DB, tableName string, model interface{}) error {
 	tblExists := gormDb.Migrator().HasTable(tableName)
 	if !tblExists {

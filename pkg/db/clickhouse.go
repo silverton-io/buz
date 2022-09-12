@@ -6,6 +6,7 @@ package db
 
 import "strconv"
 
+// GenerateClickhouseDsn generates a dsn from the provided connection params
 func GenerateClickhouseDsn(params ConnectionParams) string {
 	// "tcp://localhost:9000?database=gorm&username=gorm&password=gorm&read_timeout=10&write_timeout=20"
 	port := strconv.FormatUint(uint64(params.Port), 10)
