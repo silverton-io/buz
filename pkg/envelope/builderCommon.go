@@ -11,7 +11,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
-	"github.com/silverton-io/buz/pkg/event"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/util"
 )
@@ -39,7 +38,6 @@ func buildCommonEnvelope(c *gin.Context, conf config.Middleware, m *meta.Collect
 			Id:        identity,
 			Useragent: c.Request.UserAgent(),
 		},
-		Contexts: event.Contexts{},
 	}
 	return envelope
 }

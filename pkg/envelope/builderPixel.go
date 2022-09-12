@@ -26,7 +26,7 @@ func BuildPixelEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta
 	n.EventMeta.Protocol = protocol.PIXEL
 	n.EventMeta.Schema = sde.Schema
 	// Contexts
-	n.Contexts = contexts
+	n.Contexts = &contexts
 	// Payload
 	n.Payload = sde.Data
 	envelopes = append(envelopes, n)

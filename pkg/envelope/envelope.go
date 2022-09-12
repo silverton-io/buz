@@ -31,8 +31,8 @@ type Envelope struct {
 	*Annotations `json:"annotations" gorm:"type:json"`
 	*Enrichments `json:"enrichments" gorm:"type:json"`
 	Validation   `json:"validation" gorm:"type:json"`
-	Contexts     event.Contexts `json:"contexts" gorm:"type:json"`
-	Payload      event.Payload  `json:"payload" gorm:"type:json"`
+	Contexts     *map[string]interface{} `json:"contexts" gorm:"type:json"`
+	Payload      event.Payload           `json:"payload" gorm:"type:json"`
 }
 
 func (e *Envelope) AsMap() (map[string]interface{}, error) {
@@ -66,8 +66,8 @@ type JsonbEnvelope struct {
 	*Annotations `json:"annotations" gorm:"type:jsonb"`
 	*Enrichments `json:"enrichments" gorm:"type:jsonb"`
 	Validation   `json:"validation" gorm:"type:jsonb"`
-	Contexts     event.Contexts `json:"contexts" gorm:"type:jsonb"`
-	Payload      event.Payload  `json:"payload" gorm:"type:jsonb"`
+	Contexts     *map[string]interface{} `json:"contexts" gorm:"type:jsonb"`
+	Payload      event.Payload           `json:"payload" gorm:"type:jsonb"`
 }
 
 type StringEnvelope struct {
@@ -81,6 +81,6 @@ type StringEnvelope struct {
 	*Annotations `json:"annotations" gorm:"type:string"`
 	*Enrichments `json:"enrichments" gorm:"type:string"`
 	Validation   `json:"validation" gorm:"type:string"`
-	Contexts     event.Contexts `json:"contexts" gorm:"type:string"`
-	Payload      event.Payload  `json:"payload" gorm:"type:string"`
+	Contexts     *map[string]interface{} `json:"contexts" gorm:"type:string"`
+	Payload      event.Payload           `json:"payload" gorm:"type:string"`
 }

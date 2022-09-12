@@ -58,6 +58,10 @@ func buildSnowplowEnvelope(c *gin.Context, conf *config.Config, e snowplow.Snowp
 		Idx: e.DomainSessionIdx,
 	}
 	// Page
+	n.Web = &Web{
+		Page:     PageAttrs{},
+		Referrer: PageAttrs{},
+	}
 	n.Web.Page.Url = *e.PageUrl
 	n.Web.Page.Title = e.PageTitle
 	n.Web.Page.Scheme = *e.PageUrlScheme
@@ -85,7 +89,7 @@ func buildSnowplowEnvelope(c *gin.Context, conf *config.Config, e snowplow.Snowp
 	n.Web.Referrer.Content = e.RefrContent
 	n.Web.Referrer.Campaign = e.RefrCampaign
 	// Contexts
-	n.Contexts = *e.Contexts
+	n.Contexts = e.Contexts
 	n.Payload = e.SelfDescribingEvent.Data
 	return n
 }
