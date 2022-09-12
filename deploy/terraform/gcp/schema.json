@@ -43,11 +43,11 @@
         "fields": [
           {
             "name": "generatedTstamp",
-            "type": "INT64"
+            "type": "TIMESTAMP"
           },
           {
             "name": "sentTstamp",
-            "type": "INT64"
+            "type": "TIMESTAMP"
           },
           {
             "name": "name",
@@ -65,7 +65,7 @@
         "fields": [
           {
             "name": "tstamp",
-            "type": "INT64"
+            "type": "TIMESTAMP"
           },
           {
             "name": "name",

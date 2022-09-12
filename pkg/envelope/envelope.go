@@ -22,16 +22,17 @@ const (
 
 type Envelope struct {
 	db.BasePKeylessModel
-	EventMeta  `json:"eventMeta" gorm:"type:json"`
-	Pipeline   `json:"pipeline" gorm:"type:json"`
-	Device     `json:"device" gorm:"type:json"`
-	User       `json:"user" gorm:"type:json"`
-	Session    `json:"session" gorm:"type:json"`
-	Web        `json:"web" gorm:"type:json"`
-	Annotation `json:"annotation" gorm:"type:json"`
-	Validation `json:"validation" gorm:"type:json"`
-	Contexts   event.Contexts `json:"contexts" gorm:"type:json"`
-	Payload    event.Payload  `json:"payload" gorm:"type:json"`
+	EventMeta    `json:"eventMeta" gorm:"type:json"`
+	Pipeline     `json:"pipeline" gorm:"type:json"`
+	Device       `json:"device" gorm:"type:json"`
+	*User        `json:"user" gorm:"type:json"`
+	*Session     `json:"session" gorm:"type:json"`
+	*Web         `json:"web" gorm:"type:json"`
+	*Annotations `json:"annotations" gorm:"type:json"`
+	*Enrichments `json:"enrichments" gorm:"type:json"`
+	Validation   `json:"validation" gorm:"type:json"`
+	Contexts     event.Contexts `json:"contexts" gorm:"type:json"`
+	Payload      event.Payload  `json:"payload" gorm:"type:json"`
 }
 
 func (e *Envelope) AsMap() (map[string]interface{}, error) {
@@ -56,28 +57,30 @@ func (e *Envelope) AsByte() ([]byte, error) {
 
 type JsonbEnvelope struct {
 	db.BasePKeylessModel
-	EventMeta  `json:"eventMeta" gorm:"type:jsonb"`
-	Pipeline   `json:"pipeline" gorm:"type:jsonb"`
-	Device     `json:"device" gorm:"type:jsonb"`
-	User       `json:"user" gorm:"type:jsonb"`
-	Session    `json:"session" gorm:"type:jsonb"`
-	Web        `json:"web" gorm:"type:jsonb"`
-	Annotation `json:"annotation" gorm:"type:jsonb"`
-	Validation `json:"validation" gorm:"type:jsonb"`
-	Contexts   event.Contexts `json:"contexts" gorm:"type:jsonb"`
-	Payload    event.Payload  `json:"payload" gorm:"type:jsonb"`
+	EventMeta    `json:"eventMeta" gorm:"type:jsonb"`
+	Pipeline     `json:"pipeline" gorm:"type:jsonb"`
+	*Device      `json:"device" gorm:"type:jsonb"`
+	*User        `json:"user" gorm:"type:jsonb"`
+	*Session     `json:"session" gorm:"type:jsonb"`
+	*Web         `json:"web" gorm:"type:jsonb"`
+	*Annotations `json:"annotations" gorm:"type:jsonb"`
+	*Enrichments `json:"enrichments" gorm:"type:jsonb"`
+	Validation   `json:"validation" gorm:"type:jsonb"`
+	Contexts     event.Contexts `json:"contexts" gorm:"type:jsonb"`
+	Payload      event.Payload  `json:"payload" gorm:"type:jsonb"`
 }
 
 type StringEnvelope struct {
 	db.BasePKeylessModel
-	EventMeta  `json:"eventMeta" gorm:"type:string"`
-	Pipeline   `json:"pipeline" gorm:"type:string"`
-	Device     `json:"device" gorm:"type:string"`
-	User       `json:"user" gorm:"type:string"`
-	Session    `json:"session" gorm:"type:string"`
-	Web        `json:"web" gorm:"type:string"`
-	Annotation `json:"annotation" gorm:"type:string"`
-	Validation `json:"validation" gorm:"type:string"`
-	Contexts   event.Contexts `json:"contexts" gorm:"type:string"`
-	Payload    event.Payload  `json:"payload" gorm:"type:string"`
+	EventMeta    `json:"eventMeta" gorm:"type:string"`
+	Pipeline     `json:"pipeline" gorm:"type:string"`
+	*Device      `json:"device" gorm:"type:string"`
+	*User        `json:"user" gorm:"type:string"`
+	*Session     `json:"session" gorm:"type:string"`
+	*Web         `json:"web" gorm:"type:string"`
+	*Annotations `json:"annotations" gorm:"type:string"`
+	*Enrichments `json:"enrichments" gorm:"type:string"`
+	Validation   `json:"validation" gorm:"type:string"`
+	Contexts     event.Contexts `json:"contexts" gorm:"type:string"`
+	Payload      event.Payload  `json:"payload" gorm:"type:string"`
 }

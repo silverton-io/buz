@@ -17,8 +17,8 @@ resource "google_storage_bucket" "schemas" {
 
 resource "google_pubsub_schema" "envelope" {
   name = "buz-envelope"
-  type = "AVRO"
-  definition = file("../../../schemas/io.silverton/buz/internal/envelope/v1.0.avsc")
+  type = "PROTOCOL_BUFFER"
+  definition = file("../../../schemas/io.silverton/buz/internal/envelope/v1.0.proto")
 }
 
 resource "google_pubsub_topic" "valid_topic" {

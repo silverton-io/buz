@@ -33,20 +33,13 @@ func buildCommonEnvelope(c *gin.Context, conf config.Middleware, m *meta.Collect
 				Name:    &m.Name,
 				Version: &m.Version,
 			},
-			Relay: Relay{
-				Relayed: false,
-			},
 		},
 		Device: Device{
 			Ip:        c.ClientIP(),
 			Id:        identity,
 			Useragent: c.Request.UserAgent(),
 		},
-		User:       User{},
-		Session:    Session{},
-		Web:        Web{},
-		Validation: Validation{},
-		Contexts:   event.Contexts{},
+		Contexts: event.Contexts{},
 	}
 	return envelope
 }

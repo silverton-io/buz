@@ -8,14 +8,12 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Pipeline struct {
 	Source    `json:"source,omitempty"`
 	Collector `json:"collector,omitempty"`
-	Relay     `json:"relay,omitempty"`
+	// Relay     `json:"relay,omitempty"`
 }
 
 func (p Pipeline) Value() (driver.Value, error) {
@@ -58,17 +56,17 @@ func (c Collector) Scan(input interface{}) error {
 	return json.Unmarshal(input.([]byte), &c)
 }
 
-type Relay struct {
-	Relayed bool       `json:"relayed,omitempty"`
-	Id      *uuid.UUID `json:"id,omitempty"`
-	Tstamp  *time.Time `json:"tstamp,omitempty"`
-}
+// type Relay struct {
+// 	Relayed bool       `json:"relayed,omitempty"`
+// 	Id      *uuid.UUID `json:"id,omitempty"`
+// 	Tstamp  *time.Time `json:"tstamp,omitempty"`
+// }
 
-func (r Relay) Value() (driver.Value, error) {
-	b, err := json.Marshal(r)
-	return string(b), err
-}
+// func (r Relay) Value() (driver.Value, error) {
+// 	b, err := json.Marshal(r)
+// 	return string(b), err
+// }
 
-func (r Relay) Scan(input interface{}) error {
-	return json.Unmarshal(input.([]byte), &r)
-}
+// func (r Relay) Scan(input interface{}) error {
+// 	return json.Unmarshal(input.([]byte), &r)
+// }

@@ -373,7 +373,7 @@
             "properties": {
                 "isValid": {
                     "type": "boolean",
-                    "description": "Indication of whether or not the payload is valid"
+                    "description": "Whether or not the payload is valid"
                 },
                 "error": {
                     "type": "object",
@@ -389,7 +389,7 @@
                         },
                         "errors": {
                             "type": "array",
-                            "description": "Property-level jsonschema validation errors",
+                            "description": "Validation errors",
                             "items": {
                                 "type": "object",
                                 "description": "Errors",
