@@ -15,26 +15,12 @@ resource "google_storage_bucket" "schemas" {
   force_destroy = true
 }
 
-resource "google_pubsub_schema" "envelope" {
-  name = "buz-envelope"
-  type = "PROTOCOL_BUFFER"
-  definition = file("../../../schemas/io.silverton/buz/internal/envelope/v1.0.proto")
-}
-
 resource "google_pubsub_topic" "valid_topic" {
   name = local.valid_topic
-  schema_settings {
-    schema = "projects/${var.gcp_project}/schemas/${google_pubsub_schema.envelope.name}"
-    encoding = "JSON"
-  }
 }
 
 resource "google_pubsub_topic" "invalid_topic" {
   name = local.invalid_topic
-  schema_settings {
-    schema = "projects/${var.gcp_project}/schemas/${google_pubsub_schema.envelope.name}"
-    encoding = "JSON"
-  }
 }
 
 resource "google_secret_manager_secret" "buz_config" {
@@ -116,7 +102,7 @@ resource "google_project_iam_binding" "buz_config_secret_access" {
 }
 
 resource "google_cloud_run_service" "buz" {
-  name                       = var.system
+  name                       = local.service_name
   location                   = var.gcp_region
   autogenerate_revision_name = true
 
