@@ -68,6 +68,7 @@ resource "google_secret_manager_secret_version" "buz_config" {
     project       = var.gcp_project,
     system        = var.system,
     env           = var.env,
+    mode          = var.buz_mode,
     port          = var.buz_service_container_port
     trackerDomain = var.buz_domain,
     cookieDomain  = local.cookie_domain,

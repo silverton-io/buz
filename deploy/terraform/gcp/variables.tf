@@ -29,6 +29,11 @@ variable "buz_version" {
   type        = string
 }
 
+variable "buz_mode" {
+  description = "The mode of Buz to run. \n\nExamples: ['debug', 'release']"
+  type        = string
+}
+
 variable "buz_service_timeout_seconds" {
   description = "The service timeout in seconds"
   type        = number
