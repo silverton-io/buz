@@ -4,12 +4,18 @@ data "google_project" "project" {}
 // NOTE
 //  Uncomment this if you want to store tfstate in a
 //  pre-existing GCS bucket
-# terraform {
-#   backend "gcs" {
-#     bucket  = "YOUR_TFSTATE_BUCKET"
-#     prefix  = "YOUR_TFSTATE_PREFIX"
-#   }
-# }
+#  terraform {
+#    backend "gcs" {
+#      bucket  = "YOUR_TFSTATE_BUCKET"
+#      prefix  = "YOUR_TFSTATE_PREFIX"
+#    }
+#  }
+
+module "template_files" {
+  source = "hashicorp/dir/template"
+
+  base_dir = "../../../schemas"
+}
 
 resource "google_project_service" "project_services" {
   for_each                   = toset(local.activate_apis)
@@ -23,6 +29,13 @@ resource "google_storage_bucket" "schemas" {
   name          = local.schema_bucket
   location      = var.schema_bucket_location
   force_destroy = true
+}
+
+resource "google_storage_bucket_object" "schemas" {
+  for_each = module.template_files.files
+  bucket = google_storage_bucket.schemas.name
+  name = each.key
+  source = each.value.source_path
 }
 
 resource "google_pubsub_topic" "valid_topic" {
