@@ -84,7 +84,7 @@ func (s *IndicativeSink) batchPublish(ctx context.Context, envelopes []envelope.
 			EventName:     e.EventMeta.Namespace,
 			EventUniqueId: e.EventMeta.Uuid.String(),
 			Properties:    flattenedPropertyMap,
-			EventTime:     e.Source.GeneratedTstamp,
+			EventTime:     *e.Source.GeneratedTstamp,
 		}
 		indicativeEvents = append(indicativeEvents, evnt)
 	}

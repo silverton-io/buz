@@ -17,6 +17,7 @@ import (
 
 func buildCommonEnvelope(c *gin.Context, conf config.Middleware, m *meta.CollectorMeta) Envelope {
 	identity := util.GetIdentityOrFallback(c, conf)
+	now := time.Now().UTC()
 	envelope := Envelope{
 		EventMeta: EventMeta{
 			Uuid:      uuid.New(),
@@ -24,11 +25,11 @@ func buildCommonEnvelope(c *gin.Context, conf config.Middleware, m *meta.Collect
 		},
 		Pipeline: Pipeline{
 			Source: Source{
-				GeneratedTstamp: time.Now().UTC(),
-				SentTstamp:      time.Now().UTC(),
+				GeneratedTstamp: &now,
+				SentTstamp:      &now,
 			},
 			Collector: Collector{
-				Tstamp:  time.Now().UTC(),
+				Tstamp:  now,
 				Name:    &m.Name,
 				Version: &m.Version,
 			},

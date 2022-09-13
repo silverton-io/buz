@@ -112,17 +112,21 @@ func getContexts(b64encodedContexts *string) *map[string]interface{} {
 }
 
 func getSdPayload(b64EncodedPayload *string) *event.SelfDescribingPayload {
-	payload, err := b64.RawStdEncoding.DecodeString(*b64EncodedPayload)
-	if err != nil {
-		log.Error().Err(err).Msg("🔴 could not decode b64 encoded self describing payload")
+	if b64EncodedPayload != nil {
+		payload, err := b64.RawStdEncoding.DecodeString(*b64EncodedPayload)
+		if err != nil {
+			log.Error().Err(err).Msg("🔴 could not decode b64 encoded self describing payload")
+			return nil
+		}
+		schema := gjson.GetBytes(payload, "data.schema").String()
+		p := event.SelfDescribingPayload{
+			Schema: schema,
+			Data:   gjson.GetBytes(payload, "data.data").Value().(map[string]interface{}),
+		}
+		return &p
+	} else {
 		return nil
 	}
-	schema := gjson.GetBytes(payload, "data.schema").String()
-	p := event.SelfDescribingPayload{
-		Schema: schema,
-		Data:   gjson.GetBytes(payload, "data.data").Value().(map[string]interface{}),
-	}
-	return &p
 }
 
 func getQueryParam(u url.URL, k string) *string {
@@ -166,17 +170,20 @@ func getPageFromParam(params map[string]interface{}, k string) (Page, error) {
 }
 
 func setTstamps(e *SnowplowEvent, params map[string]interface{}) {
-	e.DvceCreatedTstamp = *getTimeParam(params, "dtm")
-	e.DvceSentTstamp = *getTimeParam(params, "stm")
+	now := time.Now().UTC()
+	e.DvceCreatedTstamp = getTimeParam(params, "dtm")
+	e.DvceSentTstamp = getTimeParam(params, "stm")
 	e.TrueTstamp = getTimeParam(params, "ttm")
 	e.CollectorTstamp = time.Now().UTC()
-	e.EtlTstamp = time.Now().UTC()
-	timeOnDevice := e.DvceSentTstamp.Sub(e.DvceCreatedTstamp)
-	e.DerivedTstamp = e.CollectorTstamp.Add(-timeOnDevice)
+	e.EtlTstamp = &now
+	if e.DvceCreatedTstamp != nil {
+		timeOnDevice := e.DvceSentTstamp.Sub(*e.DvceCreatedTstamp)
+		e.DerivedTstamp = e.CollectorTstamp.Add(-timeOnDevice)
+	}
 }
 
 func setPlatformMetadata(e *SnowplowEvent, params map[string]interface{}, conf config.Config) {
-	e.NameTracker = *getStringParam(params, "tna")
+	e.NameTracker = getStringParam(params, "tna")
 	e.TrackerVersion = getStringParam(params, "tv")
 	e.CollectorVersion = &conf.App.Version
 	e.EtlVersion = &conf.App.Version
@@ -185,7 +192,7 @@ func setPlatformMetadata(e *SnowplowEvent, params map[string]interface{}, conf c
 func setEvent(e *SnowplowEvent, params map[string]interface{}) {
 	eName := getStringParam(params, "e")
 	fingerprint := uuid.New()
-	e.AppId = *getStringParam(params, "aid")
+	e.AppId = getStringParam(params, "aid")
 	e.Platform = *getStringParam(params, "p")
 	e.Event = getEventType(*eName)
 	e.TxnId = getStringParam(params, "tid")
@@ -342,7 +349,9 @@ func setTransactionItem(e *SnowplowEvent, params map[string]interface{}) {
 
 func setContexts(e *SnowplowEvent, params map[string]interface{}) {
 	b64encodedContexts := getStringParam(params, "cx")
-	e.Contexts = getContexts(b64encodedContexts)
+	if b64encodedContexts != nil {
+		e.Contexts = getContexts(b64encodedContexts)
+	}
 }
 
 func setSelfDescribing(e *SnowplowEvent, params map[string]interface{}) {
