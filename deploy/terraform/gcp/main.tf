@@ -1,6 +1,16 @@
 
 data "google_project" "project" {}
 
+// NOTE
+//  Uncomment this if you want to store tfstate in a
+//  pre-existing GCS bucket
+# terraform {
+#   backend "gcs" {
+#     bucket  = "YOUR_TFSTATE_BUCKET"
+#     prefix  = "YOUR_TFSTATE_PREFIX"
+#   }
+# }
+
 resource "google_project_service" "project_services" {
   for_each                   = toset(local.activate_apis)
   project                    = var.gcp_project
