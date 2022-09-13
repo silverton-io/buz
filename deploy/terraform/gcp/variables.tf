@@ -32,6 +32,7 @@ variable "buz_version" {
 variable "buz_mode" {
   description = "The mode of Buz to run. \n\nExamples: ['debug', 'release']"
   type        = string
+  default     = "release"
 }
 
 variable "buz_service_timeout_seconds" {
