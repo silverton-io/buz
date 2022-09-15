@@ -33,9 +33,9 @@ resource "google_storage_bucket" "schemas" {
 
 resource "google_storage_bucket_object" "schemas" {
   for_each = module.template_files.files
-  bucket = google_storage_bucket.schemas.name
-  name = each.key
-  source = each.value.source_path
+  bucket   = google_storage_bucket.schemas.name
+  name     = each.key
+  source   = each.value.source_path
 }
 
 resource "google_pubsub_topic" "valid_topic" {
@@ -218,14 +218,14 @@ resource "google_cloud_run_domain_mapping" "buz" {
 
 resource "google_project_iam_member" "bigquery_viewer" {
   project = data.google_project.project.project_id
-  role   = "roles/bigquery.metadataViewer"
-  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
+  role    = "roles/bigquery.metadataViewer"
+  member  = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "bigquery_editor" {
   project = data.google_project.project.project_id
-  role   = "roles/bigquery.dataEditor"
-  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
+  role    = "roles/bigquery.dataEditor"
+  member  = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
 }
 
 resource "google_bigquery_dataset" "buz" {
@@ -236,35 +236,35 @@ resource "google_bigquery_dataset" "buz" {
 }
 
 resource "google_bigquery_table" "events" {
-  table_id = var.bigquery_valid_events_table_name
+  table_id   = var.bigquery_valid_events_table_name
   dataset_id = google_bigquery_dataset.buz.dataset_id
-  schema = file("schema.json")
+  schema     = file("schema.json")
 }
 
 resource "google_bigquery_table" "invalid_events" {
-  table_id = var.bigquery_invalid_events_table_name
+  table_id   = var.bigquery_invalid_events_table_name
   dataset_id = google_bigquery_dataset.buz.dataset_id
-  schema = file("schema.json")
+  schema     = file("schema.json")
 }
 
 resource "google_pubsub_subscription" "events" {
-  name = local.valid_events_subscription
+  name  = local.valid_events_subscription
   topic = local.valid_topic
   bigquery_config {
-    table = local.events_table_fqn
+    table            = local.events_table_fqn
     use_topic_schema = true
-    write_metadata = true
+    write_metadata   = true
   }
   depends_on = [google_project_iam_member.bigquery_viewer, google_project_iam_member.bigquery_editor]
 }
 
 resource "google_pubsub_subscription" "invalid_events" {
-  name = local.invalid_events_subscription
+  name  = local.invalid_events_subscription
   topic = local.invalid_topic
   bigquery_config {
-    table = local.invalid_events_table_fqn
+    table            = local.invalid_events_table_fqn
     use_topic_schema = true
-    write_metadata = true
+    write_metadata   = true
   }
   depends_on = [google_project_iam_member.bigquery_viewer, google_project_iam_member.bigquery_editor]
 }

@@ -20,8 +20,8 @@ locals {
   schema_bucket                = "${local.system_env_base}${var.schema_bucket_name}"
   invalid_topic                = "${local.system_env_base}${var.invalid_topic_name}"
   valid_topic                  = "${local.system_env_base}${var.valid_topic_name}"
-  valid_events_subscription = "${local.system_env_base}-events"
-  invalid_events_subscription = "${local.system_env_base}-invalid-events"
-  events_table_fqn = "${var.gcp_project}.${var.bigquery_dataset_name}.${var.bigquery_valid_events_table_name}"
-  invalid_events_table_fqn = "${var.gcp_project}.${var.bigquery_dataset_name}.${var.bigquery_invalid_events_table_name}"
+  valid_events_subscription    = "${local.system_env_base}-events"
+  invalid_events_subscription  = "${local.system_env_base}-invalid-events"
+  events_table_fqn             = "${var.gcp_project}.${var.bigquery_dataset_name}.${var.bigquery_valid_events_table_name}"
+  invalid_events_table_fqn     = "${var.gcp_project}.${var.bigquery_dataset_name}.${var.bigquery_invalid_events_table_name}"
 }
