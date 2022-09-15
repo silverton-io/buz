@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_kinesis_firehose_delivery_stream" "buz_valid" {
   name        = local.valid_topic
   destination = "extended_s3"
@@ -68,6 +70,30 @@ resource "aws_secretsmanager_secret_version" "buz_config" {
   secret_string = templatefile("config.tftpl", {})
 }
 
+resource "null_resource" "configure_docker" {
+  triggers = {
+    build_number = timestamp()
+  }
+  provisioner "local-exec" {
+    command = "aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com"
+  }
+  depends_on = [
+    aws_ecr_repository.buz_repository
+  ]
+}
+
+resource "null_resource" "pull_and_push_image" {
+  triggers = {
+    build_number = timestamp()
+  }
+  provisioner "local-exec" {
+    command = "docker pull ${local.buz_source_image} && docker tag ${local.buz_source_image} ${aws_ecr_repository.buz_repository.arn}:latest && docker push ${aws_ecr_repository.buz_repository.arn}:latest"
+  }
+  depends_on = [
+    null_resource.configure_docker
+  ]
+}
+
 resource "aws_apprunner_auto_scaling_configuration_version" "buz" {
   auto_scaling_configuration_name = local.service_name
 
@@ -82,9 +108,15 @@ resource "aws_apprunner_service" "buz" {
   auto_scaling_configuration_arn = aws_apprunner_auto_scaling_configuration_version.buz.arn
 
   source_configuration {
+    authentication_configuration {
+      access_role_arn = aws_iam_role.apprunner_service_role.arn
+    }
     image_repository {
       image_configuration {
         port = var.buz_service_container_port
+        runtime_environment_variables = {
+          (local.buz_config_var) : local.buz_config_path
+        }
       }
       image_identifier      = "${aws_ecr_repository.buz_repository.repository_url}@${data.aws_ecr_image.buz_image.image_digest}"
       image_repository_type = "ECR"
@@ -95,6 +127,11 @@ resource "aws_apprunner_service" "buz" {
   instance_configuration {
     cpu               = var.buz_service_cpu_limit
     memory            = var.buz_service_memory_limit
-    instance_role_arn = aws_iam_role.app_runner_role.arn
+    instance_role_arn = aws_iam_role.apprunner_instance_role.arn
   }
+
+  depends_on = [
+    null_resource.pull_and_push_image,
+    aws_iam_role.apprunner_service_role
+  ]
 }

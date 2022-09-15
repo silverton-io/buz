@@ -28,8 +28,8 @@ variable "buz_service_container_concurrency" {
 
 variable "buz_service_cpu_limit" {
   description = "The service cpu limit"
-  type        = string
-  default     = "1"
+  type        = number
+  default     = 1024
 }
 
 variable "buz_service_memory_limit" {
@@ -44,7 +44,23 @@ variable "buz_service_container_port" {
   default     = 8080
 }
 
+variable "repository_name" {
+  description = "The name of ECR repository."
+  type        = string
+  default     = "buz-repository"
+}
+
 variable "schema_bucket_name" {
+  description = "The name of the AWS bucket for schemas. \n\nPLEASE NOTE! Buckets are globally unique so you may need to be creative."
+  type        = string
+}
+
+variable "valid_bucket_name" {
+  description = "The name of the AWS bucket for schemas. \n\nPLEASE NOTE! Buckets are globally unique so you may need to be creative."
+  type        = string
+}
+
+variable "invalid_bucket_name" {
   description = "The name of the AWS bucket for schemas. \n\nPLEASE NOTE! Buckets are globally unique so you may need to be creative."
   type        = string
 }
