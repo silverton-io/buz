@@ -25,10 +25,10 @@ func (p Pipeline) Scan(input interface{}) error {
 }
 
 type Source struct {
-	GeneratedTstamp time.Time `json:"generatedTstamp,omitempty"`
-	SentTstamp      time.Time `json:"sentTstamp,omitempty"`
-	Name            *string   `json:"name,omitempty"`
-	Version         *string   `json:"version,omitempty"`
+	GeneratedTstamp *time.Time `json:"generatedTstamp,omitempty"`
+	SentTstamp      *time.Time `json:"sentTstamp,omitempty"`
+	Name            *string    `json:"name,omitempty"`
+	Version         *string    `json:"version,omitempty"`
 }
 
 func (s Source) Value() (driver.Value, error) {

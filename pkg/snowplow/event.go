@@ -32,12 +32,12 @@ const (
 
 type SnowplowEvent struct {
 	// Application parameters - https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/snowplow-tracker-protocol/#common-parameters-platform-and-event-independent
-	NameTracker            string                       `json:"name_tracker"`
-	AppId                  string                       `json:"app_id"`
+	NameTracker            *string                      `json:"name_tracker"`
+	AppId                  *string                      `json:"app_id"`
 	Platform               string                       `json:"platform"`
-	EtlTstamp              time.Time                    `json:"etl_tstamp"`
-	DvceCreatedTstamp      time.Time                    `json:"dvce_created_tstamp"`
-	DvceSentTstamp         time.Time                    `json:"dvce_sent_tstamp"`
+	EtlTstamp              *time.Time                   `json:"etl_tstamp"`
+	DvceCreatedTstamp      *time.Time                   `json:"dvce_created_tstamp"`
+	DvceSentTstamp         *time.Time                   `json:"dvce_sent_tstamp"`
 	TrueTstamp             *time.Time                   `json:"true_tstamp"`
 	CollectorTstamp        time.Time                    `json:"collector_tstamp"`
 	DerivedTstamp          time.Time                    `json:"derived_tstamp"`
