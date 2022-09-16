@@ -11,4 +11,5 @@ locals {
   invalid_bucket      = "${local.system_env_base}${var.invalid_bucket_name}"
   valid_topic         = "${local.system_env_base}${var.valid_firehose_name}"
   invalid_topic       = "${local.system_env_base}${var.invalid_firehose_name}"
+  s3_dynamic_prefix   = "!{partitionKeyFromQuery:namespace}/!{partitionKeyFromQuery:version}/!{timestamp:yyyy}/!{timestamp:MM}/!{timestamp:dd}/"
 }

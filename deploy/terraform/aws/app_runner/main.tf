@@ -7,6 +7,24 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_valid" {
   extended_s3_configuration {
     role_arn   = aws_iam_role.firehose_role.arn
     bucket_arn = aws_s3_bucket.buz_valid.arn
+
+    prefix = local.s3_dynamic_prefix
+
+    processing_configuration {
+      enabled = "true"
+
+      processors {
+        type = "MetadataExtraction"
+        parameters {
+          parameter_name  = "JsonParsingEngine"
+          parameter_value = "{namespace:.event.namespace}"
+        }
+        parameters {
+          parameter_name  = "JsonParsingEngine"
+          parameter_value = "{version:.event.version}"
+        }
+      }
+    }
   }
 }
 
@@ -17,6 +35,24 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_invalid" {
   extended_s3_configuration {
     role_arn   = aws_iam_role.firehose_role.arn
     bucket_arn = aws_s3_bucket.buz_invalid.arn
+
+    prefix = local.s3_dynamic_prefix
+
+    processing_configuration {
+      enabled = "true"
+
+      processors {
+        type = "MetadataExtraction"
+        parameters {
+          parameter_name  = "JsonParsingEngine"
+          parameter_value = "{namespace:.event.namespace}"
+        }
+        parameters {
+          parameter_name  = "JsonParsingEngine"
+          parameter_value = "{version:.event.version}"
+        }
+      }
+    }
   }
 }
 
