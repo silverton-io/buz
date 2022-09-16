@@ -18,9 +18,9 @@
     },
     "type": "object",
     "properties": {
-        "eventMeta": {
+        "event": {
             "type": "object",
-            "description": "Event/ payload metadata",
+            "description": "Event metadata",
             "properties": {
                 "protocol": {
                     "type": "string",
@@ -47,9 +47,9 @@
                     "type": "string",
                     "description": "Format of event"
                 },
-                "path": {
+                "schema": {
                     "type": "string",
-                    "description": "Event schema path"
+                    "description": "The event schema"
                 }
             },
             "required": ["protocol", "uuid"]
