@@ -37,9 +37,9 @@
             },
             "format": {
               "type": "string",
-              "description": "The schema format",
-              "default": "json",
-              "enum": ["json"]
+              "description": "The event schema format",
+              "default": "jsonschema",
+              "enum": ["jsonschema", "jsontypedef"]
             }
           },
           "required": ["vendor", "namespace", "version"],
