@@ -108,6 +108,25 @@
               "required": ["individual"]
             }
           ]
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "measures": {
+              "type": "array",
+              "description": "A list of event properties to be considered measures",
+              "items": {
+                "type": "string"
+              }
+            },
+            "dimensions": {
+              "type": "array",
+              "description": "A list of event properties to be considered dimensions",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
         }
       },
       "required": ["owner", "self"]
