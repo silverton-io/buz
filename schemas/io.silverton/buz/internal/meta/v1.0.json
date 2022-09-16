@@ -130,7 +130,7 @@
         },
         "disableValidation": {
           "type": "boolean",
-          "description": "A meta property that enables the disabling of validation",
+          "description": "A meta property that disables validation",
           "default": "false"
         }
       },
