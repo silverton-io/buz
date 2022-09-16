@@ -127,6 +127,11 @@
               }
             }
           }
+        },
+        "disableValidation": {
+          "type": "boolean",
+          "description": "A meta property that enables the disabling of validation",
+          "default": "false"
         }
       },
       "required": ["owner", "self"]
