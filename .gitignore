@@ -16,3 +16,4 @@ examples/quickstart/minio/*
 .terraform.lock.hcl
 terraform.*
 build/buz
+*.build
