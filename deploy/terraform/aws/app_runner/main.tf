@@ -1,27 +1,34 @@
 data "aws_caller_identity" "current" {}
 
 resource "aws_kinesis_firehose_delivery_stream" "buz_valid" {
-  name        = local.valid_topic
+  name        = local.valid_stream
   destination = "extended_s3"
 
   extended_s3_configuration {
-    role_arn   = aws_iam_role.firehose_role.arn
-    bucket_arn = aws_s3_bucket.buz_valid.arn
+    role_arn    = aws_iam_role.firehose_role.arn
+    bucket_arn  = aws_s3_bucket.buz_events.arn
+    buffer_size = 128 # FIXME
 
-    prefix = local.s3_dynamic_prefix
+    prefix              = "valid/${local.s3_dynamic_prefix}/"
+    error_output_prefix = "err"
+
+
+    dynamic_partitioning_configuration {
+      enabled = true
+    }
 
     processing_configuration {
-      enabled = "true"
+      enabled = true
 
       processors {
         type = "MetadataExtraction"
         parameters {
           parameter_name  = "JsonParsingEngine"
-          parameter_value = "{namespace:.event.namespace}"
+          parameter_value = "JQ-1.6"
         }
         parameters {
-          parameter_name  = "JsonParsingEngine"
-          parameter_value = "{version:.event.version}"
+          parameter_name  = "MetadataExtractionQuery"
+          parameter_value = "{vendor:.event.vendor,namespace:.event.namespace,version:.event.version}"
         }
       }
     }
@@ -29,52 +36,51 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_valid" {
 }
 
 resource "aws_kinesis_firehose_delivery_stream" "buz_invalid" {
-  name        = local.invalid_topic
+  name        = local.invalid_stream
   destination = "extended_s3"
 
   extended_s3_configuration {
-    role_arn   = aws_iam_role.firehose_role.arn
-    bucket_arn = aws_s3_bucket.buz_invalid.arn
+    role_arn    = aws_iam_role.firehose_role.arn
+    bucket_arn  = aws_s3_bucket.buz_events.arn
+    buffer_size = 128 # FIXME
 
-    prefix = local.s3_dynamic_prefix
+    prefix              = "invalid/${local.s3_dynamic_prefix}/"
+    error_output_prefix = "err/invalid/"
+
+    dynamic_partitioning_configuration {
+      enabled = true
+    }
 
     processing_configuration {
-      enabled = "true"
+      enabled = true
 
       processors {
         type = "MetadataExtraction"
         parameters {
           parameter_name  = "JsonParsingEngine"
-          parameter_value = "{namespace:.event.namespace}"
+          parameter_value = "JQ-1.6"
         }
         parameters {
-          parameter_name  = "JsonParsingEngine"
-          parameter_value = "{version:.event.version}"
+          parameter_name  = "MetadataExtractionQuery"
+          parameter_value = "{vendor:.event.vendor,namespace:.event.namespace,version:.event.version}"
         }
       }
     }
   }
 }
 
-resource "aws_s3_bucket" "buz_valid" {
-  bucket = local.valid_bucket
+resource "aws_s3_bucket" "buz_events" {
+  bucket = local.events_bucket
 }
 
-resource "aws_s3_bucket" "buz_invalid" {
-  bucket = local.invalid_bucket
-}
 
 resource "aws_s3_bucket" "buz_schemas" {
   bucket = local.schema_bucket
 }
 
-resource "aws_s3_bucket_acl" "valid_acl" {
-  bucket = aws_s3_bucket.buz_valid.id
-  acl    = "private"
-}
 
-resource "aws_s3_bucket_acl" "invalid_acl" {
-  bucket = aws_s3_bucket.buz_invalid.id
+resource "aws_s3_bucket_acl" "events_acl" {
+  bucket = aws_s3_bucket.buz_events.id
   acl    = "private"
 }
 
@@ -94,21 +100,15 @@ resource "aws_ecr_repository" "buz_repository" {
 
 data "aws_ecr_image" "buz_image" {
   repository_name = aws_ecr_repository.buz_repository.name
-  image_tag       = "latest"
-}
-
-resource "aws_secretsmanager_secret" "buz_config" {
-  name = local.config
-}
-
-resource "aws_secretsmanager_secret_version" "buz_config" {
-  secret_id     = aws_secretsmanager_secret.buz_config.id
-  secret_string = templatefile("config.tftpl", {})
+  image_tag       = var.buz_version
+  depends_on = [
+    null_resource.build_and_push_image
+  ]
 }
 
 resource "null_resource" "configure_docker" {
   triggers = {
-    build_number = timestamp()
+    build_number = var.buz_version
   }
   provisioner "local-exec" {
     command = "aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com"
@@ -118,12 +118,34 @@ resource "null_resource" "configure_docker" {
   ]
 }
 
-resource "null_resource" "pull_and_push_image" {
+resource "local_file" "config" {
+  filename = "config.yml.build"
+  content = templatefile("config.tftpl", {
+    system        = var.system,
+    env           = var.env,
+    mode          = "debug",
+    port          = "8080",
+    trackerDomain = var.buz_domain,
+    cookieDomain  = local.cookie_domain,
+    schemaBucket  = local.schema_bucket,
+    validStream   = local.valid_stream,
+    invalidStream = local.invalid_stream,
+  })
+}
+
+resource "local_file" "dockerfile" {
+  filename = "Dockerfile.build"
+  content = templatefile("Dockerfile.tftpl", {
+    sourceImage = local.buz_source_image
+  })
+}
+
+resource "null_resource" "build_and_push_image" {
   triggers = {
     build_number = timestamp()
   }
   provisioner "local-exec" {
-    command = "docker pull ${local.buz_source_image} && docker tag ${local.buz_source_image} ${aws_ecr_repository.buz_repository.arn}:latest && docker push ${aws_ecr_repository.buz_repository.arn}:latest"
+    command = "docker buildx build --push --platform=linux/amd64 -f Dockerfile.build -t ${aws_ecr_repository.buz_repository.repository_url}:${var.buz_version} ."
   }
   depends_on = [
     null_resource.configure_docker
@@ -167,7 +189,12 @@ resource "aws_apprunner_service" "buz" {
   }
 
   depends_on = [
-    null_resource.pull_and_push_image,
+    null_resource.build_and_push_image,
     aws_iam_role.apprunner_service_role
   ]
 }
+
+# resource "aws_apprunner_custom_domain_association" "buz" {
+#   domain_name = var.buz_domain
+#   service_arn = aws_apprunner_service.buz.arn
+# }

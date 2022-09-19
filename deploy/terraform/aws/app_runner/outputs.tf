@@ -6,10 +6,14 @@ output "schema_bucket" {
   value = local.schema_bucket
 }
 
-output "valid_topic" {
-  value = local.valid_topic
+output "events_bucket" {
+  value = local.events_bucket
 }
 
-output "invalid_topic" {
-  value = local.invalid_topic
+output "valid_stream" {
+  value = local.valid_stream
+}
+
+output "invalid_stream" {
+  value = local.invalid_stream
 }

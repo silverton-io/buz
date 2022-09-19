@@ -15,8 +15,13 @@ variable "env" {
   default     = "dev"
 }
 
+variable "buz_domain" {
+  description = "The subdomain to map Buz to. \n\nExample: track.yourdomain.com"
+  type        = string
+}
+
 variable "buz_version" {
-  description = "The version of Buz to run. \n\nExample: v0.11.11"
+  description = "The version of Buz to run. \n\nExample: v0.11.14"
   type        = string
 }
 
@@ -44,35 +49,12 @@ variable "buz_service_container_port" {
   default     = 8080
 }
 
-variable "repository_name" {
-  description = "The name of ECR repository."
-  type        = string
-  default     = "buz-repository"
-}
-
 variable "schema_bucket_name" {
   description = "The name of the AWS bucket for schemas. \n\nPLEASE NOTE! Buckets are globally unique so you may need to be creative."
   type        = string
 }
 
-variable "valid_bucket_name" {
-  description = "The name of the AWS bucket for schemas. \n\nPLEASE NOTE! Buckets are globally unique so you may need to be creative."
+variable "events_bucket_name" {
+  description = "The name of the AWS bucket for events. \n\nPLEASE NOTE! Buckets are globally unique so you may need to be creative."
   type        = string
-}
-
-variable "invalid_bucket_name" {
-  description = "The name of the AWS bucket for schemas. \n\nPLEASE NOTE! Buckets are globally unique so you may need to be creative."
-  type        = string
-}
-
-variable "valid_firehose_name" {
-  description = "The name of the Kinesis Firehose for valid events"
-  type        = string
-  default     = "valid-events"
-}
-
-variable "invalid_firehose_name" {
-  description = "The name of the Kinesis Firehose for invalid events"
-  type        = string
-  default     = "invalid-events"
 }

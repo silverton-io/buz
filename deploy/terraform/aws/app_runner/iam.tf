@@ -86,12 +86,4 @@ data "aws_iam_policy_document" "apprunner_instance_role_policy" {
     ]
   }
 
-  statement {
-    actions = ["secretsmanager:GetSecretValue"]
-    effect  = "Allow"
-    resources = [
-      aws_secretsmanager_secret.buz_config.arn
-    ]
-
-  }
 }
