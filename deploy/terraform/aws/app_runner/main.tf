@@ -48,10 +48,11 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_invalid" {
   destination = "extended_s3"
 
   extended_s3_configuration {
-    role_arn        = aws_iam_role.firehose.arn
-    bucket_arn      = aws_s3_bucket.events.arn
-    buffer_size     = var.firehose_buffer_size
-    buffer_interval = var.firehose_buffer_interval
+    role_arn           = aws_iam_role.firehose.arn
+    bucket_arn         = aws_s3_bucket.events.arn
+    buffer_size        = var.firehose_buffer_size
+    buffer_interval    = var.firehose_buffer_interval
+    compression_format = "GZIP"
 
     prefix              = "invalid/${local.s3_dynamic_prefix}/"
     error_output_prefix = "err/invalid/"
