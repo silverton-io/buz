@@ -4,7 +4,7 @@ locals {
   buz_config_var      = "HONEYPOT_CONFIG_PATH"
   buz_config_path     = "/etc/buz/config.yml"
   system_env_base     = "${var.system}-${var.env}-"
-  artifact_repository = "${local.system_env_base}repository"
+  artifact_repository = "${local.system_env_base}img"
   image               = "buz:${var.buz_version}"
   buz_source_image    = "ghcr.io/silverton-io/${local.image}"
   service_name        = "${local.system_env_base}collector"

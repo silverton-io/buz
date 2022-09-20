@@ -31,6 +31,18 @@ variable "buz_service_container_concurrency" {
   default     = 200
 }
 
+variable "buz_service_container_min_count" {
+  description = "The minimum number of buz instances to run"
+  type = number
+  default = 1 # The minimum since app runner doesn't go to 0. Ouch.
+}
+
+variable "buz_service_container_max_count" {
+  description = "The maximum number of buz instances to run"
+  type = number
+  default = 25 # The actual maximum w/out bumping limits
+}
+
 variable "buz_service_cpu_limit" {
   description = "The service cpu limit"
   type        = number
@@ -57,4 +69,16 @@ variable "schema_bucket_name" {
 variable "events_bucket_name" {
   description = "The name of the AWS bucket for events. \n\nPLEASE NOTE! Buckets are globally unique so you may need to be creative."
   type        = string
+}
+
+variable "firehose_buffer_size" {
+  description = "The size of the firehose buffer, in MiB"
+  type        = number
+  default     = 128 # Maximum
+}
+
+variable "firehose_buffer_interval" {
+  description = "The buffer interval, in seconds"
+  type        = number
+  default     = 60 # 1 minute
 }
