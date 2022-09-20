@@ -1,0 +1,99 @@
+version: 1.1
+
+app:
+  name: ${system}
+  env: ${env}
+  mode: ${mode}
+  port: ${port}
+  trackerDomain: ${trackerDomain}
+  enableConfigRoute: false
+
+middleware:
+  timeout:
+    enabled: false
+    ms: 2000
+  rateLimiter:
+    enabled: false
+    period: S
+    limit: 10
+  identity:
+    cookie:
+      enabled: true
+      name: nuid
+      secure: true
+      ttlDays: 365
+      domain: .${cookieDomain}
+      path: /
+      sameSite: None
+    fallback: 00000000-0000-4000-A000-000000000000
+  cors:
+    enabled: true
+    allowOrigin:
+      - "*"
+    allowCredentials: true
+    allowMethods:
+      - POST
+      - OPTIONS
+      - GET
+    maxAge: 86400
+  requestLogger:
+    enabled: true
+  yeet:
+    enabled: false
+
+inputs:
+  snowplow:
+    enabled: true
+    standardRoutesEnabled: true
+    openRedirectsEnabled: true
+    getPath: /snowplow/g
+    postPath: /snowplow/p
+    redirectPath: /snowplow/r
+  cloudevents:
+    enabled: true
+    path: /cloudevents
+  generic:
+    enabled: true
+    path: /self-describing
+    contexts:
+      rootKey: contexts
+    payload:
+      rootKey: payload
+      schemaKey: schema
+      dataKey: data
+  webhook:
+    enabled: true
+    path: /webhook
+  pixel:
+    enabled: true
+    path: /pixel
+
+schemaCache:
+  backend:
+    type: s3
+    bucket: ${schemaBucket}
+    path: /
+
+sinks:
+  - name: primary
+    type: kinesis-firehose
+    deliveryRequired: true
+    validStream: ${validStream}
+    invalidStream: ${invalidStream}
+
+squawkBox:
+  enabled: true
+  cloudeventsPath: /squawkbox/cloudevents
+  snowplowPath: /squawkbox/snowplow
+  genericPath: /squawkbox/self-describing
+
+privacy:
+  anonymize:
+    device:
+      ip: false
+      useragent: false
+    user:
+      id: false
+
+tele:
+  enabled: true

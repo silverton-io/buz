@@ -25,7 +25,7 @@ variable "buz_domain" {
 }
 
 variable "buz_version" {
-  description = "The version of Buz to run. \n\nExample: v0.11.12"
+  description = "The version of Buz to run. \n\nExample: v0.11.14"
   type        = string
 }
 
@@ -76,17 +76,6 @@ variable "schema_bucket_name" {
   type        = string
 }
 
-variable "valid_topic_name" {
-  description = "The name of the Pub/Sub topic for valid events"
-  type        = string
-  default     = "events"
-}
-
-variable "invalid_topic_name" {
-  description = "The name of the Pub/Sub topic for invalid events"
-  type        = string
-  default     = "invalid-events"
-}
 
 variable "bigquery_location" {
   description = "The location to store data in BigQuery"
