@@ -1,13 +1,20 @@
 data "aws_caller_identity" "current" {}
 
+
+module "template_files" {
+  source   = "hashicorp/dir/template"
+  base_dir = "../../../../schemas/"
+}
+
 resource "aws_kinesis_firehose_delivery_stream" "buz_valid" {
   name        = local.valid_stream
   destination = "extended_s3"
 
   extended_s3_configuration {
-    role_arn    = aws_iam_role.firehose_role.arn
-    bucket_arn  = aws_s3_bucket.buz_events.arn
-    buffer_size = 128 # FIXME
+    role_arn        = aws_iam_role.firehose_role.arn
+    bucket_arn      = aws_s3_bucket.buz_events.arn
+    buffer_size     = var.firehose_buffer_size
+    buffer_interval = var.firehose_buffer_interval
 
     prefix              = "valid/${local.s3_dynamic_prefix}/"
     error_output_prefix = "err"
@@ -40,9 +47,10 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_invalid" {
   destination = "extended_s3"
 
   extended_s3_configuration {
-    role_arn    = aws_iam_role.firehose_role.arn
-    bucket_arn  = aws_s3_bucket.buz_events.arn
-    buffer_size = 128 # FIXME
+    role_arn        = aws_iam_role.firehose_role.arn
+    bucket_arn      = aws_s3_bucket.buz_events.arn
+    buffer_size     = var.firehose_buffer_size
+    buffer_interval = var.firehose_buffer_interval
 
     prefix              = "invalid/${local.s3_dynamic_prefix}/"
     error_output_prefix = "err/invalid/"
@@ -71,6 +79,14 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_invalid" {
 
 resource "aws_s3_bucket" "buz_events" {
   bucket = local.events_bucket
+}
+
+resource "aws_s3_object" "schemas" {
+  for_each = module.template_files.files
+  bucket   = aws_s3_bucket.buz_schemas.bucket
+  key      = each.key
+  source   = each.value.source_path
+  etag     = filemd5(each.value.source_path)
 }
 
 
@@ -152,16 +168,38 @@ resource "null_resource" "build_and_push_image" {
   ]
 }
 
+resource "null_resource" "config_cleanup" {
+  provisioner "local-exec" {
+    command = "rm ${local_file.dockerfile.filename} || true && rm ${local_file.config.filename} || true"
+  }
+  depends_on = [
+    null_resource.build_and_push_image
+  ]
+}
+
 resource "aws_apprunner_auto_scaling_configuration_version" "buz" {
   auto_scaling_configuration_name = local.service_name
 
   max_concurrency = var.buz_service_container_concurrency
-  min_size        = 1
-  max_size        = 5
+  min_size        = var.buz_service_container_min_count
+  max_size        = var.buz_service_container_max_count
+}
+
+resource "aws_apprunner_observability_configuration" "buz" {
+  observability_configuration_name = local.service_name
+
+  trace_configuration {
+    vendor = "AWSXRAY"
+  }
 }
 
 resource "aws_apprunner_service" "buz" {
   service_name = local.service_name
+
+  observability_configuration {
+    observability_configuration_arn = aws_apprunner_observability_configuration.buz.arn
+    observability_enabled           = true
+  }
 
   auto_scaling_configuration_arn = aws_apprunner_auto_scaling_configuration_version.buz.arn
 

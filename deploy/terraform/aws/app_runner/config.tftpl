@@ -73,6 +73,13 @@ schemaCache:
     type: s3
     bucket: ${schemaBucket}
     path: /
+  ttlSeconds: 300
+  maxSizeBytes: 104857600
+  purge:
+    enabled: true
+    path: /cache/purge
+  schemaDirectory:
+    enabled: true
 
 sinks:
   - name: primary
