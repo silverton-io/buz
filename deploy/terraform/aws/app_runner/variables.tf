@@ -21,8 +21,9 @@ variable "buz_domain" {
 }
 
 variable "buz_version" {
-  description = "The version of Buz to run. \n\nExample: v0.11.14"
+  description = "The version of Buz to run. \n\nExample: v0.11.15"
   type        = string
+  default     = "v0.11.15" # The min version that can be run.
 }
 
 variable "buz_service_container_concurrency" {
@@ -33,14 +34,14 @@ variable "buz_service_container_concurrency" {
 
 variable "buz_service_container_min_count" {
   description = "The minimum number of buz instances to run"
-  type = number
-  default = 1 # The minimum since app runner doesn't go to 0. Ouch.
+  type        = number
+  default     = 1 # The minimum since app runner doesn't go to 0. Ouch.
 }
 
 variable "buz_service_container_max_count" {
   description = "The maximum number of buz instances to run"
-  type = number
-  default = 25 # The actual maximum w/out bumping limits
+  type        = number
+  default     = 25 # The actual maximum w/out bumping limits
 }
 
 variable "buz_service_cpu_limit" {

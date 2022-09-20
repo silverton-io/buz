@@ -1,24 +1,50 @@
-resource "aws_iam_role" "firehose_role" {
-  name = "${local.service_name}FirehoseRole"
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Sid    = ""
-        Principal = {
-          Service = "firehose.amazonaws.com"
-        }
-      },
+data "aws_iam_policy_document" "firehose_assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["firehose.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "firehose_bucket" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:AbortMultipartUpload",
+      "s3:GetBucketLocation",
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:ListBucketMultipartUploads",
+      "s3:PutObject",
     ]
-  })
+
+    resources = [
+      aws_s3_bucket.events.arn,
+      "${aws_s3_bucket.events.arn}/*",
+    ]
+  }
+}
+
+resource "aws_iam_role" "firehose" {
+  name               = "${local.system_env_base}firehose"
+  assume_role_policy = data.aws_iam_policy_document.firehose_assume_role.json
+}
+
+resource "aws_iam_role_policy" "firehose_bucket" {
+  name   = "${local.system_env_base}firehose"
+  role   = aws_iam_role.firehose.name
+  policy = data.aws_iam_policy_document.firehose_bucket.json
 }
 
 # App Runner Service 
-resource "aws_iam_role" "apprunner_service_role" {
-  name               = "${local.service_name}AppRunnerECRAccessRole"
+resource "aws_iam_role" "apprunner" {
+  name               = "${local.system_env_base}apprunner"
   path               = "/"
   assume_role_policy = data.aws_iam_policy_document.apprunner_service_assume_policy.json
 }
@@ -34,20 +60,20 @@ data "aws_iam_policy_document" "apprunner_service_assume_policy" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "apprunner_service_role_attachment" {
-  role       = aws_iam_role.apprunner_service_role.name
+resource "aws_iam_role_policy_attachment" "apprunner_attachment" {
+  role       = aws_iam_role.apprunner.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess"
 }
 
 # App Runner Instance 
 resource "aws_iam_role" "apprunner_instance_role" {
-  name               = "${local.service_name}AppRunnerInstanceRole"
+  name               = "${local.system_env_base}apprunner-instance"
   path               = "/"
   assume_role_policy = data.aws_iam_policy_document.apprunner_instance_assume_policy.json
 }
 
 resource "aws_iam_policy" "apprunner_policy" {
-  name   = "${local.service_name}Apprunner"
+  name   = "${local.system_env_base}apprunner"
   policy = data.aws_iam_policy_document.apprunner_instance_role_policy.json
 }
 
