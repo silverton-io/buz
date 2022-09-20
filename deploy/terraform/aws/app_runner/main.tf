@@ -16,7 +16,7 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_valid" {
     buffer_size     = var.firehose_buffer_size
     buffer_interval = var.firehose_buffer_interval
 
-    prefix              = "valid/${local.s3_dynamic_prefix}/"
+    prefix              = "${local.s3_dynamic_prefix}/"
     error_output_prefix = "err"
 
 
