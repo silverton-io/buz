@@ -22,7 +22,7 @@ const (
 
 type Envelope struct {
 	db.BasePKeylessModel
-	EventMeta    `json:"eventMeta" gorm:"type:json"`
+	EventMeta    `json:"event" gorm:"type:json"`
 	Pipeline     `json:"pipeline" gorm:"type:json"`
 	Device       `json:"device" gorm:"type:json"`
 	*User        `json:"user" gorm:"type:json"`
@@ -57,7 +57,7 @@ func (e *Envelope) AsByte() ([]byte, error) {
 
 type JsonbEnvelope struct {
 	db.BasePKeylessModel
-	EventMeta    `json:"eventMeta" gorm:"type:jsonb"`
+	EventMeta    `json:"event" gorm:"type:jsonb"`
 	Pipeline     `json:"pipeline" gorm:"type:jsonb"`
 	*Device      `json:"device" gorm:"type:jsonb"`
 	*User        `json:"user" gorm:"type:jsonb"`
@@ -72,7 +72,7 @@ type JsonbEnvelope struct {
 
 type StringEnvelope struct {
 	db.BasePKeylessModel
-	EventMeta    `json:"eventMeta" gorm:"type:string"`
+	EventMeta    `json:"event" gorm:"type:string"`
 	Pipeline     `json:"pipeline" gorm:"type:string"`
 	*Device      `json:"device" gorm:"type:string"`
 	*User        `json:"user" gorm:"type:string"`

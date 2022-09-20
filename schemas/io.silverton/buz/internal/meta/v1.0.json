@@ -37,9 +37,9 @@
             },
             "format": {
               "type": "string",
-              "description": "The schema format",
-              "default": "json",
-              "enum": ["json"]
+              "description": "The event schema format",
+              "default": "jsonschema",
+              "enum": ["jsonschema", "jsontypedef"]
             }
           },
           "required": ["vendor", "namespace", "version"],
@@ -108,6 +108,30 @@
               "required": ["individual"]
             }
           ]
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "measures": {
+              "type": "array",
+              "description": "A list of event properties to be considered measures",
+              "items": {
+                "type": "string"
+              }
+            },
+            "dimensions": {
+              "type": "array",
+              "description": "A list of event properties to be considered dimensions",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "disableValidation": {
+          "type": "boolean",
+          "description": "A meta property that disables validation",
+          "default": "false"
         }
       },
       "required": ["owner", "self"]

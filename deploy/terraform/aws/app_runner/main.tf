@@ -89,11 +89,9 @@ resource "aws_s3_object" "schemas" {
   etag     = filemd5(each.value.source_path)
 }
 
-
 resource "aws_s3_bucket" "buz_schemas" {
   bucket = local.schema_bucket
 }
-
 
 resource "aws_s3_bucket_acl" "events_acl" {
   bucket = aws_s3_bucket.buz_events.id
@@ -200,7 +198,6 @@ resource "aws_apprunner_service" "buz" {
     observability_configuration_arn = aws_apprunner_observability_configuration.buz.arn
     observability_enabled           = true
   }
-
   auto_scaling_configuration_arn = aws_apprunner_auto_scaling_configuration_version.buz.arn
 
   source_configuration {
