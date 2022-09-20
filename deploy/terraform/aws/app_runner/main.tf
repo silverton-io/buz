@@ -11,8 +11,8 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_valid" {
   destination = "extended_s3"
 
   extended_s3_configuration {
-    role_arn        = aws_iam_role.firehose_role.arn
-    bucket_arn      = aws_s3_bucket.buz_events.arn
+    role_arn        = aws_iam_role.firehose.arn
+    bucket_arn      = aws_s3_bucket.events.arn
     buffer_size     = var.firehose_buffer_size
     buffer_interval = var.firehose_buffer_interval
 
@@ -47,8 +47,8 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_invalid" {
   destination = "extended_s3"
 
   extended_s3_configuration {
-    role_arn        = aws_iam_role.firehose_role.arn
-    bucket_arn      = aws_s3_bucket.buz_events.arn
+    role_arn        = aws_iam_role.firehose.arn
+    bucket_arn      = aws_s3_bucket.events.arn
     buffer_size     = var.firehose_buffer_size
     buffer_interval = var.firehose_buffer_interval
 
@@ -77,7 +77,7 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_invalid" {
   }
 }
 
-resource "aws_s3_bucket" "buz_events" {
+resource "aws_s3_bucket" "events" {
   bucket = local.events_bucket
 }
 
@@ -94,7 +94,7 @@ resource "aws_s3_bucket" "buz_schemas" {
 }
 
 resource "aws_s3_bucket_acl" "events_acl" {
-  bucket = aws_s3_bucket.buz_events.id
+  bucket = aws_s3_bucket.events.id
   acl    = "private"
 }
 
@@ -202,7 +202,7 @@ resource "aws_apprunner_service" "buz" {
 
   source_configuration {
     authentication_configuration {
-      access_role_arn = aws_iam_role.apprunner_service_role.arn
+      access_role_arn = aws_iam_role.apprunner.arn
     }
     image_repository {
       image_configuration {
@@ -225,7 +225,7 @@ resource "aws_apprunner_service" "buz" {
 
   depends_on = [
     null_resource.build_and_push_image,
-    aws_iam_role.apprunner_service_role
+    aws_iam_role.apprunner
   ]
 }
 

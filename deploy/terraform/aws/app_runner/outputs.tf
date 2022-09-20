@@ -2,6 +2,10 @@ output "buz_version" {
   value = var.buz_version
 }
 
+output "buz_url" {
+  value = aws_apprunner_service.buz.service_url
+}
+
 output "schema_bucket" {
   value = local.schema_bucket
 }
