@@ -4,6 +4,10 @@
 
 package config
 
+type Http struct {
+	Enabled bool `json:"enabled"`
+}
+
 type Purge struct {
 	Enabled bool   `json:"enabled"`
 	Path    string `json:"path"`
@@ -57,14 +61,10 @@ type Backend struct {
 	SecretAccessKey string `json:"secretAccessKey,omitempty"`
 }
 
-type SchemaDirectory struct {
-	Enabled bool `json:"enabled"`
-}
-
-type SchemaCache struct {
-	Backend         `json:"backend"`
-	TtlSeconds      int `json:"ttlSeconds"`
-	MaxSizeBytes    int `json:"maxSizeBytes"`
-	Purge           `json:"purge"`
-	SchemaDirectory `json:"schemaDirectory"`
+type Registry struct {
+	Backend      `json:"backend"`
+	TtlSeconds   int `json:"ttlSeconds"`
+	MaxSizeBytes int `json:"maxSizeBytes"`
+	Purge        `json:"purge"`
+	Http         `json:"http"`
 }

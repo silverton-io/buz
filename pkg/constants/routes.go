@@ -1,7 +1,6 @@
 package constants
 
 const (
-	SCHEMAS_BASE_PATH               = "/s/"
 	STATS_PATH                      = "/stats"
 	HEALTH_PATH                     = "/health"
 	ROUTE_OVERVIEW_PATH             = "/routes"

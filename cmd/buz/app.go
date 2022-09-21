@@ -96,7 +96,7 @@ func (a *App) initializeStats() {
 func (a *App) initializeRegistry() {
 	log.Info().Msg("🟢 initializing schema registry")
 	registry := registry.Registry{}
-	if err := registry.Initialize(a.config.SchemaCache); err != nil {
+	if err := registry.Initialize(a.config.Registry); err != nil {
 		panic(err)
 	}
 	a.registry = &registry
@@ -175,12 +175,12 @@ func (a *App) initializeOpsRoutes() {
 }
 
 func (a *App) initializeSchemaCacheRoutes() {
-	if a.config.SchemaCache.Purge.Enabled {
-		log.Info().Msg("🟢 initializing schema cache purge route")
-		a.engine.GET(a.config.SchemaCache.Purge.Path, handler.CachePurgeHandler(a.registry))
+	if a.config.Registry.Purge.Enabled {
+		log.Info().Msg("🟢 initializing schema registry cache purge route")
+		a.engine.GET(a.config.Registry.Purge.Path, handler.RegistryCachePurgeHandler(a.registry))
 	}
-	log.Info().Msg("🟢 initializing schema cache index and getter routes")
-	a.engine.GET(registry.SCHEMA_CACHE_ROOT_ROUTE+"/*"+registry.SCHEMA_ROUTE_PARAM, handler.RegistrySchemaHandler(a.registry))
+	log.Info().Msg("🟢 initializing schema routes")
+	a.engine.GET(registry.SCHEMA_CACHE_ROOT_ROUTE+"*"+registry.SCHEMA_ROUTE_PARAM, handler.RegistryGetSchemaHandler(a.registry))
 }
 
 func (a *App) initializeSnowplowRoutes() {

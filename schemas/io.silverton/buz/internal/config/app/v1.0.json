@@ -471,18 +471,18 @@
                 "pixel"
             ]
         },
-        "schemaCache": {
+        "registry": {
             "type": "object",
-            "description": "Schema cache configuration",
+            "description": "Schema registry configuration",
             "properties": {
                 "backend": {
                     "type": "object",
-                    "description": "Cache backend configuration",
+                    "description": "Registry backend configuration",
                     "properties": {
                         "type": {
                             "type": "string",
                             "default": "s3",
-                            "description": "The type of schema cache backend",
+                            "description": "The type of schema registry backend",
                             "enum": [
                                 "gcs",
                                 "s3",
@@ -500,16 +500,16 @@
                         "path": {
                             "type": "string",
                             "default": "/",
-                            "description": "The root path of the schema cache backend"
+                            "description": "The root path of the schema registry backend"
                         },
                         "bucket": {
                             "type": "string",
                             "default": "buz-schemas",
-                            "description": "The schema cache bucket, if applicable"
+                            "description": "The schema registry bucket, if applicable"
                         },
                         "host": {
                             "type": "string",
-                            "description": "The schema cache host, if applicable"
+                            "description": "The schema registry host, if applicable"
                         },
                         "registryTable": {
                             "type": "string",
@@ -518,112 +518,112 @@
                         },
                         "registryCollection": {
                             "type": "string",
-                            "description": "The mongodb collection for schemas in the cache backend is mongodb",
+                            "description": "The mongodb collection for schemas in the registry backend is mongodb",
                             "default": "registry"
                         },
                         "pgHost": {
                             "type": "string",
-                            "description": "The postgres cache backend host",
+                            "description": "The postgres registry backend host",
                             "default": "localhost"
                         },
                         "pgPort": {
                             "type": "number",
-                            "description": "The postgres cache backend port",
+                            "description": "The postgres registry backend port",
                             "default": 5432
                         },
                         "pgDbName": {
                             "type": "string",
-                            "description": "The postgres cache backend db name",
+                            "description": "The postgres registry backend db name",
                             "default": "buz"
                         },
                         "pgUser": {
                             "type": "string",
-                            "description": "The postgres cache backend user",
+                            "description": "The postgres registry backend user",
                             "default": "buz"
                         },
                         "pgPass": {
                             "type": "string",
-                            "description": "The postgres cache backend password",
+                            "description": "The postgres registry backend password",
                             "default": "buz"
                         },
                         "mysqlHost": {
                             "type": "string",
-                            "description": "The mysql cache backend host",
+                            "description": "The mysql registry backend host",
                             "default": "localhost"
                         },
                         "mysqlPort": {
                             "type": "number",
-                            "description": "The mysql cache backend port",
+                            "description": "The mysql registry backend port",
                             "default": 3306
                         },
                         "mysqlDbName": {
                             "type": "string",
-                            "description": "The mysql cache backend db name",
+                            "description": "The mysql registry backend db name",
                             "default": "buz"
                         },
                         "mysqlUser": {
                             "type": "string",
-                            "description": "The mysql cache backend user",
+                            "description": "The mysql registry backend user",
                             "default": "buz"
                         },
                         "mysqlPass": {
                             "type": "string",
-                            "description": "The mysql cache backend password",
+                            "description": "The mysql registry backend password",
                             "default": "buz"
                         },
                         "mzHost": {
                             "type": "string",
-                            "description": "The materialize cache backend host",
+                            "description": "The materialize registry backend host",
                             "default": "localhost"
                         },
                         "mzPort": {
                             "type": "number",
-                            "description": "The materialize cache backend port",
+                            "description": "The materialize registry backend port",
                             "default": 6875
                         },
                         "mzDbName": {
                             "type": "string",
-                            "description": "The materialize cache backend db name",
+                            "description": "The materialize registry backend db name",
                             "default": "materialize"
                         },
                         "mzUser": {
                             "type": "string",
-                            "description": "The materialize cache backend user",
+                            "description": "The materialize registry backend user",
                             "default": "materialize"
                         },
                         "mzPass": {
                             "type": "string",
-                            "description": "The materialize cache backend password",
+                            "description": "The materialize registry backend password",
                             "default": ""
                         },
                         "clickhouseHost": {
                             "type": "string",
-                            "description": "The clickhouse cache backend host",
+                            "description": "The clickhouse registry backend host",
                             "default": "localhost"
                         },
                         "clickhousePort": {
                             "type": "number",
-                            "description": "The clickhouse cache backend port",
+                            "description": "The clickhouse registry backend port",
                             "default": 9000
                         },
                         "clickhouseDbName": {
                             "type": "string",
-                            "description": "The clickhouse cache backend db",
+                            "description": "The clickhouse registry backend db",
                             "default": "buz"
                         },
                         "clickhouseUser": {
                             "type": "string",
-                            "description": "The clickhouse cache backend user",
+                            "description": "The clickhouse registry backend user",
                             "default": "buz"
                         },
                         "clickhousePass": {
                             "type": "string",
-                            "description": "The clickhouse cache backend pass",
+                            "description": "The clickhouse registry backend pass",
                             "default": "buz"
                         },
                         "mongoHosts": {
                             "type": "array",
-                            "description": "The mongodb cache backend hosts",
+                            "description": "The mongodb registry backend hosts",
                             "default": [
                                 "mongodb1",
                                 "mongodb2",
@@ -632,22 +632,22 @@
                         },
                         "mongoPort": {
                             "type": "number",
-                            "description": "The mongodb cache backend port",
+                            "description": "The mongodb registry backend port",
                             "default": "27017"
                         },
                         "mongoDbName": {
                             "type": "string",
-                            "description": "The mongodb cache backend db",
+                            "description": "The mongodb registry backend db",
                             "default": "buz"
                         },
                         "mongoUser": {
                             "type": "string",
-                            "description": "The mongodb cache backend user",
+                            "description": "The mongodb registry backend user",
                             "default": "buz"
                         },
                         "mongoPass": {
                             "type": "string",
-                            "description": "The mongodb cache backend pass",
+                            "description": "The mongodb registry backend pass",
                             "default": "buz"
                         },
                         "minioEndpoint": {
@@ -826,7 +826,7 @@
                 },
                 "purge": {
                     "type": "object",
-                    "description": "Cache purge configuration",
+                    "description": "Registry purge configuration",
                     "properties": {
                         "enabled": {
                             "type": "boolean",
@@ -845,14 +845,14 @@
                         "path"
                     ]
                 },
-                "schemaDirectory": {
+                "http": {
                     "type": "object",
-                    "description": "Schema endpoint configuration",
+                    "description": "Registry http functionality",
                     "properties": {
                         "enabled": {
                             "type": "boolean",
                             "default": "true",
-                            "description": "Whether or not to enable schema cache endpoints"
+                            "description": "Whether or not to expose the registry via HTTP"
                         }
                     },
                     "additionalProperties": false,
@@ -867,7 +867,7 @@
                 "ttlSeconds",
                 "maxSizeBytes",
                 "purge",
-                "schemaDirectory"
+                "http"
             ]
         },
         "sinks": {
@@ -1544,29 +1544,11 @@
                     "type": "boolean",
                     "description": "Whether or not to enable the squawkbox",
                     "default": "true"
-                },
-                "cloudeventsPath": {
-                    "type": "string",
-                    "description": "Path for the cloudevents squawkbox",
-                    "default": "/sqwk/ce"
-                },
-                "snowplowPath": {
-                    "type": "string",
-                    "description": "Path for the snowplow squawkbox",
-                    "default": "/sqwk/sp"
-                },
-                "genericPath": {
-                    "type": "string",
-                    "description": "Path for the generic self-describing events squawkbox",
-                    "default": "/sqwk/gen"
                 }
             },
             "additionalProperties": false,
             "required": [
-                "enabled",
-                "cloudeventsPath",
-                "snowplowPath",
-                "genericPath"
+                "enabled"
             ]
         },
         "tele": {
@@ -1638,7 +1620,7 @@
         "app",
         "middleware",
         "inputs",
-        "schemaCache",
+        "registry",
         "sinks",
         "squawkBox",
         "tele",

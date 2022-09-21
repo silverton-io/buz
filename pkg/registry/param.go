@@ -5,6 +5,6 @@
 package registry
 
 const (
-	SCHEMA_CACHE_ROOT_ROUTE = "/schemas"
+	SCHEMA_CACHE_ROOT_ROUTE = "/s/"
 	SCHEMA_ROUTE_PARAM      = "schema"
 )

@@ -17,7 +17,7 @@ type Registry struct {
 	ttlSeconds   int
 }
 
-func (r *Registry) Initialize(conf config.SchemaCache) error {
+func (r *Registry) Initialize(conf config.Registry) error {
 	cacheBackend, _ := BuildSchemaCacheBackend(conf.Backend) // FIXME - pass err up
 	initErr := InitializeSchemaCacheBackend(conf.Backend, cacheBackend)
 	if initErr != nil {

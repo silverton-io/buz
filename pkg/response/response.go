@@ -24,6 +24,10 @@ var SchemaNotCached = Response{
 	Message: "schema not cached",
 }
 
+var SchemaNotAvailable = Response{
+	Message: "schema not available",
+}
+
 var Timeout = Response{
 	Message: "request timed out",
 }
