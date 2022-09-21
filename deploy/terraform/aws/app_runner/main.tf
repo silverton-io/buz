@@ -136,7 +136,7 @@ resource "null_resource" "configure_docker" {
 
 resource "local_file" "config" {
   filename = "config.yml.build"
-  content = templatefile("config.tftpl", {
+  content = templatefile("config.yml.tftpl", {
     system        = var.system,
     env           = var.env,
     mode          = "debug",

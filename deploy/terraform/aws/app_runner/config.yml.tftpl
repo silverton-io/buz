@@ -3,10 +3,17 @@ version: 1.1
 app:
   name: ${system}
   env: ${env}
-  mode: ${mode}
   port: ${port}
   trackerDomain: ${trackerDomain}
   enableConfigRoute: false
+
+privacy:
+  anonymize:
+    device:
+      ip: false
+      useragent: false
+    user:
+      id: false
 
 middleware:
   timeout:
@@ -52,7 +59,7 @@ inputs:
   cloudevents:
     enabled: true
     path: /cloudevents
-  generic:
+  selfDescribing:
     enabled: true
     path: /self-describing
     contexts:
@@ -68,33 +75,28 @@ inputs:
     enabled: true
     path: /pixel
 
-schemaCache:
+registry:
   backend:
-    type: gcs
+    type: s3
     bucket: ${schemaBucket}
     path: /
+  ttlSeconds: 300
+  maxSizeBytes: 104857600
+  purge:
+    enabled: true
+    path: /cache/purge
+  http:
+    enabled: true
 
 sinks:
   - name: primary
-    type: pubsub
+    type: kinesis-firehose
     deliveryRequired: true
-    validTopic: ${validTopic}
-    invalidTopic: ${invalidTopic}
-    project: ${project}
+    validStream: ${validStream}
+    invalidStream: ${invalidStream}
 
 squawkBox:
   enabled: true
-  cloudeventsPath: /squawkbox/cloudevents
-  snowplowPath: /squawkbox/snowplow
-  genericPath: /squawkbox/self-describing
-
-privacy:
-  anonymize:
-    device:
-      ip: false
-      useragent: false
-    user:
-      id: false
 
 tele:
   enabled: true

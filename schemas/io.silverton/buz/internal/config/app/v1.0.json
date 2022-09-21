@@ -841,7 +841,7 @@
                     },
                     "additionalProperties": false,
                     "required": [
-                        "enabled",
+                    "enabled",
                         "path"
                     ]
                 },

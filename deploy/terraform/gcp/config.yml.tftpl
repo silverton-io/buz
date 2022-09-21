@@ -1,5 +1,12 @@
 version: 1.1
 
+app:
+  name: ${system}
+  env: ${env}
+  port: ${port}
+  trackerDomain: ${trackerDomain}
+  enableConfigRoute: false
+
 privacy:
   anonymize:
     device:
@@ -8,13 +15,6 @@ privacy:
     user:
       id: false
 
-app:
-  name: buz
-  env: development
-  mode: debug
-  port: 8080
-  trackerDomain: localhost
-  enableConfigRoute: true
 middleware:
   timeout:
     enabled: false
@@ -23,36 +23,28 @@ middleware:
     enabled: false
     period: S
     limit: 10
-  cookie:
-    enabled: true
-    name: nuid
-    secure: true
-    ttlDays: 365
-    domain: devel.silverton.io
-    path: /
-    sameSite: None
   identity:
     cookie:
       enabled: true
       name: nuid
       secure: true
       ttlDays: 365
-      domain: devel.silverton.io
+      domain: .${cookieDomain}
       path: /
-      sameSite: Lax
-    fallback: "00000000-0000-4000-A000-000000000000"
+      sameSite: None
+    fallback: 00000000-0000-4000-A000-000000000000
   cors:
     enabled: true
     allowOrigin:
       - "*"
-    allowCredentials: false
+    allowCredentials: true
     allowMethods:
       - POST
       - OPTIONS
       - GET
     maxAge: 86400
   requestLogger:
-    enabled: false
+    enabled: true
   yeet:
     enabled: false
 
@@ -61,15 +53,15 @@ inputs:
     enabled: true
     standardRoutesEnabled: true
     openRedirectsEnabled: true
-    getPath: /plw/g
-    postPath: /plw/p
-    redirectPath: /plw/r
+    getPath: /snowplow/g
+    postPath: /snowplow/p
+    redirectPath: /snowplow/r
   cloudevents:
     enabled: true
-    path: /cloudevent
-  generic:
+    path: /cloudevents
+  selfDescribing:
     enabled: true
-    path: /generic
+    path: /self-describing
     contexts:
       rootKey: contexts
     payload:
@@ -78,38 +70,34 @@ inputs:
       dataKey: data
   webhook:
     enabled: true
-    path: /hook
+    path: /webhook
   pixel:
     enabled: true
-    path: /pxl
+    path: /pixel
 
-schemaCache:
+registry:
   backend:
-    type: fs
-    path: schemas/
+    type: gcs
+    bucket: ${schemaBucket}
+    path: /
   ttlSeconds: 300
-  maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
+  maxSizeBytes: 104857600
   purge:
     enabled: true
     path: /c/purge
-  schemaDirectory:
+  http:
     enabled: true
 
 sinks:
-  - name: console
-    type: stdout
+  - name: primary
+    type: pubsub
     deliveryRequired: true
-  - name: file
-    type: file
-    deliveryRequired: true
-    validFile: buz-valid.json
-    invalidFile: buz-invalid.json
+    validTopic: ${validTopic}
+    invalidTopic: ${invalidTopic}
+    project: ${project}
 
 squawkBox:
   enabled: true
-  cloudeventsPath: /sqwk/ce
-  snowplowPath: /sqwk/sp
-  genericPath: /sqwk/gen
 
 tele:
   enabled: true
