@@ -12,7 +12,7 @@ import (
 
 func TestInputConst(t *testing.T) {
 	assert.Equal(t, "snowplow", SNOWPLOW)
-	assert.Equal(t, "generic", GENERIC)
+	assert.Equal(t, "selfDescribing", SELF_DESCRIBING)
 	assert.Equal(t, "cloudevents", CLOUDEVENTS)
 	assert.Equal(t, "webhook", WEBHOOK)
 	assert.Equal(t, "pixel", PIXEL)

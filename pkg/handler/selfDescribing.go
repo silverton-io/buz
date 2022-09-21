@@ -15,10 +15,10 @@ import (
 	"github.com/silverton-io/buz/pkg/response"
 )
 
-func GenericHandler(h params.Handler) gin.HandlerFunc {
+func SelfDescribingHandler(h params.Handler) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/json" {
-			envelopes := envelope.BuildGenericEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
+			envelopes := envelope.BuildSelfDescribingEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 			annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
 			anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, h.Config.Privacy)
 			err := h.Manifold.Distribute(anonymizedEnvelopes, h.ProtocolStats)

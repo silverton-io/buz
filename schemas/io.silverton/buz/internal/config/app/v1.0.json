@@ -38,15 +38,6 @@
                         "production"
                     ]
                 },
-                "mode": {
-                    "type": "string",
-                    "default": "debug",
-                    "description": "Collector mode",
-                    "enum": [
-                        "release",
-                        "debug"
-                    ]
-                },
                 "port": {
                     "type": "integer",
                     "default": "8081",
@@ -67,7 +58,6 @@
             "required": [
                 "name",
                 "env",
-                "mode",
                 "port",
                 "trackerDomain",
                 "enableConfigRoute"

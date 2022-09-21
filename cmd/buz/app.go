@@ -58,9 +58,11 @@ func (a *App) handlerParams() params.Handler {
 func (a *App) configure() {
 	// Set up app logger
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	gin.SetMode("release")
 
 	// Load app config from file
 	conf := os.Getenv(env.BUZ_CONFIG_PATH)
+	debug := os.Getenv(env.DEBUG)
 	if conf == "" {
 		conf = "config.yml"
 	}
@@ -75,8 +77,8 @@ func (a *App) configure() {
 	if err := viper.Unmarshal(a.config); err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not unmarshal config")
 	}
-	gin.SetMode(a.config.App.Mode)
-	if gin.IsDebugging() {
+	if debug != "" {
+		gin.SetMode("debug")
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
 	a.config.App.Version = VERSION
@@ -205,11 +207,11 @@ func (a *App) initializeSnowplowRoutes() {
 	}
 }
 
-func (a *App) initializeGenericRoutes() {
-	if a.config.Inputs.Generic.Enabled {
+func (a *App) initializeSelfDescribingRoutes() {
+	if a.config.Inputs.SelfDescribing.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing generic routes")
-		a.engine.POST(a.config.Inputs.Generic.Path, handler.GenericHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.SelfDescribing.Path, handler.SelfDescribingHandler(handlerParams))
 	}
 }
 
@@ -243,10 +245,12 @@ func (a *App) initializeSquawkboxRoutes() {
 	if a.config.Squawkbox.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing squawkbox routes")
-		a.engine.POST(a.config.Squawkbox.CloudeventsPath, handler.SquawkboxHandler(handlerParams, protocol.CLOUDEVENTS))
-		a.engine.POST(a.config.Squawkbox.GenericPath, handler.SquawkboxHandler(handlerParams, protocol.GENERIC))
-		a.engine.POST(a.config.Squawkbox.SnowplowPath, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
-		a.engine.GET(a.config.Squawkbox.SnowplowPath, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
+		a.engine.POST(constants.SQUAWKBOX_CLOUDEVENTS_PATH, handler.SquawkboxHandler(handlerParams, protocol.CLOUDEVENTS))
+		a.engine.POST(constants.SQUAWKBOX_SNOWPLOW_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
+		a.engine.GET(constants.SQUAWKBOX_SNOWPLOW_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
+		a.engine.POST(constants.SQUAWKBOX_SELF_DESCRIBING_PATH, handler.SquawkboxHandler(handlerParams, protocol.SELF_DESCRIBING))
+		a.engine.GET(constants.SQUAWKBOX_PIXEL_PATH, handler.SquawkboxHandler(handlerParams, protocol.PIXEL))
+		a.engine.POST(constants.SQUAWKBOX_WEBHOOK_PATH, handler.SquawkboxHandler(handlerParams, protocol.WEBHOOK))
 	}
 }
 
@@ -262,7 +266,7 @@ func (a *App) Initialize() {
 	a.initializeOpsRoutes()
 	a.initializeSchemaCacheRoutes()
 	a.initializeSnowplowRoutes()
-	a.initializeGenericRoutes()
+	a.initializeSelfDescribingRoutes()
 	a.initializeCloudeventsRoutes()
 	a.initializeWebhookRoutes()
 	a.initializePixelRoutes()

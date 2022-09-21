@@ -16,7 +16,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func BuildGenericEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []Envelope {
+func BuildSelfDescribingEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []Envelope {
 	var envelopes []Envelope
 	reqBody, err := io.ReadAll(c.Request.Body)
 	if err != nil {
@@ -25,12 +25,12 @@ func BuildGenericEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *me
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
 		n := buildCommonEnvelope(c, conf.Middleware, m)
-		genEvent, err := generic.BuildEvent(e, conf.Generic)
+		genEvent, err := generic.BuildEvent(e, conf.SelfDescribing)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not build generic event")
 		}
 		// Event meta
-		n.EventMeta.Protocol = protocol.GENERIC
+		n.EventMeta.Protocol = protocol.SELF_DESCRIBING
 		n.EventMeta.Schema = genEvent.Payload.Schema
 		// Context
 		n.Contexts = &genEvent.Contexts

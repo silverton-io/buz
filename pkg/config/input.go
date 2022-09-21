@@ -5,9 +5,9 @@
 package config
 
 type Inputs struct {
-	Snowplow    `json:"snowplow"`
-	Cloudevents `json:"cloudevents"`
-	Generic     `json:"generic"`
-	Webhook     `json:"webhook"`
-	Pixel       `json:"pixel"`
+	Snowplow       `json:"snowplow"`
+	Cloudevents    `json:"cloudevents"`
+	SelfDescribing `json:"selfDescribing"`
+	Webhook        `json:"webhook"`
+	Pixel          `json:"pixel"`
 }

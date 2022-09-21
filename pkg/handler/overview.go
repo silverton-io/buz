@@ -35,7 +35,7 @@ func RouteOverviewHandler(conf config.Config) gin.HandlerFunc {
 			RouteOverviewPath:            constants.ROUTE_OVERVIEW_PATH,
 			ConfigOverviewPath:           constants.CONFIG_OVERVIEW_PATH,
 			CloudeventsPath:              conf.Cloudevents.Path,
-			GenericPath:                  conf.Generic.Path,
+			GenericPath:                  conf.SelfDescribing.Path,
 			WebhookPath:                  conf.Webhook.Path,
 			PixelPath:                    conf.Pixel.Path,
 			SnowplowStandardGetPath:      constants.SNOWPLOW_STANDARD_GET_PATH,
