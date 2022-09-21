@@ -179,8 +179,10 @@ func (a *App) initializeSchemaCacheRoutes() {
 		log.Info().Msg("🟢 initializing schema registry cache purge route")
 		a.engine.GET(a.config.Registry.Purge.Path, handler.RegistryCachePurgeHandler(a.registry))
 	}
-	log.Info().Msg("🟢 initializing schema routes")
-	a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, handler.RegistryGetSchemaHandler(a.registry))
+	if a.config.Registry.Http.Enabled {
+		log.Info().Msg("🟢 initializing schema registry routes")
+		a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, handler.RegistryGetSchemaHandler(a.registry))
+	}
 }
 
 func (a *App) initializeSnowplowRoutes() {
