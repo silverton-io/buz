@@ -1,6 +1,6 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "http://registry.silverton.io/io.silverton/segment/spec/common/v1.0.json",
+    "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "io.silverton/segment/spec/common/v1.0.json",
     "title": "io.silverton/segment/spec/common/v1.0.json",
     "description": "Segment common fields spec",
 	"self": {

@@ -1,6 +1,6 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "http://registry.silverton.io/io.silverton/snowplow/page_view/v1.0.json",
+    "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "io.silverton/snowplow/page_view/v1.0.json",
     "title": "io.silverton/snowplow/page_view/v1.0.json",
     "description": "Snowplow Page View Event",
 	"self": {
