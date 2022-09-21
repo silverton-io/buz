@@ -77,7 +77,7 @@ func (a *App) configure() {
 	if err := viper.Unmarshal(a.config); err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not unmarshal config")
 	}
-	if debug != "" {
+	if debug != "" { // FIXME -> Currently if ANY value is passed to DEBUG the system goes into debug mode 🤨
 		gin.SetMode("debug")
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
