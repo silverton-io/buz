@@ -2,7 +2,7 @@
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package cache
+package registry
 
 import (
 	"github.com/coocood/freecache"
@@ -10,41 +10,40 @@ import (
 	"github.com/silverton-io/buz/pkg/config"
 )
 
-type SchemaCache struct {
+type Registry struct {
 	Cache        *freecache.Cache
 	Backend      SchemaCacheBackend
 	maxSizeBytes int
 	ttlSeconds   int
 }
 
-func (s *SchemaCache) Initialize(conf config.SchemaCache) error {
+func (r *Registry) Initialize(conf config.SchemaCache) error {
 	cacheBackend, _ := BuildSchemaCacheBackend(conf.Backend) // FIXME - pass err up
 	initErr := InitializeSchemaCacheBackend(conf.Backend, cacheBackend)
 	if initErr != nil {
 		return initErr
 	}
-	s.Backend = cacheBackend
-	s.Cache = freecache.NewCache(conf.MaxSizeBytes)
-	s.maxSizeBytes = conf.MaxSizeBytes
-	s.ttlSeconds = conf.TtlSeconds
-	log.Info().Msg("🟢 schema cache with " + conf.Type + " backend initialized")
+	r.Backend = cacheBackend
+	r.Cache = freecache.NewCache(conf.MaxSizeBytes)
+	r.maxSizeBytes = conf.MaxSizeBytes
+	r.ttlSeconds = conf.TtlSeconds
 	return nil
 }
 
-func (s *SchemaCache) Get(key string) (exists bool, data []byte) {
+func (r *Registry) Get(key string) (exists bool, data []byte) {
 	k := []byte(key)
-	schemaContents, _ := s.Cache.Get(k)
+	schemaContents, _ := r.Cache.Get(k)
 	if schemaContents != nil { // Schema already cached locally
 		log.Debug().Msg("🟡 found cache key " + key)
 		return true, schemaContents
 	} else { // Schema not yet cached locally - getting from remote backend
-		schemaContents, err := s.Backend.GetRemote(key)
+		schemaContents, err := r.Backend.GetRemote(key)
 		if err != nil { // Error when getting schema from remote backend
 			log.Debug().Msg("error when getting remote schema")
 			return false, nil
 		}
 		log.Debug().Msg("🟡 caching " + key)
-		err = s.Cache.Set(k, schemaContents, s.ttlSeconds)
+		err = r.Cache.Set(k, schemaContents, r.ttlSeconds)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 error when setting key " + key)
 		}

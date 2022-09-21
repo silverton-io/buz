@@ -5,13 +5,11 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	cache "github.com/silverton-io/buz/pkg/cache"
-	"github.com/silverton-io/buz/pkg/response"
+	"github.com/silverton-io/buz/pkg/registry"
 )
 
 type CacheIndex struct {
@@ -19,18 +17,27 @@ type CacheIndex struct {
 	Schemas []string `json:"schemas"`
 }
 
-func CachePurgeHandler(s *cache.SchemaCache) gin.HandlerFunc {
+func CachePurgeHandler(r *registry.Registry) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		log.Debug().Msg("🟡 schema cache purged")
-		s.Cache.Clear()
+		r.Cache.Clear()
 	}
 	return gin.HandlerFunc(fn)
 }
 
-func CacheIndexHandler(s *cache.SchemaCache) gin.HandlerFunc {
+func RegistrySchemaHandler(r *registry.Registry) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+
+	}
+	return gin.HandlerFunc(fn)
+}
+
+// func RegistryIndexHandler(){} TODO! Fix this.
+
+func CacheIndexHandler(r *registry.Registry) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		var schemaKeys = make([]string, 0)
-		iter := s.Cache.NewIterator()
+		iter := r.Cache.NewIterator()
 		for {
 			entry := iter.Next()
 			if entry == nil {
@@ -44,29 +51,6 @@ func CacheIndexHandler(s *cache.SchemaCache) gin.HandlerFunc {
 			Schemas: schemaKeys,
 		}
 		c.JSON(http.StatusOK, index)
-	}
-	return gin.HandlerFunc(fn)
-}
-
-func CacheGetHandler(s *cache.SchemaCache) gin.HandlerFunc {
-	fn := func(c *gin.Context) {
-		schemaName := c.Param(cache.SCHEMA_ROUTE_PARAM)[1:]
-		cacheKey := []byte(schemaName)
-		cachedSchema, _ := s.Cache.Get(cacheKey)
-		if cachedSchema != nil {
-			var schema interface{}
-			err := json.Unmarshal(cachedSchema, &schema)
-			if err != nil {
-				log.Error().Stack().Err(err).Msg("🔴 could not unmarshal cached schema")
-				c.JSON(http.StatusBadRequest, response.BadRequest)
-				return
-			}
-			c.JSON(http.StatusOK, schema)
-			return
-		} else {
-			c.JSON(http.StatusNotFound, response.SchemaNotCached)
-			return
-		}
 	}
 	return gin.HandlerFunc(fn)
 }

@@ -19,7 +19,7 @@ import (
 func SnowplowHandler(h params.Handler) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		envelopes := envelope.BuildSnowplowEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
-		annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
+		annotatedEnvelopes := annotator.Annotate(envelopes, h.Registry)
 		anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, h.Config.Privacy)
 		err := h.Manifold.Distribute(anonymizedEnvelopes, h.ProtocolStats)
 		if err != nil {

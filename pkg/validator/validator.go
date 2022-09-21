@@ -6,12 +6,12 @@ package validator
 
 import (
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/buz/pkg/cache"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/event"
+	"github.com/silverton-io/buz/pkg/registry"
 )
 
-func ValidatePayload(schemaName string, payload event.Payload, cache *cache.SchemaCache) (isValid bool, validationError envelope.ValidationError, schema []byte) {
+func ValidatePayload(schemaName string, payload event.Payload, registry *registry.Registry) (isValid bool, validationError envelope.ValidationError, schema []byte) {
 	// FIXME- Short-circuit if the event is an unknown event
 	if schemaName == "" {
 		validationError := envelope.ValidationError{
@@ -21,7 +21,7 @@ func ValidatePayload(schemaName string, payload event.Payload, cache *cache.Sche
 		}
 		return false, validationError, nil
 	}
-	schemaExists, schemaContents := cache.Get(schemaName)
+	schemaExists, schemaContents := registry.Get(schemaName)
 	if !schemaExists {
 		validationError := envelope.ValidationError{
 			ErrorType:       &NoSchemaInBackend.Type,

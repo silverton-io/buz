@@ -29,7 +29,7 @@ func SquawkboxHandler(h params.Handler, eventProtocol string) gin.HandlerFunc {
 		case protocol.WEBHOOK:
 			envelopes = envelope.BuildWebhookEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		}
-		annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
+		annotatedEnvelopes := annotator.Annotate(envelopes, h.Registry)
 		c.JSON(http.StatusOK, annotatedEnvelopes)
 	}
 	return gin.HandlerFunc(fn)
