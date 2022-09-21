@@ -103,5 +103,5 @@
   ],
   "additionalProperties": false,
   "type": "object",
-  "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json"
+  "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json"
 }

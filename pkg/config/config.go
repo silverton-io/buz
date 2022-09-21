@@ -5,13 +5,13 @@
 package config
 
 type Config struct {
-	App         `json:"app"`
-	Middleware  `json:"middleware"`
-	Inputs      `json:"inputs"`
-	SchemaCache `json:"schemaCache"`
-	Manifold    `json:"manifold,omitempty"`
-	Sinks       []Sink `json:"sinks"`
-	Squawkbox   `json:"squawkBox"`
-	Privacy     `json:"privacy"`
-	Tele        `json:"tele"`
+	App        `json:"app"`
+	Middleware `json:"middleware"`
+	Inputs     `json:"inputs"`
+	Registry   `json:"registry"`
+	Manifold   `json:"manifold,omitempty"`
+	Sinks      []Sink `json:"sinks"`
+	Squawkbox  `json:"squawkBox"`
+	Privacy    `json:"privacy"`
+	Tele       `json:"tele"`
 }

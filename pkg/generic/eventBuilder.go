@@ -11,7 +11,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func BuildEvent(e gjson.Result, conf config.Generic) (GenericEvent, error) {
+func BuildEvent(e gjson.Result, conf config.SelfDescribing) (GenericEvent, error) {
 	var sdPayload event.SelfDescribingPayload
 	c := e.Get(conf.Contexts.RootKey).Value()
 	var contexts map[string]interface{}

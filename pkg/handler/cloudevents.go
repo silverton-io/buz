@@ -19,7 +19,7 @@ func CloudeventsHandler(h params.Handler) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/cloudevents+json" || c.ContentType() == "application/cloudevents-batch+json" {
 			envelopes := envelope.BuildCloudeventEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
-			annotatedEnvelopes := annotator.Annotate(envelopes, h.Cache)
+			annotatedEnvelopes := annotator.Annotate(envelopes, h.Registry)
 			anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, h.Config.Privacy)
 			err := h.Manifold.Distribute(anonymizedEnvelopes, h.ProtocolStats)
 			if err != nil {

@@ -1,6 +1,6 @@
 {
-    "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
-    "$id": "http://registry.silverton.io/io.silverton/buz/example/gettingStarted/v1.0.json",
+    "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "io.silverton/buz/example/gettingStarted/v1.0.json",
     "title": "io.silverton/buz/example/gettingStarted/v1.0.json",
     "description": "A getting started event used to bootstrap and demonstrate validation",
     "owner": {

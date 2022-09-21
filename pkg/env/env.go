@@ -5,3 +5,4 @@
 package env
 
 const BUZ_CONFIG_PATH = "BUZ_CONFIG_PATH"
+const DEBUG = "DEBUG"

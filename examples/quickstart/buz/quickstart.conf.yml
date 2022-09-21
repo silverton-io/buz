@@ -1,17 +1,20 @@
 version: 1.1
 
+privacy:
+  anonymize:
+    device:
+      ip: false
+      useragent: false
+    user:
+      id: false
+
 app:
   name: buz
   env: development
-  mode: debug
   port: 8080
   trackerDomain: quickstart.silverton.io
-  health:
-    enabled: true
-    path: /health
-  stats:
-    enabled: true
-    path: /stats
+  enableConfigRoute: true
+
 middleware:
   timeout:
     enabled: false
@@ -56,9 +59,9 @@ inputs:
   cloudevents:
     enabled: true
     path: /cloudevents
-  generic:
+  selfDescribing:
     enabled: true
-    path: /generic
+    path: /self-describing
     contexts:
       rootKey: contexts
     payload:
@@ -72,16 +75,16 @@ inputs:
     enabled: true
     path: /pxl
 
-schemaCache:
+registry:
   backend:
     type: fs
     path: /schemas/
   ttlSeconds: 300
-  maxSizeBytes: 104857600 # 100mb -> 100 * 1024 * 1024
+  maxSizeBytes: 104857600
   purge:
     enabled: true
     path: /c/purge
-  schemaDirectory:
+  http:
     enabled: true
 
 sinks:
@@ -100,17 +103,6 @@ sinks:
 
 squawkBox:
   enabled: true
-  cloudeventsPath: /sqwk/ce
-  snowplowPath: /sqwk/sp
-  genericPath: /sqwk/gen
-
-privacy:
-  anonymize:
-    device:
-      ip: false
-      useragent: false
-    user:
-      id: false
 
 tele:
   enabled: true

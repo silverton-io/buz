@@ -1,6 +1,6 @@
 {
-    "$schema": "http://registry.silverton.io/io.silverton/buz/internal/meta/v1.0.json",
-    "$id": "http://registry.silverton.io/io.silverton/buz/tele/shutdown/v1.0.json",
+    "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "io.silverton/buz/tele/shutdown/v1.0.json",
     "title": "io.silverton/buz/tele/shutdown/v1.0.json",
     "description": "Buz shutdown event",
     "owner": {

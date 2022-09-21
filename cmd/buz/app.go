@@ -16,7 +16,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/buz/pkg/cache"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/env"
@@ -26,6 +25,7 @@ import (
 	"github.com/silverton-io/buz/pkg/middleware"
 	"github.com/silverton-io/buz/pkg/params"
 	"github.com/silverton-io/buz/pkg/protocol"
+	"github.com/silverton-io/buz/pkg/registry"
 	"github.com/silverton-io/buz/pkg/sink"
 	"github.com/silverton-io/buz/pkg/stats"
 	"github.com/silverton-io/buz/pkg/tele"
@@ -37,7 +37,7 @@ var VERSION string
 type App struct {
 	config        *config.Config
 	engine        *gin.Engine
-	schemaCache   *cache.SchemaCache
+	registry      *registry.Registry
 	manifold      *manifold.SimpleManifold
 	sinks         []sink.Sink
 	collectorMeta *meta.CollectorMeta
@@ -47,7 +47,7 @@ type App struct {
 func (a *App) handlerParams() params.Handler {
 	params := params.Handler{
 		Config:        a.config,
-		Cache:         a.schemaCache,
+		Registry:      a.registry,
 		Manifold:      a.manifold,
 		CollectorMeta: a.collectorMeta,
 		ProtocolStats: a.stats,
@@ -58,9 +58,11 @@ func (a *App) handlerParams() params.Handler {
 func (a *App) configure() {
 	// Set up app logger
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	gin.SetMode("release")
 
 	// Load app config from file
 	conf := os.Getenv(env.BUZ_CONFIG_PATH)
+	debug := os.Getenv(env.DEBUG)
 	if conf == "" {
 		conf = "config.yml"
 	}
@@ -75,8 +77,8 @@ func (a *App) configure() {
 	if err := viper.Unmarshal(a.config); err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not unmarshal config")
 	}
-	gin.SetMode(a.config.App.Mode)
-	if gin.IsDebugging() {
+	if debug != "" { // FIXME -> Currently if ANY value is passed to DEBUG the system goes into debug mode 🤨
+		gin.SetMode("debug")
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
 	a.config.App.Version = VERSION
@@ -91,13 +93,13 @@ func (a *App) initializeStats() {
 	a.stats = &ps
 }
 
-func (a *App) initializeSchemaCache() {
-	log.Info().Msg("🟢 initializing schema cache")
-	cache := cache.SchemaCache{}
-	if err := cache.Initialize(a.config.SchemaCache); err != nil {
+func (a *App) initializeRegistry() {
+	log.Info().Msg("🟢 initializing schema registry")
+	registry := registry.Registry{}
+	if err := registry.Initialize(a.config.Registry); err != nil {
 		panic(err)
 	}
-	a.schemaCache = &cache
+	a.registry = &registry
 }
 
 func (a *App) initializeSinks() {
@@ -158,6 +160,8 @@ func (a *App) initializeMiddleware() {
 }
 
 func (a *App) initializeOpsRoutes() {
+	log.Info().Msg("🟢 initializing buz route")
+	a.engine.GET("/", handler.BuzHandler())
 	log.Info().Msg("🟢 initializing health check route")
 	a.engine.GET(constants.HEALTH_PATH, handler.HealthcheckHandler)
 	log.Info().Msg("🟢 initializing stats route")
@@ -171,14 +175,13 @@ func (a *App) initializeOpsRoutes() {
 }
 
 func (a *App) initializeSchemaCacheRoutes() {
-	if a.config.SchemaCache.Purge.Enabled {
-		log.Info().Msg("🟢 initializing schema cache purge route")
-		a.engine.GET(a.config.SchemaCache.Purge.Path, handler.CachePurgeHandler(a.schemaCache))
+	if a.config.Registry.Purge.Enabled {
+		log.Info().Msg("🟢 initializing schema registry cache purge route")
+		a.engine.GET(a.config.Registry.Purge.Path, handler.RegistryCachePurgeHandler(a.registry))
 	}
-	if a.config.SchemaCache.SchemaDirectory.Enabled {
-		log.Info().Msg("🟢 initializing schema cache index and getter routes")
-		a.engine.GET(cache.SCHEMA_CACHE_ROOT_ROUTE, handler.CacheIndexHandler(a.schemaCache))
-		a.engine.GET(cache.SCHEMA_CACHE_ROOT_ROUTE+"/*"+cache.SCHEMA_ROUTE_PARAM, handler.CacheGetHandler(a.schemaCache))
+	if a.config.Registry.Http.Enabled {
+		log.Info().Msg("🟢 initializing schema registry routes")
+		a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, handler.RegistryGetSchemaHandler(a.registry))
 	}
 }
 
@@ -205,11 +208,11 @@ func (a *App) initializeSnowplowRoutes() {
 	}
 }
 
-func (a *App) initializeGenericRoutes() {
-	if a.config.Inputs.Generic.Enabled {
+func (a *App) initializeSelfDescribingRoutes() {
+	if a.config.Inputs.SelfDescribing.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing generic routes")
-		a.engine.POST(a.config.Inputs.Generic.Path, handler.GenericHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.SelfDescribing.Path, handler.SelfDescribingHandler(handlerParams))
 	}
 }
 
@@ -243,10 +246,12 @@ func (a *App) initializeSquawkboxRoutes() {
 	if a.config.Squawkbox.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing squawkbox routes")
-		a.engine.POST(a.config.Squawkbox.CloudeventsPath, handler.SquawkboxHandler(handlerParams, protocol.CLOUDEVENTS))
-		a.engine.POST(a.config.Squawkbox.GenericPath, handler.SquawkboxHandler(handlerParams, protocol.GENERIC))
-		a.engine.POST(a.config.Squawkbox.SnowplowPath, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
-		a.engine.GET(a.config.Squawkbox.SnowplowPath, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
+		a.engine.POST(constants.SQUAWKBOX_CLOUDEVENTS_PATH, handler.SquawkboxHandler(handlerParams, protocol.CLOUDEVENTS))
+		a.engine.POST(constants.SQUAWKBOX_SNOWPLOW_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
+		a.engine.GET(constants.SQUAWKBOX_SNOWPLOW_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
+		a.engine.POST(constants.SQUAWKBOX_SELF_DESCRIBING_PATH, handler.SquawkboxHandler(handlerParams, protocol.SELF_DESCRIBING))
+		a.engine.GET(constants.SQUAWKBOX_PIXEL_PATH, handler.SquawkboxHandler(handlerParams, protocol.PIXEL))
+		a.engine.POST(constants.SQUAWKBOX_WEBHOOK_PATH, handler.SquawkboxHandler(handlerParams, protocol.WEBHOOK))
 	}
 }
 
@@ -256,13 +261,13 @@ func (a *App) Initialize() {
 	a.initializeStats()
 	a.initializeSinks()
 	a.initializeManifold()
-	a.initializeSchemaCache()
+	a.initializeRegistry()
 	a.initializeRouter()
 	a.initializeMiddleware()
 	a.initializeOpsRoutes()
 	a.initializeSchemaCacheRoutes()
 	a.initializeSnowplowRoutes()
-	a.initializeGenericRoutes()
+	a.initializeSelfDescribingRoutes()
 	a.initializeCloudeventsRoutes()
 	a.initializeWebhookRoutes()
 	a.initializePixelRoutes()

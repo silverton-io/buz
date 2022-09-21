@@ -64,7 +64,7 @@ resource "google_secret_manager_secret" "buz_config" {
 
 resource "google_secret_manager_secret_version" "buz_config" {
   secret = google_secret_manager_secret.buz_config.id
-  secret_data = templatefile("config.tftpl", {
+  secret_data = templatefile("config.yml.tftpl", {
     project       = var.gcp_project,
     system        = var.system,
     env           = var.env,

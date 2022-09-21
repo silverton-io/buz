@@ -23,7 +23,7 @@ variable "buz_domain" {
 variable "buz_version" {
   description = "The version of Buz to run. \n\nExample: v0.11.15"
   type        = string
-  default     = "v0.11.15" # The min version that can be run.
+  default     = "v0.12.0"
 }
 
 variable "buz_service_container_concurrency" {

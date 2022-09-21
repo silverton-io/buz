@@ -6,8 +6,8 @@ package annotator
 
 import (
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/buz/pkg/cache"
 	"github.com/silverton-io/buz/pkg/envelope"
+	"github.com/silverton-io/buz/pkg/registry"
 	"github.com/silverton-io/buz/pkg/validator"
 	"github.com/tidwall/gjson"
 )
@@ -26,11 +26,11 @@ func getMetadataFromSchema(schema []byte) envelope.EventMeta {
 	}
 }
 
-func Annotate(envelopes []envelope.Envelope, cache *cache.SchemaCache) []envelope.Envelope {
+func Annotate(envelopes []envelope.Envelope, registry *registry.Registry) []envelope.Envelope {
 	var e []envelope.Envelope
 	for _, envelope := range envelopes {
 		log.Debug().Msg("🟡 annotating event")
-		isValid, validationError, schemaContents := validator.ValidatePayload(envelope.EventMeta.Schema, envelope.Payload, cache)
+		isValid, validationError, schemaContents := validator.ValidatePayload(envelope.EventMeta.Schema, envelope.Payload, registry)
 		envelope.Validation.IsValid = &isValid
 		if !isValid {
 			envelope.Validation.Error = &validationError

@@ -1,6 +1,6 @@
 {
     "yaml.schemas": {
-        "http://registry.silverton.io/io.silverton/buz/internal/config/app/v1.0.json": "/*conf*.yml"
-        // "./schemas/io.silverton/buz/internal/config/app/v1.0.json": "/*conf*.yml"
+        "https://registry.buz.dev/s/io.silverton/buz/internal/config/app/v1.0.json": "/*conf*.yml"
+        // "./schemas/io.silverton/buz/internal/config/app/v1.0.json": "/*conf*.yml*"
     }
 }
