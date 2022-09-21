@@ -23,7 +23,7 @@ type Backend struct {
 	// Http
 	Host string `json:"host,omitempty"`
 	// Db, general
-	RegistryTable string `json:"registryTable"`
+	RegistryTable string `json:"registryTable,omitempty"`
 	// Postgres Database
 	PgHost   string `json:"-"`
 	PgPort   uint16 `json:"-"`

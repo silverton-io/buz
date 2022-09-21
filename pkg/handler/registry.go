@@ -22,7 +22,7 @@ func RegistryCachePurgeHandler(r *registry.Registry) gin.HandlerFunc {
 
 func RegistryGetSchemaHandler(r *registry.Registry) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		schemaName := c.Param(registry.SCHEMA_ROUTE_PARAM)[1:]
+		schemaName := c.Param(registry.SCHEMA_PARAM)[1:]
 		exists, schemaContents := r.Get(schemaName)
 		if !exists {
 			c.JSON(404, response.SchemaNotAvailable)

@@ -180,7 +180,7 @@ func (a *App) initializeSchemaCacheRoutes() {
 		a.engine.GET(a.config.Registry.Purge.Path, handler.RegistryCachePurgeHandler(a.registry))
 	}
 	log.Info().Msg("🟢 initializing schema routes")
-	a.engine.GET(registry.SCHEMA_CACHE_ROOT_ROUTE+"*"+registry.SCHEMA_ROUTE_PARAM, handler.RegistryGetSchemaHandler(a.registry))
+	a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, handler.RegistryGetSchemaHandler(a.registry))
 }
 
 func (a *App) initializeSnowplowRoutes() {

@@ -8,42 +8,64 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
+	r "github.com/silverton-io/buz/pkg/registry"
 )
 
+type systemPaths struct {
+	Health         string `json:"health"`
+	Stats          string `json:"stats"`
+	RouteOverview  string `json:"routeOverview"`
+	ConfigOverview string `json:"configOverview"`
+}
+
+type snowplowPaths struct {
+	Get      []string `json:"get"`
+	Post     []string `json:"post"`
+	Redirect []string `json:"redirect"`
+}
+
+type inputPaths struct {
+	Cloudevents    string        `json:"cloudevents"`
+	SelfDescribing string        `json:"selfDescribing"`
+	Webhook        string        `json:"webhook"`
+	Pixel          string        `json:"pixel"`
+	Snowplow       snowplowPaths `json:"snowplow"`
+}
+
+type registryPaths struct {
+	Base string `json:"base"`
+}
+
 type RoutesResponse struct {
-	HealthPath                   string `json:"healthPath"`
-	StatsPath                    string `json:"statsPath"`
-	RouteOverviewPath            string `json:"routeOverviewPath"`
-	ConfigOverviewPath           string `json:"configOverviewPath"`
-	CloudeventsPath              string `json:"cloudeventsPath"`
-	GenericPath                  string `json:"genericPath"`
-	WebhookPath                  string `json:"webhookPath"`
-	PixelPath                    string `json:"pixelPath"`
-	SnowplowStandardGetPath      string `json:"snowplowStandardGetPath"`
-	SnowplowGetPath              string `json:"snowplowGetPath"`
-	SnowplowStandardPostPath     string `json:"snowplowStandardPostPath"`
-	SnowplowPostPath             string `json:"snowplowPostPath"`
-	SnowplowStandardRedirectPath string `json:"snowplowStandardRedirectPath"`
-	SnowplowRedirectPath         string `json:"snowplowRedirectPath"`
+	systemPaths   `json:"system"`
+	inputPaths    `json:"input"`
+	registryPaths `json:"registry"`
 }
 
 func RouteOverviewHandler(conf config.Config) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
+		sp := snowplowPaths{
+			Get:      []string{constants.SNOWPLOW_STANDARD_GET_PATH, conf.Snowplow.GetPath},
+			Post:     []string{constants.SNOWPLOW_STANDARD_POST_PATH, conf.Snowplow.PostPath},
+			Redirect: []string{constants.SNOWPLOW_STANDARD_REDIRECT_PATH, conf.Snowplow.RedirectPath},
+		}
 		resp := RoutesResponse{
-			HealthPath:                   constants.HEALTH_PATH,
-			StatsPath:                    constants.STATS_PATH,
-			RouteOverviewPath:            constants.ROUTE_OVERVIEW_PATH,
-			ConfigOverviewPath:           constants.CONFIG_OVERVIEW_PATH,
-			CloudeventsPath:              conf.Cloudevents.Path,
-			GenericPath:                  conf.SelfDescribing.Path,
-			WebhookPath:                  conf.Webhook.Path,
-			PixelPath:                    conf.Pixel.Path,
-			SnowplowStandardGetPath:      constants.SNOWPLOW_STANDARD_GET_PATH,
-			SnowplowGetPath:              conf.Snowplow.GetPath,
-			SnowplowStandardPostPath:     constants.SNOWPLOW_STANDARD_POST_PATH,
-			SnowplowPostPath:             conf.Snowplow.PostPath,
-			SnowplowStandardRedirectPath: constants.SNOWPLOW_STANDARD_REDIRECT_PATH,
-			SnowplowRedirectPath:         conf.Snowplow.RedirectPath,
+			systemPaths{
+				Health:         constants.HEALTH_PATH,
+				Stats:          constants.STATS_PATH,
+				RouteOverview:  constants.ROUTE_OVERVIEW_PATH,
+				ConfigOverview: constants.CONFIG_OVERVIEW_PATH,
+			},
+			inputPaths{
+				Snowplow:       sp,
+				Cloudevents:    conf.Cloudevents.Path,
+				SelfDescribing: conf.SelfDescribing.Path,
+				Webhook:        conf.Webhook.Path,
+				Pixel:          conf.Pixel.Path,
+			},
+			registryPaths{
+				Base: r.SCHEMAS_ROUTE,
+			},
 		}
 		c.JSON(200, resp)
 	}

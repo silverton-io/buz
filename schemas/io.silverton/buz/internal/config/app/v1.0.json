@@ -357,14 +357,14 @@
                         "path"
                     ]
                 },
-                "generic": {
+                "selfDescribing": {
                     "type": "object",
-                    "description": "Generic self-describing events collector configuration",
+                    "description": "Arbitrary self-describing events collector configuration",
                     "properties": {
                         "enabled": {
                             "type": "boolean",
                             "default": "true",
-                            "description": "Whether or not to activate generic self-describing event tracking"
+                            "description": "Whether or not to activate arbitrary self-describing event tracking"
                         },
                         "path": {
                             "type": "string",
@@ -466,7 +466,7 @@
             "required": [
                 "snowplow",
                 "cloudevents",
-                "generic",
+                "selfDescribing",
                 "webhook",
                 "pixel"
             ]
