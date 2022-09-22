@@ -13,6 +13,7 @@ import (
 	cloudevents "github.com/silverton-io/buz/pkg/inputCloudevents"
 	pixel "github.com/silverton-io/buz/pkg/inputPixel"
 	selfdescribing "github.com/silverton-io/buz/pkg/inputSelfDescribing"
+	snowplow "github.com/silverton-io/buz/pkg/inputSnowplow"
 	webhook "github.com/silverton-io/buz/pkg/inputWebhook"
 	"github.com/silverton-io/buz/pkg/params"
 	"github.com/silverton-io/buz/pkg/protocol"
@@ -23,7 +24,7 @@ func SquawkboxHandler(h params.Handler, eventProtocol string) gin.HandlerFunc {
 		var envelopes []envelope.Envelope
 		switch eventProtocol {
 		case protocol.SNOWPLOW:
-			envelopes = envelope.BuildSnowplowEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
+			envelopes = snowplow.BuildEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		case protocol.CLOUDEVENTS:
 			envelopes = cloudevents.BuildEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		case protocol.SELF_DESCRIBING:

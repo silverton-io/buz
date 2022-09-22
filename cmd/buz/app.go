@@ -23,6 +23,7 @@ import (
 	inputcloudevents "github.com/silverton-io/buz/pkg/inputCloudevents"
 	inputpixel "github.com/silverton-io/buz/pkg/inputPixel"
 	"github.com/silverton-io/buz/pkg/inputSelfDescribing"
+	inputsnowplow "github.com/silverton-io/buz/pkg/inputSnowplow"
 	inputwebhook "github.com/silverton-io/buz/pkg/inputWebhook"
 	"github.com/silverton-io/buz/pkg/manifold"
 	"github.com/silverton-io/buz/pkg/meta"
@@ -195,19 +196,19 @@ func (a *App) initializeSnowplowRoutes() {
 		log.Info().Msg("🟢 initializing snowplow routes")
 		if a.config.Inputs.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("🟢 initializing standard snowplow routes")
-			a.engine.GET(constants.SNOWPLOW_STANDARD_GET_PATH, handler.SnowplowHandler(handlerParams))
-			a.engine.POST(constants.SNOWPLOW_STANDARD_POST_PATH, handler.SnowplowHandler(handlerParams))
+			a.engine.GET(constants.SNOWPLOW_STANDARD_GET_PATH, inputsnowplow.Handler(handlerParams))
+			a.engine.POST(constants.SNOWPLOW_STANDARD_POST_PATH, inputsnowplow.Handler(handlerParams))
 			if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("🟢 initializing standard open redirect route")
-				a.engine.GET(constants.SNOWPLOW_STANDARD_REDIRECT_PATH, handler.SnowplowHandler(handlerParams))
+				a.engine.GET(constants.SNOWPLOW_STANDARD_REDIRECT_PATH, inputsnowplow.Handler(handlerParams))
 			}
 		}
 		log.Info().Msg("🟢 initializing custom snowplow routes")
-		a.engine.GET(a.config.Inputs.Snowplow.GetPath, handler.SnowplowHandler(handlerParams))
-		a.engine.POST(a.config.Inputs.Snowplow.PostPath, handler.SnowplowHandler(handlerParams))
+		a.engine.GET(a.config.Inputs.Snowplow.GetPath, inputsnowplow.Handler(handlerParams))
+		a.engine.POST(a.config.Inputs.Snowplow.PostPath, inputsnowplow.Handler(handlerParams))
 		if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
 			log.Info().Msg("🟢 initializing custom open redirect route")
-			a.engine.GET(a.config.Inputs.Snowplow.RedirectPath, handler.SnowplowHandler(handlerParams))
+			a.engine.GET(a.config.Inputs.Snowplow.RedirectPath, inputsnowplow.Handler(handlerParams))
 		}
 	}
 }

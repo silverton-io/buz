@@ -2,7 +2,7 @@
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package envelope
+package inputsnowplow
 
 import (
 	"io"
@@ -10,15 +10,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/protocol"
-	"github.com/silverton-io/buz/pkg/snowplow"
 	"github.com/silverton-io/buz/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
-func buildSnowplowEnvelope(c *gin.Context, conf *config.Config, e snowplow.SnowplowEvent, m *meta.CollectorMeta) Envelope {
-	n := BuildCommonEnvelope(c, conf.Middleware, m)
+func buildSnowplowEnvelope(c *gin.Context, conf *config.Config, e SnowplowEvent, m *meta.CollectorMeta) envelope.Envelope {
+	n := envelope.BuildCommonEnvelope(c, conf.Middleware, m)
 	// Event Meta
 	n.EventMeta.Protocol = protocol.SNOWPLOW
 	n.EventMeta.Schema = *e.SelfDescribingEvent.SchemaName()
@@ -29,8 +29,8 @@ func buildSnowplowEnvelope(c *gin.Context, conf *config.Config, e snowplow.Snowp
 	if e.DomainUserid != nil {
 		n.Device.Id = *e.DomainUserid
 	}
-	n.Device.Os = &Os{Timezone: e.OsTimezone}
-	n.Device.Browser = &Browser{
+	n.Device.Os = &envelope.Os{Timezone: e.OsTimezone}
+	n.Device.Browser = &envelope.Browser{
 		Lang:           e.BrLang,
 		Cookies:        e.BrCookies,
 		ColorDepth:     e.BrColordepth,
@@ -42,25 +42,25 @@ func buildSnowplowEnvelope(c *gin.Context, conf *config.Config, e snowplow.Snowp
 		DocumentHeight: e.DocHeight,
 		DocumentWidth:  e.DocWidth,
 	}
-	n.Device.Screen = &Screen{
+	n.Device.Screen = &envelope.Screen{
 		Resolution: e.DvceScreenResolution,
 		Height:     e.DvceScreenHeight,
 		Width:      e.DvceScreenWidth,
 	}
 	// User
-	n.User = &User{
+	n.User = &envelope.User{
 		Id:          e.Userid,
 		Fingerprint: e.UserFingerprint,
 	}
 	// Session
-	n.Session = &Session{
+	n.Session = &envelope.Session{
 		Id:  e.DomainSessionId,
 		Idx: e.DomainSessionIdx,
 	}
 	// Page
-	n.Web = &Web{
-		Page:     PageAttrs{},
-		Referrer: PageAttrs{},
+	n.Web = &envelope.Web{
+		Page:     envelope.PageAttrs{},
+		Referrer: envelope.PageAttrs{},
 	}
 	n.Web.Page.Url = *e.PageUrl
 	n.Web.Page.Title = e.PageTitle
@@ -94,8 +94,8 @@ func buildSnowplowEnvelope(c *gin.Context, conf *config.Config, e snowplow.Snowp
 	return n
 }
 
-func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []Envelope {
-	var envelopes []Envelope
+func BuildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []envelope.Envelope {
+	var envelopes []envelope.Envelope
 	if c.Request.Method == "POST" {
 		body, err := io.ReadAll(c.Request.Body)
 		if err != nil {
@@ -104,13 +104,13 @@ func BuildSnowplowEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *m
 		}
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
-			spEvent := snowplow.BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), *conf)
+			spEvent := BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), *conf)
 			e := buildSnowplowEnvelope(c, conf, spEvent, m)
 			envelopes = append(envelopes, e)
 		}
 	} else {
 		params := util.MapUrlParams(c)
-		spEvent := snowplow.BuildEventFromMappedParams(c, params, *conf)
+		spEvent := BuildEventFromMappedParams(c, params, *conf)
 		e := buildSnowplowEnvelope(c, conf, spEvent, m)
 		envelopes = append(envelopes, e)
 	}
