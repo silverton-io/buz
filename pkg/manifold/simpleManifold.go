@@ -13,7 +13,9 @@ import (
 	"github.com/silverton-io/buz/pkg/stats"
 )
 
-// A stupid-simple manifold with strict guarantees
+// A stupid-simple manifold with strict guarantees.
+// This manifold requires buffering at the client level for substantial event volumes.
+// Otherwise there is a change it will overload the configured sink(s).
 type SimpleManifold struct {
 	sinks *[]sink.Sink
 }

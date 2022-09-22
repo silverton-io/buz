@@ -9,6 +9,5 @@ const (
 	SNOWPLOW_STANDARD_POST_PATH     = "/com.snowplowanalytics.snowplow/tp2"
 	SNOWPLOW_STANDARD_REDIRECT_PATH = "/r/tp2"
 
-	SQUAWKBOX_SNOWPLOW_PATH        = "/squawk/snowplow"
-	SQUAWKBOX_SELF_DESCRIBING_PATH = "/squawk/self-describing"
+	SQUAWKBOX_SNOWPLOW_PATH = "/squawk/snowplow"
 )

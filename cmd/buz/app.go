@@ -22,6 +22,7 @@ import (
 	"github.com/silverton-io/buz/pkg/handler"
 	inputcloudevents "github.com/silverton-io/buz/pkg/inputCloudevents"
 	inputpixel "github.com/silverton-io/buz/pkg/inputPixel"
+	"github.com/silverton-io/buz/pkg/inputSelfDescribing"
 	inputwebhook "github.com/silverton-io/buz/pkg/inputWebhook"
 	"github.com/silverton-io/buz/pkg/manifold"
 	"github.com/silverton-io/buz/pkg/meta"
@@ -215,7 +216,7 @@ func (a *App) initializeSelfDescribingRoutes() {
 	if a.config.Inputs.SelfDescribing.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing generic routes")
-		a.engine.POST(a.config.Inputs.SelfDescribing.Path, handler.SelfDescribingHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.SelfDescribing.Path, inputSelfDescribing.Handler(handlerParams))
 	}
 }
 
@@ -252,7 +253,7 @@ func (a *App) initializeSquawkboxRoutes() {
 		a.engine.POST(inputcloudevents.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.CLOUDEVENTS))
 		a.engine.POST(constants.SQUAWKBOX_SNOWPLOW_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
 		a.engine.GET(constants.SQUAWKBOX_SNOWPLOW_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
-		a.engine.POST(constants.SQUAWKBOX_SELF_DESCRIBING_PATH, handler.SquawkboxHandler(handlerParams, protocol.SELF_DESCRIBING))
+		a.engine.POST(inputSelfDescribing.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.SELF_DESCRIBING))
 		a.engine.GET(inputpixel.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.PIXEL))
 		a.engine.POST(inputwebhook.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.WEBHOOK))
 	}
