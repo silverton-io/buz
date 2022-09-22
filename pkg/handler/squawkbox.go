@@ -10,6 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/buz/pkg/annotator"
 	"github.com/silverton-io/buz/pkg/envelope"
+	cloudevents "github.com/silverton-io/buz/pkg/inputCloudevents"
+	pixel "github.com/silverton-io/buz/pkg/inputPixel"
+	webhook "github.com/silverton-io/buz/pkg/inputWebhook"
 	"github.com/silverton-io/buz/pkg/params"
 	"github.com/silverton-io/buz/pkg/protocol"
 )
@@ -20,14 +23,14 @@ func SquawkboxHandler(h params.Handler, eventProtocol string) gin.HandlerFunc {
 		switch eventProtocol {
 		case protocol.SNOWPLOW:
 			envelopes = envelope.BuildSnowplowEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
-		// case protocol.CLOUDEVENTS:
-		// 	envelopes = envelope.BuildCloudeventEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
+		case protocol.CLOUDEVENTS:
+			envelopes = cloudevents.BuildEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		case protocol.SELF_DESCRIBING:
 			envelopes = envelope.BuildSelfDescribingEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		case protocol.PIXEL:
-			envelopes = envelope.BuildPixelEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
+			envelopes = pixel.BuildEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		case protocol.WEBHOOK:
-			envelopes = envelope.BuildWebhookEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
+			envelopes = webhook.BuildEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		}
 		annotatedEnvelopes := annotator.Annotate(envelopes, h.Registry)
 		c.JSON(http.StatusOK, annotatedEnvelopes)

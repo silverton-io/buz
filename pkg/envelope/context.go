@@ -11,7 +11,7 @@ import (
 
 const HTTP_HEADERS_CONTEXT string = "io.silverton/buz/internal/contexts/httpHeaders/v1.0.json"
 
-func buildContextsFromRequest(c *gin.Context) map[string]interface{} {
+func BuildContextsFromRequest(c *gin.Context) map[string]interface{} {
 	headers := util.HttpHeadersToMap(c)
 	context := map[string]interface{}{
 		HTTP_HEADERS_CONTEXT: headers,

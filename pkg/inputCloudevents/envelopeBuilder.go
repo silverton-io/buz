@@ -16,7 +16,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func BuildCloudeventEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []envelope.Envelope {
+func BuildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []envelope.Envelope {
 	var envelopes []envelope.Envelope
 	reqBody, err := io.ReadAll(c.Request.Body)
 	if err != nil {

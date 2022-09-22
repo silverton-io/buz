@@ -21,6 +21,8 @@ import (
 	"github.com/silverton-io/buz/pkg/env"
 	"github.com/silverton-io/buz/pkg/handler"
 	inputcloudevents "github.com/silverton-io/buz/pkg/inputCloudevents"
+	inputpixel "github.com/silverton-io/buz/pkg/inputPixel"
+	inputwebhook "github.com/silverton-io/buz/pkg/inputWebhook"
 	"github.com/silverton-io/buz/pkg/manifold"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/middleware"
@@ -229,8 +231,8 @@ func (a *App) initializeWebhookRoutes() {
 	if a.config.Inputs.Webhook.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing webhook routes")
-		a.engine.POST(a.config.Inputs.Webhook.Path, handler.WebhookHandler(handlerParams))
-		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+constants.BUZ_SCHEMA_PARAM, handler.WebhookHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Webhook.Path, inputwebhook.Handler(handlerParams))
+		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+constants.BUZ_SCHEMA_PARAM, inputwebhook.Handler(handlerParams))
 	}
 }
 
@@ -238,8 +240,8 @@ func (a *App) initializePixelRoutes() {
 	if a.config.Inputs.Pixel.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing pixel routes")
-		a.engine.GET(a.config.Inputs.Pixel.Path, handler.PixelHandler(handlerParams))
-		a.engine.GET(a.config.Inputs.Pixel.Path+"/*"+constants.BUZ_SCHEMA_PARAM, handler.PixelHandler(handlerParams))
+		a.engine.GET(a.config.Inputs.Pixel.Path, inputpixel.Handler(handlerParams))
+		a.engine.GET(a.config.Inputs.Pixel.Path+"/*"+constants.BUZ_SCHEMA_PARAM, inputpixel.Handler(handlerParams))
 	}
 }
 
@@ -251,8 +253,8 @@ func (a *App) initializeSquawkboxRoutes() {
 		a.engine.POST(constants.SQUAWKBOX_SNOWPLOW_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
 		a.engine.GET(constants.SQUAWKBOX_SNOWPLOW_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
 		a.engine.POST(constants.SQUAWKBOX_SELF_DESCRIBING_PATH, handler.SquawkboxHandler(handlerParams, protocol.SELF_DESCRIBING))
-		a.engine.GET(constants.SQUAWKBOX_PIXEL_PATH, handler.SquawkboxHandler(handlerParams, protocol.PIXEL))
-		a.engine.POST(constants.SQUAWKBOX_WEBHOOK_PATH, handler.SquawkboxHandler(handlerParams, protocol.WEBHOOK))
+		a.engine.GET(inputpixel.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.PIXEL))
+		a.engine.POST(inputwebhook.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.WEBHOOK))
 	}
 }
 
