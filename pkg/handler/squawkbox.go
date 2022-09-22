@@ -20,8 +20,8 @@ func SquawkboxHandler(h params.Handler, eventProtocol string) gin.HandlerFunc {
 		switch eventProtocol {
 		case protocol.SNOWPLOW:
 			envelopes = envelope.BuildSnowplowEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
-		case protocol.CLOUDEVENTS:
-			envelopes = envelope.BuildCloudeventEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
+		// case protocol.CLOUDEVENTS:
+		// 	envelopes = envelope.BuildCloudeventEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		case protocol.SELF_DESCRIBING:
 			envelopes = envelope.BuildSelfDescribingEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
 		case protocol.PIXEL:

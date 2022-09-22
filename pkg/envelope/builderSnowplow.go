@@ -18,7 +18,7 @@ import (
 )
 
 func buildSnowplowEnvelope(c *gin.Context, conf *config.Config, e snowplow.SnowplowEvent, m *meta.CollectorMeta) Envelope {
-	n := buildCommonEnvelope(c, conf.Middleware, m)
+	n := BuildCommonEnvelope(c, conf.Middleware, m)
 	// Event Meta
 	n.EventMeta.Protocol = protocol.SNOWPLOW
 	n.EventMeta.Schema = *e.SelfDescribingEvent.SchemaName()

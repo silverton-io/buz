@@ -20,6 +20,7 @@ import (
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/env"
 	"github.com/silverton-io/buz/pkg/handler"
+	inputcloudevents "github.com/silverton-io/buz/pkg/inputCloudevents"
 	"github.com/silverton-io/buz/pkg/manifold"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/middleware"
@@ -177,11 +178,11 @@ func (a *App) initializeOpsRoutes() {
 func (a *App) initializeSchemaCacheRoutes() {
 	if a.config.Registry.Purge.Enabled {
 		log.Info().Msg("🟢 initializing schema registry cache purge route")
-		a.engine.GET(a.config.Registry.Purge.Path, handler.RegistryCachePurgeHandler(a.registry))
+		a.engine.GET(a.config.Registry.Purge.Path, registry.PurgeCacheHandler(a.registry))
 	}
 	if a.config.Registry.Http.Enabled {
 		log.Info().Msg("🟢 initializing schema registry routes")
-		a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, handler.RegistryGetSchemaHandler(a.registry))
+		a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, registry.GetSchemaHandler(a.registry))
 	}
 }
 
@@ -220,7 +221,7 @@ func (a *App) initializeCloudeventsRoutes() {
 	if a.config.Inputs.Cloudevents.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing cloudevents routes")
-		a.engine.POST(a.config.Inputs.Cloudevents.Path, handler.CloudeventsHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Cloudevents.Path, inputcloudevents.Handler(handlerParams))
 	}
 }
 
@@ -246,7 +247,7 @@ func (a *App) initializeSquawkboxRoutes() {
 	if a.config.Squawkbox.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing squawkbox routes")
-		a.engine.POST(constants.SQUAWKBOX_CLOUDEVENTS_PATH, handler.SquawkboxHandler(handlerParams, protocol.CLOUDEVENTS))
+		a.engine.POST(inputcloudevents.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.CLOUDEVENTS))
 		a.engine.POST(constants.SQUAWKBOX_SNOWPLOW_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
 		a.engine.GET(constants.SQUAWKBOX_SNOWPLOW_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
 		a.engine.POST(constants.SQUAWKBOX_SELF_DESCRIBING_PATH, handler.SquawkboxHandler(handlerParams, protocol.SELF_DESCRIBING))
