@@ -1,6 +1,6 @@
 locals {
-  buz_config_var  = "HONEYPOT_CONFIG_PATH"
-  buz_config_path = "/etc/buz"
+  buz_config_var  = "BUZ_CONFIG_PATH"
+  buz_config_path = "/etc/buz/config.yml"
   activate_apis = [
     "artifactregistry.googleapis.com",
     "run.googleapis.com",

@@ -1,7 +1,7 @@
 locals {
   domain_parts        = split(".", var.buz_domain)
   cookie_domain       = join(".", slice(local.domain_parts, 1, length(local.domain_parts))) # Assumes Buz is running on a subdomain and the cookie should be on root
-  buz_config_var      = "HONEYPOT_CONFIG_PATH"
+  buz_config_var      = "BUZ_CONFIG_PATH"
   buz_config_path     = "/etc/buz/config.yml"
   system_env_base     = "${var.system}-${var.env}-"
   artifact_repository = "${local.system_env_base}img"
