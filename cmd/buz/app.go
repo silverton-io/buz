@@ -47,6 +47,7 @@ type App struct {
 	sinks         []sink.Sink
 	collectorMeta *meta.CollectorMeta
 	stats         *stats.ProtocolStats
+	debug         bool
 }
 
 func (a *App) handlerParams() params.Handler {
@@ -82,9 +83,14 @@ func (a *App) configure() {
 	if err := viper.Unmarshal(a.config); err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not unmarshal config")
 	}
-	if debug != "" { // FIXME -> Currently if ANY value is passed to DEBUG the system goes into debug mode 🤨
-		gin.SetMode("debug")
+	if debug != "" && (debug == "true" || debug == "1" || debug == "True") {
+		// Put gin, logging, and request logging into debug mode
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		log.Warn().Msg("🟡 DEBUG flag set - setting gin mode to debug")
+		gin.SetMode("debug")
+		log.Warn().Msg("🟡 DEBUG flag set - activating request logger")
+		a.config.Middleware.RequestLogger.Enabled = true
+		a.debug = true
 	}
 	a.config.App.Version = VERSION
 	meta := meta.BuildCollectorMeta(VERSION, a.config)
@@ -280,7 +286,8 @@ func (a *App) Initialize() {
 }
 
 func (a *App) Run() {
-	log.Info().Interface("config", a.config).Msg("🐝🐝🐝 buz is running! 🐝🐝🐝")
+	log.Debug().Interface("config", a.config).Msg("running 🐝 with config")
+	log.Info().Msg("🐝🐝🐝 buz is running 🐝🐝🐝")
 	tele.Metry(a.config, a.collectorMeta)
 	srv := &http.Server{
 		Addr:    ":" + a.config.App.Port,

@@ -13,7 +13,6 @@ import (
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/protocol"
-	"github.com/silverton-io/buz/pkg/webhook"
 	"github.com/tidwall/gjson"
 )
 
@@ -27,7 +26,7 @@ func BuildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
 		n := envelope.BuildCommonEnvelope(c, conf.Middleware, m)
 		contexts := envelope.BuildContextsFromRequest(c)
-		sde, err := webhook.BuildEvent(c, e)
+		sde, err := buildEvent(c, e)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not build webhook event")
 		}

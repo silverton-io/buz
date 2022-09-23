@@ -2,6 +2,7 @@
 config.yml
 scratch/*
 testprofile.out
+cmd/scratch/*
 # File sink
 buz-valid.json
 buz-invalid.json

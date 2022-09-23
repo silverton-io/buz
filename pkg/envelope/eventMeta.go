@@ -7,6 +7,7 @@ package envelope
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -28,4 +29,23 @@ func (e EventMeta) Value() (driver.Value, error) {
 
 func (e EventMeta) Scan(input interface{}) error {
 	return json.Unmarshal(input.([]byte), &e)
+}
+
+// Return the desired database schema name using event metadata.
+// An event with `com.something` vendor should be directed into
+// a `com_something` schema.
+func (e *EventMeta) DbSchemaName() string {
+	return strings.Replace(e.Vendor, ".", "_", -1)
+}
+
+// Return the desired database table name using event metadata.
+// An event with a namespace of `some.namespace.something` and
+// a version of `1.0` and/or `1.1` should be directed into
+// a `some_namespace_something_1` table.
+func (e *EventMeta) DbTableName() string {
+	ns := strings.Replace(e.Namespace, ".", "_", -1)
+	// Only worry about the major version of the schema since minors are backwards-compat
+	version := strings.Replace(e.Version, ".", "_", -1)
+	majorVersion := strings.Split(version, "_")[0]
+	return ns + "_" + majorVersion
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func BuildEvent(payload gjson.Result) (CloudEvent, error) {
+func buildEvent(payload gjson.Result) (CloudEvent, error) {
 	event := CloudEvent{}
 	event.DataContentType = "application/json" // Always
 

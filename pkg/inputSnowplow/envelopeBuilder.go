@@ -104,13 +104,13 @@ func BuildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 		}
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
-			spEvent := BuildEventFromMappedParams(c, event.Value().(map[string]interface{}), *conf)
+			spEvent := buildEventFromMappedParams(c, event.Value().(map[string]interface{}), *conf)
 			e := buildSnowplowEnvelope(c, conf, spEvent, m)
 			envelopes = append(envelopes, e)
 		}
 	} else {
 		params := util.MapUrlParams(c)
-		spEvent := BuildEventFromMappedParams(c, params, *conf)
+		spEvent := buildEventFromMappedParams(c, params, *conf)
 		e := buildSnowplowEnvelope(c, conf, spEvent, m)
 		envelopes = append(envelopes, e)
 	}
