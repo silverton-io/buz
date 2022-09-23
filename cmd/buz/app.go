@@ -20,6 +20,11 @@ import (
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/env"
 	"github.com/silverton-io/buz/pkg/handler"
+	inputcloudevents "github.com/silverton-io/buz/pkg/inputCloudevents"
+	inputpixel "github.com/silverton-io/buz/pkg/inputPixel"
+	"github.com/silverton-io/buz/pkg/inputSelfDescribing"
+	inputsnowplow "github.com/silverton-io/buz/pkg/inputSnowplow"
+	inputwebhook "github.com/silverton-io/buz/pkg/inputWebhook"
 	"github.com/silverton-io/buz/pkg/manifold"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/middleware"
@@ -177,11 +182,11 @@ func (a *App) initializeOpsRoutes() {
 func (a *App) initializeSchemaCacheRoutes() {
 	if a.config.Registry.Purge.Enabled {
 		log.Info().Msg("🟢 initializing schema registry cache purge route")
-		a.engine.GET(a.config.Registry.Purge.Path, handler.RegistryCachePurgeHandler(a.registry))
+		a.engine.GET(a.config.Registry.Purge.Path, registry.PurgeCacheHandler(a.registry))
 	}
 	if a.config.Registry.Http.Enabled {
 		log.Info().Msg("🟢 initializing schema registry routes")
-		a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, handler.RegistryGetSchemaHandler(a.registry))
+		a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, registry.GetSchemaHandler(a.registry))
 	}
 }
 
@@ -191,19 +196,19 @@ func (a *App) initializeSnowplowRoutes() {
 		log.Info().Msg("🟢 initializing snowplow routes")
 		if a.config.Inputs.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("🟢 initializing standard snowplow routes")
-			a.engine.GET(constants.SNOWPLOW_STANDARD_GET_PATH, handler.SnowplowHandler(handlerParams))
-			a.engine.POST(constants.SNOWPLOW_STANDARD_POST_PATH, handler.SnowplowHandler(handlerParams))
+			a.engine.GET(constants.SNOWPLOW_STANDARD_GET_PATH, inputsnowplow.Handler(handlerParams))
+			a.engine.POST(constants.SNOWPLOW_STANDARD_POST_PATH, inputsnowplow.Handler(handlerParams))
 			if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("🟢 initializing standard open redirect route")
-				a.engine.GET(constants.SNOWPLOW_STANDARD_REDIRECT_PATH, handler.SnowplowHandler(handlerParams))
+				a.engine.GET(constants.SNOWPLOW_STANDARD_REDIRECT_PATH, inputsnowplow.Handler(handlerParams))
 			}
 		}
 		log.Info().Msg("🟢 initializing custom snowplow routes")
-		a.engine.GET(a.config.Inputs.Snowplow.GetPath, handler.SnowplowHandler(handlerParams))
-		a.engine.POST(a.config.Inputs.Snowplow.PostPath, handler.SnowplowHandler(handlerParams))
+		a.engine.GET(a.config.Inputs.Snowplow.GetPath, inputsnowplow.Handler(handlerParams))
+		a.engine.POST(a.config.Inputs.Snowplow.PostPath, inputsnowplow.Handler(handlerParams))
 		if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
 			log.Info().Msg("🟢 initializing custom open redirect route")
-			a.engine.GET(a.config.Inputs.Snowplow.RedirectPath, handler.SnowplowHandler(handlerParams))
+			a.engine.GET(a.config.Inputs.Snowplow.RedirectPath, inputsnowplow.Handler(handlerParams))
 		}
 	}
 }
@@ -212,7 +217,7 @@ func (a *App) initializeSelfDescribingRoutes() {
 	if a.config.Inputs.SelfDescribing.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing generic routes")
-		a.engine.POST(a.config.Inputs.SelfDescribing.Path, handler.SelfDescribingHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.SelfDescribing.Path, inputSelfDescribing.Handler(handlerParams))
 	}
 }
 
@@ -220,7 +225,7 @@ func (a *App) initializeCloudeventsRoutes() {
 	if a.config.Inputs.Cloudevents.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing cloudevents routes")
-		a.engine.POST(a.config.Inputs.Cloudevents.Path, handler.CloudeventsHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Cloudevents.Path, inputcloudevents.Handler(handlerParams))
 	}
 }
 
@@ -228,8 +233,8 @@ func (a *App) initializeWebhookRoutes() {
 	if a.config.Inputs.Webhook.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing webhook routes")
-		a.engine.POST(a.config.Inputs.Webhook.Path, handler.WebhookHandler(handlerParams))
-		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+constants.BUZ_SCHEMA_PARAM, handler.WebhookHandler(handlerParams))
+		a.engine.POST(a.config.Inputs.Webhook.Path, inputwebhook.Handler(handlerParams))
+		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+constants.BUZ_SCHEMA_PARAM, inputwebhook.Handler(handlerParams))
 	}
 }
 
@@ -237,8 +242,8 @@ func (a *App) initializePixelRoutes() {
 	if a.config.Inputs.Pixel.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing pixel routes")
-		a.engine.GET(a.config.Inputs.Pixel.Path, handler.PixelHandler(handlerParams))
-		a.engine.GET(a.config.Inputs.Pixel.Path+"/*"+constants.BUZ_SCHEMA_PARAM, handler.PixelHandler(handlerParams))
+		a.engine.GET(a.config.Inputs.Pixel.Path, inputpixel.Handler(handlerParams))
+		a.engine.GET(a.config.Inputs.Pixel.Path+"/*"+constants.BUZ_SCHEMA_PARAM, inputpixel.Handler(handlerParams))
 	}
 }
 
@@ -246,12 +251,12 @@ func (a *App) initializeSquawkboxRoutes() {
 	if a.config.Squawkbox.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing squawkbox routes")
-		a.engine.POST(constants.SQUAWKBOX_CLOUDEVENTS_PATH, handler.SquawkboxHandler(handlerParams, protocol.CLOUDEVENTS))
-		a.engine.POST(constants.SQUAWKBOX_SNOWPLOW_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
-		a.engine.GET(constants.SQUAWKBOX_SNOWPLOW_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
-		a.engine.POST(constants.SQUAWKBOX_SELF_DESCRIBING_PATH, handler.SquawkboxHandler(handlerParams, protocol.SELF_DESCRIBING))
-		a.engine.GET(constants.SQUAWKBOX_PIXEL_PATH, handler.SquawkboxHandler(handlerParams, protocol.PIXEL))
-		a.engine.POST(constants.SQUAWKBOX_WEBHOOK_PATH, handler.SquawkboxHandler(handlerParams, protocol.WEBHOOK))
+		a.engine.POST(inputcloudevents.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.CLOUDEVENTS))
+		a.engine.POST(inputsnowplow.SQUAWKBOX_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
+		a.engine.GET(inputsnowplow.SQUAWKBOX_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
+		a.engine.POST(inputSelfDescribing.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.SELF_DESCRIBING))
+		a.engine.GET(inputpixel.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.PIXEL))
+		a.engine.POST(inputwebhook.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.WEBHOOK))
 	}
 }
 

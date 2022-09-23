@@ -5,6 +5,9 @@
 package middleware
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
 	"strings"
 	"time"
 
@@ -20,6 +23,7 @@ type request struct {
 	ClientIp                 string        `json:"clientIp"`
 	RequestMethod            string        `json:"requestMethod"`
 	RequestUri               string        `json:"requestUri"`
+	Body                     interface{}   `json:"body"`
 }
 
 func getIp(c *gin.Context) string {
@@ -39,9 +43,25 @@ func getIp(c *gin.Context) string {
 func RequestLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now().UTC()
-		c.Next()
 		end := time.Now().UTC()
 		duration := util.GetDuration(start, end)
+		buf, _ := io.ReadAll(c.Request.Body)
+		r1 := io.NopCloser(bytes.NewBuffer(buf))
+		r2 := io.NopCloser(bytes.NewBuffer(buf))
+		reqBody, err := io.ReadAll(r1)
+		c.Request.Body = r2
+		c.Next()
+		if err != nil {
+			log.Error().Err(err).Msg("could not read request body")
+		}
+
+		var b interface{}
+		err = json.Unmarshal(reqBody, &b)
+
+		if err != nil {
+			log.Error().Err(err).Msg("could not unmarshal request body")
+		}
+
 		r := request{
 			ResponseCode:             c.Writer.Status(),
 			RequestDuration:          duration,
@@ -49,7 +69,8 @@ func RequestLogger() gin.HandlerFunc {
 			ClientIp:                 getIp(c),
 			RequestMethod:            c.Request.Method,
 			RequestUri:               c.Request.RequestURI,
+			Body:                     b,
 		}
-		log.Info().Interface("🟢 request", r).Msg("")
+		log.Info().Interface("request", r).Msg("🟢")
 	}
 }

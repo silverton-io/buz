@@ -15,7 +15,7 @@ import (
 	"github.com/silverton-io/buz/pkg/util"
 )
 
-func buildCommonEnvelope(c *gin.Context, conf config.Middleware, m *meta.CollectorMeta) Envelope {
+func BuildCommonEnvelope(c *gin.Context, conf config.Middleware, m *meta.CollectorMeta) Envelope {
 	identity := util.GetIdentityOrFallback(c, conf)
 	now := time.Now().UTC()
 	envelope := Envelope{
