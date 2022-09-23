@@ -9,10 +9,10 @@ privacy:
       id: false
 
 app:
-  name: buz-quickstart
+  name: buz-bootstrap
   env: development
   port: 8080
-  trackerDomain: quickstart.silverton.io
+  trackerDomain: bootstrap.silverton.io
   enableConfigRoute: true
 
 middleware:
@@ -78,7 +78,7 @@ inputs:
 registry:
   backend:
     type: fs
-    path: /schemas/
+    path: ./schemas/
   ttlSeconds: 300
   maxSizeBytes: 104857600
   purge:
@@ -88,16 +88,7 @@ registry:
     enabled: true
 
 sinks:
-  - name: primary
-    type: kafka
-    deliveryRequired: true
-    kafkaBrokers:
-      - redpanda-1:29092 # internally advertised
-      - redpanda-2:29093 # internally advertised
-      - redpanda-3:29094 # internally advertised
-    invalidTopic: hpt-invalid
-    validTopic: hpt-valid
-  - name: secondary
+  - name: easyfeedback
     type: stdout
     deliveryRequired: true
 
