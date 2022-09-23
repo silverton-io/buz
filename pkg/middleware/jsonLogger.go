@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"strings"
 	"time"
 
@@ -46,9 +45,9 @@ func RequestLogger() gin.HandlerFunc {
 		start := time.Now().UTC()
 		end := time.Now().UTC()
 		duration := util.GetDuration(start, end)
-		buf, _ := ioutil.ReadAll(c.Request.Body)
-		r1 := ioutil.NopCloser(bytes.NewBuffer(buf))
-		r2 := ioutil.NopCloser(bytes.NewBuffer(buf))
+		buf, _ := io.ReadAll(c.Request.Body)
+		r1 := io.NopCloser(bytes.NewBuffer(buf))
+		r2 := io.NopCloser(bytes.NewBuffer(buf))
 		reqBody, err := io.ReadAll(r1)
 		c.Request.Body = r2
 		c.Next()
