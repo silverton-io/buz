@@ -10,14 +10,13 @@ import (
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/meta"
-	"github.com/silverton-io/buz/pkg/pixel"
 	"github.com/silverton-io/buz/pkg/protocol"
 )
 
 // NOTE - one envelope per request
 func BuildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []envelope.Envelope {
 	var envelopes []envelope.Envelope
-	sde, err := pixel.BuildEvent(c)
+	sde, err := buildEvent(c)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not build pixel event")
 	}

@@ -2,7 +2,7 @@
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package generic
+package inputSelfDescribing
 
 import (
 	"github.com/rs/zerolog/log"
@@ -11,7 +11,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func BuildEvent(e gjson.Result, conf config.SelfDescribing) (GenericEvent, error) {
+func buildEvent(e gjson.Result, conf config.SelfDescribing) (GenericEvent, error) {
 	var sdPayload event.SelfDescribingPayload
 	c := e.Get(conf.Contexts.RootKey).Value()
 	var contexts map[string]interface{}

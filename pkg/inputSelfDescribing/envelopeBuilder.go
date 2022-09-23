@@ -11,7 +11,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
-	"github.com/silverton-io/buz/pkg/generic"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/protocol"
 	"github.com/tidwall/gjson"
@@ -26,7 +25,7 @@ func BuildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
 		n := envelope.BuildCommonEnvelope(c, conf.Middleware, m)
-		genEvent, err := generic.BuildEvent(e, conf.SelfDescribing)
+		genEvent, err := buildEvent(e, conf.SelfDescribing)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not build generic event")
 		}

@@ -2,7 +2,7 @@
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package pixel
+package inputpixel
 
 import (
 	b64 "encoding/base64"
@@ -18,7 +18,7 @@ const (
 	ARBITRARY_PIXEL_SCHEMA    string = "io.silverton/buz/pixel/arbitrary/v1.0.json"
 )
 
-func BuildEvent(c *gin.Context) (event.SelfDescribingPayload, error) {
+func buildEvent(c *gin.Context) (event.SelfDescribingPayload, error) {
 	params := util.MapUrlParams(c)
 	schemaName := util.GetSchemaNameFromRequest(c, ARBITRARY_PIXEL_SCHEMA)
 	base64EncodedPayload := params[B64_ENCODED_PAYLOAD_PARAM]

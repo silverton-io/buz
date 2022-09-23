@@ -2,7 +2,7 @@
 // You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package webhook
+package inputwebhook
 
 import (
 	"github.com/gin-gonic/gin"
@@ -13,7 +13,7 @@ import (
 
 const ARBITRARY_WEBHOOK_SCHEMA = "io.silverton/buz/hook/arbitrary/v1.0.json"
 
-func BuildEvent(c *gin.Context, payload gjson.Result) (event.SelfDescribingPayload, error) {
+func buildEvent(c *gin.Context, payload gjson.Result) (event.SelfDescribingPayload, error) {
 	schemaName := util.GetSchemaNameFromRequest(c, ARBITRARY_WEBHOOK_SCHEMA)
 	sdp := event.SelfDescribingPayload{
 		Schema: schemaName,
