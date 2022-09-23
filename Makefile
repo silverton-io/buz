@@ -1,4 +1,4 @@
-.PHONY: help run bootstrap bootstrap-destinations build-docker buildx-deploy test-cover-pkg
+.PHONY: help run build bootstrap bootstrap-destinations build-docker buildx-deploy test-cover-pkg
 S=silverton
 REGISTRY:=us-east1-docker.pkg.dev/silverton-io/docker
 VERSION:=$(shell cat .VERSION)

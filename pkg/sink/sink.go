@@ -31,6 +31,7 @@ const (
 	NATS_JETSTREAM   string = "nats-jetstream"
 	INDICATIVE       string = "indicative"
 	AMPLITUDE        string = "amplitude"
+	DATADOG          string = "datadog"
 )
 
 type Sink interface {
