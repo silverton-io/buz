@@ -359,7 +359,7 @@ func setSelfDescribing(e *SnowplowEvent, params map[string]interface{}) {
 	e.SelfDescribingEvent = getSdPayload(b64EncodedPayload)
 }
 
-func BuildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Config) SnowplowEvent {
+func buildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Config) SnowplowEvent {
 	event := SnowplowEvent{}
 	setTstamps(&event, params)
 	setPlatformMetadata(&event, params, conf)
