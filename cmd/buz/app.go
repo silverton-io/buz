@@ -84,8 +84,12 @@ func (a *App) configure() {
 		log.Fatal().Stack().Err(err).Msg("could not unmarshal config")
 	}
 	if debug != "" && (debug == "true" || debug == "1" || debug == "True") {
-		gin.SetMode("debug")
+		// Put gin, logging, and request logging into debug mode
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		log.Warn().Msg("🟡 DEBUG flag set - setting gin mode to debug")
+		gin.SetMode("debug")
+		log.Warn().Msg("🟡 DEBUG flag set - activating request logger")
+		a.config.Middleware.RequestLogger.Enabled = true
 		a.debug = true
 	}
 	a.config.App.Version = VERSION
