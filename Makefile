@@ -1,4 +1,4 @@
-.PHONY: help run bootstrap bootstrap-destinations build-docker buildx-deploy test-cover-pkg
+.PHONY: help run bootstrap-destinations build-docker buildx-deploy test-cover-pkg
 S=silverton
 REGISTRY:=us-east1-docker.pkg.dev/silverton-io/docker
 VERSION:=$(shell cat .VERSION)
@@ -12,7 +12,7 @@ run: ## Run buz locally
 	go run -ldflags="-X 'main.VERSION=x.x.dev'" $(BUZ_DIR)
 
 bootstrap: ## Bootstrap development environment
-	curl https://raw.githubusercontent.com/silverton-io/buz/main/examples/devel/buz/simple.conf.yml -o config.yml;
+	test -f config.yml || cp ./examples/devel/buz/simple.conf.yml config.yml;
 	make run
 
 bootstrap-destinations: ## Bootstrap various containerized database/stream systems
