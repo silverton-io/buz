@@ -26,13 +26,16 @@ func getMetadataFromSchema(schema []byte) envelope.EventMeta {
 	}
 }
 
-func Annotate(envelopes []envelope.Envelope, registry *registry.Registry, validatorBypass bool) []envelope.Envelope {
+func Annotate(envelopes []envelope.Envelope, registry *registry.Registry) []envelope.Envelope {
 	var e []envelope.Envelope
-	if validatorBypass {
-		return e
-	}
 	for _, envelope := range envelopes {
 		log.Debug().Msg("🟡 annotating event")
+		_, schemaContents := registry.Get(envelope.EventMeta.Schema)
+		disableValidation := gjson.ParseBytes(schemaContents).Get("allOf.properties.disableValidation").Bool()
+		if disableValidation {
+			e = append(e, envelope)
+			continue
+		}
 		isValid, validationError, schemaContents := validator.ValidatePayload(envelope.EventMeta.Schema, envelope.Payload, registry)
 		envelope.Validation.IsValid = &isValid
 		if !isValid {
