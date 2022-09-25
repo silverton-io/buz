@@ -31,16 +31,6 @@ func Annotate(envelopes []envelope.Envelope, registry *registry.Registry) []enve
 	for _, envelope := range envelopes {
 		log.Debug().Msg("🟡 annotating event")
 		_, schemaContents := registry.Get(envelope.EventMeta.Schema)
-		disableValidation := gjson.ParseBytes(schemaContents).Get("allOf.properties.disableValidation").Bool()
-		if disableValidation {
-			e = append(e, envelope)
-			continue
-		}
-		isValid, validationError, schemaContents := validator.ValidatePayload(envelope.EventMeta.Schema, envelope.Payload, registry)
-		envelope.Validation.IsValid = &isValid
-		if !isValid {
-			envelope.Validation.Error = &validationError
-		}
 		m := getMetadataFromSchema(schemaContents)
 		if m.Namespace != "" {
 			envelope.EventMeta.Namespace = m.Namespace
@@ -48,6 +38,16 @@ func Annotate(envelopes []envelope.Envelope, registry *registry.Registry) []enve
 		envelope.EventMeta.Vendor = m.Vendor
 		envelope.EventMeta.Version = m.Version
 		envelope.EventMeta.Format = m.Format
+		disableValidation := gjson.ParseBytes(schemaContents).Get("allOf.properties.disableValidation").Bool()
+		if disableValidation {
+			e = append(e, envelope)
+			continue
+		}
+		isValid, validationError, _ := validator.ValidatePayload(envelope.EventMeta.Schema, envelope.Payload, registry)
+		envelope.Validation.IsValid = &isValid
+		if !isValid {
+			envelope.Validation.Error = &validationError
+		}
 		e = append(e, envelope)
 	}
 	return e
