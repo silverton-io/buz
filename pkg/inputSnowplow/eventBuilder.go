@@ -95,9 +95,21 @@ func getDimensions(dimensionString string) (Dimension, error) {
 	}, nil
 }
 
+func decodeB64Param(param string) ([]byte, error) {
+	payload, err := b64.RawStdEncoding.DecodeString(param)
+	if err != nil {
+		payload, err := b64.StdEncoding.DecodeString(param)
+		if err != nil {
+			return nil, err
+		}
+		return payload, nil
+	}
+	return payload, nil
+}
+
 func getContexts(b64encodedContexts *string) *map[string]interface{} {
 	var contexts = make(map[string]interface{})
-	payload, err := b64.RawStdEncoding.DecodeString(*b64encodedContexts)
+	payload, err := decodeB64Param(*b64encodedContexts)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not decode b64 encoded contexts")
 		return nil
@@ -113,7 +125,7 @@ func getContexts(b64encodedContexts *string) *map[string]interface{} {
 
 func getSdPayload(b64EncodedPayload *string) *event.SelfDescribingPayload {
 	if b64EncodedPayload != nil {
-		payload, err := b64.RawStdEncoding.DecodeString(*b64EncodedPayload)
+		payload, err := decodeB64Param(*b64EncodedPayload)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not decode b64 encoded self describing payload")
 			return nil
