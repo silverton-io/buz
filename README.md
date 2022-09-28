@@ -1,6 +1,6 @@
 # Buz
 
-![agplv3](https://img.shields.io/badge/license-AGPLv3-brightgreen)
+[![License](https://img.shields.io/badge/License-Apache%202.0-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/silverton-io/buz)
 
 ![honey](img/buzz.png)
