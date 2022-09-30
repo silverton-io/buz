@@ -90,6 +90,7 @@ func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, enve
 				envelope.NAMESPACE:      e.EventMeta.Namespace,
 				envelope.VERSION:        e.EventMeta.Version,
 				envelope.FORMAT:         e.EventMeta.Format,
+				envelope.SCHEMA:         e.EventMeta.Schema,
 			},
 		}
 		result := topic.Publish(ctx, msg)
