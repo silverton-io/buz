@@ -100,6 +100,7 @@ func (s *KafkaSink) batchPublish(ctx context.Context, topic string, envelopes []
 			{Key: envelope.NAMESPACE, Value: []byte(e.EventMeta.Namespace)},
 			{Key: envelope.VERSION, Value: []byte(e.EventMeta.Version)},
 			{Key: envelope.FORMAT, Value: []byte(e.EventMeta.Format)},
+			{Key: envelope.SCHEMA, Value: []byte(e.EventMeta.Schema)},
 		}
 		record := &kgo.Record{
 			Key:     []byte(e.EventMeta.Namespace),

@@ -18,6 +18,7 @@ const (
 	FORMAT         string = "format"
 	PATH           string = "path"
 	INPUT_PROTOCOL string = "inputProtocol"
+	SCHEMA         string = "schema"
 )
 
 type Envelope struct {
