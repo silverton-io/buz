@@ -25,14 +25,14 @@ type Envelope struct {
 	db.BasePKeylessModel
 	EventMeta    `json:"event" gorm:"type:json"`
 	Pipeline     `json:"pipeline" gorm:"type:json"`
-	Device       `json:"device" gorm:"type:json"`
-	*User        `json:"user" gorm:"type:json"`
-	*Session     `json:"session" gorm:"type:json"`
-	*Web         `json:"web" gorm:"type:json"`
-	*Annotations `json:"annotations" gorm:"type:json"`
-	*Enrichments `json:"enrichments" gorm:"type:json"`
+	Device       `json:"device,omitempty" gorm:"type:json"`
+	*User        `json:"user,omitempty" gorm:"type:json"`
+	*Session     `json:"session,omitempty" gorm:"type:json"`
+	*Web         `json:"web,omitempty" gorm:"type:json"`
+	*Annotations `json:"annotations,omitempty" gorm:"type:json"`
+	*Enrichments `json:"enrichments,omitempty" gorm:"type:json"`
 	Validation   `json:"validation" gorm:"type:json"`
-	Contexts     *map[string]interface{} `json:"contexts" gorm:"type:json"`
+	Contexts     *map[string]interface{} `json:"contexts,omitempty" gorm:"type:json"`
 	Payload      event.Payload           `json:"payload" gorm:"type:json"`
 }
 

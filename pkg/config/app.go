@@ -11,4 +11,5 @@ type App struct {
 	Port              string `json:"port"`
 	TrackerDomain     string `json:"trackerDomain"`
 	EnableConfigRoute bool   `json:"enableConfigRoute"`
+	Serverless        bool   `json:"serverless"`
 }
