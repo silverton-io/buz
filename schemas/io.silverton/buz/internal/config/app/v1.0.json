@@ -50,8 +50,13 @@
                 },
                 "enableConfigRoute" : {
                     "type": "boolean",
-                    "default": "true",
+                    "default": false,
                     "description": "Whether or not to enable the config route"
+                },
+                "serverless" : {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether or not to run buz in serverless mode"
                 }
             },
             "additionalProperties": false,

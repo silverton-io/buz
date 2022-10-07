@@ -13,6 +13,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/apex/gateway/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -285,15 +286,21 @@ func (a *App) Initialize() {
 	a.initializeSquawkboxRoutes()
 }
 
-func (a *App) Run() {
-	log.Debug().Interface("config", a.config).Msg("running 🐝 with config")
+func (a *App) serverlessMode() {
+	log.Debug().Msg("🟡 Running Buz in serverless mode")
 	log.Info().Msg("🐝🐝🐝 buz is running 🐝🐝🐝")
-	tele.Metry(a.config, a.collectorMeta)
+	gateway.ListenAndServe(":3000", a.engine)
+	tele.Sis(a.collectorMeta)
+}
+
+func (a *App) standardMode() {
+	log.Debug().Msg("🟡 Running Buz in standard mode")
 	srv := &http.Server{
 		Addr:    ":" + a.config.App.Port,
 		Handler: a.engine,
 	}
 	go func() {
+		log.Info().Msg("🐝🐝🐝 buz is running 🐝🐝🐝")
 		if err := srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
 			log.Info().Msgf("🟢 server shut down")
 		}
@@ -309,4 +316,14 @@ func (a *App) Run() {
 		log.Fatal().Stack().Err(err).Msg("server forced to shutdown")
 	}
 	tele.Sis(a.collectorMeta)
+}
+
+func (a *App) Run() {
+	log.Debug().Interface("config", a.config).Msg("running 🐝 with config")
+	tele.Metry(a.config, a.collectorMeta)
+	if a.config.App.Serverless {
+		a.serverlessMode()
+	} else {
+		a.standardMode()
+	}
 }
