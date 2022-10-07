@@ -40,10 +40,11 @@ func Annotate(envelopes []envelope.Envelope, registry *registry.Registry) []enve
 		envelope.EventMeta.Vendor = m.Vendor
 		envelope.EventMeta.Version = m.Version
 		envelope.EventMeta.Format = m.Format
-		envelope.EventMeta.DisableValidation = m.DisableValidation
 		if m.DisableValidation {
 			// If schema-level validation override is in place, treat
 			// the payload as valid. Regardless if that is actually the case.
+			// Stamp the envelope with this context.
+			envelope.EventMeta.DisableValidation = m.DisableValidation
 			valid := true
 			envelope.Validation.IsValid = &valid
 			e = append(e, envelope)
