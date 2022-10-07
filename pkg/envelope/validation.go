@@ -11,7 +11,7 @@ import (
 
 type Validation struct {
 	IsValid *bool            `json:"isValid"`
-	Error   *ValidationError `json:"error"`
+	Error   *ValidationError `json:"error,omitempty"`
 }
 
 func (e Validation) Value() (driver.Value, error) {

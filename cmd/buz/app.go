@@ -289,8 +289,11 @@ func (a *App) Initialize() {
 func (a *App) serverlessMode() {
 	log.Debug().Msg("🟡 Running Buz in serverless mode")
 	log.Info().Msg("🐝🐝🐝 buz is running 🐝🐝🐝")
-	gateway.ListenAndServe(":3000", a.engine)
+	err := gateway.ListenAndServe(":3000", a.engine)
 	tele.Sis(a.collectorMeta)
+	if err != nil {
+		log.Fatal().Err(err)
+	}
 }
 
 func (a *App) standardMode() {

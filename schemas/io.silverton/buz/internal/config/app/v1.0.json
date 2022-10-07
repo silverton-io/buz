@@ -1,6 +1,6 @@
 {
     "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
-    "$id": "io.silverton/buz/internal/config/app/v1.0.json",
+    "$id": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
     "title": "io.silverton/buz/internal/config/app/v1.0.json",
     "description": "Application configuration",
     "owner": {
