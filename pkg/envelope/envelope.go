@@ -1,5 +1,5 @@
 // Copyright (c) 2022 Silverton Data, Inc.
-// You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
+// You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package envelope
@@ -18,20 +18,21 @@ const (
 	FORMAT         string = "format"
 	PATH           string = "path"
 	INPUT_PROTOCOL string = "inputProtocol"
+	SCHEMA         string = "schema"
 )
 
 type Envelope struct {
 	db.BasePKeylessModel
 	EventMeta    `json:"event" gorm:"type:json"`
 	Pipeline     `json:"pipeline" gorm:"type:json"`
-	Device       `json:"device" gorm:"type:json"`
-	*User        `json:"user" gorm:"type:json"`
-	*Session     `json:"session" gorm:"type:json"`
-	*Web         `json:"web" gorm:"type:json"`
-	*Annotations `json:"annotations" gorm:"type:json"`
-	*Enrichments `json:"enrichments" gorm:"type:json"`
+	Device       `json:"device,omitempty" gorm:"type:json"`
+	*User        `json:"user,omitempty" gorm:"type:json"`
+	*Session     `json:"session,omitempty" gorm:"type:json"`
+	*Web         `json:"web,omitempty" gorm:"type:json"`
+	*Annotations `json:"annotations,omitempty" gorm:"type:json"`
+	*Enrichments `json:"enrichments,omitempty" gorm:"type:json"`
 	Validation   `json:"validation" gorm:"type:json"`
-	Contexts     *map[string]interface{} `json:"contexts" gorm:"type:json"`
+	Contexts     *map[string]interface{} `json:"contexts,omitempty" gorm:"type:json"`
 	Payload      event.Payload           `json:"payload" gorm:"type:json"`
 }
 

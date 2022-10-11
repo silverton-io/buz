@@ -1,5 +1,5 @@
 // Copyright (c) 2022 Silverton Data, Inc.
-// You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
+// You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package envelope
@@ -41,9 +41,9 @@ func (s Source) Scan(input interface{}) error {
 }
 
 type Collector struct {
-	Tstamp  time.Time `json:"tstamp,omitempty"`
-	Name    *string   `json:"name,omitempty"`
-	Version *string   `json:"version,omitempty"`
+	Tstamp  time.Time `json:"tstamp"`
+	Name    *string   `json:"name"`
+	Version *string   `json:"version"`
 }
 
 func (c Collector) Value() (driver.Value, error) {

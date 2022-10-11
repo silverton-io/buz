@@ -1,5 +1,5 @@
 // Copyright (c) 2022 Silverton Data, Inc.
-// You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
+// You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package middleware
@@ -59,7 +59,7 @@ func RequestLogger() gin.HandlerFunc {
 		err = json.Unmarshal(reqBody, &b)
 
 		if err != nil {
-			log.Error().Err(err).Msg("could not unmarshal request body")
+			log.Debug().Err(err).Msg("could not unmarshal request body")
 		}
 
 		r := request{

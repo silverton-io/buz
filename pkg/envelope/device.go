@@ -1,5 +1,5 @@
 // Copyright (c) 2022 Silverton Data, Inc.
-// You may use, distribute, and modify this code under the terms of the AGPLv3 license, a copy of
+// You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
 package envelope
@@ -23,13 +23,13 @@ type Device struct {
 	Name              *string `json:"name,omitempty"`
 	Type              *string `json:"type,omitempty"`
 	Token             *string `json:"token,omitempty"`
-	*Os               `json:"os"`
-	*Browser          `json:"browser"`
-	*Screen           `json:"screen"`
-	*Network          `json:"network"`
-	*App              `json:"app"`
-	*Location         `json:"location"`
-	Traits            map[string]interface{} `json:"traits"`
+	*Os               `json:"os,omitempty"`
+	*Browser          `json:"browser,omitempty"`
+	*Screen           `json:"screen,omitempty"`
+	*Network          `json:"network,omitempty"`
+	*App              `json:"app,omitempty"`
+	*Location         `json:"location,omitempty"`
+	Traits            map[string]interface{} `json:"traits,omitempty"`
 }
 
 func (d Device) Value() (driver.Value, error) {
