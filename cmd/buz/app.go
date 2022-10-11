@@ -167,8 +167,6 @@ func (a *App) initializeMiddleware() {
 		log.Info().Msg("🟢 initializing yeet middleware")
 		a.engine.Use(middleware.Yeet())
 	}
-	log.Info().Msg("🟢 initializing identity middleware")
-	a.engine.Use(middleware.Identity(a.config.Identity))
 }
 
 func (a *App) initializeOpsRoutes() {
@@ -198,24 +196,25 @@ func (a *App) initializeSchemaCacheRoutes() {
 }
 
 func (a *App) initializeSnowplowRoutes() {
+	identityMiddleware := middleware.Identity(a.config.Identity)
 	if a.config.Inputs.Snowplow.Enabled {
 		handlerParams := a.handlerParams()
 		log.Info().Msg("🟢 initializing snowplow routes")
 		if a.config.Inputs.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("🟢 initializing standard snowplow routes")
-			a.engine.GET(constants.SNOWPLOW_STANDARD_GET_PATH, inputsnowplow.Handler(handlerParams))
-			a.engine.POST(constants.SNOWPLOW_STANDARD_POST_PATH, inputsnowplow.Handler(handlerParams))
+			a.engine.GET(constants.SNOWPLOW_STANDARD_GET_PATH, identityMiddleware, inputsnowplow.Handler(handlerParams))
+			a.engine.POST(constants.SNOWPLOW_STANDARD_POST_PATH, identityMiddleware, inputsnowplow.Handler(handlerParams))
 			if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("🟢 initializing standard open redirect route")
-				a.engine.GET(constants.SNOWPLOW_STANDARD_REDIRECT_PATH, inputsnowplow.Handler(handlerParams))
+				a.engine.GET(constants.SNOWPLOW_STANDARD_REDIRECT_PATH, identityMiddleware, inputsnowplow.Handler(handlerParams))
 			}
 		}
 		log.Info().Msg("🟢 initializing custom snowplow routes")
-		a.engine.GET(a.config.Inputs.Snowplow.GetPath, inputsnowplow.Handler(handlerParams))
-		a.engine.POST(a.config.Inputs.Snowplow.PostPath, inputsnowplow.Handler(handlerParams))
+		a.engine.GET(a.config.Inputs.Snowplow.GetPath, identityMiddleware, inputsnowplow.Handler(handlerParams))
+		a.engine.POST(a.config.Inputs.Snowplow.PostPath, identityMiddleware, inputsnowplow.Handler(handlerParams))
 		if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
 			log.Info().Msg("🟢 initializing custom open redirect route")
-			a.engine.GET(a.config.Inputs.Snowplow.RedirectPath, inputsnowplow.Handler(handlerParams))
+			a.engine.GET(a.config.Inputs.Snowplow.RedirectPath, identityMiddleware, inputsnowplow.Handler(handlerParams))
 		}
 	}
 }
