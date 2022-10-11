@@ -18,7 +18,7 @@ type CloudEvent struct { // https://github.com/cloudevents/spec/blob/v1.0.2/clou
 	DataContentType string                 `json:"datacontenttype"`
 	DataSchema      string                 `json:"dataschema"`
 	Subject         *string                `json:"subject"`
-	Time            time.Time              `json:"time"`
+	Time            *time.Time             `json:"time"`
 	Data            map[string]interface{} `json:"data"`
 	Datab64         string                 `json:"datab64"`
 }

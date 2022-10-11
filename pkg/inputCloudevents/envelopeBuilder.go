@@ -33,8 +33,10 @@ func BuildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 		n.EventMeta.Protocol = protocol.CLOUDEVENTS
 		n.EventMeta.Schema = cEvent.DataSchema
 		// Source
-		n.Pipeline.Source.GeneratedTstamp = &cEvent.Time
-		n.Pipeline.Source.SentTstamp = &cEvent.Time
+		if cEvent.Time != nil {
+			n.Pipeline.Source.GeneratedTstamp = cEvent.Time
+			n.Pipeline.Source.SentTstamp = cEvent.Time
+		}
 		// Payload
 		n.Payload = cEvent.Data
 		envelopes = append(envelopes, n)
