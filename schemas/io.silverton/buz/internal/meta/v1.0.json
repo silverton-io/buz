@@ -131,7 +131,7 @@
         "disableValidation": {
           "type": "boolean",
           "description": "A meta property that disables validation",
-          "default": "false"
+          "default": false
         }
       },
       "required": ["owner", "self"]
