@@ -59,7 +59,7 @@ func RequestLogger() gin.HandlerFunc {
 		err = json.Unmarshal(reqBody, &b)
 
 		if err != nil {
-			log.Error().Err(err).Msg("could not unmarshal request body")
+			log.Debug().Err(err).Msg("could not unmarshal request body")
 		}
 
 		r := request{

@@ -13,13 +13,14 @@ import (
 )
 
 type EventMeta struct {
-	Protocol  string    `json:"protocol,omitempty"`
-	Uuid      uuid.UUID `json:"uuid,omitempty"`
-	Vendor    string    `json:"vendor,omitempty"`
-	Namespace string    `json:"namespace,omitempty"`
-	Version   string    `json:"version,omitempty"`
-	Format    string    `json:"format,omitempty"`
-	Schema    string    `json:"schema,omitempty"`
+	Protocol          string    `json:"protocol,omitempty"`
+	Uuid              uuid.UUID `json:"uuid,omitempty"`
+	Vendor            string    `json:"vendor,omitempty"`
+	Namespace         string    `json:"namespace,omitempty"`
+	Version           string    `json:"version,omitempty"`
+	Format            string    `json:"format,omitempty"`
+	Schema            string    `json:"schema,omitempty"`
+	DisableValidation bool      `json:"disableValidation,omitempty"`
 }
 
 func (e EventMeta) Value() (driver.Value, error) {

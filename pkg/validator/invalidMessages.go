@@ -36,5 +36,5 @@ var NoSchemaAssociated = InvalidMessage{
 
 var NoSchemaInBackend = InvalidMessage{
 	Type:       "schema not published to cache backend",
-	Resolution: "publish schema to the cache backed",
+	Resolution: "publish schema to the cache backend",
 }

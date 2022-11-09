@@ -41,9 +41,9 @@ func (s Source) Scan(input interface{}) error {
 }
 
 type Collector struct {
-	Tstamp  time.Time `json:"tstamp,omitempty"`
-	Name    *string   `json:"name,omitempty"`
-	Version *string   `json:"version,omitempty"`
+	Tstamp  time.Time `json:"tstamp"`
+	Name    *string   `json:"name"`
+	Version *string   `json:"version"`
 }
 
 func (c Collector) Value() (driver.Value, error) {
