@@ -43,7 +43,7 @@ type App struct {
 	config        *config.Config
 	engine        *gin.Engine
 	registry      *registry.Registry
-	manifold      *manifold.SimpleManifold
+	manifold      manifold.Manifold
 	sinks         []sink.Sink
 	collectorMeta *meta.CollectorMeta
 	stats         *stats.ProtocolStats
