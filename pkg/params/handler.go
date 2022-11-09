@@ -15,7 +15,7 @@ import (
 type Handler struct {
 	Config        *config.Config
 	Registry      *registry.Registry
-	Manifold      *manifold.SimpleManifold
+	Manifold      manifold.Manifold
 	CollectorMeta *meta.CollectorMeta
 	ProtocolStats *stats.ProtocolStats
 }

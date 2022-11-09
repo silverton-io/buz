@@ -7,9 +7,10 @@ package manifold
 import (
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/sink"
+	"github.com/silverton-io/buz/pkg/stats"
 )
 
 type Manifold interface {
 	Initialize(sinks *[]sink.Sink) error
-	Distribute(e []envelope.Envelope) error
+	Distribute(e []envelope.Envelope, s *stats.ProtocolStats) error
 }
