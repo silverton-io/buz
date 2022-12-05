@@ -210,31 +210,30 @@ resource "aws_cloudwatch_log_group" "buz" {
 }
 
 
-# resource "aws_apigatewayv2_api" "lambda" {
+# resource "aws_apigatewayv2_api" "buz" {
 #   name          = local.service_name
 #   protocol_type = "HTTP"
 # }
 
-# resource "aws_apigatewayv2_stage" "lambda" {
-#   api_id = aws_apigatewayv2_api.lambda.id
+# resource "aws_apigatewayv2_stage" "buz" {
+#   api_id = aws_apigatewayv2_api.buz.id
 
 #   name        = local.service_name
 #   auto_deploy = true
 # }
 
 # resource "aws_apigatewayv2_integration" "buz" {
-#   api_id = aws_apigatewayv2_api.lambda.id
-
-#   integration_uri    = aws_lambda_function.buz.invoke_arn
+#   api_id = aws_apigatewayv2_api.buz.id
 #   integration_type   = "AWS_PROXY"
 #   integration_method = "POST"
+#   integration_uri    = aws_lambda_function.buz.invoke_arn
 # }
 
 # resource "aws_apigatewayv2_route" "buz" {
-#   api_id = aws_apigatewayv2_api.lambda.id
+#   api_id = aws_apigatewayv2_api.buz.id
 
-#   route_key = "GET /hello"
-#   target    = aws_apigatewayv2_integration.buz.id
+#   route_key = "ANY /{proxy+}"
+#   target    = "integrations/${aws_apigatewayv2_integration.buz.id}"
 # }
 
 # resource "aws_lambda_permission" "api_gw" {
@@ -243,5 +242,5 @@ resource "aws_cloudwatch_log_group" "buz" {
 #   function_name = aws_lambda_function.buz.function_name
 #   principal     = "apigateway.amazonaws.com"
 
-#   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
+#   source_arn = "${aws_apigatewayv2_api.buz.execution_arn}/*/*"
 # }
