@@ -1,6 +1,3 @@
-data "aws_caller_identity" "current" {}
-
-
 module "template_files" {
   source   = "hashicorp/dir/template"
   base_dir = "../../../../schemas/"
