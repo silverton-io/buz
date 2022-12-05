@@ -83,6 +83,11 @@ resource "aws_s3_bucket" "events" {
   bucket = local.events_bucket
 }
 
+resource "aws_s3_bucket_acl" "events_acl" {
+  bucket = aws_s3_bucket.events.id
+  acl    = "private"
+}
+
 resource "aws_s3_object" "schemas" {
   for_each = module.template_files.files
   bucket   = aws_s3_bucket.buz_schemas.bucket
@@ -93,11 +98,6 @@ resource "aws_s3_object" "schemas" {
 
 resource "aws_s3_bucket" "buz_schemas" {
   bucket = local.schema_bucket
-}
-
-resource "aws_s3_bucket_acl" "events_acl" {
-  bucket = aws_s3_bucket.events.id
-  acl    = "private"
 }
 
 resource "aws_s3_bucket_acl" "schemas_acl" {
@@ -183,7 +183,6 @@ resource "aws_lambda_function" "buz" {
 
   timeout                        = var.buz_lambda_timeout
   memory_size                    = var.buz_lambda_memory_limit
-  reserved_concurrent_executions = var.buz_lambda_concurrency
 
   image_uri    = "${aws_ecr_repository.buz_repository.repository_url}@${data.aws_ecr_image.buz_image.image_digest}"
   package_type = "Image"
@@ -200,38 +199,43 @@ resource "aws_lambda_function" "buz" {
   ]
 }
 
-resource "aws_apigatewayv2_api" "lambda" {
-  name          = local.service_name
-  protocol_type = "HTTP"
+resource "aws_lambda_function_url" "buz" {
+  function_name      = aws_lambda_function.buz.function_name
+  authorization_type = "NONE"
 }
 
-resource "aws_apigatewayv2_stage" "lambda" {
-  api_id = aws_apigatewayv2_api.lambda.id
+# resource "aws_apigatewayv2_api" "lambda" {
+#   name          = local.service_name
+#   protocol_type = "HTTP"
+# }
 
-  name        = local.service_name
-  auto_deploy = true
-}
+# resource "aws_apigatewayv2_stage" "lambda" {
+#   api_id = aws_apigatewayv2_api.lambda.id
 
-resource "aws_apigatewayv2_integration" "buz" {
-  api_id = aws_apigatewayv2_api.lambda.id
+#   name        = local.service_name
+#   auto_deploy = true
+# }
 
-  integration_uri    = aws_lambda_function.buz.invoke_arn
-  integration_type   = "AWS_PROXY"
-  integration_method = "POST"
-}
+# resource "aws_apigatewayv2_integration" "buz" {
+#   api_id = aws_apigatewayv2_api.lambda.id
 
-resource "aws_apigatewayv2_route" "buz" {
-  api_id = aws_apigatewayv2_api.lambda.id
+#   integration_uri    = aws_lambda_function.buz.invoke_arn
+#   integration_type   = "AWS_PROXY"
+#   integration_method = "POST"
+# }
 
-  route_key = "GET /hello"
-  target    = aws_apigatewayv2_integration.buz.id
-}
+# resource "aws_apigatewayv2_route" "buz" {
+#   api_id = aws_apigatewayv2_api.lambda.id
 
-resource "aws_lambda_permission" "api_gw" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.buz.function_name
-  principal     = "apigateway.amazonaws.com"
+#   route_key = "GET /hello"
+#   target    = aws_apigatewayv2_integration.buz.id
+# }
 
-  source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
-}
+# resource "aws_lambda_permission" "api_gw" {
+#   statement_id  = "AllowExecutionFromAPIGateway"
+#   action        = "lambda:InvokeFunction"
+#   function_name = aws_lambda_function.buz.function_name
+#   principal     = "apigateway.amazonaws.com"
+
+#   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
+# }
