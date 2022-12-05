@@ -21,15 +21,9 @@ variable "buz_domain" {
 }
 
 variable "buz_version" {
-  description = "The version of Buz to run. \n\nExample: v0.11.15"
+  description = "The version of Buz to run. \n\nExample: v0.12.7"
   type        = string
-  default     = "v0.12.0"
-}
-
-variable "buz_lambda_concurrency" {
-  description = "The lambda concurrency"
-  type        = number
-  default     = 200
+  default     = "v0.12.7"
 }
 
 variable "buz_lambda_memory_limit" {
