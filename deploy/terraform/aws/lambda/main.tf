@@ -201,6 +201,15 @@ resource "aws_lambda_function_url" "buz" {
   authorization_type = "NONE"
 }
 
+resource "aws_cloudwatch_log_group" "buz" {
+  name              = "/aws/lambda/${local.service_name}"
+  retention_in_days = 7
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
+
 # resource "aws_apigatewayv2_api" "lambda" {
 #   name          = local.service_name
 #   protocol_type = "HTTP"
