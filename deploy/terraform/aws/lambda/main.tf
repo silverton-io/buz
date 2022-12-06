@@ -209,38 +209,51 @@ resource "aws_cloudwatch_log_group" "buz" {
   }
 }
 
+resource "aws_cloudfront_distribution" "buz" {
+  enabled = true
+  is_ipv6_enabled = true
+  comment = "${local.system_env_base}distro"
+  aliases = [var.buz_domain]
 
-# resource "aws_apigatewayv2_api" "buz" {
-#   name          = local.service_name
-#   protocol_type = "HTTP"
-# }
+  origin {
+    origin_id = replace(replace(aws_lambda_function_url.buz.function_url, "https://", ""), "/", "")
+    domain_name = replace(replace(aws_lambda_function_url.buz.function_url, "https://", ""), "/", "")
+    custom_origin_config {
+      http_port = 80
+      https_port = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols = ["TLSv1", "TLSv1.1", "TLSv1.2"]
+      origin_read_timeout = 60
+      origin_keepalive_timeout = 60
+    }
+  }
 
-# resource "aws_apigatewayv2_stage" "buz" {
-#   api_id = aws_apigatewayv2_api.buz.id
+  default_cache_behavior {
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl = 0
+    default_ttl = 3600
+    max_ttl = 86400
+    target_origin_id = replace(replace(aws_lambda_function_url.buz.function_url, "https://", ""), "/", "")
+    allowed_methods = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods = ["HEAD", "GET"]
+    forwarded_values {
+      query_string = true
+      cookies {
+        forward = "all"
+      }
+    }
+  }
 
-#   name        = local.service_name
-#   auto_deploy = true
-# }
+  restrictions {
+    geo_restriction {
+      restriction_type = "whitelist"
+      locations = ["US", "CA", "GB", "DE"]
+    }
+  }
 
-# resource "aws_apigatewayv2_integration" "buz" {
-#   api_id = aws_apigatewayv2_api.buz.id
-#   integration_type   = "AWS_PROXY"
-#   integration_method = "POST"
-#   integration_uri    = aws_lambda_function.buz.invoke_arn
-# }
-
-# resource "aws_apigatewayv2_route" "buz" {
-#   api_id = aws_apigatewayv2_api.buz.id
-
-#   route_key = "ANY /{proxy+}"
-#   target    = "integrations/${aws_apigatewayv2_integration.buz.id}"
-# }
-
-# resource "aws_lambda_permission" "api_gw" {
-#   statement_id  = "AllowExecutionFromAPIGateway"
-#   action        = "lambda:InvokeFunction"
-#   function_name = aws_lambda_function.buz.function_name
-#   principal     = "apigateway.amazonaws.com"
-
-#   source_arn = "${aws_apigatewayv2_api.buz.execution_arn}/*/*"
-# }
+  viewer_certificate {
+    acm_certificate_arn = var.certificate_arn
+    ssl_support_method = "sni-only"
+    minimum_protocol_version = "TLSv1"
+  }
+}

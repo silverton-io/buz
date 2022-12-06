@@ -65,3 +65,12 @@ variable "firehose_buffer_interval" {
   type        = number
   default     = 60 # 1 minute
 }
+
+# variable "enable_cloudfront" {
+#   description = "(Optional) Whether or not to enable "
+
+# }
+
+variable "certificate_arn" {
+  description = "(Optional) The ACM certificate arn to use for the pretty dns name"
+}
