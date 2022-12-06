@@ -209,7 +209,6 @@ resource "aws_cloudwatch_log_group" "buz" {
   }
 }
 
-
 resource "aws_cloudfront_distribution" "buz" {
   enabled = true
   is_ipv6_enabled = true
