@@ -26,3 +26,7 @@ output "invalid_stream" {
 output "buz_function_url" {
   value = aws_lambda_function_url.buz.function_url
 }
+
+output "buz_cloudfront_url" {
+    value = aws_cloudfront_distribution.buz.domain_name
+}
