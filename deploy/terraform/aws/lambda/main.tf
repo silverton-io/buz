@@ -14,7 +14,7 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_valid" {
     buffer_interval    = var.firehose_buffer_interval
     compression_format = "GZIP"
 
-    prefix              = "${local.s3_dynamic_prefix}/"
+    prefix              = local.s3_dynamic_prefix
     error_output_prefix = "err"
 
 
@@ -51,7 +51,7 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_invalid" {
     buffer_interval    = var.firehose_buffer_interval
     compression_format = "GZIP"
 
-    prefix              = "invalid/${local.s3_dynamic_prefix}/"
+    prefix              = "invalid/${local.s3_dynamic_prefix}"
     error_output_prefix = "err/invalid/"
 
     dynamic_partitioning_configuration {
@@ -178,8 +178,8 @@ resource "aws_lambda_function" "buz" {
   function_name = local.service_name
   role          = aws_iam_role.lambda_role.arn
 
-  timeout                        = var.buz_lambda_timeout
-  memory_size                    = var.buz_lambda_memory_limit
+  timeout     = var.buz_lambda_timeout
+  memory_size = var.buz_lambda_memory_limit
 
   image_uri    = "${aws_ecr_repository.buz_repository.repository_url}@${data.aws_ecr_image.buz_image.image_digest}"
   package_type = "Image"
@@ -210,32 +210,32 @@ resource "aws_cloudwatch_log_group" "buz" {
 }
 
 resource "aws_cloudfront_distribution" "buz" {
-  enabled = true
+  enabled         = true
   is_ipv6_enabled = true
-  comment = "${local.system_env_base}distro"
-  aliases = [var.buz_domain]
+  comment         = "${local.system_env_base}distro"
+  aliases         = [var.buz_domain]
 
   origin {
-    origin_id = replace(replace(aws_lambda_function_url.buz.function_url, "https://", ""), "/", "")
+    origin_id   = replace(replace(aws_lambda_function_url.buz.function_url, "https://", ""), "/", "")
     domain_name = replace(replace(aws_lambda_function_url.buz.function_url, "https://", ""), "/", "")
     custom_origin_config {
-      http_port = 80
-      https_port = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols = ["TLSv1", "TLSv1.1", "TLSv1.2"]
-      origin_read_timeout = 60
+      http_port                = 80
+      https_port               = 443
+      origin_protocol_policy   = "https-only"
+      origin_ssl_protocols     = ["TLSv1", "TLSv1.1", "TLSv1.2"]
+      origin_read_timeout      = 60
       origin_keepalive_timeout = 60
     }
   }
 
   default_cache_behavior {
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl = 0
-    default_ttl = 3600
-    max_ttl = 86400
-    target_origin_id = replace(replace(aws_lambda_function_url.buz.function_url, "https://", ""), "/", "")
-    allowed_methods = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods = ["HEAD", "GET"]
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+    target_origin_id       = replace(replace(aws_lambda_function_url.buz.function_url, "https://", ""), "/", "")
+    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods         = ["HEAD", "GET"]
     forwarded_values {
       query_string = true
       cookies {
@@ -247,13 +247,13 @@ resource "aws_cloudfront_distribution" "buz" {
   restrictions {
     geo_restriction {
       restriction_type = "whitelist"
-      locations = ["US", "CA", "GB", "DE"]
+      locations        = ["US", "CA", "GB", "DE"]
     }
   }
 
   viewer_certificate {
-    acm_certificate_arn = var.certificate_arn
-    ssl_support_method = "sni-only"
+    acm_certificate_arn      = var.certificate_arn
+    ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1"
   }
 }
