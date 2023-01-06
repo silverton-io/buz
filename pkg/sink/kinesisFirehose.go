@@ -55,6 +55,7 @@ func (s *KinesisFirehoseSink) Initialize(conf config.Sink) error {
 
 func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
+	var records []types.Record
 	for _, event := range envelopes {
 		payload, _ := json.Marshal(event)
 		newline := []byte("\n")
@@ -62,27 +63,28 @@ func (s *KinesisFirehoseSink) batchPublish(ctx context.Context, stream string, e
 		record := types.Record{
 			Data: payload,
 		}
-		input := &firehose.PutRecordInput{
-			DeliveryStreamName: &stream,
-			Record:             &record,
-		}
-		wg.Add(1)
-		pubErr := make(chan error, 1)
-		go func(pErr chan error) {
-			output, err := s.client.PutRecord(ctx, input) // Will want to use `PutRecordBatch`
-			defer wg.Done()
-			if err != nil {
-				log.Error().Err(err).Msg("🔴 could not publish event to kinesis firehose")
-				pubErr <- err
-			} else {
-				log.Debug().Msgf("🟡 published event " + *output.RecordId + " to stream " + stream)
-				pubErr <- nil
-			}
-		}(pubErr)
-		err := <-pubErr
+		records = append(records, record)
+	}
+	input := &firehose.PutRecordBatchInput{
+		DeliveryStreamName: &stream,
+		Records:            records,
+	}
+	wg.Add(1)
+	pubErr := make(chan error, 1)
+	go func(pErr chan error) {
+		_, err := s.client.PutRecordBatch(ctx, input)
+		defer wg.Done()
 		if err != nil {
-			return err
+			log.Error().Err(err).Msg("🔴 could not publish event to kinesis firehose")
+			pubErr <- err
+		} else {
+			log.Debug().Msgf("🟡 published event batch to stream " + stream)
+			pubErr <- nil
 		}
+	}(pubErr)
+	err := <-pubErr
+	if err != nil {
+		return err
 	}
 	wg.Wait()
 	return nil
