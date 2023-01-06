@@ -32,8 +32,7 @@ func PostPayload(url url.URL, payload interface{}) (resp *http.Response, err err
 		return resp, nil
 	}
 	if resp.StatusCode != http.StatusOK {
-		bodyBytes, err := io.ReadAll(resp.Body)
-		log.Debug().Interface("response", string(bodyBytes)).Interface("url", url.String()).Interface("payload", payload).Msg("🟡 non-200 response")
+		_, err := io.ReadAll(resp.Body)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not read response body")
 			return nil, err
