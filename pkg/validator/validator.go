@@ -8,47 +8,28 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/event"
-	"github.com/silverton-io/buz/pkg/registry"
 )
 
-func ValidatePayload(schemaName string, payload event.Payload, registry *registry.Registry) (isValid bool, validationError envelope.ValidationError, schema []byte) {
-	// FIXME- Short-circuit if the event is an unknown event
-	if schemaName == "" {
+func ValidatePayload(schemaContents []byte, payLoad event.Payload) (isValid bool, validationError envelope.ValidationError) {
+	payload, err := payLoad.AsByte()
+	if err != nil {
+		log.Error().Stack().Err(err).Msg("🔴 could not marshal payload")
 		validationError := envelope.ValidationError{
-			ErrorType:       &NoSchemaAssociated.Type,
-			ErrorResolution: &NoSchemaAssociated.Resolution,
+			ErrorType:       &InvalidPayload.Type,
+			ErrorResolution: &InvalidPayload.Resolution,
 			Errors:          nil,
 		}
-		return false, validationError, nil
+		return false, validationError
 	}
-	schemaExists, schemaContents := registry.Get(schemaName)
-	if !schemaExists {
+	if payload == nil {
 		validationError := envelope.ValidationError{
-			ErrorType:       &NoSchemaInBackend.Type,
-			ErrorResolution: &NoSchemaInBackend.Resolution,
+			ErrorType:       &PayloadNotPresent.Type,
+			ErrorResolution: &PayloadNotPresent.Resolution,
 			Errors:          nil,
 		}
-		return false, validationError, nil
-	} else {
-		payload, err := payload.AsByte()
-		if err != nil {
-			log.Error().Stack().Err(err).Msg("🔴 could not marshal payload")
-			validationError := envelope.ValidationError{
-				ErrorType:       &InvalidPayload.Type,
-				ErrorResolution: &InvalidPayload.Resolution,
-				Errors:          nil,
-			}
-			return false, validationError, nil
-		}
-		if payload == nil {
-			validationError := envelope.ValidationError{
-				ErrorType:       &PayloadNotPresent.Type,
-				ErrorResolution: &PayloadNotPresent.Resolution,
-				Errors:          nil,
-			}
-			return false, validationError, nil
-		}
-		isValid, validationError := validatePayload(payload, schemaContents)
-		return isValid, validationError, schemaContents
+		return false, validationError
 	}
+	isValid, validationError = validatePayload(payload, schemaContents)
+	return isValid, validationError
+
 }
