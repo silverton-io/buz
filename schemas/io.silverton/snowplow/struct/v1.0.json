@@ -19,18 +19,18 @@
             "description": "The struct event action"
         },
         "se_label": {
-            "type": "string",
+            "type": ["string","null"],
             "description": "The struct event label"
         },
         "se_property": {
-            "type": "string",
+            "type": ["string","null"],
             "description": "The struct event property"
         },
         "se_value": {
-            "type": "number",
+            "type": ["string","null"],
             "description": "The struct event value"
         }
     },
-    "required": [],
+    "required": ["se_category", "se_action"],
     "additionalProperties": false
 }

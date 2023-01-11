@@ -19,11 +19,11 @@
             "description": "The transaction item sku"
         },
         "ti_name": {
-            "type": "string",
+            "type": ["string","null"],
             "description": "The transaction item name"
         },
         "ti_category": {
-            "type": "string",
+            "type": ["string","null"],
             "description": "The transaction item category"
         },
         "ti_price": {
@@ -35,7 +35,7 @@
             "description": "The transaction item quantity"
         },
         "ti_currency": {
-            "type": "string",
+            "type": ["string","null"],
             "description": "The transaction item currency"
         }
     },
