@@ -15,7 +15,7 @@
             "description": "The transaction order id"
         },
         "tr_affiliation": {
-            "type": "string",
+            "type": ["string","null"],
             "description": "The transaction affiliation"
         },
         "tr_total": {
@@ -23,30 +23,30 @@
             "description": "The transaction total"
         },
         "tr_tax": {
-            "type": "number",
+            "type": ["number","null"],
             "description": "The transaction tax"
         },
         "tr_shipping": {
-            "type": "number",
+            "type": ["number","null"],
             "description": "The transaction shipping"
         },
         "tr_city": {
-            "type": "number",
+            "type": ["number","null"],
             "description": "The transaction city"
         },
         "tr_state": {
-            "type": "number",
+            "type": ["number","null"],
             "description": "The transaction state"
         },
         "tr_country": {
-            "type": "number",
+            "type": ["number","null"],
             "description": "The transaction country"
         },
         "tr_currency": {
-            "type": "number",
+            "type": ["number","null"],
             "description": "The transaction currency"
         }
     },
-    "required": [],
+    "required": ["tr_orderid", "tr_total"],
     "additionalProperties": false
 }
