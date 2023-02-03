@@ -15,7 +15,7 @@ import (
 
 // A stupid-simple manifold with strict guarantees.
 // This manifold requires buffering at the client level for substantial event volumes.
-// Otherwise there is a change it will overload the configured sink(s).
+// Otherwise it will probably overload the configured sink(s).
 type SimpleManifold struct {
 	sinks *[]sink.Sink
 }
@@ -63,5 +63,10 @@ func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope, s *stats.Prot
 			}
 		}
 	}
+	return nil
+}
+
+func (m *SimpleManifold) Shutdown() error {
+	log.Info().Msg("shutting down simple manifold")
 	return nil
 }

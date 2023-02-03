@@ -125,8 +125,13 @@ func (a *App) initializeSinks() {
 
 func (a *App) initializeManifold() {
 	log.Info().Msg("🟢 initializing manifold")
-	manifold := manifold.SimpleManifold{}
-	err := manifold.Initialize(&a.sinks)
+	manifold := manifold.ChannelManifold{}
+	log.Info().Msg("🟢 initializing sinks")
+	sinks, err := sink.BuildAndInitializeSinks(a.config.Sinks)
+	if err != nil {
+		log.Fatal().Err(err).Msg("could not build and initialize sinks")
+	}
+	err = manifold.Initialize(&sinks)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not build manifold")
 	}
@@ -270,7 +275,6 @@ func (a *App) Initialize() {
 	log.Info().Msg("🟢 initializing app")
 	a.configure()
 	a.initializeStats()
-	a.initializeSinks()
 	a.initializeManifold()
 	a.initializeRegistry()
 	a.initializeRouter()
@@ -314,6 +318,7 @@ func (a *App) standardMode() {
 	log.Info().Msg("🟢 shutting down server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
+	a.manifold.Shutdown()
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal().Stack().Err(err).Msg("server forced to shutdown")
 	}

@@ -13,4 +13,5 @@ import (
 type Manifold interface {
 	Initialize(sinks *[]sink.Sink) error
 	Distribute(e []envelope.Envelope, s *stats.ProtocolStats) error
+	Shutdown() error
 }
