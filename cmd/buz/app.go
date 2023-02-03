@@ -320,6 +320,7 @@ func (a *App) standardMode() {
 	defer cancel()
 	a.manifold.Shutdown()
 	if err := srv.Shutdown(ctx); err != nil {
+		a.manifold.Shutdown()
 		log.Fatal().Stack().Err(err).Msg("server forced to shutdown")
 	}
 	tele.Sis(a.collectorMeta)

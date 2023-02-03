@@ -10,7 +10,6 @@ import (
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/privacy"
 	"github.com/silverton-io/buz/pkg/sink"
-	"github.com/silverton-io/buz/pkg/stats"
 	"github.com/silverton-io/buz/pkg/util"
 )
 
@@ -41,7 +40,7 @@ func (m *ChannelManifold) Initialize(sinks *[]sink.Sink) error {
 	return nil
 }
 
-func (m *ChannelManifold) Distribute(envelopes []envelope.Envelope, s *stats.ProtocolStats) error {
+func (m *ChannelManifold) Distribute(envelopes []envelope.Envelope) error {
 	annotatedEnvelopes := annotator.Annotate(envelopes, h.Registry)
 	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, h.Config.Privacy)
 	for _, e := range anonymizedEnvelopes {
