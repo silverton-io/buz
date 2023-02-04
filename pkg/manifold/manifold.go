@@ -6,11 +6,13 @@ package manifold
 
 import (
 	"github.com/silverton-io/buz/pkg/envelope"
+	"github.com/silverton-io/buz/pkg/params"
+	"github.com/silverton-io/buz/pkg/registry"
 	"github.com/silverton-io/buz/pkg/sink"
 )
 
 type Manifold interface {
-	Initialize(sinks *[]sink.Sink) error
-	Distribute(e []envelope.Envelope) error
+	Initialize(registry *registry.Registry, sinks *[]sink.Sink, handlerParams *params.Handler) error
+	Distribute(envelopes []envelope.Envelope) error
 	Shutdown() error
 }

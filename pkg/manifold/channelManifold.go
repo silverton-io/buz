@@ -8,20 +8,26 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/annotator"
 	"github.com/silverton-io/buz/pkg/envelope"
+	"github.com/silverton-io/buz/pkg/params"
 	"github.com/silverton-io/buz/pkg/privacy"
+	"github.com/silverton-io/buz/pkg/registry"
 	"github.com/silverton-io/buz/pkg/sink"
 	"github.com/silverton-io/buz/pkg/util"
 )
 
 type ChannelManifold struct {
-	invalid  chan envelope.Envelope
-	valid    chan envelope.Envelope
-	sinks    *[]sink.Sink
-	shutdown chan int
+	registry      *registry.Registry
+	sinks         *[]sink.Sink
+	handlerParams *params.Handler
+	invalid       chan envelope.Envelope
+	valid         chan envelope.Envelope
+	shutdown      chan int
 }
 
-func (m *ChannelManifold) Initialize(sinks *[]sink.Sink) error {
+func (m *ChannelManifold) Initialize(registry *registry.Registry, sinks *[]sink.Sink, handlerParams *params.Handler) error {
+	m.registry = registry
 	m.sinks = sinks
+	m.handlerParams = handlerParams
 	m.valid = make(chan envelope.Envelope)
 	m.invalid = make(chan envelope.Envelope)
 	m.shutdown = make(chan int, 1)
@@ -41,8 +47,8 @@ func (m *ChannelManifold) Initialize(sinks *[]sink.Sink) error {
 }
 
 func (m *ChannelManifold) Distribute(envelopes []envelope.Envelope) error {
-	annotatedEnvelopes := annotator.Annotate(envelopes, h.Registry)
-	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, h.Config.Privacy)
+	annotatedEnvelopes := annotator.Annotate(envelopes, m.registry)
+	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.handlerParams.Config.Privacy)
 	for _, e := range anonymizedEnvelopes {
 		isValid := e.Validation.IsValid
 		log.Debug().Interface("payload", e).Msg("sending msg to chan")

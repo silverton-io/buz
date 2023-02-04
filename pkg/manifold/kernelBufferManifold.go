@@ -2,14 +2,8 @@
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package params
+package manifold
 
-import (
-	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/meta"
-)
-
-type Handler struct {
-	Config        *config.Config
-	CollectorMeta *meta.CollectorMeta
+type KernelBufferManifold struct {
+	// IMPLEMENT ME
 }

@@ -8,15 +8,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/silverton-io/buz/pkg/manifold"
 	"github.com/silverton-io/buz/pkg/params"
 	"github.com/silverton-io/buz/pkg/response"
 )
 
-func Handler(h params.Handler) gin.HandlerFunc {
+func Handler(h params.Handler, m manifold.Manifold) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/cloudevents+json" || c.ContentType() == "application/cloudevents-batch+json" {
 			envelopes := BuildEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
-			err := h.Manifold.Distribute(envelopes)
+			err := m.Distribute(envelopes)
 			if err != nil {
 				c.Header("Retry-After", response.RETRY_AFTER_60)
 				c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)
