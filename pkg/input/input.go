@@ -12,7 +12,7 @@ import (
 
 type Input interface {
 	Initialize(engine *gin.Engine, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error
+	Handler(m manifold.Manifold, conf config.Config, metadata *meta.CollectorMeta) gin.HandlerFunc
 	// Routes() []string
-	// Handler() gin.HandlerFunc
 	// Auth() interface{}
 }

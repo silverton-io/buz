@@ -78,5 +78,6 @@ func (m *SimpleManifold) GetRegistry() *registry.Registry {
 
 func (m *SimpleManifold) Shutdown() error {
 	log.Info().Msg("shutting down simple manifold")
+	log.Info().Msg("manifold shut down")
 	return nil
 }
