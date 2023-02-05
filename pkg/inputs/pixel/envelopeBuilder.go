@@ -14,7 +14,7 @@ import (
 )
 
 // NOTE - one envelope per request
-func BuildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []envelope.Envelope {
+func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []envelope.Envelope {
 	var envelopes []envelope.Envelope
 	sde, err := buildEvent(c)
 	if err != nil {

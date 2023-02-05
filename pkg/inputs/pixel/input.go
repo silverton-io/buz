@@ -12,6 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
+	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/manifold"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/response"
@@ -32,7 +33,7 @@ func (i *PixelInput) Initialize(engine *gin.Engine, manifold *manifold.Manifold,
 
 func (i *PixelInput) Handler(m manifold.Manifold, conf config.Config, metadata *meta.CollectorMeta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		envelopes := BuildEnvelopesFromRequest(c, &conf, metadata)
+		envelopes := i.EnvelopeBuilder(c, &conf, metadata)
 		err := m.Distribute(envelopes)
 		if err != nil {
 			c.Header("Retry-After", response.RETRY_AFTER_60)
@@ -43,4 +44,8 @@ func (i *PixelInput) Handler(m manifold.Manifold, conf config.Config, metadata *
 		}
 	}
 	return gin.HandlerFunc(fn)
+}
+
+func (i *PixelInput) EnvelopeBuilder(c *gin.Context, conf *config.Config, metadata *meta.CollectorMeta) []envelope.Envelope {
+	return buildEnvelopesFromRequest(c, conf, metadata)
 }

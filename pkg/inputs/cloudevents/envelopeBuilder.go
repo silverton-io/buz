@@ -16,7 +16,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func BuildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []envelope.Envelope {
+func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []envelope.Envelope {
 	var envelopes []envelope.Envelope
 	reqBody, err := io.ReadAll(c.Request.Body)
 	if err != nil {

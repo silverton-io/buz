@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/manifold"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/response"
@@ -28,7 +29,7 @@ func (i *CloudeventsInput) Initialize(engine *gin.Engine, manifold *manifold.Man
 func (i *CloudeventsInput) Handler(m manifold.Manifold, conf config.Config, metadata *meta.CollectorMeta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/cloudevents+json" || c.ContentType() == "application/cloudevents-batch+json" {
-			envelopes := BuildEnvelopesFromRequest(c, &conf, metadata)
+			envelopes := i.EnvelopeBuilder(c, &conf, metadata)
 			err := m.Distribute(envelopes)
 			if err != nil {
 				c.Header("Retry-After", response.RETRY_AFTER_60)
@@ -41,4 +42,9 @@ func (i *CloudeventsInput) Handler(m manifold.Manifold, conf config.Config, meta
 		}
 	}
 	return gin.HandlerFunc(fn)
+
+}
+
+func (i *CloudeventsInput) EnvelopeBuilder(c *gin.Context, conf *config.Config, metadata *meta.CollectorMeta) []envelope.Envelope {
+	return buildEnvelopesFromRequest(c, conf, metadata)
 }

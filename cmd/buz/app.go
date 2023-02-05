@@ -197,7 +197,6 @@ func (a *App) Initialize() {
 	a.initializeOpsRoutes()
 	a.initializeSchemaCacheRoutes()
 	a.initializeInputs()
-	// a.initializeSquawkboxRoutes()
 }
 
 func (a *App) serverlessMode() {
