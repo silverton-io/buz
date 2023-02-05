@@ -21,9 +21,13 @@ type WebhookInput struct{}
 
 func (i *WebhookInput) Initialize(engine *gin.Engine, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
 	if conf.Inputs.Webhook.Enabled {
-		log.Info().Msg("🟢 initializing webhook routes")
+		log.Info().Msg("🟢 initializing webhook input")
 		engine.POST(conf.Inputs.Webhook.Path, i.Handler(*manifold, *conf, metadata))
 		engine.POST(conf.Inputs.Webhook.Path+"/*"+constants.BUZ_SCHEMA_PARAM, i.Handler(*manifold, *conf, metadata))
+	}
+	if conf.Squawkbox.Enabled {
+		log.Info().Msg("🟢 initializing webhook input squawkbox")
+		engine.POST("/squawkbox/webhook", i.SquawkboxHandler(*manifold, *conf, metadata))
 	}
 	return nil
 }
@@ -42,6 +46,14 @@ func (i *WebhookInput) Handler(m manifold.Manifold, conf config.Config, metadata
 		} else {
 			c.JSON(http.StatusBadRequest, response.InvalidContentType)
 		}
+	}
+	return gin.HandlerFunc(fn)
+}
+
+func (i *WebhookInput) SquawkboxHandler(m manifold.Manifold, conf config.Config, metadata *meta.CollectorMeta) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		envelopes := i.EnvelopeBuilder(c, &conf, metadata)
+		c.JSON(http.StatusOK, envelopes)
 	}
 	return gin.HandlerFunc(fn)
 }

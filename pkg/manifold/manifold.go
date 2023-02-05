@@ -5,14 +5,15 @@
 package manifold
 
 import (
+	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
-	"github.com/silverton-io/buz/pkg/params"
+	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/registry"
 	"github.com/silverton-io/buz/pkg/sink"
 )
 
 type Manifold interface {
-	Initialize(registry *registry.Registry, sinks *[]sink.Sink, handlerParams *params.Handler) error
+	Initialize(registry *registry.Registry, sinks *[]sink.Sink, conf *config.Config, metadata *meta.CollectorMeta) error
 	Distribute(envelopes []envelope.Envelope) error
 	GetRegistry() *registry.Registry
 	Shutdown() error

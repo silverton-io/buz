@@ -12,6 +12,6 @@ const (
 	PIXEL           string = "pixel"
 )
 
-func GetIntputProtocols() []string {
+func GetInputProtocols() []string {
 	return []string{SNOWPLOW, SELF_DESCRIBING, CLOUDEVENTS, WEBHOOK, PIXEL}
 }

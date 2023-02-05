@@ -28,6 +28,10 @@ func (i *PixelInput) Initialize(engine *gin.Engine, manifold *manifold.Manifold,
 		engine.GET(conf.Inputs.Pixel.Path, i.Handler(*manifold, *conf, metadata))
 		engine.GET(conf.Inputs.Pixel.Path+"/*"+constants.BUZ_SCHEMA_PARAM, i.Handler(*manifold, *conf, metadata))
 	}
+	if conf.Squawkbox.Enabled {
+		log.Info().Msg("🟢 initializing pixel input squawkbox")
+		engine.GET("/squawkbox/pixel", i.SquawkboxHandler(*manifold, *conf, metadata))
+	}
 	return nil
 }
 
@@ -42,6 +46,14 @@ func (i *PixelInput) Handler(m manifold.Manifold, conf config.Config, metadata *
 			b, _ := base64.StdEncoding.DecodeString(PX)
 			c.Data(http.StatusOK, "image/png", b)
 		}
+	}
+	return gin.HandlerFunc(fn)
+}
+
+func (i *PixelInput) SquawkboxHandler(m manifold.Manifold, conf config.Config, metadata *meta.CollectorMeta) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		envelopes := i.EnvelopeBuilder(c, &conf, metadata)
+		c.JSON(http.StatusOK, envelopes)
 	}
 	return gin.HandlerFunc(fn)
 }

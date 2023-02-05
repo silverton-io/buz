@@ -20,8 +20,11 @@ type SelfDescribingInput struct{}
 
 func (i *SelfDescribingInput) Initialize(engine *gin.Engine, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
 	if conf.Inputs.SelfDescribing.Enabled {
-		log.Info().Msg("🟢 initializing generic routes")
+		log.Info().Msg("🟢 initializing self-describing input")
 		engine.POST(conf.Inputs.SelfDescribing.Path, i.Handler(*manifold, *conf, metadata))
+	}
+	if conf.Squawkbox.Enabled {
+		log.Info().Msg("🟢 initializing self-describing input squawkbox")
 	}
 	return nil
 }
@@ -43,6 +46,14 @@ func (i *SelfDescribingInput) Handler(m manifold.Manifold, conf config.Config, m
 				c.Redirect(http.StatusFound, redirectUrl)
 			}
 		}
+	}
+	return gin.HandlerFunc(fn)
+}
+
+func (i *SelfDescribingInput) SquawkboxHandler(m manifold.Manifold, conf config.Config, metadata *meta.CollectorMeta) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		envelopes := i.EnvelopeBuilder(c, &conf, metadata)
+		c.JSON(http.StatusOK, envelopes)
 	}
 	return gin.HandlerFunc(fn)
 }

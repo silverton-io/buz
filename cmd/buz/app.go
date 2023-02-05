@@ -30,7 +30,6 @@ import (
 	"github.com/silverton-io/buz/pkg/manifold"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/middleware"
-	"github.com/silverton-io/buz/pkg/params"
 	"github.com/silverton-io/buz/pkg/registry"
 	"github.com/silverton-io/buz/pkg/sink"
 	"github.com/silverton-io/buz/pkg/tele"
@@ -45,14 +44,6 @@ type App struct {
 	manifold      manifold.Manifold
 	collectorMeta *meta.CollectorMeta
 	debug         bool
-}
-
-func (a *App) handlerParams() params.Handler {
-	params := params.Handler{
-		Config:        a.config,
-		CollectorMeta: a.collectorMeta,
-	}
-	return params
 }
 
 func (a *App) configure() {
@@ -93,7 +84,7 @@ func (a *App) configure() {
 
 func (a *App) initializeManifold() {
 	log.Info().Msg("🟢 initializing manifold")
-	m := &manifold.SimpleManifold{}
+	m := &manifold.ChannelManifold{}
 	log.Info().Msg("🟢 initializing registry")
 	registry := registry.Registry{}
 	if err := registry.Initialize(a.config.Registry); err != nil {
@@ -104,8 +95,7 @@ func (a *App) initializeManifold() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("could not build and initialize sinks")
 	}
-	handlerParams := a.handlerParams()
-	err = m.Initialize(&registry, &sinks, &handlerParams)
+	err = m.Initialize(&registry, &sinks, a.config, a.collectorMeta)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not build manifold")
 	}
@@ -177,11 +167,11 @@ func (a *App) initializeSchemaCacheRoutes() {
 
 func (a *App) initializeInputs() {
 	inputs := []input.Input{
-		&snowplow.SnowplowInput{},
-		&selfdescribing.SelfDescribingInput{},
-		&cloudevents.CloudeventsInput{},
 		&pixel.PixelInput{},
 		&webhook.WebhookInput{},
+		&selfdescribing.SelfDescribingInput{},
+		&cloudevents.CloudeventsInput{},
+		&snowplow.SnowplowInput{},
 	}
 	for _, i := range inputs {
 		i.Initialize(a.engine, &a.manifold, a.config, a.collectorMeta)
@@ -200,17 +190,18 @@ func (a *App) Initialize() {
 }
 
 func (a *App) serverlessMode() {
-	log.Debug().Msg("🟡 Running Buz in serverless mode")
+	log.Debug().Msg("🟡 running buz in serverless mode")
 	log.Info().Msg("🐝🐝🐝 buz is running 🐝🐝🐝")
 	err := gateway.ListenAndServe(":3000", a.engine)
 	tele.Sis(a.collectorMeta)
 	if err != nil {
 		log.Fatal().Err(err)
 	}
+	a.manifold.Shutdown()
 }
 
 func (a *App) standardMode() {
-	log.Debug().Msg("🟡 Running Buz in standard mode")
+	log.Debug().Msg("🟡 running Buz in standard mode")
 	srv := &http.Server{
 		Addr:    ":" + a.config.App.Port,
 		Handler: a.engine,

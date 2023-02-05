@@ -9,8 +9,9 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/annotator"
+	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
-	"github.com/silverton-io/buz/pkg/params"
+	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/privacy"
 	"github.com/silverton-io/buz/pkg/registry"
 	"github.com/silverton-io/buz/pkg/sink"
@@ -20,15 +21,17 @@ import (
 // This manifold requires buffering at the client level for substantial event volumes.
 // Otherwise it will probably overload the configured sink(s).
 type SimpleManifold struct {
-	registry *registry.Registry
-	sinks    *[]sink.Sink
-	Params   *params.Handler
+	registry         *registry.Registry
+	sinks            *[]sink.Sink
+	conf             *config.Config
+	collectorMetdata *meta.CollectorMeta
 }
 
-func (m *SimpleManifold) Initialize(registry *registry.Registry, sinks *[]sink.Sink, handlerParams *params.Handler) error {
+func (m *SimpleManifold) Initialize(registry *registry.Registry, sinks *[]sink.Sink, conf *config.Config, metadata *meta.CollectorMeta) error {
 	m.registry = registry
 	m.sinks = sinks
-	m.Params = handlerParams
+	m.conf = conf
+	m.collectorMetdata = metadata
 	return nil
 }
 
@@ -36,7 +39,7 @@ func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope) error {
 	var validEnvelopes []envelope.Envelope
 	var invalidEnvelopes []envelope.Envelope
 	annotatedEnvelopes := annotator.Annotate(envelopes, m.registry)
-	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.Params.Config.Privacy)
+	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.conf.Privacy)
 	for _, e := range anonymizedEnvelopes {
 		isValid := e.Validation.IsValid
 		if *isValid {

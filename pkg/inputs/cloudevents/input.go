@@ -23,6 +23,10 @@ func (i *CloudeventsInput) Initialize(engine *gin.Engine, manifold *manifold.Man
 		log.Info().Msg("🟢 initializing cloudevents input")
 		engine.POST(conf.Inputs.Cloudevents.Path, i.Handler(*manifold, *conf, metadata))
 	}
+	if conf.Squawkbox.Enabled {
+		log.Info().Msg("🟢 initializing cloudevents input squawkbox")
+		engine.POST("/squawkbox/cloudevents", i.SquawkboxHandler(*manifold, *conf, metadata))
+	}
 	return nil
 }
 
@@ -43,6 +47,14 @@ func (i *CloudeventsInput) Handler(m manifold.Manifold, conf config.Config, meta
 	}
 	return gin.HandlerFunc(fn)
 
+}
+
+func (i *CloudeventsInput) SquawkboxHandler(m manifold.Manifold, conf config.Config, metadata *meta.CollectorMeta) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		envelopes := i.EnvelopeBuilder(c, &conf, metadata)
+		c.JSON(http.StatusOK, envelopes)
+	}
+	return gin.HandlerFunc(fn)
 }
 
 func (i *CloudeventsInput) EnvelopeBuilder(c *gin.Context, conf *config.Config, metadata *meta.CollectorMeta) []envelope.Envelope {

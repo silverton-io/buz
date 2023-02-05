@@ -22,8 +22,8 @@ type SnowplowInput struct{}
 
 func (i *SnowplowInput) Initialize(engine *gin.Engine, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
 	identityMiddleware := middleware.Identity(conf.Identity)
+	log.Info().Msg("🟢 initializing snowplow input")
 	if conf.Inputs.Snowplow.Enabled {
-		log.Info().Msg("🟢 initializing snowplow routes")
 		if conf.Inputs.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("🟢 initializing standard snowplow routes")
 			engine.GET(constants.SNOWPLOW_STANDARD_GET_PATH, identityMiddleware, i.Handler(*manifold, *conf, metadata))
@@ -40,6 +40,11 @@ func (i *SnowplowInput) Initialize(engine *gin.Engine, manifold *manifold.Manifo
 			log.Info().Msg("🟢 initializing custom open redirect route")
 			engine.GET(conf.Inputs.Snowplow.RedirectPath, identityMiddleware, i.Handler(*manifold, *conf, metadata))
 		}
+	}
+	if conf.Squawkbox.Enabled {
+		log.Info().Msg("🟢 initializing snowplow squawkbox")
+		engine.GET("snowplow/squawkbox", identityMiddleware, i.Handler(*manifold, *conf, metadata))
+		engine.POST("snowplow/squawkbox", identityMiddleware, i.Handler(*manifold, *conf, metadata))
 	}
 	return nil
 }
@@ -61,6 +66,14 @@ func (i *SnowplowInput) Handler(m manifold.Manifold, conf config.Config, metadat
 				c.Redirect(http.StatusFound, redirectUrl)
 			}
 		}
+	}
+	return gin.HandlerFunc(fn)
+}
+
+func (i *SnowplowInput) SquawkboxHandler(m manifold.Manifold, conf config.Config, metadata *meta.CollectorMeta) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		envelopes := i.EnvelopeBuilder(c, &conf, metadata)
+		c.JSON(http.StatusOK, envelopes)
 	}
 	return gin.HandlerFunc(fn)
 }
