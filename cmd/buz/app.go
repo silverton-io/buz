@@ -21,10 +21,11 @@ import (
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/env"
 	"github.com/silverton-io/buz/pkg/handler"
+	"github.com/silverton-io/buz/pkg/input"
 	inputcloudevents "github.com/silverton-io/buz/pkg/inputCloudevents"
 	inputpixel "github.com/silverton-io/buz/pkg/inputPixel"
 	"github.com/silverton-io/buz/pkg/inputSelfDescribing"
-	inputsnowplow "github.com/silverton-io/buz/pkg/inputSnowplow"
+	snowplow "github.com/silverton-io/buz/pkg/inputSnowplow"
 	inputwebhook "github.com/silverton-io/buz/pkg/inputWebhook"
 	"github.com/silverton-io/buz/pkg/manifold"
 	"github.com/silverton-io/buz/pkg/meta"
@@ -152,8 +153,8 @@ func (a *App) initializeOpsRoutes() {
 	a.engine.GET("/", handler.BuzHandler())
 	log.Info().Msg("🟢 initializing health check route")
 	a.engine.GET(constants.HEALTH_PATH, handler.HealthcheckHandler)
-	// log.Info().Msg("🟢 initializing stats route")
-	// a.engine.GET(constants.STATS_PATH, handler.StatsHandler(a.collectorMeta, a.stats))
+	log.Info().Msg("🟢 initializing stats route")
+	a.engine.GET(constants.STATS_PATH, handler.StatsHandler(a.collectorMeta))
 	log.Info().Msg("🟢 initializing overview routes")
 	a.engine.GET(constants.ROUTE_OVERVIEW_PATH, handler.RouteOverviewHandler(*a.config))
 	if a.config.App.EnableConfigRoute {
@@ -163,38 +164,25 @@ func (a *App) initializeOpsRoutes() {
 }
 
 func (a *App) initializeSchemaCacheRoutes() {
-	// if a.config.Registry.Purge.Enabled {
-	// 	log.Info().Msg("🟢 initializing schema registry cache purge route")
-	// 	a.engine.GET(a.config.Registry.Purge.Path, registry.PurgeCacheHandler(a.registry))
-	// }
-	// if a.config.Registry.Http.Enabled {
-	// 	log.Info().Msg("🟢 initializing schema registry routes")
-	// 	a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, registry.GetSchemaHandler(a.registry))
-	// }
+	r := a.manifold.GetRegistry()
+	if a.config.Registry.Purge.Enabled {
+		log.Info().Msg("🟢 initializing schema registry cache purge route")
+		a.engine.GET(a.config.Registry.Purge.Path, registry.PurgeCacheHandler(r))
+	}
+	if a.config.Registry.Http.Enabled {
+		log.Info().Msg("🟢 initializing schema registry routes")
+		a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, registry.GetSchemaHandler(r))
+	}
 }
 
-func (a *App) initializeSnowplowRoutes() {
-	identityMiddleware := middleware.Identity(a.config.Identity)
-	if a.config.Inputs.Snowplow.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("🟢 initializing snowplow routes")
-		if a.config.Inputs.Snowplow.StandardRoutesEnabled {
-			log.Info().Msg("🟢 initializing standard snowplow routes")
-			a.engine.GET(constants.SNOWPLOW_STANDARD_GET_PATH, identityMiddleware, inputsnowplow.Handler(handlerParams, a.manifold))
-			a.engine.POST(constants.SNOWPLOW_STANDARD_POST_PATH, identityMiddleware, inputsnowplow.Handler(handlerParams, a.manifold))
-			if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
-				log.Info().Msg("🟢 initializing standard open redirect route")
-				a.engine.GET(constants.SNOWPLOW_STANDARD_REDIRECT_PATH, identityMiddleware, inputsnowplow.Handler(handlerParams, a.manifold))
-			}
-		}
-		log.Info().Msg("🟢 initializing custom snowplow routes")
-		a.engine.GET(a.config.Inputs.Snowplow.GetPath, identityMiddleware, inputsnowplow.Handler(handlerParams, a.manifold))
-		a.engine.POST(a.config.Inputs.Snowplow.PostPath, identityMiddleware, inputsnowplow.Handler(handlerParams, a.manifold))
-		if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
-			log.Info().Msg("🟢 initializing custom open redirect route")
-			a.engine.GET(a.config.Inputs.Snowplow.RedirectPath, identityMiddleware, inputsnowplow.Handler(handlerParams, a.manifold))
-		}
+func (a *App) initializeSnowplow() {
+	inputs := []input.Input{
+		&snowplow.SnowplowInput{},
 	}
+	for _, i := range inputs {
+		i.Initialize(a.engine, &a.manifold, a.config, a.collectorMeta)
+	}
+	// input := snowplow.SnowplowInput{}
 }
 
 func (a *App) initializeSelfDescribingRoutes() {
@@ -239,7 +227,7 @@ func (a *App) Initialize() {
 	a.initializeMiddleware()
 	a.initializeOpsRoutes()
 	a.initializeSchemaCacheRoutes()
-	a.initializeSnowplowRoutes()
+	a.initializeSnowplow()
 	a.initializeSelfDescribingRoutes()
 	a.initializeCloudeventsRoutes()
 	a.initializeWebhookRoutes()

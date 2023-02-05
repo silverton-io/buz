@@ -5,10 +5,14 @@ package input
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/manifold"
+	"github.com/silverton-io/buz/pkg/meta"
 )
 
 type Input interface {
-	Routes() []string
-	Handler() gin.HandlerFunc
-	Auth() interface{}
+	Initialize(engine *gin.Engine, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error
+	// Routes() []string
+	// Handler() gin.HandlerFunc
+	// Auth() interface{}
 }

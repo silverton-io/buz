@@ -20,15 +20,15 @@ import (
 // This manifold requires buffering at the client level for substantial event volumes.
 // Otherwise it will probably overload the configured sink(s).
 type SimpleManifold struct {
-	registry      *registry.Registry
-	sinks         *[]sink.Sink
-	handlerParams *params.Handler
+	registry *registry.Registry
+	sinks    *[]sink.Sink
+	Params   *params.Handler
 }
 
 func (m *SimpleManifold) Initialize(registry *registry.Registry, sinks *[]sink.Sink, handlerParams *params.Handler) error {
 	m.registry = registry
 	m.sinks = sinks
-	m.handlerParams = handlerParams
+	m.Params = handlerParams
 	return nil
 }
 
@@ -36,7 +36,7 @@ func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope) error {
 	var validEnvelopes []envelope.Envelope
 	var invalidEnvelopes []envelope.Envelope
 	annotatedEnvelopes := annotator.Annotate(envelopes, m.registry)
-	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.handlerParams.Config.Privacy)
+	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.Params.Config.Privacy)
 	for _, e := range anonymizedEnvelopes {
 		isValid := e.Validation.IsValid
 		if *isValid {
@@ -70,6 +70,10 @@ func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope) error {
 		}
 	}
 	return nil
+}
+
+func (m *SimpleManifold) GetRegistry() *registry.Registry {
+	return m.registry
 }
 
 func (m *SimpleManifold) Shutdown() error {

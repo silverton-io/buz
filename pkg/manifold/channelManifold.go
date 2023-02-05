@@ -61,6 +61,10 @@ func (m *ChannelManifold) Distribute(envelopes []envelope.Envelope) error {
 	return nil
 }
 
+func (m *ChannelManifold) GetRegistry() *registry.Registry {
+	return m.registry
+}
+
 func (m *ChannelManifold) Shutdown() error {
 	log.Info().Msg("shutting down channel manifold")
 	m.shutdown <- 1
