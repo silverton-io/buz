@@ -8,15 +8,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/manifold"
-	"github.com/silverton-io/buz/pkg/params"
+	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/response"
 )
 
-func Handler(h params.Handler, m manifold.Manifold) gin.HandlerFunc {
+func Handler(m manifold.Manifold, conf config.Config, metadata *meta.CollectorMeta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/json" {
-			envelopes := BuildEnvelopesFromRequest(c, h.Config, h.CollectorMeta)
+			envelopes := BuildEnvelopesFromRequest(c, &conf, metadata)
 			err := m.Distribute(envelopes)
 			if err != nil {
 				c.Header("Retry-After", response.RETRY_AFTER_60)

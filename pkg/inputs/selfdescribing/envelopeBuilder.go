@@ -2,7 +2,7 @@
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package inputcloudevents
+package inputselfdescribing
 
 import (
 	"io"
@@ -23,22 +23,19 @@ func BuildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 		log.Error().Err(err).Msg("🔴 could not read request body")
 		return envelopes
 	}
-	for _, ce := range gjson.ParseBytes(reqBody).Array() {
+	for _, e := range gjson.ParseBytes(reqBody).Array() {
 		n := envelope.BuildCommonEnvelope(c, conf.Middleware, m)
-		cEvent, err := buildEvent(ce)
+		genEvent, err := buildEvent(e, conf.SelfDescribing)
 		if err != nil {
-			log.Error().Err(err).Msg("🔴 could not build Cloudevent")
+			log.Error().Err(err).Msg("🔴 could not build generic event")
 		}
-		// Event Meta
-		n.EventMeta.Protocol = protocol.CLOUDEVENTS
-		n.EventMeta.Schema = cEvent.DataSchema
-		// Source
-		if cEvent.Time != nil {
-			n.Pipeline.Source.GeneratedTstamp = cEvent.Time
-			n.Pipeline.Source.SentTstamp = cEvent.Time
-		}
+		// Event meta
+		n.EventMeta.Protocol = protocol.SELF_DESCRIBING
+		n.EventMeta.Schema = genEvent.Payload.Schema
+		// Context
+		n.Contexts = &genEvent.Contexts
 		// Payload
-		n.Payload = cEvent.Data
+		n.Payload = genEvent.Payload.Data
 		envelopes = append(envelopes, n)
 	}
 	return envelopes

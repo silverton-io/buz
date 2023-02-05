@@ -22,11 +22,11 @@ import (
 	"github.com/silverton-io/buz/pkg/env"
 	"github.com/silverton-io/buz/pkg/handler"
 	"github.com/silverton-io/buz/pkg/input"
-	inputcloudevents "github.com/silverton-io/buz/pkg/inputCloudevents"
-	inputpixel "github.com/silverton-io/buz/pkg/inputPixel"
-	"github.com/silverton-io/buz/pkg/inputSelfDescribing"
-	snowplow "github.com/silverton-io/buz/pkg/inputSnowplow"
-	inputwebhook "github.com/silverton-io/buz/pkg/inputWebhook"
+	cloudevents "github.com/silverton-io/buz/pkg/inputs/cloudevents"
+	pixel "github.com/silverton-io/buz/pkg/inputs/pixel"
+	selfdescribing "github.com/silverton-io/buz/pkg/inputs/selfdescribing"
+	snowplow "github.com/silverton-io/buz/pkg/inputs/snowplow"
+	webhook "github.com/silverton-io/buz/pkg/inputs/webhook"
 	"github.com/silverton-io/buz/pkg/manifold"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/middleware"
@@ -175,63 +175,28 @@ func (a *App) initializeSchemaCacheRoutes() {
 	}
 }
 
-func (a *App) initializeSnowplow() {
+func (a *App) initializeInputs() {
 	inputs := []input.Input{
 		&snowplow.SnowplowInput{},
+		&selfdescribing.SelfDescribingInput{},
+		&cloudevents.CloudeventsInput{},
+		&pixel.PixelInput{},
+		&webhook.WebhookInput{},
 	}
 	for _, i := range inputs {
 		i.Initialize(a.engine, &a.manifold, a.config, a.collectorMeta)
-	}
-	// input := snowplow.SnowplowInput{}
-}
-
-func (a *App) initializeSelfDescribingRoutes() {
-	if a.config.Inputs.SelfDescribing.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("🟢 initializing generic routes")
-		a.engine.POST(a.config.Inputs.SelfDescribing.Path, inputSelfDescribing.Handler(handlerParams, a.manifold))
-	}
-}
-
-func (a *App) initializeCloudeventsRoutes() {
-	if a.config.Inputs.Cloudevents.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("🟢 initializing cloudevents routes")
-		a.engine.POST(a.config.Inputs.Cloudevents.Path, inputcloudevents.Handler(handlerParams, a.manifold))
-	}
-}
-
-func (a *App) initializeWebhookRoutes() {
-	if a.config.Inputs.Webhook.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("🟢 initializing webhook routes")
-		a.engine.POST(a.config.Inputs.Webhook.Path, inputwebhook.Handler(handlerParams, a.manifold))
-		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+constants.BUZ_SCHEMA_PARAM, inputwebhook.Handler(handlerParams, a.manifold))
-	}
-}
-
-func (a *App) initializePixelRoutes() {
-	if a.config.Inputs.Pixel.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("🟢 initializing pixel routes")
-		a.engine.GET(a.config.Inputs.Pixel.Path, inputpixel.Handler(handlerParams, a.manifold))
-		a.engine.GET(a.config.Inputs.Pixel.Path+"/*"+constants.BUZ_SCHEMA_PARAM, inputpixel.Handler(handlerParams, a.manifold))
 	}
 }
 
 func (a *App) Initialize() {
 	log.Info().Msg("🟢 initializing app")
 	a.configure()
-	a.initializeManifold()
 	a.initializeRouter()
+	a.initializeManifold()
 	a.initializeMiddleware()
 	a.initializeOpsRoutes()
 	a.initializeSchemaCacheRoutes()
-	a.initializeSnowplow()
-	a.initializeSelfDescribingRoutes()
-	a.initializeCloudeventsRoutes()
-	a.initializeWebhookRoutes()
-	a.initializePixelRoutes()
+	a.initializeInputs()
 	// a.initializeSquawkboxRoutes()
 }
 
