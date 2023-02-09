@@ -40,11 +40,7 @@ func (s *BlackholeSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *BlackholeSink) BatchPublishValid(ctx context.Context, validEnvelopes []envelope.Envelope) error {
-	return nil
-}
-
-func (s *BlackholeSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) error {
+func (s *BlackholeSink) BatchPublish(ctx context.Context, validEnvelopes []envelope.Envelope) error {
 	return nil
 }
 

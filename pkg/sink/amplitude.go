@@ -145,12 +145,7 @@ func (s *AmplitudeSink) batchPublish(ctx context.Context, envelopes []envelope.E
 	return nil
 }
 
-func (s *AmplitudeSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, envelopes)
-	return err
-}
-
-func (s *AmplitudeSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *AmplitudeSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.batchPublish(ctx, envelopes)
 	return err
 }

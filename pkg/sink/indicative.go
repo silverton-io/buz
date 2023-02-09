@@ -67,7 +67,7 @@ func (s *IndicativeSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *IndicativeSink) batchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *IndicativeSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
 	var indicativeEvents []indicativeEvent
 	for _, e := range envelopes {
 		propertyMap, err := e.AsMap()
@@ -97,16 +97,6 @@ func (s *IndicativeSink) batchPublish(ctx context.Context, envelopes []envelope.
 		return err
 	}
 	return nil
-}
-
-func (s *IndicativeSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, envelopes)
-	return err
-}
-
-func (s *IndicativeSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, envelopes)
-	return err
 }
 
 func (s *IndicativeSink) Close() {
