@@ -39,8 +39,7 @@ type Sink interface {
 	Type() string
 	DeliveryRequired() bool
 	Initialize(conf config.Sink) error
-	BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error
-	BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error
+	BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error
 	Close()
 }
 

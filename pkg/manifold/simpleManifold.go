@@ -36,39 +36,16 @@ func (m *SimpleManifold) Initialize(registry *registry.Registry, sinks *[]sink.S
 }
 
 func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope) error {
-	var validEnvelopes []envelope.Envelope
-	var invalidEnvelopes []envelope.Envelope
 	annotatedEnvelopes := annotator.Annotate(envelopes, m.registry)
 	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.conf.Privacy)
-	for _, e := range anonymizedEnvelopes {
-		isValid := e.Validation.IsValid
-		if *isValid {
-			validEnvelopes = append(validEnvelopes, e)
-		} else {
-			invalidEnvelopes = append(invalidEnvelopes, e)
-		}
-	}
-
 	for _, s := range *m.sinks {
 		ctx := context.Background()
-		if len(validEnvelopes) > 0 {
-			log.Debug().Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🟡 purging valid envelopes to sink")
-			publishErr := s.BatchPublishValid(ctx, validEnvelopes)
-			if publishErr != nil {
-				log.Error().Err(publishErr).Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🔴 could not purge valid envelopes to sink")
-				if s.DeliveryRequired() {
-					return publishErr
-				}
-			}
-		}
-		if len(invalidEnvelopes) > 0 {
-			log.Debug().Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🟡 purging invalid envelopes to sink")
-			publishErr := s.BatchPublishInvalid(ctx, invalidEnvelopes)
-			if publishErr != nil {
-				log.Error().Err(publishErr).Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🔴 could not purge invalid envelopes to sink")
-				if s.DeliveryRequired() {
-					return publishErr
-				}
+		log.Debug().Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🟡 purging envelopes to sink")
+		publishErr := s.BatchPublish(ctx, anonymizedEnvelopes)
+		if publishErr != nil {
+			log.Error().Err(publishErr).Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🔴 could not purge valid envelopes to sink")
+			if s.DeliveryRequired() {
+				return publishErr
 			}
 		}
 	}

@@ -5,6 +5,8 @@
 package manifold
 
 import (
+	"context"
+
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/annotator"
 	"github.com/silverton-io/buz/pkg/config"
@@ -13,7 +15,6 @@ import (
 	"github.com/silverton-io/buz/pkg/privacy"
 	"github.com/silverton-io/buz/pkg/registry"
 	"github.com/silverton-io/buz/pkg/sink"
-	"github.com/silverton-io/buz/pkg/util"
 )
 
 type ChannelManifold struct {
@@ -30,15 +31,20 @@ func (m *ChannelManifold) Initialize(registry *registry.Registry, sinks *[]sink.
 	m.sinks = sinks
 	m.conf = conf
 	m.collectorMeta = metadata
-	m.inputChan = make(chan []envelope.Envelope)
+	m.inputChan = make(chan []envelope.Envelope, 100000) // Set a fairly high buffer size. Can revisit as necessary.
 	m.shutdownChan = make(chan int, 1)
 	log.Debug().Msg("spinning up manifold goroutine")
 	go func(e <-chan []envelope.Envelope, quit chan int) {
 		for {
 			select {
 			case envelopes := <-e:
-				// FIXME!!! Make this actually do something
-				util.Pprint(envelopes)
+				for _, s := range *m.sinks {
+					ctx := context.Background()
+					err := s.BatchPublish(ctx, envelopes)
+					if err != nil {
+						log.Error().Err(err).Msg("could not publish envelopes to sink " + s.Id().String())
+					}
+				}
 			case <-quit:
 				log.Info().Msg("manifold shut down")
 				return
