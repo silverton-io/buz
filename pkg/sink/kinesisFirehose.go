@@ -49,7 +49,7 @@ func (s *KinesisFirehoseSink) Initialize(conf config.Sink) error {
 	client := firehose.NewFromConfig(cfg)
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	s.client, s.validStream, s.invalidStream = client, conf.ValidStream, conf.InvalidStream
+	s.client, s.validStream, s.invalidStream = client, BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
 	return err
 }
 
@@ -98,6 +98,11 @@ func (s *KinesisFirehoseSink) BatchPublishValid(ctx context.Context, envelopes [
 func (s *KinesisFirehoseSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.batchPublish(ctx, s.invalidStream, envelopes)
 	return err
+}
+
+func (s *KinesisFirehoseSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	// err := s.batchPublish(ctx, s.validStream, envelopes)
+	return nil
 }
 
 func (s *KinesisFirehoseSink) Close() {

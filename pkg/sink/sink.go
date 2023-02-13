@@ -41,6 +41,7 @@ type Sink interface {
 	Initialize(conf config.Sink) error
 	BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error
 	Close()
+	// FIXME! Add "shard by" mechanism.
 }
 
 func BuildSink(conf config.Sink) (sink Sink, err error) {

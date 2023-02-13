@@ -55,7 +55,7 @@ func (s *NatsSink) Initialize(conf config.Sink) error {
 		log.Error().Err(err).Msg("🔴 could not open encoded connection")
 	}
 	s.conn, s.encodedConn = conn, encodedConn
-	s.validSubject, s.invalidSubject = conf.ValidSubject, conf.InvalidSubject
+	s.validSubject, s.invalidSubject = BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
 	return nil
 }
 
@@ -76,6 +76,10 @@ func (s *NatsSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope
 			return err
 		}
 	}
+	return nil
+}
+
+func (s *NatsSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
 	return nil
 }
 

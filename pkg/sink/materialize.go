@@ -59,7 +59,7 @@ func (s *MaterializeSink) Initialize(conf config.Sink) error {
 		return err
 	}
 	s.gormDb = gormDb
-	s.validTable, s.invalidTable = conf.ValidTable, conf.InvalidTable
+	s.validTable, s.invalidTable = BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
 	for _, tbl := range []string{s.validTable, s.invalidTable} {
 		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.Envelope{})
 		if ensureErr != nil {
@@ -76,6 +76,11 @@ func (s *MaterializeSink) BatchPublishValid(ctx context.Context, envelopes []env
 
 func (s *MaterializeSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
+	return err
+}
+
+func (s *MaterializeSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.gormDb.Table(s.validTable).Create(envelopes).Error
 	return err
 }
 

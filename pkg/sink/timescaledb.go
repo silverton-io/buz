@@ -58,7 +58,7 @@ func (s *TimescaleSink) Initialize(conf config.Sink) error {
 		log.Error().Err(err).Msg("🔴 could not open timescale connection")
 		return err
 	}
-	s.gormDb, s.validTable, s.invalidTable = gormDb, conf.ValidTable, conf.InvalidTable
+	s.gormDb, s.validTable, s.invalidTable = gormDb, BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
 	for _, tbl := range []string{s.validTable, s.invalidTable} {
 		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.Envelope{})
 		if ensureErr != nil {
@@ -68,14 +68,12 @@ func (s *TimescaleSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *TimescaleSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.gormDb.Table(s.validTable).Create(envelopes).Error
-	return err
-}
-
-func (s *TimescaleSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
-	return err
+func (s *TimescaleSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	// Get shards
+	// Write shard to appropriate table
+	// err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
+	// return err
+	return nil
 }
 
 func (s *TimescaleSink) Close() {

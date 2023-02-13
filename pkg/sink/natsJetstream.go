@@ -57,7 +57,7 @@ func (s *NatsJetstreamSink) Initialize(conf config.Sink) error {
 		return err
 	}
 
-	s.validSubject, s.invalidSubject = conf.ValidSubject, conf.InvalidSubject
+	s.validSubject, s.invalidSubject = BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
 	s.conn, s.jetstream = conn, js
 	return nil
 }
@@ -91,6 +91,10 @@ func (s *NatsJetstreamSink) BatchPublishInvalid(ctx context.Context, envelopes [
 			return err
 		}
 	}
+	return nil
+}
+
+func (s *NatsJetstreamSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
 	return nil
 }
 

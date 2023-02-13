@@ -53,7 +53,7 @@ func (s *PubnubSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing pubnub sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	s.validChannel, s.invalidChannel = conf.ValidChannel, conf.InvalidChannel
+	s.validChannel, s.invalidChannel = BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
 	s.pubKey, s.subKey = conf.PubnubPubKey, conf.PubnubSubKey
 	return nil
 }
@@ -82,6 +82,10 @@ func (s *PubnubSink) BatchPublishValid(ctx context.Context, envelopes []envelope
 func (s *PubnubSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.batchPublish(ctx, s.invalidChannel, envelopes)
 	return err
+}
+
+func (s *PubnubSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	return nil
 }
 
 func (s *PubnubSink) Close() {

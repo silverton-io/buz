@@ -68,7 +68,7 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 	}
 	admClient := kadm.NewClient(client)
 	log.Debug().Msg("🟡 verifying topics exist")
-	topicDetails, err := admClient.DescribeTopicConfigs(ctx, conf.ValidTopic, conf.InvalidTopic)
+	topicDetails, err := admClient.DescribeTopicConfigs(ctx, BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not describe topic configs")
 		return err
@@ -83,7 +83,7 @@ func (s *KafkaSink) Initialize(conf config.Sink) error {
 			log.Debug().Interface("response", resp).Msg("🟡 topic created: " + d.Name)
 		}
 	}
-	s.client, s.validEventsTopic, s.invalidEventsTopic = client, conf.ValidTopic, conf.InvalidTopic
+	s.client, s.validEventsTopic, s.invalidEventsTopic = client, BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
 	return nil
 }
 
@@ -137,6 +137,11 @@ func (s *KafkaSink) BatchPublishValid(ctx context.Context, envelopes []envelope.
 func (s *KafkaSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
 	return err
+}
+
+func (ms *KafkaSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	// err := s.batchPublish(ctx, $TOPIC, envelopes)
+	return nil
 }
 
 func (s *KafkaSink) Close() {

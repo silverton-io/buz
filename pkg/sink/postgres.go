@@ -58,7 +58,7 @@ func (s *PostgresSink) Initialize(conf config.Sink) error {
 		log.Error().Err(err).Msg("🔴 could not open pg connection")
 		return err
 	}
-	s.gormDb, s.validTable, s.invalidTable = gormDb, conf.ValidTable, conf.InvalidTable
+	s.gormDb, s.validTable, s.invalidTable = gormDb, BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
 	for _, tbl := range []string{s.validTable, s.invalidTable} {
 		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.JsonbEnvelope{})
 		if ensureErr != nil {
@@ -76,6 +76,10 @@ func (s *PostgresSink) BatchPublishValid(ctx context.Context, envelopes []envelo
 func (s *PostgresSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
 	return err
+}
+
+func (s *PostgresSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	return nil
 }
 
 func (s *PostgresSink) Close() {

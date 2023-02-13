@@ -52,7 +52,7 @@ func (s *ElasticsearchSink) Initialize(conf config.Sink) error {
 	es, err := elasticsearch.NewClient(cfg)
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	s.client, s.validIndex, s.invalidIndex = es, conf.ValidIndex, conf.InvalidIndex
+	s.client, s.validIndex, s.invalidIndex = es, BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
 	return err
 }
 
@@ -89,6 +89,10 @@ func (s *ElasticsearchSink) BatchPublishValid(ctx context.Context, validEnvelope
 func (s *ElasticsearchSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []envelope.Envelope) error {
 	err := s.batchPublish(ctx, s.invalidIndex, invalidEnvelopes)
 	return err
+}
+
+func (s *ElasticsearchSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	return nil
 }
 
 func (s *ElasticsearchSink) Close() {

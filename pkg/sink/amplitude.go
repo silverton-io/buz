@@ -152,5 +152,5 @@ func (s *AmplitudeSink) BatchPublish(ctx context.Context, envelopes []envelope.E
 
 func (s *AmplitudeSink) Close() {
 	log.Debug().Msg("🟡 closing amplitude sink")
-	// no-opo
+	// no-op
 }

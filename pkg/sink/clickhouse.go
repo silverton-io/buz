@@ -58,7 +58,7 @@ func (s *ClickhouseSink) Initialize(conf config.Sink) error {
 		log.Error().Err(err).Msg("🔴 could not open clickhouse connection")
 		return err
 	}
-	s.gormDb, s.validTable, s.invalidTable = gormDb, conf.ValidTable, conf.InvalidTable
+	s.gormDb, s.validTable, s.invalidTable = gormDb, BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
 	for _, tbl := range []string{s.validTable, s.invalidTable} {
 		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.StringEnvelope{})
 		if ensureErr != nil {
@@ -68,14 +68,11 @@ func (s *ClickhouseSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *ClickhouseSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.gormDb.Table(s.validTable).Create(envelopes).Error
-	return err
-}
-
-func (s *ClickhouseSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
-	return err
+func (s *ClickhouseSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	// Get shards
+	// err := s.gormDb.Table(s.validTable).Create(envelopes).Error
+	// return err
+	return nil
 }
 
 func (s *ClickhouseSink) Close() {

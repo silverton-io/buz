@@ -54,6 +54,11 @@ func (ms *MockSink) BatchPublishInvalid(ctx context.Context, invalidEnvelopes []
 	return nil
 }
 
+func (ms *MockSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	ms.Called()
+	return nil
+}
+
 func (ms *MockSink) BatchPublishValidAndInvalid(ctx context.Context, validEvents []envelope.Envelope, invalidEvents []envelope.Envelope) {
 	ms.Called(ctx, validEvents, invalidEvents)
 }
@@ -67,8 +72,6 @@ func TestBuildSink(t *testing.T) {
 		Type:         PUBSUB,
 		Project:      "myproject",
 		KafkaBrokers: []string{"broker1"},
-		ValidTopic:   "valid-topic",
-		InvalidTopic: "invalid-topic",
 	}
 
 	t.Run(PUBSUB, func(t *testing.T) {
@@ -124,8 +127,6 @@ func TestInitializeSink(t *testing.T) {
 		Type:         PUBSUB,
 		Project:      "myproject",
 		KafkaBrokers: []string{"broker1"},
-		ValidTopic:   "valid-topic",
-		InvalidTopic: "invalid-topic",
 	}
 	mSink := MockSink{}
 	mSink.On("Initialize", c)

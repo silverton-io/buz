@@ -59,7 +59,7 @@ func (s *MysqlSink) Initialize(conf config.Sink) error {
 		log.Error().Err(err).Msg("🔴 could not open mysql connection")
 		return err
 	}
-	s.gormDb, s.validTable, s.invalidTable = gormDb, conf.ValidTable, conf.InvalidTable
+	s.gormDb, s.validTable, s.invalidTable = gormDb, BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
 	for _, tbl := range []string{s.validTable, s.invalidTable} {
 		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.Envelope{})
 		if ensureErr != nil {
@@ -77,6 +77,11 @@ func (s *MysqlSink) BatchPublishValid(ctx context.Context, envelopes []envelope.
 func (s *MysqlSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
 	return err
+}
+
+func (s *MysqlSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	// err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
+	return nil
 }
 
 func (s *MysqlSink) Close() {

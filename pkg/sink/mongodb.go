@@ -62,8 +62,8 @@ func (s *MongodbSink) Initialize(conf config.Sink) error {
 		log.Error().Err(err).Msg("🔴 could not connect to mongodb")
 	}
 	s.client = client
-	vCollection := s.client.Database(conf.MongoDbName).Collection(conf.ValidCollection)
-	iCollection := s.client.Database(conf.MongoDbName).Collection(conf.InvalidCollection)
+	vCollection := s.client.Database(conf.MongoDbName).Collection(BUZ_VALID_EVENTS)
+	iCollection := s.client.Database(conf.MongoDbName).Collection(BUZ_INVALID_EVENTS)
 	s.validCollection, s.invalidCollection = vCollection, iCollection
 	return nil
 }
@@ -89,6 +89,20 @@ func (s *MongodbSink) BatchPublishInvalid(ctx context.Context, envelopes []envel
 			return err
 		}
 		_, err = s.invalidCollection.InsertOne(ctx, payload) // FIXME - should batch these
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *MongodbSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	for _, e := range envelopes {
+		payload, err := bson.Marshal(e)
+		if err != nil {
+			return err
+		}
+		_, err = s.validCollection.InsertOne(ctx, payload) // FIXME - should batch these
 		if err != nil {
 			return err
 		}

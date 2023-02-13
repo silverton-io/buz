@@ -84,8 +84,8 @@ func (s *StdoutSink) BatchPublish(ctx context.Context, envelopes []envelope.Enve
 		fmt.Println(Green(validEnvelopes))
 	}
 	if len(invalidEnvelopes) > 0 {
-		validEnvelopes := util.Stringify(validEnvelopes)
-		fmt.Println(Red(validEnvelopes))
+		invalidEnvelopes := util.Stringify(invalidEnvelopes)
+		fmt.Println(Red(invalidEnvelopes))
 	}
 	return nil
 }

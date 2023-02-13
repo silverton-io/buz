@@ -41,10 +41,10 @@ func (s *FileSink) DeliveryRequired() bool {
 
 func (s *FileSink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing file sink")
-	s.validFile = conf.ValidFile
+	s.validFile = BUZ_VALID_EVENTS + ".json"
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	s.invalidFile = conf.InvalidFile
+	s.invalidFile = BUZ_INVALID_EVENTS + ".json"
 	return nil
 }
 
@@ -78,6 +78,11 @@ func (s *FileSink) BatchPublishValid(ctx context.Context, envelopes []envelope.E
 
 func (s *FileSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.batchPublish(ctx, s.invalidFile, envelopes)
+	return err
+}
+
+func (s *FileSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.validFile, envelopes)
 	return err
 }
 
