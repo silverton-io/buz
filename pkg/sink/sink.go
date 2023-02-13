@@ -16,10 +16,15 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/file"
 	"github.com/silverton-io/buz/pkg/backend/http"
 	"github.com/silverton-io/buz/pkg/backend/kafka"
+	"github.com/silverton-io/buz/pkg/backend/kinesis"
+	"github.com/silverton-io/buz/pkg/backend/kinesisFirehose"
 	"github.com/silverton-io/buz/pkg/backend/materializedb"
 	"github.com/silverton-io/buz/pkg/backend/mongodb"
 	"github.com/silverton-io/buz/pkg/backend/mysqldb"
+	"github.com/silverton-io/buz/pkg/backend/nats"
 	"github.com/silverton-io/buz/pkg/backend/postgresdb"
+	"github.com/silverton-io/buz/pkg/backend/pubnub"
+	"github.com/silverton-io/buz/pkg/backend/pubsub"
 	"github.com/silverton-io/buz/pkg/backend/stdout"
 	"github.com/silverton-io/buz/pkg/backend/timescaledb"
 	"github.com/silverton-io/buz/pkg/config"
@@ -42,7 +47,7 @@ type Sink interface {
 func BuildSink(conf config.Sink) (sink Sink, err error) {
 	switch conf.Type {
 	case constants.PUBSUB:
-		sink := PubsubSink{}
+		sink := pubsub.Sink{}
 		return &sink, nil
 	case constants.KAFKA:
 		sink := kafka.Sink{}
@@ -51,10 +56,10 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		sink := kafka.Sink{}
 		return &sink, nil
 	case constants.KINESIS:
-		sink := KinesisSink{}
+		sink := kinesis.Sink{}
 		return &sink, nil
 	case constants.KINESIS_FIREHOSE:
-		sink := KinesisFirehoseSink{}
+		sink := kinesisFirehose.Sink{}
 		return &sink, nil
 	case constants.STDOUT:
 		sink := stdout.Sink{}
@@ -75,7 +80,7 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		sink := file.Sink{}
 		return &sink, nil
 	case constants.PUBNUB:
-		sink := PubnubSink{}
+		sink := pubnub.Sink{}
 		return &sink, nil
 	case constants.POSTGRES:
 		sink := postgresdb.Sink{}
@@ -96,7 +101,7 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		sink := timescaledb.Sink{}
 		return &sink, nil
 	case constants.NATS:
-		sink := NatsSink{}
+		sink := nats.Sink{}
 		return &sink, nil
 	case constants.AMPLITUDE:
 		sink := amplitude.Sink{}

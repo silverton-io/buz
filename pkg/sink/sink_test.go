@@ -11,6 +11,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/silverton-io/buz/pkg/backend/kafka"
+	"github.com/silverton-io/buz/pkg/backend/kinesis"
+	"github.com/silverton-io/buz/pkg/backend/kinesisFirehose"
+	"github.com/silverton-io/buz/pkg/backend/pubsub"
 	"github.com/silverton-io/buz/pkg/backend/stdout"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
@@ -79,7 +82,7 @@ func TestBuildSink(t *testing.T) {
 
 	t.Run(constants.PUBSUB, func(t *testing.T) {
 		sink, err := BuildSink(c)
-		pubsubSink := PubsubSink{}
+		pubsubSink := pubsub.Sink{}
 		assert.IsType(t, &pubsubSink, sink)
 		assert.Equal(t, err, nil)
 	})
@@ -95,7 +98,7 @@ func TestBuildSink(t *testing.T) {
 	t.Run(constants.KINESIS, func(t *testing.T) {
 		c.Type = constants.KINESIS
 		sink, err := BuildSink(c)
-		kinesisSink := KinesisSink{}
+		kinesisSink := kinesis.Sink{}
 		assert.IsType(t, &kinesisSink, sink)
 		assert.Equal(t, nil, err)
 	})
@@ -103,7 +106,7 @@ func TestBuildSink(t *testing.T) {
 	t.Run(constants.KINESIS_FIREHOSE, func(t *testing.T) {
 		c.Type = constants.KINESIS_FIREHOSE
 		sink, err := BuildSink(c)
-		firehoseSink := KinesisFirehoseSink{}
+		firehoseSink := kinesisFirehose.Sink{}
 		assert.IsType(t, &firehoseSink, sink)
 		assert.Equal(t, nil, err)
 	})

@@ -2,7 +2,7 @@
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package sink
+package natsJetstream
 
 import (
 	"context"
@@ -11,10 +11,11 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 )
 
-type NatsJetstreamSink struct {
+type Sink struct {
 	id               *uuid.UUID
 	name             string
 	deliveryRequired bool
@@ -25,23 +26,23 @@ type NatsJetstreamSink struct {
 	// FIXME! Add .creds/token/tls cert/nkey auth
 }
 
-func (s *NatsJetstreamSink) Id() *uuid.UUID {
+func (s *Sink) Id() *uuid.UUID {
 	return s.id
 }
 
-func (s *NatsJetstreamSink) Name() string {
+func (s *Sink) Name() string {
 	return s.name
 }
 
-func (s *NatsJetstreamSink) Type() string {
-	return NATS_JETSTREAM
+func (s *Sink) Type() string {
+	return "jetstream"
 }
 
-func (s *NatsJetstreamSink) DeliveryRequired() bool {
+func (s *Sink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }
 
-func (s *NatsJetstreamSink) Initialize(conf config.Sink) error {
+func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing nats jetstream sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
@@ -57,12 +58,12 @@ func (s *NatsJetstreamSink) Initialize(conf config.Sink) error {
 		return err
 	}
 
-	s.validSubject, s.invalidSubject = BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
+	s.validSubject, s.invalidSubject = constants.BUZ_VALID_EVENTS, constants.BUZ_INVALID_EVENTS
 	s.conn, s.jetstream = conn, js
 	return nil
 }
 
-func (s *NatsJetstreamSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
 	for _, e := range envelopes {
 		contents, err := e.AsByte()
 		if err != nil {
@@ -78,7 +79,7 @@ func (s *NatsJetstreamSink) BatchPublishValid(ctx context.Context, envelopes []e
 	return nil
 }
 
-func (s *NatsJetstreamSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	for _, e := range envelopes {
 		contents, err := e.AsByte()
 		if err != nil {
@@ -94,11 +95,11 @@ func (s *NatsJetstreamSink) BatchPublishInvalid(ctx context.Context, envelopes [
 	return nil
 }
 
-func (s *NatsJetstreamSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
 	return nil
 }
 
-func (s *NatsJetstreamSink) Close() {
+func (s *Sink) Close() {
 	log.Debug().Msg("🟡 closing nats sink")
 	s.conn.Close()
 }

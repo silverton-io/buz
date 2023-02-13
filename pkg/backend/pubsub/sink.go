@@ -1,8 +1,8 @@
-// Copyright (c) 2022 Silverton Data, Inc.
+// Copyright (c) 2023 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package sink
+package pubsub
 
 import (
 	"encoding/json"
@@ -14,13 +14,14 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"golang.org/x/net/context"
 )
 
 const INIT_TIMEOUT_SECONDS = 10
 
-type PubsubSink struct {
+type Sink struct {
 	id                 *uuid.UUID
 	name               string
 	deliveryRequired   bool
@@ -29,31 +30,31 @@ type PubsubSink struct {
 	invalidEventsTopic *pubsub.Topic
 }
 
-func (s *PubsubSink) Id() *uuid.UUID {
+func (s *Sink) Id() *uuid.UUID {
 	return s.id
 }
 
-func (s *PubsubSink) Name() string {
+func (s *Sink) Name() string {
 	return s.name
 }
 
-func (s *PubsubSink) Type() string {
-	return PUBSUB
+func (s *Sink) Type() string {
+	return "pubsub"
 }
 
-func (s *PubsubSink) DeliveryRequired() bool {
+func (s *Sink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }
 
-func (s *PubsubSink) Initialize(conf config.Sink) error {
+func (s *Sink) Initialize(conf config.Sink) error {
 	ctx, _ := context.WithTimeout(context.Background(), INIT_TIMEOUT_SECONDS*time.Second)
 	client, err := pubsub.NewClient(ctx, conf.Project)
 	if err != nil {
 		log.Debug().Err(err).Msg("🟡 could not initialize pubsub sink")
 		return err
 	}
-	validTopic := client.Topic(BUZ_VALID_EVENTS)
-	invalidTopic := client.Topic(BUZ_INVALID_EVENTS)
+	validTopic := client.Topic(constants.BUZ_VALID_EVENTS)
+	invalidTopic := client.Topic(constants.BUZ_INVALID_EVENTS)
 	vTopicExists, err := validTopic.Exists(ctx)
 	if err != nil {
 		log.Debug().Err(err).Msg("🟡 cannot check valid event topic existence")
@@ -78,7 +79,7 @@ func (s *PubsubSink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, envelopes []envelope.Envelope) error {
+func (s *Sink) batchPublish(ctx context.Context, topic *pubsub.Topic, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
 	for _, e := range envelopes {
 		payload, _ := json.Marshal(e)
@@ -116,12 +117,12 @@ func (s *PubsubSink) batchPublish(ctx context.Context, topic *pubsub.Topic, enve
 	return nil
 }
 
-func (s *PubsubSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
 	return err
 }
 
-func (s *PubsubSink) Close() {
+func (s *Sink) Close() {
 	log.Debug().Msg("🟡 closing pubsub sink client")
 	s.client.Close() // Technically does not need to be called since it's available for lifetime
 }

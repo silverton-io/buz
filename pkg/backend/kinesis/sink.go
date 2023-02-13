@@ -1,8 +1,8 @@
-// Copyright (c) 2022 Silverton Data, Inc.
+// Copyright (c) 2023 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package sink
+package kinesis
 
 import (
 	"context"
@@ -14,10 +14,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 )
 
-type KinesisSink struct {
+type Sink struct {
 	id               *uuid.UUID
 	name             string
 	deliveryRequired bool
@@ -26,33 +27,33 @@ type KinesisSink struct {
 	invalidStream    string
 }
 
-func (s *KinesisSink) Id() *uuid.UUID {
+func (s *Sink) Id() *uuid.UUID {
 	return s.id
 }
 
-func (s *KinesisSink) Name() string {
+func (s *Sink) Name() string {
 	return s.name
 }
 
-func (s *KinesisSink) Type() string {
-	return KINESIS
+func (s *Sink) Type() string {
+	return "kinesis"
 }
 
-func (s *KinesisSink) DeliveryRequired() bool {
+func (s *Sink) DeliveryRequired() bool {
 	return s.deliveryRequired
 }
 
-func (s *KinesisSink) Initialize(conf config.Sink) error {
+func (s *Sink) Initialize(conf config.Sink) error {
 	ctx := context.Background()
 	cfg, err := awsconf.LoadDefaultConfig(ctx)
 	client := kinesis.NewFromConfig(cfg)
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	s.client, s.validStream, s.invalidStream = client, BUZ_VALID_EVENTS, BUZ_INVALID_EVENTS
+	s.client, s.validStream, s.invalidStream = client, constants.BUZ_VALID_EVENTS, constants.BUZ_INVALID_EVENTS
 	return err
 }
 
-func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) error {
+func (s *Sink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
 	for _, event := range envelopes {
 		partitionKey := "blah" // FIXME!
@@ -84,22 +85,22 @@ func (s *KinesisSink) batchPublish(ctx context.Context, stream string, envelopes
 	return nil
 }
 
-func (s *KinesisSink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.batchPublish(ctx, s.validStream, envelopes)
 	return err
 }
 
-func (s *KinesisSink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.batchPublish(ctx, s.invalidStream, envelopes)
 	return err
 }
 
-func (s *KinesisSink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
 	// err := s.batchPublish(ctx, s.validStream, envelopes)
 	return nil
 }
 
-func (s *KinesisSink) Close() {
+func (s *Sink) Close() {
 	log.Debug().Msg("🟡 closing kinesis sink client")
 
 }
