@@ -9,28 +9,23 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/amplitude"
+	"github.com/silverton-io/buz/pkg/backend/blackhole"
+	"github.com/silverton-io/buz/pkg/backend/clickhousedb"
+	"github.com/silverton-io/buz/pkg/backend/elasticsearch"
+	"github.com/silverton-io/buz/pkg/backend/file"
+	"github.com/silverton-io/buz/pkg/backend/http"
+	"github.com/silverton-io/buz/pkg/backend/kafka"
+	"github.com/silverton-io/buz/pkg/backend/materializedb"
+	"github.com/silverton-io/buz/pkg/backend/mongodb"
+	"github.com/silverton-io/buz/pkg/backend/mysqldb"
+	"github.com/silverton-io/buz/pkg/backend/postgresdb"
+	"github.com/silverton-io/buz/pkg/backend/stdout"
+	"github.com/silverton-io/buz/pkg/backend/timescaledb"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/db"
+	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"golang.org/x/net/context"
-)
-
-const (
-	PUBSUB           string = "pubsub"
-	REDPANDA         string = "redpanda"
-	KAFKA            string = "kafka"
-	KINESIS          string = "kinesis"
-	KINESIS_FIREHOSE string = "kinesis-firehose"
-	STDOUT           string = "stdout"
-	HTTP             string = "http"
-	HTTPS            string = "https"
-	BLACKHOLE        string = "blackhole"
-	FILE             string = "file"
-	PUBNUB           string = "pubnub"
-	NATS             string = "nats"
-	NATS_JETSTREAM   string = "nats-jetstream"
-	INDICATIVE       string = "indicative"
-	AMPLITUDE        string = "amplitude"
 )
 
 type Sink interface {
@@ -46,68 +41,65 @@ type Sink interface {
 
 func BuildSink(conf config.Sink) (sink Sink, err error) {
 	switch conf.Type {
-	case PUBSUB:
+	case constants.PUBSUB:
 		sink := PubsubSink{}
 		return &sink, nil
-	case KAFKA:
-		sink := KafkaSink{}
+	case constants.KAFKA:
+		sink := kafka.Sink{}
 		return &sink, nil
-	case REDPANDA:
-		sink := KafkaSink{}
+	case constants.REDPANDA:
+		sink := kafka.Sink{}
 		return &sink, nil
-	case KINESIS:
+	case constants.KINESIS:
 		sink := KinesisSink{}
 		return &sink, nil
-	case KINESIS_FIREHOSE:
+	case constants.KINESIS_FIREHOSE:
 		sink := KinesisFirehoseSink{}
 		return &sink, nil
-	case STDOUT:
-		sink := StdoutSink{}
+	case constants.STDOUT:
+		sink := stdout.Sink{}
 		return &sink, nil
-	case HTTP:
-		sink := HttpSink{}
+	case constants.HTTP:
+		sink := http.Sink{}
 		return &sink, nil
-	case HTTPS:
-		sink := HttpSink{}
+	case constants.HTTPS:
+		sink := http.Sink{}
 		return &sink, nil
-	case db.ELASTICSEARCH:
-		sink := ElasticsearchSink{}
+	case constants.ELASTICSEARCH:
+		sink := elasticsearch.Sink{}
 		return &sink, nil
-	case BLACKHOLE:
-		sink := BlackholeSink{}
+	case constants.BLACKHOLE:
+		sink := blackhole.Sink{}
 		return &sink, nil
-	case FILE:
-		sink := FileSink{}
+	case constants.FILE:
+		sink := file.Sink{}
 		return &sink, nil
-	case PUBNUB:
+	case constants.PUBNUB:
 		sink := PubnubSink{}
 		return &sink, nil
-	case db.POSTGRES:
-		sink := PostgresSink{}
+	case constants.POSTGRES:
+		sink := postgresdb.Sink{}
 		return &sink, nil
-	case db.MYSQL:
-		sink := MysqlSink{}
+	case constants.MYSQL:
+		sink := mysqldb.Sink{}
 		return &sink, nil
-	case db.MATERIALIZE:
-		sink := MaterializeSink{}
+	case constants.MATERIALIZE:
+		sink := materializedb.Sink{}
 		return &sink, nil
-	case db.CLICKHOUSE:
-		sink := ClickhouseSink{}
+	case constants.CLICKHOUSE:
+		sink := clickhousedb.Sink{}
 		return &sink, nil
-	case db.MONGODB:
-		sink := MongodbSink{}
+	case constants.MONGODB:
+		sink := mongodb.Sink{}
 		return &sink, nil
-	case db.TIMESCALE:
-		sink := TimescaleSink{}
+	case constants.TIMESCALE:
+		sink := timescaledb.Sink{}
 		return &sink, nil
-	case NATS:
+	case constants.NATS:
 		sink := NatsSink{}
 		return &sink, nil
-	case INDICATIVE:
-		sink := IndicativeSink{}
-		return &sink, nil
-	case AMPLITUDE:
-		sink := AmplitudeSink{}
+	case constants.AMPLITUDE:
+		sink := amplitude.Sink{}
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)

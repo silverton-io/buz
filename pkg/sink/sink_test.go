@@ -10,7 +10,10 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/silverton-io/buz/pkg/backend/kafka"
+	"github.com/silverton-io/buz/pkg/backend/stdout"
 	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -69,46 +72,46 @@ func (ms *MockSink) Close() {
 
 func TestBuildSink(t *testing.T) {
 	c := config.Sink{
-		Type:         PUBSUB,
+		Type:         constants.PUBSUB,
 		Project:      "myproject",
 		KafkaBrokers: []string{"broker1"},
 	}
 
-	t.Run(PUBSUB, func(t *testing.T) {
+	t.Run(constants.PUBSUB, func(t *testing.T) {
 		sink, err := BuildSink(c)
 		pubsubSink := PubsubSink{}
 		assert.IsType(t, &pubsubSink, sink)
 		assert.Equal(t, err, nil)
 	})
 
-	t.Run(KAFKA, func(t *testing.T) {
-		c.Type = KAFKA
+	t.Run(constants.KAFKA, func(t *testing.T) {
+		c.Type = constants.KAFKA
 		sink, err := BuildSink(c)
-		kafkaSink := KafkaSink{}
+		kafkaSink := kafka.Sink{}
 		assert.IsType(t, &kafkaSink, sink)
 		assert.Equal(t, nil, err)
 	})
 
-	t.Run(KINESIS, func(t *testing.T) {
-		c.Type = KINESIS
+	t.Run(constants.KINESIS, func(t *testing.T) {
+		c.Type = constants.KINESIS
 		sink, err := BuildSink(c)
 		kinesisSink := KinesisSink{}
 		assert.IsType(t, &kinesisSink, sink)
 		assert.Equal(t, nil, err)
 	})
 
-	t.Run(KINESIS_FIREHOSE, func(t *testing.T) {
-		c.Type = KINESIS_FIREHOSE
+	t.Run(constants.KINESIS_FIREHOSE, func(t *testing.T) {
+		c.Type = constants.KINESIS_FIREHOSE
 		sink, err := BuildSink(c)
 		firehoseSink := KinesisFirehoseSink{}
 		assert.IsType(t, &firehoseSink, sink)
 		assert.Equal(t, nil, err)
 	})
 
-	t.Run(STDOUT, func(t *testing.T) {
-		c.Type = STDOUT
+	t.Run(constants.STDOUT, func(t *testing.T) {
+		c.Type = constants.STDOUT
 		sink, err := BuildSink(c)
-		stdoutSink := StdoutSink{}
+		stdoutSink := stdout.Sink{}
 		assert.IsType(t, &stdoutSink, sink)
 		assert.Equal(t, nil, err)
 	})
@@ -124,7 +127,7 @@ func TestBuildSink(t *testing.T) {
 
 func TestInitializeSink(t *testing.T) {
 	c := config.Sink{
-		Type:         PUBSUB,
+		Type:         constants.PUBSUB,
 		Project:      "myproject",
 		KafkaBrokers: []string{"broker1"},
 	}

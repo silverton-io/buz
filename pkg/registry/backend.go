@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Silverton Data, Inc.
+// Copyright (c) 2023 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
@@ -8,8 +8,15 @@ import (
 	"errors"
 
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/clickhousedb"
+	"github.com/silverton-io/buz/pkg/backend/file"
+	"github.com/silverton-io/buz/pkg/backend/http"
+	"github.com/silverton-io/buz/pkg/backend/materializedb"
+	"github.com/silverton-io/buz/pkg/backend/mongodb"
+	"github.com/silverton-io/buz/pkg/backend/mysqldb"
+	"github.com/silverton-io/buz/pkg/backend/postgresdb"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/db"
+	"github.com/silverton-io/buz/pkg/constants"
 )
 
 const (
@@ -41,28 +48,28 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 		cacheBackend := MinioSchemaCacheBackend{}
 		return &cacheBackend, nil
 	case FS:
-		cacheBackend := FilesystemCacheBackend{}
+		cacheBackend := file.RegistryBackend{}
 		return &cacheBackend, nil
 	case HTTP:
-		cacheBackend := HttpSchemaCacheBackend{}
+		cacheBackend := http.RegistryBackend{}
 		return &cacheBackend, nil
 	case HTTPS:
-		cacheBackend := HttpSchemaCacheBackend{}
+		cacheBackend := http.RegistryBackend{}
 		return &cacheBackend, nil
-	case db.POSTGRES:
-		cacheBackend := PostgresSchemaCacheBackend{}
+	case constants.POSTGRES:
+		cacheBackend := postgresdb.RegistryBackend{}
 		return &cacheBackend, nil
-	case db.MYSQL:
-		cacheBackend := MysqlSchemaCacheBackend{}
+	case constants.MYSQL:
+		cacheBackend := mysqldb.RegistryBackend{}
 		return &cacheBackend, nil
-	case db.MATERIALIZE:
-		cacheBackend := MaterializeSchemaCacheBackend{}
+	case constants.MATERIALIZE:
+		cacheBackend := materializedb.RegistryBackend{}
 		return &cacheBackend, nil
-	case db.CLICKHOUSE:
-		cacheBackend := ClickhouseSchemaCacheBackend{}
+	case constants.CLICKHOUSE:
+		cacheBackend := clickhousedb.RegistryBackend{}
 		return &cacheBackend, nil
-	case db.MONGODB:
-		cacheBackend := MongodbSchemaCacheBackend{}
+	case constants.MONGODB:
+		cacheBackend := mongodb.RegistryBackend{}
 		return &cacheBackend, nil
 	case IGLU:
 		e := errors.New("the iglu schema cache backend is not yet available")

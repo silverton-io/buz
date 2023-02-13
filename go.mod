@@ -5,6 +5,7 @@ go 1.19
 require (
 	cloud.google.com/go/pubsub v1.17.1
 	cloud.google.com/go/storage v1.14.0
+	github.com/apex/gateway/v2 v2.0.0
 	github.com/aws/aws-sdk-go-v2 v1.14.0
 	github.com/aws/aws-sdk-go-v2/config v1.13.1
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.9.1
@@ -42,7 +43,6 @@ require (
 	cloud.google.com/go/compute v1.1.0 // indirect
 	cloud.google.com/go/iam v0.1.1 // indirect
 	github.com/ClickHouse/clickhouse-go v1.5.4 // indirect
-	github.com/apex/gateway/v2 v2.0.0 // indirect
 	github.com/aws/aws-lambda-go v1.34.1 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.3.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.8.0 // indirect
