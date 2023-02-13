@@ -10,24 +10,16 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/clickhousedb"
 	"github.com/silverton-io/buz/pkg/backend/file"
+	"github.com/silverton-io/buz/pkg/backend/gcs"
 	"github.com/silverton-io/buz/pkg/backend/http"
 	"github.com/silverton-io/buz/pkg/backend/materializedb"
+	"github.com/silverton-io/buz/pkg/backend/minio"
 	"github.com/silverton-io/buz/pkg/backend/mongodb"
 	"github.com/silverton-io/buz/pkg/backend/mysqldb"
 	"github.com/silverton-io/buz/pkg/backend/postgresdb"
+	"github.com/silverton-io/buz/pkg/backend/s3"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
-)
-
-const (
-	GCS   string = "gcs"
-	S3    string = "s3"
-	MINIO string = "minio"
-	FS    string = "fs"
-	HTTP  string = "http"
-	HTTPS string = "https"
-	IGLU  string = "iglu"
-	KSR   string = "ksr" // Kafka schema registry
 )
 
 type SchemaCacheBackend interface {
@@ -38,22 +30,22 @@ type SchemaCacheBackend interface {
 
 func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, err error) {
 	switch conf.Type {
-	case GCS:
-		cacheBackend := GcsSchemaCacheBackend{}
+	case constants.GCS:
+		cacheBackend := gcs.RegistryBackend{}
 		return &cacheBackend, nil
-	case S3:
-		cacheBackend := S3SchemaCacheBackend{}
+	case constants.S3:
+		cacheBackend := s3.RegistryBackend{}
 		return &cacheBackend, nil
-	case MINIO:
-		cacheBackend := MinioSchemaCacheBackend{}
+	case constants.MINIO:
+		cacheBackend := minio.RegistryBackend{}
 		return &cacheBackend, nil
-	case FS:
+	case constants.FILE:
 		cacheBackend := file.RegistryBackend{}
 		return &cacheBackend, nil
-	case HTTP:
+	case constants.HTTP:
 		cacheBackend := http.RegistryBackend{}
 		return &cacheBackend, nil
-	case HTTPS:
+	case constants.HTTPS:
 		cacheBackend := http.RegistryBackend{}
 		return &cacheBackend, nil
 	case constants.POSTGRES:
@@ -71,11 +63,11 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 	case constants.MONGODB:
 		cacheBackend := mongodb.RegistryBackend{}
 		return &cacheBackend, nil
-	case IGLU:
+	case constants.IGLU:
 		e := errors.New("the iglu schema cache backend is not yet available")
 		log.Fatal().Stack().Err(e).Msg("iglu is unsupported")
 		return nil, e
-	case KSR:
+	case constants.KAFKA:
 		e := errors.New("the kafka schema registry cache backend is not yet available")
 		log.Fatal().Stack().Err(e).Msg("kafka schema registry is unsupported")
 		return nil, e

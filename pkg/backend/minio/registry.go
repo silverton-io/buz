@@ -2,7 +2,7 @@
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package registry
+package minio
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"github.com/silverton-io/buz/pkg/config"
 )
 
-type MinioSchemaCacheBackend struct {
+type RegistryBackend struct {
 	endpoint        string
 	accessKeyId     string
 	secretAccessKey string
@@ -26,7 +26,7 @@ type MinioSchemaCacheBackend struct {
 	client *minio.Client
 }
 
-func (b *MinioSchemaCacheBackend) Initialize(conf config.Backend) error {
+func (b *RegistryBackend) Initialize(conf config.Backend) error {
 	log.Debug().Msg("🟡 initializing minio schema cache backend")
 	b.endpoint = conf.MinioEndpoint
 	b.accessKeyId = conf.AccessKeyId
@@ -43,7 +43,7 @@ func (b *MinioSchemaCacheBackend) Initialize(conf config.Backend) error {
 	return nil
 }
 
-func (b *MinioSchemaCacheBackend) GetRemote(schema string) (contents []byte, err error) {
+func (b *RegistryBackend) GetRemote(schema string) (contents []byte, err error) {
 	ctx := context.Background()
 	var schemaLocation string
 	if b.path == "/" {
@@ -65,6 +65,6 @@ func (b *MinioSchemaCacheBackend) GetRemote(schema string) (contents []byte, err
 	return contents, nil
 }
 
-func (b *MinioSchemaCacheBackend) Close() {
+func (b *RegistryBackend) Close() {
 	log.Debug().Msg("🟡 closing minio schema cache backend")
 }

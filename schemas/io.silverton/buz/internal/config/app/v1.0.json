@@ -492,7 +492,7 @@
                                 "gcs",
                                 "s3",
                                 "minio",
-                                "fs",
+                                "file",
                                 "http",
                                 "https",
                                 "postgres",
@@ -737,7 +737,7 @@
                         {
                             "properties": {
                                 "type": {
-                                    "const": "fs"
+                                    "const": "file"
                                 }
                             },
                             "required": [

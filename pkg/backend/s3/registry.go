@@ -2,7 +2,7 @@
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package registry
+package s3
 
 import (
 	"context"
@@ -16,14 +16,14 @@ import (
 	"github.com/silverton-io/buz/pkg/config"
 )
 
-type S3SchemaCacheBackend struct {
+type RegistryBackend struct {
 	bucket     string
 	path       string
 	client     *s3.Client
 	downloader *manager.Downloader
 }
 
-func (b *S3SchemaCacheBackend) Initialize(conf config.Backend) error {
+func (b *RegistryBackend) Initialize(conf config.Backend) error {
 	log.Debug().Msg("🟡 initializing s3 schema cache backend")
 	ctx := context.Background()
 	cfg, err := awsconf.LoadDefaultConfig(ctx)
@@ -37,7 +37,7 @@ func (b *S3SchemaCacheBackend) Initialize(conf config.Backend) error {
 	return nil
 }
 
-func (b *S3SchemaCacheBackend) GetRemote(schema string) (contents []byte, err error) {
+func (b *RegistryBackend) GetRemote(schema string) (contents []byte, err error) {
 	ctx := context.Background()
 	var schemaLocation string
 	if b.path == "/" {
@@ -58,7 +58,7 @@ func (b *S3SchemaCacheBackend) GetRemote(schema string) (contents []byte, err er
 	return buffer.Bytes(), nil
 }
 
-func (b *S3SchemaCacheBackend) Close() {
+func (b *RegistryBackend) Close() {
 	log.Debug().Msg("🟡 closing s3 schema cache backend")
 	// This is no-op
 }

@@ -2,7 +2,7 @@
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package registry
+package gcs
 
 import (
 	"context"
@@ -14,13 +14,13 @@ import (
 	"github.com/silverton-io/buz/pkg/config"
 )
 
-type GcsSchemaCacheBackend struct {
+type RegistryBackend struct {
 	bucket string
 	path   string
 	client *storage.Client
 }
 
-func (b *GcsSchemaCacheBackend) Initialize(config config.Backend) error {
+func (b *RegistryBackend) Initialize(config config.Backend) error {
 	ctx := context.Background()
 	log.Debug().Msg("🟡 initializing gcs schema cache backend")
 	client, err := storage.NewClient(ctx)
@@ -32,7 +32,7 @@ func (b *GcsSchemaCacheBackend) Initialize(config config.Backend) error {
 	return nil
 }
 
-func (b *GcsSchemaCacheBackend) GetRemote(schema string) (contents []byte, err error) {
+func (b *RegistryBackend) GetRemote(schema string) (contents []byte, err error) {
 	ctx := context.Background()
 	var schemaLocation string
 	if b.path == "/" {
@@ -50,7 +50,7 @@ func (b *GcsSchemaCacheBackend) GetRemote(schema string) (contents []byte, err e
 	return data, nil
 }
 
-func (b *GcsSchemaCacheBackend) Close() {
+func (b *RegistryBackend) Close() {
 	log.Debug().Msg("🟡 closing gcs schema cache backend")
 	b.client.Close()
 }
