@@ -68,41 +68,13 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *Sink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
-	for _, e := range envelopes {
-		payload, err := bson.Marshal(e)
-		if err != nil {
-			return err
-		}
-		_, err = s.validCollection.InsertOne(ctx, payload) // FIXME - should batch these
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (s *Sink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
-	for _, e := range envelopes {
-		payload, err := bson.Marshal(e)
-		if err != nil {
-			return err
-		}
-		_, err = s.invalidCollection.InsertOne(ctx, payload) // FIXME - should batch these
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
 	for _, e := range envelopes {
 		payload, err := bson.Marshal(e)
 		if err != nil {
 			return err
 		}
-		_, err = s.validCollection.InsertOne(ctx, payload) // FIXME - should batch these
+		_, err = s.validCollection.InsertOne(ctx, payload) // FIXME - should batch these and shard them
 		if err != nil {
 			return err
 		}

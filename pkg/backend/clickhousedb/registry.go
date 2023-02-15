@@ -17,12 +17,6 @@ type RegistryBackend struct {
 	registryTable string
 }
 
-type RegistryTable struct {
-	db.BasePKeylessModel
-	Name     string `json:"name" gorm:"index:idx_name"`
-	Contents string `json:"contents"`
-}
-
 func (b *RegistryBackend) Initialize(conf config.Backend) error {
 	connParams := db.ConnectionParams{
 		Host: conf.ClickhouseHost,
@@ -38,7 +32,7 @@ func (b *RegistryBackend) Initialize(conf config.Backend) error {
 		return err
 	}
 	b.gormDb, b.registryTable = gormDb, conf.RegistryTable
-	ensureErr := db.EnsureTable(b.gormDb, b.registryTable, RegistryTable{})
+	ensureErr := db.EnsureTable(b.gormDb, b.registryTable, db.RegistryTable{})
 	return ensureErr
 }
 

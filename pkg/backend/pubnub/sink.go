@@ -75,18 +75,9 @@ func (s *Sink) batchPublish(ctx context.Context, channel string, envelopes []env
 	return err
 }
 
-func (s *Sink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, s.validChannel, envelopes)
-	return err
-}
-
-func (s *Sink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, s.invalidChannel, envelopes)
-	return err
-}
-
 func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	return nil
+	err := s.batchPublish(ctx, s.validChannel, envelopes) // FIXME -> shard
+	return err
 }
 
 func (s *Sink) Close() {

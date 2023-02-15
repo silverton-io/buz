@@ -130,19 +130,9 @@ func (s *Sink) batchPublish(ctx context.Context, topic string, envelopes []envel
 	return nil
 }
 
-func (s *Sink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, s.validEventsTopic, envelopes)
+func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	err := s.batchPublish(ctx, s.validEventsTopic, envelopes) // FIXME -> shard this by configured strategy
 	return err
-}
-
-func (s *Sink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
-	return err
-}
-
-func (ms *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	// err := s.batchPublish(ctx, $TOPIC, envelopes)
-	return nil
 }
 
 func (s *Sink) Close() {

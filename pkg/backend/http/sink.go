@@ -52,7 +52,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 }
 
 func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	_, err := request.PostEnvelopes(s.url, envelopes)
+	_, err := request.PostEnvelopes(s.url, envelopes) // FIXME -> shard this by configured strategy
 	return err
 }
 

@@ -63,8 +63,8 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *Sink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
-	for _, e := range envelopes {
+func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	for _, e := range envelopes { // FIXME -> shard
 		contents, err := e.AsByte()
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not marshal envelope")
@@ -76,26 +76,6 @@ func (s *Sink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envel
 			return err
 		}
 	}
-	return nil
-}
-
-func (s *Sink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
-	for _, e := range envelopes {
-		contents, err := e.AsByte()
-		if err != nil {
-			log.Error().Err(err).Msg("🔴 could not marshal envelope")
-			return err
-		}
-		_, err = s.jetstream.Publish(s.invalidSubject, contents)
-		if err != nil {
-			log.Error().Err(err).Msg("🔴 could not publish invalid envelope to jetstream")
-			return err
-		}
-	}
-	return nil
-}
-
-func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
 	return nil
 }
 

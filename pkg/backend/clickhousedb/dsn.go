@@ -10,7 +10,7 @@ import (
 	"github.com/silverton-io/buz/pkg/db"
 )
 
-// GenerateClickhouseDsn generates a dsn from the provided connection params
+// generateDsn generates a Clickhouse dsn from the provided connection params
 func generateDsn(params db.ConnectionParams) string {
 	// "tcp://localhost:9000?database=gorm&username=gorm&password=gorm&read_timeout=10&write_timeout=20"
 	port := strconv.FormatUint(uint64(params.Port), 10)

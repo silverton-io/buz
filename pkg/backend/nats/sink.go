@@ -60,27 +60,13 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *Sink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
-	for _, e := range envelopes {
-		err := s.encodedConn.Publish(s.validSubject, &e)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (s *Sink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
-	for _, e := range envelopes {
-		err := s.encodedConn.Publish(s.invalidSubject, &e)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	for _, e := range envelopes {
+		err := s.encodedConn.Publish(s.validSubject, &e) // FIXME -> shard
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

@@ -78,18 +78,8 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *Sink) BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.gormDb.Table(s.validTable).Create(envelopes).Error
-	return err
-}
-
-func (s *Sink) BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.gormDb.Table(s.invalidTable).Create(envelopes).Error
-	return err
-}
-
 func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.gormDb.Table(s.validTable).Create(envelopes).Error
+	err := s.gormDb.Table(s.validTable).Create(envelopes).Error // FIXME -> shard
 	return err
 }
 
