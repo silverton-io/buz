@@ -9,28 +9,12 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/buz/pkg/backend/amplitude"
 	"github.com/silverton-io/buz/pkg/backend/blackhole"
-	"github.com/silverton-io/buz/pkg/backend/clickhousedb"
-	"github.com/silverton-io/buz/pkg/backend/elasticsearch"
 	"github.com/silverton-io/buz/pkg/backend/file"
-	"github.com/silverton-io/buz/pkg/backend/http"
-	"github.com/silverton-io/buz/pkg/backend/kafka"
-	"github.com/silverton-io/buz/pkg/backend/kinesis"
-	"github.com/silverton-io/buz/pkg/backend/kinesisFirehose"
-	"github.com/silverton-io/buz/pkg/backend/materializedb"
-	"github.com/silverton-io/buz/pkg/backend/mongodb"
-	"github.com/silverton-io/buz/pkg/backend/mysqldb"
-	"github.com/silverton-io/buz/pkg/backend/nats"
-	"github.com/silverton-io/buz/pkg/backend/postgresdb"
-	"github.com/silverton-io/buz/pkg/backend/pubnub"
-	"github.com/silverton-io/buz/pkg/backend/pubsub"
 	"github.com/silverton-io/buz/pkg/backend/stdout"
-	"github.com/silverton-io/buz/pkg/backend/timescaledb"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
-	"golang.org/x/net/context"
 )
 
 type Sink interface {
@@ -39,73 +23,74 @@ type Sink interface {
 	Type() string
 	DeliveryRequired() bool
 	Initialize(conf config.Sink) error
-	BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error
-	Close()
-	// FIXME! Add "shard by" mechanism.
+	Distribute(envelopes []envelope.Envelope) // Helper for writing to the input chan
+	Shutdown() error
 }
 
 func BuildSink(conf config.Sink) (sink Sink, err error) {
 	switch conf.Type {
-	case constants.PUBSUB:
-		sink := pubsub.Sink{}
-		return &sink, nil
-	case constants.KAFKA:
-		sink := kafka.Sink{}
-		return &sink, nil
-	case constants.REDPANDA:
-		sink := kafka.Sink{}
-		return &sink, nil
-	case constants.KINESIS:
-		sink := kinesis.Sink{}
-		return &sink, nil
-	case constants.KINESIS_FIREHOSE:
-		sink := kinesisFirehose.Sink{}
-		return &sink, nil
-	case constants.STDOUT:
-		sink := stdout.Sink{}
-		return &sink, nil
-	case constants.HTTP:
-		sink := http.Sink{}
-		return &sink, nil
-	case constants.HTTPS:
-		sink := http.Sink{}
-		return &sink, nil
-	case constants.ELASTICSEARCH:
-		sink := elasticsearch.Sink{}
-		return &sink, nil
+	// System
 	case constants.BLACKHOLE:
 		sink := blackhole.Sink{}
 		return &sink, nil
 	case constants.FILE:
 		sink := file.Sink{}
 		return &sink, nil
-	case constants.PUBNUB:
-		sink := pubnub.Sink{}
+	case constants.STDOUT:
+		sink := stdout.Sink{}
 		return &sink, nil
-	case constants.POSTGRES:
-		sink := postgresdb.Sink{}
-		return &sink, nil
-	case constants.MYSQL:
-		sink := mysqldb.Sink{}
-		return &sink, nil
-	case constants.MATERIALIZE:
-		sink := materializedb.Sink{}
-		return &sink, nil
-	case constants.CLICKHOUSE:
-		sink := clickhousedb.Sink{}
-		return &sink, nil
-	case constants.MONGODB:
-		sink := mongodb.Sink{}
-		return &sink, nil
-	case constants.TIMESCALE:
-		sink := timescaledb.Sink{}
-		return &sink, nil
-	case constants.NATS:
-		sink := nats.Sink{}
-		return &sink, nil
-	case constants.AMPLITUDE:
-		sink := amplitude.Sink{}
-		return &sink, nil
+	// Streams
+	// case constants.PUBSUB:
+	// 	sink := pubsub.Sink{}
+	// 	return &sink, nil
+	// case constants.KAFKA:
+	// 	sink := kafka.Sink{}
+	// 	return &sink, nil
+	// case constants.REDPANDA:
+	// 	sink := kafka.Sink{}
+	// 	return &sink, nil
+	// case constants.KINESIS:
+	// 	sink := kinesis.Sink{}
+	// 	return &sink, nil
+	// case constants.KINESIS_FIREHOSE:
+	// 	sink := kinesisFirehose.Sink{}
+	// 	return &sink, nil
+	// case constants.HTTP:
+	// 	sink := http.Sink{}
+	// 	return &sink, nil
+	// case constants.HTTPS:
+	// 	sink := http.Sink{}
+	// 	return &sink, nil
+	// case constants.ELASTICSEARCH:
+	// 	sink := elasticsearch.Sink{}
+	// 	return &sink, nil
+	// case constants.PUBNUB:
+	// 	sink := pubnub.Sink{}
+	// 	return &sink, nil
+	// case constants.POSTGRES:
+	// 	sink := postgresdb.Sink{}
+	// 	return &sink, nil
+	// case constants.MYSQL:
+	// 	sink := mysqldb.Sink{}
+	// 	return &sink, nil
+	// case constants.MATERIALIZE:
+	// 	sink := materializedb.Sink{}
+	// 	return &sink, nil
+	// case constants.CLICKHOUSE:
+	// 	sink := clickhousedb.Sink{}
+	// 	return &sink, nil
+	// case constants.MONGODB:
+	// 	sink := mongodb.Sink{}
+	// 	return &sink, nil
+	// case constants.TIMESCALE:
+	// 	sink := timescaledb.Sink{}
+	// 	return &sink, nil
+	// case constants.NATS:
+	// 	sink := nats.Sink{}
+	// 	return &sink, nil
+	// case constants.AMPLITUDE:
+	// 	sink := amplitude.Sink{}
+	// 	return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
 		log.Error().Stack().Err(e).Msg("🔴 unsupported sink")

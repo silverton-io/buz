@@ -22,6 +22,7 @@ type Sink struct {
 	deliveryRequired bool
 	validFile        string
 	invalidFile      string
+	inputChan        chan []envelope.Envelope
 }
 
 func (s *Sink) Id() *uuid.UUID {
@@ -42,9 +43,10 @@ func (s *Sink) DeliveryRequired() bool {
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing file sink")
-	s.validFile = constants.BUZ_VALID_EVENTS + ".json"
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
+	s.inputChan = make(chan []envelope.Envelope, 10000)
+	s.validFile = constants.BUZ_VALID_EVENTS + ".json"
 	s.invalidFile = constants.BUZ_INVALID_EVENTS + ".json"
 	return nil
 }
@@ -77,6 +79,11 @@ func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) 
 	return err
 }
 
-func (s *Sink) Close() {
-	log.Debug().Msg("🟡 closing file sink")
+func (s *Sink) Distribute(envelopes []envelope.Envelope) {
+	s.inputChan <- envelopes
+}
+
+func (s *Sink) Shutdown() error {
+	log.Info().Msg("🟡 shutting down file sink")
+	return nil
 }

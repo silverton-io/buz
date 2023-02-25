@@ -5,8 +5,6 @@
 package blackhole
 
 import (
-	"context"
-
 	"github.com/google/uuid"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
@@ -40,9 +38,10 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *Sink) BatchPublish(ctx context.Context, validEnvelopes []envelope.Envelope) error {
-	return nil
+func (s *Sink) Distribute(validEnvelopes []envelope.Envelope) {
+	// This is a blackhole. It does nothing.
 }
 
-func (s *Sink) Close() {
+func (s *Sink) Shutdown() error {
+	return nil
 }

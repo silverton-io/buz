@@ -50,5 +50,5 @@ func TestStdoutSink(t *testing.T) {
 	sink := Sink{}
 
 	sink.Initialize(c)
-	sink.Close()
+	sink.Shutdown()
 }

@@ -5,8 +5,6 @@
 package manifold
 
 import (
-	"context"
-
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/annotator"
 	"github.com/silverton-io/buz/pkg/config"
@@ -34,19 +32,24 @@ func (m *ChannelManifold) Initialize(registry *registry.Registry, sinks *[]sink.
 	m.inputChan = make(chan []envelope.Envelope, 100000) // Set a fairly high buffer size. Can revisit as necessary.
 	m.shutdownChan = make(chan int, 1)
 	log.Debug().Msg("spinning up manifold goroutine")
-	go func(e <-chan []envelope.Envelope, quit chan int) {
+	go func(envelopes <-chan []envelope.Envelope, quit chan int) {
 		for {
 			select {
-			case envelopes := <-e:
+			case envelopes := <-envelopes:
 				for _, s := range *m.sinks {
-					ctx := context.Background()
-					err := s.BatchPublish(ctx, envelopes)
-					if err != nil {
-						log.Error().Err(err).Msg("could not publish envelopes to sink " + s.Id().String())
-					}
+					s.Distribute(envelopes)
 				}
 			case <-quit:
-				log.Info().Msg("manifold shut down")
+				// Read all envelopes from input channel and pass to all sinks
+				// FIXME
+				// Then send shutdown sig to all sinks
+				for _, s := range *m.sinks {
+					err := s.Shutdown()
+					if err != nil {
+						log.Error().Err(err).Interface("sink", s.Name()).Msg("sink did not safely shut down")
+					}
+				}
+				log.Info().Msg("🟢 manifold shut down")
 				return
 			}
 		}
@@ -67,7 +70,7 @@ func (m *ChannelManifold) GetRegistry() *registry.Registry {
 }
 
 func (m *ChannelManifold) Shutdown() error {
-	log.Info().Msg("shutting down channel manifold")
+	log.Info().Msg("🟢 shutting down channel manifold")
 	m.shutdownChan <- 1
 	return nil
 }

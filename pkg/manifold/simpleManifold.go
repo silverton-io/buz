@@ -5,8 +5,6 @@
 package manifold
 
 import (
-	"context"
-
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/annotator"
 	"github.com/silverton-io/buz/pkg/config"
@@ -39,15 +37,8 @@ func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope) error {
 	annotatedEnvelopes := annotator.Annotate(envelopes, m.registry)
 	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.conf.Privacy)
 	for _, s := range *m.sinks {
-		ctx := context.Background()
 		log.Debug().Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🟡 purging envelopes to sink")
-		publishErr := s.BatchPublish(ctx, anonymizedEnvelopes)
-		if publishErr != nil {
-			log.Error().Err(publishErr).Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🔴 could not purge valid envelopes to sink")
-			if s.DeliveryRequired() {
-				return publishErr
-			}
-		}
+		s.Distribute(anonymizedEnvelopes)
 	}
 	return nil
 }

@@ -44,6 +44,7 @@ type Sink struct {
 	id               *uuid.UUID
 	name             string
 	deliveryRequired bool
+	inputChan        chan []envelope.Envelope
 }
 
 func (s *Sink) Id() *uuid.UUID {
@@ -65,6 +66,7 @@ func (s *Sink) DeliveryRequired() bool {
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing stdout sink")
 	id := uuid.New()
+	s.inputChan = make(chan []envelope.Envelope, 10000)
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	return nil
 }
@@ -90,6 +92,11 @@ func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) 
 	return nil
 }
 
-func (s *Sink) Close() {
-	log.Debug().Msg("🟡 closing stdout sink")
+func (s *Sink) Distribute(envelopes []envelope.Envelope) {
+	s.inputChan <- envelopes
+}
+
+func (s *Sink) Shutdown() error {
+	log.Debug().Msg("🟡 shutting down stdout sink")
+	return nil
 }

@@ -219,11 +219,11 @@ func (a *App) standardMode() {
 	log.Info().Msg("🟢 shutting down server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	a.manifold.Shutdown()
 	if err := srv.Shutdown(ctx); err != nil {
 		a.manifold.Shutdown()
 		log.Fatal().Stack().Err(err).Msg("server forced to shutdown")
 	}
+	a.manifold.Shutdown()
 	tele.Sis(a.collectorMeta)
 }
 
