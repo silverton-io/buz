@@ -33,12 +33,13 @@ func (m *SimpleManifold) Initialize(registry *registry.Registry, sinks *[]sink.S
 	return nil
 }
 
-func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope) error {
+func (m *SimpleManifold) Enqueue(envelopes []envelope.Envelope) error {
 	annotatedEnvelopes := annotator.Annotate(envelopes, m.registry)
 	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.conf.Privacy)
-	for _, s := range *m.sinks {
-		log.Debug().Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🟡 purging envelopes to sink")
-		s.Distribute(anonymizedEnvelopes)
+	for _, outputSink := range *m.sinks {
+		meta := outputSink.Metadata()
+		log.Debug().Interface("metadata", meta).Msg("🟡 enqueueing envelopes to sink")
+		outputSink.Enqueue(anonymizedEnvelopes)
 	}
 	return nil
 }

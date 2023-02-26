@@ -38,7 +38,7 @@ func (i *PixelInput) Initialize(engine *gin.Engine, manifold *manifold.Manifold,
 func (i *PixelInput) Handler(m manifold.Manifold, conf config.Config, metadata *meta.CollectorMeta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		envelopes := i.EnvelopeBuilder(c, &conf, metadata)
-		err := m.Distribute(envelopes)
+		err := m.Enqueue(envelopes)
 		if err != nil {
 			c.Header("Retry-After", response.RETRY_AFTER_60)
 			c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)

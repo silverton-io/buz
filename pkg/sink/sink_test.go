@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/backend/kafka"
 	"github.com/silverton-io/buz/pkg/backend/kinesis"
 	"github.com/silverton-io/buz/pkg/backend/kinesisFirehose"
@@ -26,23 +27,13 @@ type MockSink struct {
 	mock.Mock
 }
 
-func (ms *MockSink) Id() *uuid.UUID {
+func (ms *MockSink) Metadata() backendutils.SinkMetadata {
 	id := uuid.New()
-	return &id
-}
-
-func (ms *MockSink) Name() string {
-	id := "thing"
-	return id
-}
-
-func (ms *MockSink) Type() string {
-	id := "mock"
-	return id
-}
-
-func (ms *MockSink) DeliveryRequired() bool {
-	return false
+	sinkName := "test"
+	return backendutils.SinkMetadata{
+		Id:   &id,
+		Name: sinkName,
+	}
 }
 
 func (ms *MockSink) Initialize(conf config.Sink) error {

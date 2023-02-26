@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
@@ -20,31 +21,28 @@ type Sink struct {
 	id               *uuid.UUID
 	name             string
 	deliveryRequired bool
+	fanout           bool
 	validFile        string
 	invalidFile      string
 	inputChan        chan []envelope.Envelope
 }
 
-func (s *Sink) Id() *uuid.UUID {
-	return s.id
-}
-
-func (s *Sink) Name() string {
-	return s.name
-}
-
-func (s *Sink) Type() string {
-	return "file"
-}
-
-func (s *Sink) DeliveryRequired() bool {
-	return s.deliveryRequired
+func (s *Sink) Metadata() backendutils.SinkMetadata {
+	sinkType := "file"
+	return backendutils.SinkMetadata{
+		Id:               s.id,
+		Name:             s.name,
+		Type:             sinkType,
+		DeliveryRequired: s.deliveryRequired,
+		Fanout:           false,
+	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing file sink")
 	id := uuid.New()
-	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
+	s.id, s.name = &id, conf.Name
+	s.deliveryRequired, s.fanout = conf.DeliveryRequired, conf.Fanout
 	s.inputChan = make(chan []envelope.Envelope, 10000)
 	s.validFile = constants.BUZ_VALID_EVENTS + ".json"
 	s.invalidFile = constants.BUZ_INVALID_EVENTS + ".json"
@@ -79,7 +77,7 @@ func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) 
 	return err
 }
 
-func (s *Sink) Distribute(envelopes []envelope.Envelope) {
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
 	s.inputChan <- envelopes
 }
 

@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/util"
@@ -44,30 +45,27 @@ type Sink struct {
 	id               *uuid.UUID
 	name             string
 	deliveryRequired bool
+	fanout           bool
 	inputChan        chan []envelope.Envelope
 }
 
-func (s *Sink) Id() *uuid.UUID {
-	return s.id
-}
-
-func (s *Sink) Name() string {
-	return s.name
-}
-
-func (s *Sink) Type() string {
-	return "stdout"
-}
-
-func (s *Sink) DeliveryRequired() bool {
-	return s.deliveryRequired
+func (s *Sink) Metadata() backendutils.SinkMetadata {
+	sinkType := "stdout"
+	return backendutils.SinkMetadata{
+		Id:               s.id,
+		Name:             s.name,
+		Type:             sinkType,
+		DeliveryRequired: s.deliveryRequired,
+		Fanout:           false,
+	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing stdout sink")
 	id := uuid.New()
 	s.inputChan = make(chan []envelope.Envelope, 10000)
-	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
+	s.id, s.name = &id, conf.Name
+	s.deliveryRequired, s.fanout = conf.DeliveryRequired, conf.Fanout
 	return nil
 }
 
@@ -92,7 +90,7 @@ func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) 
 	return nil
 }
 
-func (s *Sink) Distribute(envelopes []envelope.Envelope) {
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
 	s.inputChan <- envelopes
 }
 

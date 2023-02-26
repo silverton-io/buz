@@ -14,7 +14,7 @@ import (
 
 type Manifold interface {
 	Initialize(registry *registry.Registry, sinks *[]sink.Sink, conf *config.Config, metadata *meta.CollectorMeta) error
-	Distribute(envelopes []envelope.Envelope) error
+	Enqueue(envelopes []envelope.Envelope) error
 	GetRegistry() *registry.Registry
 	Shutdown() error
 }

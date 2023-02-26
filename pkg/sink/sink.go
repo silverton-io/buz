@@ -7,8 +7,8 @@ package sink
 import (
 	"errors"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/backend/blackhole"
 	"github.com/silverton-io/buz/pkg/backend/file"
 	"github.com/silverton-io/buz/pkg/backend/stdout"
@@ -18,12 +18,9 @@ import (
 )
 
 type Sink interface {
-	Id() *uuid.UUID
-	Name() string
-	Type() string
-	DeliveryRequired() bool
+	Metadata() backendutils.SinkMetadata
 	Initialize(conf config.Sink) error
-	Distribute(envelopes []envelope.Envelope) // Helper for writing to the input chan
+	Enqueue(envelopes []envelope.Envelope)
 	Shutdown() error
 }
 

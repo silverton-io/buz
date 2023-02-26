@@ -36,7 +36,7 @@ func (i *WebhookInput) Handler(m manifold.Manifold, conf config.Config, metadata
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/json" {
 			envelopes := i.EnvelopeBuilder(c, &conf, metadata)
-			err := m.Distribute(envelopes)
+			err := m.Enqueue(envelopes)
 			if err != nil {
 				c.Header("Retry-After", response.RETRY_AFTER_60)
 				c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)

@@ -34,7 +34,7 @@ func (i *CloudeventsInput) Handler(m manifold.Manifold, conf config.Config, meta
 	fn := func(c *gin.Context) {
 		if c.ContentType() == "application/cloudevents+json" || c.ContentType() == "application/cloudevents-batch+json" {
 			envelopes := i.EnvelopeBuilder(c, &conf, metadata)
-			err := m.Distribute(envelopes)
+			err := m.Enqueue(envelopes)
 			if err != nil {
 				c.Header("Retry-After", response.RETRY_AFTER_60)
 				c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)

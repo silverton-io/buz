@@ -37,7 +37,7 @@ func (m *ChannelManifold) Initialize(registry *registry.Registry, sinks *[]sink.
 			select {
 			case envelopes := <-envelopes:
 				for _, s := range *m.sinks {
-					s.Distribute(envelopes)
+					s.Enqueue(envelopes)
 				}
 			case <-quit:
 				// Read all envelopes from input channel and pass to all sinks
@@ -46,7 +46,8 @@ func (m *ChannelManifold) Initialize(registry *registry.Registry, sinks *[]sink.
 				for _, s := range *m.sinks {
 					err := s.Shutdown()
 					if err != nil {
-						log.Error().Err(err).Interface("sink", s.Name()).Msg("sink did not safely shut down")
+						meta := s.Metadata()
+						log.Error().Err(err).Interface("metadata", meta).Msg("sink did not safely shut down")
 					}
 				}
 				log.Info().Msg("🟢 manifold shut down")
@@ -57,7 +58,7 @@ func (m *ChannelManifold) Initialize(registry *registry.Registry, sinks *[]sink.
 	return nil
 }
 
-func (m *ChannelManifold) Distribute(envelopes []envelope.Envelope) error {
+func (m *ChannelManifold) Enqueue(envelopes []envelope.Envelope) error {
 	annotatedEnvelopes := annotator.Annotate(envelopes, m.registry)
 	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.conf.Privacy)
 	log.Debug().Interface("payload", anonymizedEnvelopes).Msg("sending envelopes to chan")
