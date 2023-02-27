@@ -74,6 +74,7 @@ type amplitudeEventBatch struct {
 
 type Sink struct {
 	id               *uuid.UUID
+	sinkType         string
 	name             string
 	deliveryRequired bool
 	endpoint         url.URL
@@ -83,11 +84,10 @@ type Sink struct {
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
-	sinkType := "amplitude"
 	return backendutils.SinkMetadata{
 		Id:               s.id,
 		Name:             s.name,
-		Type:             sinkType,
+		SinkType:         s.sinkType,
 		DeliveryRequired: s.deliveryRequired,
 	}
 }
@@ -95,7 +95,7 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing indicative sink")
 	id := uuid.New()
-	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
+	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	s.inputChan = make(chan []envelope.Envelope, 10000)
 	s.shutdownChan = make(chan int, 1)
 	var e string
@@ -109,6 +109,11 @@ func (s *Sink) Initialize(conf config.Sink) error {
 		return err
 	}
 	s.endpoint, s.apiKey = *endpoint, conf.AmplitudeApiKey
+	s.StartWorker()
+	return nil
+}
+
+func (s *Sink) StartWorker() {
 	go func(s *Sink) {
 		for {
 			select {
@@ -124,7 +129,6 @@ func (s *Sink) Initialize(conf config.Sink) error {
 			}
 		}
 	}(s)
-	return nil
 }
 
 func (s *Sink) batchPublish(ctx context.Context, envelopes []envelope.Envelope) error {

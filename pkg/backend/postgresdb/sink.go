@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/db"
@@ -19,33 +20,29 @@ import (
 
 type Sink struct {
 	id               *uuid.UUID
+	sinkType         string
 	name             string
 	deliveryRequired bool
 	gormDb           *gorm.DB
 	validTable       string
 	invalidTable     string
+	inputChan        chan []envelope.Envelope
+	shutdownChan     chan int
 }
 
-func (s *Sink) Id() *uuid.UUID {
-	return s.id
-}
-
-func (s *Sink) Name() string {
-	return s.name
-}
-
-func (s *Sink) Type() string {
-	return "postgresdb"
-}
-
-func (s *Sink) DeliveryRequired() bool {
-	return s.deliveryRequired
+func (s *Sink) Metadata() backendutils.SinkMetadata {
+	return backendutils.SinkMetadata{
+		Id:               s.id,
+		Name:             s.name,
+		SinkType:         s.sinkType,
+		DeliveryRequired: s.deliveryRequired,
+	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("🟡 initializing postgres sink")
+	log.Debug().Msg("🟡 initializing postgres database sink")
 	id := uuid.New()
-	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
+	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	connParams := db.ConnectionParams{
 		Host: conf.PgHost,
 		Port: conf.PgPort,
@@ -60,6 +57,8 @@ func (s *Sink) Initialize(conf config.Sink) error {
 		return err
 	}
 	s.gormDb, s.validTable, s.invalidTable = gormDb, constants.BUZ_VALID_EVENTS, constants.BUZ_INVALID_EVENTS
+	s.inputChan = make(chan []envelope.Envelope, 10000)
+	s.shutdownChan = make(chan int, 1)
 	for _, tbl := range []string{s.validTable, s.invalidTable} {
 		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.JsonbEnvelope{})
 		if ensureErr != nil {
@@ -74,8 +73,20 @@ func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) 
 	return err
 }
 
-func (s *Sink) Close() {
-	log.Debug().Msg("🟡 closing postgres sink")
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
+	s.inputChan <- envelopes
+}
+
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
+	return nil
+}
+
+func (s *Sink) Shutdown() error {
+	log.Debug().Msg("🟡 closing postgres database sink")
 	db, _ := s.gormDb.DB()
-	db.Close()
+	s.shutdownChan <- 1
+	err := db.Close()
+	return err
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/backend/blackhole"
 	"github.com/silverton-io/buz/pkg/backend/file"
+	"github.com/silverton-io/buz/pkg/backend/postgresdb"
 	"github.com/silverton-io/buz/pkg/backend/stdout"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
@@ -67,23 +68,23 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	// case constants.PUBNUB:
 	// 	sink := pubnub.Sink{}
 	// 	return &sink, nil
-	// case constants.POSTGRES:
-	// 	sink := postgresdb.Sink{}
-	// 	return &sink, nil
+	case constants.POSTGRES:
+		sink := postgresdb.Sink{}
+		return &sink, nil
+	case constants.MATERIALIZE:
+		sink := postgresdb.Sink{}
+		return &sink, nil
+	case constants.TIMESCALE:
+		sink := postgresdb.Sink{}
+		return &sink, nil
 	// case constants.MYSQL:
 	// 	sink := mysqldb.Sink{}
-	// 	return &sink, nil
-	// case constants.MATERIALIZE:
-	// 	sink := materializedb.Sink{}
 	// 	return &sink, nil
 	// case constants.CLICKHOUSE:
 	// 	sink := clickhousedb.Sink{}
 	// 	return &sink, nil
 	// case constants.MONGODB:
 	// 	sink := mongodb.Sink{}
-	// 	return &sink, nil
-	// case constants.TIMESCALE:
-	// 	sink := timescaledb.Sink{}
 	// 	return &sink, nil
 	// case constants.NATS:
 	// 	sink := nats.Sink{}

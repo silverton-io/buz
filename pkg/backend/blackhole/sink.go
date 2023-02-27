@@ -16,24 +16,24 @@ import (
 
 type Sink struct {
 	id               *uuid.UUID
+	sinkType         string
 	name             string
 	deliveryRequired bool
 	fanout           bool
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
-	sinkType := "blackhole"
 	return backendutils.SinkMetadata{
 		Id:               s.id,
 		Name:             s.name,
-		Type:             sinkType,
+		SinkType:         s.sinkType,
 		DeliveryRequired: s.deliveryRequired,
 	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.sinkType = &id, conf.Name, conf.Type
 	s.deliveryRequired, s.fanout = conf.DeliveryRequired, conf.Fanout
 	return nil
 }

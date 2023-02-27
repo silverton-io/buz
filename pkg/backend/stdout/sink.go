@@ -43,6 +43,7 @@ func Colorize(colorString string) func(...interface{}) string {
 
 type Sink struct {
 	id               *uuid.UUID
+	sinkType         string
 	name             string
 	deliveryRequired bool
 	inputChan        chan []envelope.Envelope
@@ -50,11 +51,10 @@ type Sink struct {
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
-	sinkType := "stdout"
 	return backendutils.SinkMetadata{
 		Id:               s.id,
 		Name:             s.name,
-		Type:             sinkType,
+		SinkType:         s.sinkType,
 		DeliveryRequired: s.deliveryRequired,
 	}
 }
@@ -62,10 +62,15 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing stdout sink")
 	id := uuid.New()
-	s.id, s.name = &id, conf.Name
+	s.id, s.name, s.sinkType = &id, conf.Name, conf.Type
 	s.deliveryRequired = conf.DeliveryRequired
 	s.inputChan = make(chan []envelope.Envelope, 10000)
 	s.shutdownChan = make(chan int, 1)
+	s.StartWorker()
+	return nil
+}
+
+func (s *Sink) StartWorker() {
 	go func(s *Sink) {
 		for {
 			select {
@@ -81,7 +86,6 @@ func (s *Sink) Initialize(conf config.Sink) error {
 			}
 		}
 	}(s)
-	return nil
 }
 
 func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
