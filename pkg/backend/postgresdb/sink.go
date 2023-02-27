@@ -40,7 +40,7 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("🟡 initializing postgres database sink")
+	log.Debug().Msg("🟡 initializing database sink")
 	id := uuid.New()
 	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	connParams := db.ConnectionParams{
@@ -53,7 +53,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	connString := GenerateDsn(connParams)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("🔴 could not open pg connection")
+		log.Error().Err(err).Msg("🔴 could not open database connection")
 		return err
 	}
 	s.gormDb, s.validTable, s.invalidTable = gormDb, constants.BUZ_VALID_EVENTS, constants.BUZ_INVALID_EVENTS
@@ -68,14 +68,20 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	return nil
 }
 
+func (s *Sink) StartWorker() error {
+	// FIXME!!!
+	return nil
+}
+
 func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
 	err := s.gormDb.Table(s.validTable).Create(envelopes).Error // FIXME -> shard
 	return err
 }
 
-func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
 	s.inputChan <- envelopes
+	return nil
 }
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
@@ -84,7 +90,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 }
 
 func (s *Sink) Shutdown() error {
-	log.Debug().Msg("🟡 closing postgres database sink")
+	log.Debug().Msg("🟡 shutting down database sink")
 	db, _ := s.gormDb.DB()
 	s.shutdownChan <- 1
 	err := db.Close()

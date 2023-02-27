@@ -50,6 +50,11 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	return nil
 }
 
+func (s *Sink) StartWorker() error {
+	// FIXME!!!
+	return nil
+}
+
 func (s *Sink) batchPublish(ctx context.Context, filePath string, envelopes []envelope.Envelope) error {
 	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -73,9 +78,10 @@ func (s *Sink) batchPublish(ctx context.Context, filePath string, envelopes []en
 	return nil
 }
 
-func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
 	s.inputChan <- envelopes
+	return nil
 }
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {

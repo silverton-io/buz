@@ -113,7 +113,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *Sink) StartWorker() {
+func (s *Sink) StartWorker() error {
 	go func(s *Sink) {
 		for {
 			select {
@@ -129,6 +129,7 @@ func (s *Sink) StartWorker() {
 			}
 		}
 	}(s)
+	return nil
 }
 
 func (s *Sink) batchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
@@ -163,9 +164,10 @@ func (s *Sink) batchPublish(ctx context.Context, envelopes []envelope.Envelope) 
 	return nil
 }
 
-func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
 	s.inputChan <- envelopes
+	return nil
 }
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {

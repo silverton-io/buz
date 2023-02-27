@@ -13,6 +13,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/backend/blackhole"
 	"github.com/silverton-io/buz/pkg/backend/file"
+	"github.com/silverton-io/buz/pkg/backend/mysqldb"
 	"github.com/silverton-io/buz/pkg/backend/postgresdb"
 	"github.com/silverton-io/buz/pkg/backend/stdout"
 	"github.com/silverton-io/buz/pkg/config"
@@ -23,7 +24,8 @@ import (
 type Sink interface {
 	Metadata() backendutils.SinkMetadata
 	Initialize(conf config.Sink) error
-	Enqueue(envelopes []envelope.Envelope)
+	StartWorker() error
+	Enqueue(envelopes []envelope.Envelope) error
 	Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 	Shutdown() error
 }
@@ -77,9 +79,9 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	case constants.TIMESCALE:
 		sink := postgresdb.Sink{}
 		return &sink, nil
-	// case constants.MYSQL:
-	// 	sink := mysqldb.Sink{}
-	// 	return &sink, nil
+	case constants.MYSQL:
+		sink := mysqldb.Sink{}
+		return &sink, nil
 	// case constants.CLICKHOUSE:
 	// 	sink := clickhousedb.Sink{}
 	// 	return &sink, nil

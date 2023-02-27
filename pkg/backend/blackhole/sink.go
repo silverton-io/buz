@@ -38,9 +38,15 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
+func (s *Sink) StartWorker() error {
+	// Blackhole. No worker necessary
+	return nil
+}
+
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
 	// This is a blackhole. It does nothing.
+	return nil
 }
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {

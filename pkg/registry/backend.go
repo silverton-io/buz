@@ -12,7 +12,6 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/file"
 	"github.com/silverton-io/buz/pkg/backend/gcs"
 	"github.com/silverton-io/buz/pkg/backend/http"
-	"github.com/silverton-io/buz/pkg/backend/materializedb"
 	"github.com/silverton-io/buz/pkg/backend/minio"
 	"github.com/silverton-io/buz/pkg/backend/mongodb"
 	"github.com/silverton-io/buz/pkg/backend/mysqldb"
@@ -55,7 +54,7 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 		cacheBackend := mysqldb.RegistryBackend{}
 		return &cacheBackend, nil
 	case constants.MATERIALIZE:
-		cacheBackend := materializedb.RegistryBackend{}
+		cacheBackend := postgresdb.RegistryBackend{}
 		return &cacheBackend, nil
 	case constants.CLICKHOUSE:
 		cacheBackend := clickhousedb.RegistryBackend{}
