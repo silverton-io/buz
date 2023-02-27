@@ -21,11 +21,11 @@ type RegistryBackend struct {
 
 func (b *RegistryBackend) Initialize(conf config.Backend) error {
 	connParams := db.ConnectionParams{
-		Host: conf.MysqlHost,
-		Port: conf.MysqlPort,
-		Db:   conf.MysqlDbName,
-		User: conf.MysqlUser,
-		Pass: conf.MysqlPass,
+		Host: conf.DbHost,
+		Port: conf.DbPort,
+		Db:   conf.DbName,
+		User: conf.DbUser,
+		Pass: conf.DbPass,
 	}
 	connString := generateDsn(connParams)
 	gormDb, err := gorm.Open(mysql.Open(connString))

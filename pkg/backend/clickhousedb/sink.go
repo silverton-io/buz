@@ -47,11 +47,11 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
 	connParams := db.ConnectionParams{
-		Host: conf.ClickhouseHost,
-		Port: conf.ClickhousePort,
-		Db:   conf.ClickhouseDbName,
-		User: conf.ClickhouseUser,
-		Pass: conf.ClickhousePass,
+		Host: conf.DbHost,
+		Port: conf.DbPort,
+		Db:   conf.DbName,
+		User: conf.DbUser,
+		Pass: conf.DbPass,
 	}
 	connString := generateDsn(connParams)
 	gormDb, err := gorm.Open(clickhouse.Open(connString), &gorm.Config{})

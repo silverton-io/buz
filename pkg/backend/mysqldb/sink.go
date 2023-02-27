@@ -45,11 +45,11 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	id := uuid.New()
 	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	connParams := db.ConnectionParams{
-		Host: conf.MysqlHost,
-		Port: conf.MysqlPort,
-		Db:   conf.MysqlDbName,
-		User: conf.MysqlUser,
-		Pass: conf.MysqlPass,
+		Host: conf.DbHost,
+		Port: conf.DbPort,
+		Db:   conf.DbName,
+		User: conf.DbUser,
+		Pass: conf.DbPass,
 	}
 	connString := generateDsn(connParams)
 	gormDb, err := gorm.Open(mysql.Open(connString), &gorm.Config{})

@@ -19,11 +19,11 @@ type RegistryBackend struct {
 
 func (b *RegistryBackend) Initialize(conf config.Backend) error {
 	connParams := db.ConnectionParams{
-		Host: conf.PgHost,
-		Port: conf.PgPort,
-		Db:   conf.PgDbName,
-		User: conf.PgUser,
-		Pass: conf.PgPass,
+		Host: conf.DbHost,
+		Port: conf.DbPort,
+		Db:   conf.DbName,
+		User: conf.DbUser,
+		Pass: conf.DbPass,
 	}
 	connString := GenerateDsn(connParams)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})

@@ -40,20 +40,20 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("🟡 initializing database sink")
 	id := uuid.New()
 	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
+	log.Debug().Msg("🟢 initializing " + s.sinkType + " sink")
 	connParams := db.ConnectionParams{
-		Host: conf.PgHost,
-		Port: conf.PgPort,
-		Db:   conf.PgDbName,
-		User: conf.PgUser,
-		Pass: conf.PgPass,
+		Host: conf.DbHost,
+		Port: conf.DbPort,
+		Db:   conf.DbName,
+		User: conf.DbUser,
+		Pass: conf.DbPass,
 	}
 	connString := GenerateDsn(connParams)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("🔴 could not open database connection")
+		log.Error().Err(err).Msg("🔴 could not open " + s.sinkType + " connection")
 		return err
 	}
 	s.gormDb, s.validTable, s.invalidTable = gormDb, constants.BUZ_VALID_EVENTS, constants.BUZ_INVALID_EVENTS
@@ -90,7 +90,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 }
 
 func (s *Sink) Shutdown() error {
-	log.Debug().Msg("🟡 shutting down database sink")
+	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink")
 	db, _ := s.gormDb.DB()
 	s.shutdownChan <- 1
 	err := db.Close()

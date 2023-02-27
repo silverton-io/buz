@@ -17,7 +17,7 @@ type RegistryBackend struct {
 }
 
 func (b *RegistryBackend) Initialize(conf config.Backend) error {
-	log.Debug().Msg("🟡 initializing filesystem schema cache backend")
+	log.Debug().Msg("🟡 initializing filesystem registry backend")
 	b.path = conf.Path
 	// No-op
 	return nil
@@ -27,13 +27,13 @@ func (b *RegistryBackend) GetRemote(schema string) (contents []byte, err error) 
 	schemaLocation := filepath.Join(b.path, schema)
 	content, err := os.ReadFile(schemaLocation)
 	if err != nil {
-		log.Error().Err(err).Msg("🔴 could not get schema from filesystem schema cache backend: " + schemaLocation)
+		log.Error().Err(err).Msg("🔴 could not get schema from filesystem registry backend: " + schemaLocation)
 		return nil, err
 	}
 	return content, nil
 }
 
 func (b *RegistryBackend) Close() {
-	log.Debug().Msg("🟡 closing filesystem schema cache backend")
+	log.Debug().Msg("🟡 closing filesystem registry backend")
 	// No-op
 }

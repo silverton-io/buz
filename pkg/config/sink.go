@@ -24,35 +24,11 @@ type Sink struct {
 	ElasticsearchUsername string   `json:"-"`
 	ElasticsearchPassword string   `json:"-"`
 	// Postgres Database
-	PgHost   string `json:"-"`
-	PgPort   uint16 `json:"-"`
-	PgDbName string `json:"-"`
-	PgUser   string `json:"-"`
-	PgPass   string `json:"-"`
-	// Mysql Database
-	MysqlHost   string `json:"-"`
-	MysqlPort   uint16 `json:"-"`
-	MysqlDbName string `json:"-"`
-	MysqlUser   string `json:"-"`
-	MysqlPass   string `json:"-"`
-	// Materialize Database
-	MzHost   string `json:"-"`
-	MzPort   uint16 `json:"-"`
-	MzDbName string `json:"-"`
-	MzUser   string `json:"-"`
-	MzPass   string `json:"-"`
-	// Timescale Database
-	TimescaleHost   string `json:"-"`
-	TimescalePort   uint16 `json:"-"`
-	TimescaleDbName string `json:"-"`
-	TimescaleUser   string `json:"-"`
-	TimescalePass   string `json:"-"`
-	// Clickhouse Database
-	ClickhouseHost   string `json:"-"`
-	ClickhousePort   uint16 `json:"-"`
-	ClickhouseDbName string `json:"-"`
-	ClickhouseUser   string `json:"-"`
-	ClickhousePass   string `json:"-"`
+	DbHost string `json:"-"`
+	DbPort uint16 `json:"-"`
+	DbName string `json:"-"`
+	DbUser string `json:"-"`
+	DbPass string `json:"-"`
 	// Pubnub
 	PubnubPubKey string `json:"pubnubPubKey,omitempty"`
 	PubnubSubKey string `json:"pubnubSubKey,omitempty"`
