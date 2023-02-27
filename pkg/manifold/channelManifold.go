@@ -29,9 +29,8 @@ func (m *ChannelManifold) Initialize(registry *registry.Registry, sinks *[]sink.
 	m.sinks = sinks
 	m.conf = conf
 	m.collectorMeta = metadata
-	m.inputChan = make(chan []envelope.Envelope, 100000) // Set a fairly high buffer size. Can revisit as necessary.
+	m.inputChan = make(chan []envelope.Envelope, 2)
 	m.shutdownChan = make(chan int, 1)
-	log.Debug().Msg("spinning up manifold goroutine")
 	go func(envelopes <-chan []envelope.Envelope, quit chan int) {
 		for {
 			select {
@@ -43,6 +42,7 @@ func (m *ChannelManifold) Initialize(registry *registry.Registry, sinks *[]sink.
 				// Read all envelopes from input channel and pass to all sinks
 				// FIXME
 				// Then send shutdown sig to all sinks
+				log.Info().Msg("🟢 shutting down all sinks")
 				for _, s := range *m.sinks {
 					err := s.Shutdown()
 					if err != nil {
@@ -61,7 +61,6 @@ func (m *ChannelManifold) Initialize(registry *registry.Registry, sinks *[]sink.
 func (m *ChannelManifold) Enqueue(envelopes []envelope.Envelope) error {
 	annotatedEnvelopes := annotator.Annotate(envelopes, m.registry)
 	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.conf.Privacy)
-	log.Debug().Interface("payload", anonymizedEnvelopes).Msg("sending envelopes to chan")
 	m.inputChan <- anonymizedEnvelopes
 	return nil
 }

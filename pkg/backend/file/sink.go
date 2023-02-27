@@ -25,6 +25,7 @@ type Sink struct {
 	validFile        string
 	invalidFile      string
 	inputChan        chan []envelope.Envelope
+	shutdownChan     chan int
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
@@ -34,7 +35,6 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 		Name:             s.name,
 		Type:             sinkType,
 		DeliveryRequired: s.deliveryRequired,
-		Fanout:           false,
 	}
 }
 
@@ -44,6 +44,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	s.id, s.name = &id, conf.Name
 	s.deliveryRequired, s.fanout = conf.DeliveryRequired, conf.Fanout
 	s.inputChan = make(chan []envelope.Envelope, 10000)
+	s.shutdownChan = make(chan int, 1)
 	s.validFile = constants.BUZ_VALID_EVENTS + ".json"
 	s.invalidFile = constants.BUZ_INVALID_EVENTS + ".json"
 	return nil
@@ -72,16 +73,19 @@ func (s *Sink) batchPublish(ctx context.Context, filePath string, envelopes []en
 	return nil
 }
 
-func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, s.validFile, envelopes) // FIXME -> shard this by configured strategy
-	return err
-}
-
 func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
 	s.inputChan <- envelopes
 }
 
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
+	err := s.batchPublish(ctx, s.validFile, envelopes)
+	return err
+}
+
 func (s *Sink) Shutdown() error {
-	log.Info().Msg("🟡 shutting down file sink")
+	log.Info().Msg("🟢 shutting down file sink")
+	s.shutdownChan <- 1
 	return nil
 }

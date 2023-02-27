@@ -5,9 +5,11 @@
 package sink
 
 import (
+	"context"
 	"errors"
 
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/amplitude"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/backend/blackhole"
 	"github.com/silverton-io/buz/pkg/backend/file"
@@ -21,6 +23,7 @@ type Sink interface {
 	Metadata() backendutils.SinkMetadata
 	Initialize(conf config.Sink) error
 	Enqueue(envelopes []envelope.Envelope)
+	Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 	Shutdown() error
 }
 
@@ -85,9 +88,9 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	// case constants.NATS:
 	// 	sink := nats.Sink{}
 	// 	return &sink, nil
-	// case constants.AMPLITUDE:
-	// 	sink := amplitude.Sink{}
-	// 	return &sink, nil
+	case constants.AMPLITUDE:
+		sink := amplitude.Sink{}
+		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
 		log.Error().Stack().Err(e).Msg("🔴 unsupported sink")

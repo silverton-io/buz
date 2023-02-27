@@ -45,8 +45,8 @@ type Sink struct {
 	id               *uuid.UUID
 	name             string
 	deliveryRequired bool
-	fanout           bool
 	inputChan        chan []envelope.Envelope
+	shutdownChan     chan int
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
@@ -56,20 +56,41 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 		Name:             s.name,
 		Type:             sinkType,
 		DeliveryRequired: s.deliveryRequired,
-		Fanout:           false,
 	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing stdout sink")
 	id := uuid.New()
-	s.inputChan = make(chan []envelope.Envelope, 10000)
 	s.id, s.name = &id, conf.Name
-	s.deliveryRequired, s.fanout = conf.DeliveryRequired, conf.Fanout
+	s.deliveryRequired = conf.DeliveryRequired
+	s.inputChan = make(chan []envelope.Envelope, 10000)
+	s.shutdownChan = make(chan int, 1)
+	go func(s *Sink) {
+		for {
+			select {
+			case envelopes := <-s.inputChan:
+				ctx := context.Background()
+				s.Dequeue(ctx, envelopes)
+			case <-s.shutdownChan:
+				err := s.Shutdown()
+				if err != nil {
+					log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("sink did not safely shut down")
+				}
+				return
+			}
+		}
+	}(s)
 	return nil
 }
 
-func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
+	s.inputChan <- envelopes
+}
+
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
 	var validEnvelopes []envelope.Envelope
 	var invalidEnvelopes []envelope.Envelope
 	for _, e := range envelopes {
@@ -90,11 +111,7 @@ func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) 
 	return nil
 }
 
-func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
-	s.inputChan <- envelopes
-}
-
 func (s *Sink) Shutdown() error {
-	log.Debug().Msg("🟡 shutting down stdout sink")
+	log.Debug().Msg("🟢 shutting down stdout sink")
 	return nil
 }

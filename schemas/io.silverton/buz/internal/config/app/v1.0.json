@@ -968,11 +968,6 @@
                         "description": "The index to sink valid envelopes to if sink type is elasticsearch",
                         "default": "buz-valid"
                     },
-                    "validFile": {
-                        "type": "string",
-                        "description": "The file to sink valid envelopes to if sink type is file",
-                        "default": "buz-valid.json"
-                    },
                     "validTable": {
                         "type": "string",
                         "description": "The table to sink valid envelopes to if using a db sink",
@@ -1012,11 +1007,6 @@
                         "type": "string",
                         "description": "The index to sink invalid envelopes to if sink type is elasticsearch",
                         "default": "buz-invalid"
-                    },
-                    "invalidFile": {
-                        "type": "string",
-                        "description": "The file to sink invalid envelopes to if sink type is file",
-                        "default": "buz-invalid.json"
                     },
                     "invalidTable": {
                         "type": "string",
@@ -1377,10 +1367,7 @@
                                 "const": "file"
                             }
                         },
-                        "required": [
-                            "validFile",
-                            "invalidFile"
-                        ]
+                        "required": []
                     },
                     {
                         "properties": {

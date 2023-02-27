@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jeremywohl/flatten/v2"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/request"
@@ -77,28 +78,26 @@ type Sink struct {
 	deliveryRequired bool
 	endpoint         url.URL
 	apiKey           string
+	inputChan        chan []envelope.Envelope
+	shutdownChan     chan int
 }
 
-func (s *Sink) Id() *uuid.UUID {
-	return s.id
-}
-
-func (s *Sink) Name() string {
-	return s.name
-}
-
-func (s *Sink) Type() string {
-	return "amplitude"
-}
-
-func (s *Sink) DeliveryRequired() bool {
-	return s.deliveryRequired
+func (s *Sink) Metadata() backendutils.SinkMetadata {
+	sinkType := "amplitude"
+	return backendutils.SinkMetadata{
+		Id:               s.id,
+		Name:             s.name,
+		Type:             sinkType,
+		DeliveryRequired: s.deliveryRequired,
+	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing indicative sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
+	s.inputChan = make(chan []envelope.Envelope, 10000)
+	s.shutdownChan = make(chan int, 1)
 	var e string
 	if conf.AmplitudeRegion == AMPLITUDE_EU {
 		e = AMPLITUDE_EU_ENDPOINT
@@ -110,6 +109,21 @@ func (s *Sink) Initialize(conf config.Sink) error {
 		return err
 	}
 	s.endpoint, s.apiKey = *endpoint, conf.AmplitudeApiKey
+	go func(s *Sink) {
+		for {
+			select {
+			case envelopes := <-s.inputChan:
+				ctx := context.Background()
+				s.Dequeue(ctx, envelopes)
+			case <-s.shutdownChan:
+				err := s.Shutdown()
+				if err != nil {
+					log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("sink did not safely shut down")
+				}
+				return
+			}
+		}
+	}(s)
 	return nil
 }
 
@@ -145,12 +159,19 @@ func (s *Sink) batchPublish(ctx context.Context, envelopes []envelope.Envelope) 
 	return nil
 }
 
-func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
+	s.inputChan <- envelopes
+}
+
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
 	err := s.batchPublish(ctx, envelopes)
 	return err
 }
 
-func (s *Sink) Close() {
-	log.Debug().Msg("🟡 closing amplitude sink")
-	// no-op
+func (s *Sink) Shutdown() error {
+	log.Debug().Msg("🟢 shutting down amplitude sink")
+	s.shutdownChan <- 1
+	return nil
 }

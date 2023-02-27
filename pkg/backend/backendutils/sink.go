@@ -11,5 +11,4 @@ type SinkMetadata struct {
 	Name             string     `json:"name"`
 	Type             string     `json:"type"`
 	DeliveryRequired bool       `json:"deliveryRequired"`
-	Fanout           bool       `json:"fanout"`
 }

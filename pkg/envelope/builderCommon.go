@@ -39,6 +39,9 @@ func BuildCommonEnvelope(c *gin.Context, conf config.Middleware, m *meta.Collect
 			Id:        identity,
 			Useragent: c.Request.UserAgent(),
 		},
+		User: &User{
+			Id: &identity,
+		},
 	}
 	return envelope
 }

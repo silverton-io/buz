@@ -5,7 +5,10 @@
 package blackhole
 
 import (
+	"context"
+
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
@@ -25,7 +28,6 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 		Name:             s.name,
 		Type:             sinkType,
 		DeliveryRequired: s.deliveryRequired,
-		Fanout:           false,
 	}
 }
 
@@ -36,10 +38,18 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	return nil
 }
 
-func (s *Sink) Enqueue(validEnvelopes []envelope.Envelope) {
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
 	// This is a blackhole. It does nothing.
 }
 
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
+	// This is a blackhole. It does nothing.
+	return nil
+}
+
 func (s *Sink) Shutdown() error {
+	log.Info().Msg("🟢 shutting down blackhole sink")
 	return nil
 }

@@ -31,8 +31,9 @@ func (ms *MockSink) Metadata() backendutils.SinkMetadata {
 	id := uuid.New()
 	sinkName := "test"
 	return backendutils.SinkMetadata{
-		Id:   &id,
-		Name: sinkName,
+		Id:               &id,
+		Name:             sinkName,
+		DeliveryRequired: false,
 	}
 }
 
