@@ -20,15 +20,14 @@ import (
 )
 
 type Sink struct {
-	id               *uuid.UUID
-	sinkType         string
-	name             string
-	deliveryRequired bool
-	gormDb           *gorm.DB
-	validTable       string
-	invalidTable     string
-	inputChan        chan []envelope.Envelope
-	shutdownChan     chan int
+	id                 *uuid.UUID
+	sinkType           string
+	name               string
+	deliveryRequired   bool
+	gormDb             *gorm.DB
+	defaultEventsTable string
+	input              chan []envelope.Envelope
+	shutdown           chan int
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
@@ -57,39 +56,40 @@ func (s *Sink) Initialize(conf config.Sink) error {
 		log.Error().Err(err).Msg("🔴 could not open mysql connection")
 		return err
 	}
-	s.gormDb, s.validTable, s.invalidTable = gormDb, constants.BUZ_VALID_EVENTS, constants.BUZ_INVALID_EVENTS
-	s.inputChan = make(chan []envelope.Envelope, 10000)
-	s.shutdownChan = make(chan int, 1)
-	for _, tbl := range []string{s.validTable, s.invalidTable} {
+	s.gormDb, s.defaultEventsTable = gormDb, constants.BUZ_EVENTS
+	s.input = make(chan []envelope.Envelope, 10000)
+	s.shutdown = make(chan int, 1)
+	for _, tbl := range []string{s.defaultEventsTable} {
 		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.Envelope{})
 		if ensureErr != nil {
 			return ensureErr
 		}
 	}
+	s.StartWorker()
 	return nil
 }
 
 func (s *Sink) StartWorker() error {
-	// FIXME!!!
-	return nil
+	err := backendutils.StartSinkWorker(s.input, s.shutdown, s)
+	return err
 }
 
 func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
-	s.inputChan <- envelopes
+	s.input <- envelopes
 	return nil
 }
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
-	// FIXME!!!
-	return nil
+	err := s.gormDb.Table(s.defaultEventsTable).Create(envelopes).Error
+	return err
 }
 
 func (s *Sink) Shutdown() error {
 	log.Debug().Msg("🟡 shutting down database sink")
 	db, _ := s.gormDb.DB()
-	s.shutdownChan <- 1
+	s.shutdown <- 1
 	err := db.Close()
 	return err
 }

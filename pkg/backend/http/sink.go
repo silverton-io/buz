@@ -22,7 +22,7 @@ type Sink struct {
 	name             string
 	deliveryRequired bool
 	url              url.URL
-	inputChan        chan []envelope.Envelope
+	input            chan []envelope.Envelope
 	shutdown         chan int
 }
 
@@ -45,42 +45,29 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	id := uuid.New()
 	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	s.url = *url
-	s.inputChan = make(chan []envelope.Envelope, 10000)
+	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
 	s.StartWorker()
 	return nil
 }
 
 func (s *Sink) StartWorker() error {
-	go func(s *Sink) {
-		for {
-			select {
-			case envelopes := <-s.inputChan:
-				ctx := context.Background()
-				s.Dequeue(ctx, envelopes)
-			case <-s.shutdown:
-				return
-			}
-		}
-	}(s)
-	return nil
-}
-
-func (s *Sink) batchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	_, err := request.PostEnvelopes(s.url, envelopes)
-	log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("🔴 could not dequeue payloads")
+	err := backendutils.StartSinkWorker(s.input, s.shutdown, s)
 	return err
 }
 
 func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
-	s.inputChan <- envelopes
+	s.input <- envelopes
 	return nil
 }
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
-	err := s.batchPublish(ctx, envelopes)
+	_, err := request.PostEnvelopes(s.url, envelopes)
+	if err != nil {
+		log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("🔴 could not dequeue payloads")
+	}
 	return err
 }
 

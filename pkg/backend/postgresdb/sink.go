@@ -73,11 +73,6 @@ func (s *Sink) StartWorker() error {
 	return err
 }
 
-func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.gormDb.Table(s.defaultEventsTable).Create(envelopes).Error
-	return err
-}
-
 func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
 	s.input <- envelopes
@@ -86,8 +81,8 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
-	s.BatchPublish(ctx, envelopes)
-	return nil
+	err := s.gormDb.Table(s.defaultEventsTable).Create(envelopes).Error
+	return err
 }
 
 func (s *Sink) Shutdown() error {
