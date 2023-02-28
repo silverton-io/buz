@@ -23,7 +23,7 @@ type Sink struct {
 	deliveryRequired bool
 	url              url.URL
 	inputChan        chan []envelope.Envelope
-	shutdownChan     chan int
+	shutdown         chan int
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
@@ -46,7 +46,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	s.url = *url
 	s.inputChan = make(chan []envelope.Envelope, 10000)
-	s.shutdownChan = make(chan int, 1)
+	s.shutdown = make(chan int, 1)
 	s.StartWorker()
 	return nil
 }
@@ -58,11 +58,8 @@ func (s *Sink) StartWorker() error {
 			case envelopes := <-s.inputChan:
 				ctx := context.Background()
 				s.Dequeue(ctx, envelopes)
-			case <-s.shutdownChan:
-				err := s.Shutdown()
-				if err != nil {
-					log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("sink did not safely shut down")
-				}
+			case <-s.shutdown:
+				return
 			}
 		}
 	}(s)
@@ -71,7 +68,7 @@ func (s *Sink) StartWorker() error {
 
 func (s *Sink) batchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
 	_, err := request.PostEnvelopes(s.url, envelopes)
-	log.Error().Err(err).Msg("could not dequeue payloads with " + s.sinkType + " sink")
+	log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("🔴 could not dequeue payloads")
 	return err
 }
 
@@ -88,7 +85,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 }
 
 func (s *Sink) Shutdown() error {
-	log.Debug().Msg("🟡 closing http sink") // no-op
-	s.shutdownChan <- 1
+	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink") // no-op
+	s.shutdown <- 1
 	return nil
 }

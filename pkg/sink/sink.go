@@ -5,7 +5,6 @@
 package sink
 
 import (
-	"context"
 	"errors"
 
 	"github.com/rs/zerolog/log"
@@ -19,19 +18,9 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/stdout"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
-	"github.com/silverton-io/buz/pkg/envelope"
 )
 
-type Sink interface {
-	Metadata() backendutils.SinkMetadata
-	Initialize(conf config.Sink) error
-	StartWorker() error
-	Enqueue(envelopes []envelope.Envelope) error
-	Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
-	Shutdown() error
-}
-
-func getSink(conf config.Sink) (sink Sink, err error) {
+func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 	switch conf.Type {
 	// System
 	case constants.BLACKHOLE:
@@ -102,7 +91,7 @@ func getSink(conf config.Sink) (sink Sink, err error) {
 	}
 }
 
-func NewSink(conf config.Sink) (Sink, error) {
+func NewSink(conf config.Sink) (backendutils.Sink, error) {
 	sink, _ := getSink(conf)
 	err := sink.Initialize(conf)
 	if err != nil {
@@ -113,8 +102,8 @@ func NewSink(conf config.Sink) (Sink, error) {
 	return sink, nil
 }
 
-func BuildAndInitializeSinks(conf []config.Sink) ([]Sink, error) {
-	var sinks []Sink
+func BuildAndInitializeSinks(conf []config.Sink) ([]backendutils.Sink, error) {
+	var sinks []backendutils.Sink
 	for _, sConf := range conf {
 		sink, err := NewSink(sConf)
 		if err != nil {
