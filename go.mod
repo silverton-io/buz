@@ -5,6 +5,7 @@ go 1.19
 require (
 	cloud.google.com/go/pubsub v1.17.1
 	cloud.google.com/go/storage v1.14.0
+	github.com/apex/gateway/v2 v2.0.0
 	github.com/aws/aws-sdk-go-v2 v1.14.0
 	github.com/aws/aws-sdk-go-v2/config v1.13.1
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.9.1
@@ -29,7 +30,7 @@ require (
 	github.com/twmb/franz-go/pkg/kadm v0.0.0-20220301200403-ffaee5b878c6
 	github.com/ulule/limiter/v3 v3.9.0
 	go.mongodb.org/mongo-driver v1.8.4
-	golang.org/x/net v0.0.0-20220812174116-3211cb980234
+	golang.org/x/net v0.7.0
 	gorm.io/datatypes v1.0.6
 	gorm.io/driver/clickhouse v0.3.1
 	gorm.io/driver/mysql v1.3.3
@@ -42,7 +43,6 @@ require (
 	cloud.google.com/go/compute v1.1.0 // indirect
 	cloud.google.com/go/iam v0.1.1 // indirect
 	github.com/ClickHouse/clickhouse-go v1.5.4 // indirect
-	github.com/apex/gateway/v2 v2.0.0 // indirect
 	github.com/aws/aws-lambda-go v1.34.1 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.3.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.8.0 // indirect
@@ -128,8 +128,8 @@ require (
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/api v0.65.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
