@@ -13,6 +13,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/backend/blackhole"
 	"github.com/silverton-io/buz/pkg/backend/file"
+	"github.com/silverton-io/buz/pkg/backend/http"
 	"github.com/silverton-io/buz/pkg/backend/mysqldb"
 	"github.com/silverton-io/buz/pkg/backend/postgresdb"
 	"github.com/silverton-io/buz/pkg/backend/stdout"
@@ -30,7 +31,7 @@ type Sink interface {
 	Shutdown() error
 }
 
-func BuildSink(conf config.Sink) (sink Sink, err error) {
+func getSink(conf config.Sink) (sink Sink, err error) {
 	switch conf.Type {
 	// System
 	case constants.BLACKHOLE:
@@ -41,6 +42,12 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 		return &sink, nil
 	case constants.STDOUT:
 		sink := stdout.Sink{}
+		return &sink, nil
+	case constants.HTTP:
+		sink := http.Sink{}
+		return &sink, nil
+	case constants.HTTPS:
+		sink := http.Sink{}
 		return &sink, nil
 	// Streams
 	// case constants.PUBSUB:
@@ -57,12 +64,6 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	// 	return &sink, nil
 	// case constants.KINESIS_FIREHOSE:
 	// 	sink := kinesisFirehose.Sink{}
-	// 	return &sink, nil
-	// case constants.HTTP:
-	// 	sink := http.Sink{}
-	// 	return &sink, nil
-	// case constants.HTTPS:
-	// 	sink := http.Sink{}
 	// 	return &sink, nil
 	// case constants.ELASTICSEARCH:
 	// 	sink := elasticsearch.Sink{}
@@ -101,25 +102,21 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	}
 }
 
-func InitializeSink(conf config.Sink, s Sink) error {
-	err := s.Initialize(conf)
+func NewSink(conf config.Sink) (Sink, error) {
+	sink, _ := getSink(conf)
+	err := sink.Initialize(conf)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not initialize sink")
-		return err
+		return nil, err
 	}
 	log.Info().Msg("🟢 " + conf.Type + " sink initialized")
-	return nil
+	return sink, nil
 }
 
 func BuildAndInitializeSinks(conf []config.Sink) ([]Sink, error) {
 	var sinks []Sink
 	for _, sConf := range conf {
-		sink, err := BuildSink(sConf)
-		if err != nil {
-			log.Error().Err(err).Msg("🔴 could not build sink")
-			return nil, err
-		}
-		err = InitializeSink(sConf, sink)
+		sink, err := NewSink(sConf)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not initialize sink")
 			return nil, err

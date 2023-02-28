@@ -13,7 +13,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 )
 
@@ -23,8 +22,7 @@ type Sink struct {
 	name             string
 	deliveryRequired bool
 	fanout           bool
-	validFile        string
-	invalidFile      string
+	outputFile       string
 	inputChan        chan []envelope.Envelope
 	shutdownChan     chan int
 }
@@ -45,13 +43,26 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	s.deliveryRequired, s.fanout = conf.DeliveryRequired, conf.Fanout
 	s.inputChan = make(chan []envelope.Envelope, 10000)
 	s.shutdownChan = make(chan int, 1)
-	s.validFile = constants.BUZ_VALID_EVENTS + ".json"
-	s.invalidFile = constants.BUZ_INVALID_EVENTS + ".json"
+	s.outputFile = "buz_events.json"
+	s.StartWorker()
 	return nil
 }
 
 func (s *Sink) StartWorker() error {
-	// FIXME!!!
+	go func(s *Sink) {
+		for {
+			select {
+			case envelopes := <-s.inputChan:
+				ctx := context.Background()
+				s.Dequeue(ctx, envelopes)
+			case <-s.shutdownChan:
+				err := s.Shutdown()
+				if err != nil {
+					log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("sink did not safely shut down")
+				}
+			}
+		}
+	}(s)
 	return nil
 }
 
@@ -86,7 +97,7 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
-	err := s.batchPublish(ctx, s.validFile, envelopes)
+	err := s.batchPublish(ctx, s.outputFile, envelopes)
 	return err
 }
 

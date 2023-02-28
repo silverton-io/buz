@@ -45,7 +45,9 @@ func (s *Sink) StartWorker() error {
 
 func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
-	// This is a blackhole. It does nothing.
+	// This is a blackhole. It does nothing but dequeue
+	ctx := context.Background()
+	s.Dequeue(ctx, envelopes)
 	return nil
 }
 

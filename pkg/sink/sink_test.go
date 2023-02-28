@@ -65,7 +65,7 @@ func (ms *MockSink) Close() {
 	ms.Called()
 }
 
-func TestBuildSink(t *testing.T) {
+func TestNewSink(t *testing.T) {
 	c := config.Sink{
 		Type:         constants.PUBSUB,
 		Project:      "myproject",
@@ -73,7 +73,7 @@ func TestBuildSink(t *testing.T) {
 	}
 
 	t.Run(constants.PUBSUB, func(t *testing.T) {
-		sink, err := BuildSink(c)
+		sink, err := NewSink(c)
 		pubsubSink := pubsub.Sink{}
 		assert.IsType(t, &pubsubSink, sink)
 		assert.Equal(t, err, nil)
@@ -81,7 +81,7 @@ func TestBuildSink(t *testing.T) {
 
 	t.Run(constants.KAFKA, func(t *testing.T) {
 		c.Type = constants.KAFKA
-		sink, err := BuildSink(c)
+		sink, err := NewSink(c)
 		kafkaSink := kafka.Sink{}
 		assert.IsType(t, &kafkaSink, sink)
 		assert.Equal(t, nil, err)
@@ -89,7 +89,7 @@ func TestBuildSink(t *testing.T) {
 
 	t.Run(constants.KINESIS, func(t *testing.T) {
 		c.Type = constants.KINESIS
-		sink, err := BuildSink(c)
+		sink, err := NewSink(c)
 		kinesisSink := kinesis.Sink{}
 		assert.IsType(t, &kinesisSink, sink)
 		assert.Equal(t, nil, err)
@@ -97,7 +97,7 @@ func TestBuildSink(t *testing.T) {
 
 	t.Run(constants.KINESIS_FIREHOSE, func(t *testing.T) {
 		c.Type = constants.KINESIS_FIREHOSE
-		sink, err := BuildSink(c)
+		sink, err := NewSink(c)
 		firehoseSink := kinesisFirehose.Sink{}
 		assert.IsType(t, &firehoseSink, sink)
 		assert.Equal(t, nil, err)
@@ -105,7 +105,7 @@ func TestBuildSink(t *testing.T) {
 
 	t.Run(constants.STDOUT, func(t *testing.T) {
 		c.Type = constants.STDOUT
-		sink, err := BuildSink(c)
+		sink, err := NewSink(c)
 		stdoutSink := stdout.Sink{}
 		assert.IsType(t, &stdoutSink, sink)
 		assert.Equal(t, nil, err)
@@ -114,7 +114,7 @@ func TestBuildSink(t *testing.T) {
 	t.Run("unsupported", func(t *testing.T) {
 		c.Type = "unsupported-type"
 		wantedErr := errors.New("unsupported sink: " + c.Type)
-		sink, err := BuildSink(c)
+		sink, err := NewSink(c)
 		assert.Equal(t, nil, sink)
 		assert.Equal(t, wantedErr, err)
 	})

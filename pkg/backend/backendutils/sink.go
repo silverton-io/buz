@@ -4,7 +4,9 @@
 
 package backendutils
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type SinkMetadata struct {
 	Id               *uuid.UUID `json:"id"`

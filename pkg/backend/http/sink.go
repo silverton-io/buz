@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/request"
@@ -17,45 +18,77 @@ import (
 
 type Sink struct {
 	id               *uuid.UUID
+	sinkType         string
 	name             string
 	deliveryRequired bool
 	url              url.URL
+	inputChan        chan []envelope.Envelope
+	shutdownChan     chan int
 }
 
-func (s *Sink) Id() *uuid.UUID {
-	return s.id
-}
-
-func (s *Sink) Name() string {
-	return s.name
-}
-
-func (s *Sink) Type() string {
-	return "http"
-}
-
-func (s *Sink) DeliveryRequired() bool {
-	return s.deliveryRequired
+func (s *Sink) Metadata() backendutils.SinkMetadata {
+	return backendutils.SinkMetadata{
+		Id:               s.id,
+		Name:             s.name,
+		SinkType:         s.sinkType,
+		DeliveryRequired: s.deliveryRequired,
+	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("🟡 initializing http sink")
-	url, err := url.Parse(conf.HttpUrl)
+	log.Debug().Msg("🟢 initializing " + s.sinkType + " sink")
+	url, err := url.Parse(conf.Url)
 	if err != nil {
-		log.Debug().Err(err).Msg("🟡 validUrl is not a valid url")
+		log.Debug().Err(err).Msg("🔴 " + conf.Url + " is not a valid url")
 		return err
 	}
 	id := uuid.New()
-	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
+	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	s.url = *url
+	s.inputChan = make(chan []envelope.Envelope, 10000)
+	s.shutdownChan = make(chan int, 1)
+	s.StartWorker()
 	return nil
 }
 
-func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	_, err := request.PostEnvelopes(s.url, envelopes) // FIXME -> shard this by configured strategy
+func (s *Sink) StartWorker() error {
+	go func(s *Sink) {
+		for {
+			select {
+			case envelopes := <-s.inputChan:
+				ctx := context.Background()
+				s.Dequeue(ctx, envelopes)
+			case <-s.shutdownChan:
+				err := s.Shutdown()
+				if err != nil {
+					log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("sink did not safely shut down")
+				}
+			}
+		}
+	}(s)
+	return nil
+}
+
+func (s *Sink) batchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+	_, err := request.PostEnvelopes(s.url, envelopes)
+	log.Error().Err(err).Msg("could not dequeue payloads with " + s.sinkType + " sink")
 	return err
 }
 
-func (s *Sink) Close() {
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
+	s.inputChan <- envelopes
+	return nil
+}
+
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
+	err := s.batchPublish(ctx, envelopes)
+	return err
+}
+
+func (s *Sink) Shutdown() error {
 	log.Debug().Msg("🟡 closing http sink") // no-op
+	s.shutdownChan <- 1
+	return nil
 }

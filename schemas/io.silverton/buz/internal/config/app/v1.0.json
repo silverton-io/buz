@@ -878,10 +878,10 @@
                         "default": "buz-gcp-project",
                         "description": "The name of the GCP project"
                     },
-                    "relayUrl": {
+                    "url": {
                         "type": "string",
-                        "description": "The url to relay envelopes to",
-                        "default": "https://another-buz.net/relay"
+                        "description": "The destination url",
+                        "default": "https://somewheres.net/buz"
                     },
                     "dbHost": {
                         "type": "string",
@@ -1041,8 +1041,7 @@
                             }
                         },
                         "required": [
-                            "validUrl",
-                            "invalidUrl"
+                            "url"
                         ]
                     },
                     {
@@ -1052,8 +1051,7 @@
                             }
                         },
                         "required": [
-                            "validUrl",
-                            "invalidUrl"
+                            "url"
                         ]
                     },
                     {

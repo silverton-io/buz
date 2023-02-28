@@ -18,7 +18,7 @@ type Sink struct {
 	NatsUser string `json:"-"`
 	NatsPass string `json:"-"`
 	// HTTP
-	HttpUrl string `json:"url,omitempty"`
+	Url string `json:"url,omitempty"`
 	// Elasticsearch
 	ElasticsearchHosts    []string `json:"elasticsearchHosts,omitempty"`
 	ElasticsearchUsername string   `json:"-"`
