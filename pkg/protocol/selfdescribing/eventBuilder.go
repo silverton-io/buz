@@ -7,14 +7,14 @@ package selfdescribing
 import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/event"
+	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/tidwall/gjson"
 )
 
-type GenericEvent event.SelfDescribingEvent
+type GenericEvent envelope.SelfDescribingEvent
 
 func buildEvent(e gjson.Result, conf config.SelfDescribing) (GenericEvent, error) {
-	var sdPayload event.SelfDescribingPayload
+	var sdPayload envelope.SelfDescribingPayload
 	c := e.Get(conf.Contexts.RootKey).Value()
 	var contexts map[string]interface{}
 	if c != nil {
@@ -27,7 +27,7 @@ func buildEvent(e gjson.Result, conf config.SelfDescribing) (GenericEvent, error
 		log.Error().Stack().Msg("🔴 no data payload found in generic event for key: " + conf.Payload.RootKey + "." + conf.Payload.DataKey)
 		log.Debug().Interface("event", e.Value()).Interface("config", conf).Msg("🟡 event format does not match config format")
 	} else {
-		sdPayload = event.SelfDescribingPayload{
+		sdPayload = envelope.SelfDescribingPayload{
 			Schema: payloadSchema,
 			Data:   payloadData.(map[string]interface{}),
 		}

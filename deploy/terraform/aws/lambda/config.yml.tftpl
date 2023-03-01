@@ -90,11 +90,16 @@ registry:
     enabled: true
 
 sinks:
-  - name: primary
-    type: kinesis-firehose
+  - name: mz
+    type: materialize
     deliveryRequired: true
-    validStream: ${validStream}
-    invalidStream: ${invalidStream}
+    mzHost: cy3mbz1ds16tsfj4uzvmfrck0.us-east-1.aws.materialize.cloud
+    mzPort: 6875
+    mzDbName: materialize
+    mzUser: "jake@silverton.io"
+    mzPass: "mzp_ca55cac95bfc4d0784c2da473c4e6f76d13313fba0ca4431a9d72a8365a7382f"
+    validTable: buz_valid
+    invalidTable: buz_invalid
 
 squawkBox:
   enabled: true

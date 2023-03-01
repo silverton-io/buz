@@ -87,7 +87,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 }
 
 func (s *Sink) Shutdown() error {
-	log.Debug().Msg("🟡 shutting down database sink")
+	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink")
 	db, _ := s.gormDb.DB()
 	s.shutdown <- 1
 	err := db.Close()

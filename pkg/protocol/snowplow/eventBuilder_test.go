@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/silverton-io/buz/pkg/event"
+	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 )
@@ -102,7 +102,7 @@ func TestGetSdPayload(t *testing.T) {
 	b64payload := "eyJzY2hlbWEiOiJpZ2x1OmNvbS5zbm93cGxvd2FuYWx5dGljcy5zbm93cGxvdy91bnN0cnVjdF9ldmVudC9qc29uc2NoZW1hLzEtMC0wIiwiZGF0YSI6eyJzY2hlbWEiOiJpZ2x1OmNvbS5zaWx2ZXJ0b24uaW8vaG9uZXlwb3QvZXhhbXBsZS92aWV3ZWRfcHJvZHVjdC9qc29uc2NoZW1hLzEtMC0wIiwiZGF0YSI6eyJwcm9kdWN0SWQiOiJBU08wMTA0MyIsImNhdGVnb3J5IjoiRHJlc3NlcyIsImJyYW5kIjoiQUNNRSIsInJldHVybmluZyI6dHJ1ZSwicHJpY2UiOjQ5Ljk1LCJzaXplcyI6WyJ4cyIsInMiLCJsIiwieGwiLCJ4eGwiXSwiYXZhaWxhYmxlU2luY2UiOiIyMDEzLTA0LTA3VDA0OjAwOjAwLjAwMFoifX19"
 	pl, _ := b64.RawStdEncoding.DecodeString(b64payload)
 	payload := gjson.ParseBytes(pl)
-	expectedPayload := event.SelfDescribingPayload{
+	expectedPayload := envelope.SelfDescribingPayload{
 		Schema: payload.Get("data.schema").String(),
 		Data:   payload.Get("data.data").Value().(map[string]interface{}),
 	}

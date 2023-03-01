@@ -2,7 +2,7 @@
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package event
+package envelope
 
 import (
 	"database/sql/driver"
@@ -20,8 +20,8 @@ func stripColonSeparatedPrefix(schema string) string {
 }
 
 type SelfDescribingEvent struct {
-	Contexts map[string]interface{} `json:"contexts"`
-	Payload  SelfDescribingPayload  `json:"payload"`
+	Contexts `json:"contexts"`
+	Payload  SelfDescribingPayload `json:"payload"`
 }
 
 type SelfDescribingPayload struct {

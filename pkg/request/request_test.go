@@ -13,7 +13,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/silverton-io/buz/pkg/event"
+	"github.com/silverton-io/buz/pkg/envelope"
 )
 
 func TestConst(t *testing.T) {
@@ -26,7 +26,7 @@ func TestConst(t *testing.T) {
 
 func TestPostEvent(t *testing.T) {
 	u := "/somewhere"
-	payload := event.SelfDescribingEvent{}
+	payload := envelope.SelfDescribingEvent{}
 	marshaledPayload, _ := json.Marshal(payload)
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
