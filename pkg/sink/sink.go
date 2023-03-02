@@ -13,6 +13,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/blackhole"
 	"github.com/silverton-io/buz/pkg/backend/file"
 	"github.com/silverton-io/buz/pkg/backend/http"
+	"github.com/silverton-io/buz/pkg/backend/mongodb"
 	"github.com/silverton-io/buz/pkg/backend/mysqldb"
 	"github.com/silverton-io/buz/pkg/backend/postgresdb"
 	"github.com/silverton-io/buz/pkg/backend/stdout"
@@ -72,11 +73,11 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 	case constants.MYSQL:
 		sink := mysqldb.Sink{}
 		return &sink, nil
+	case constants.MONGODB:
+		sink := mongodb.Sink{}
+		return &sink, nil
 	// case constants.CLICKHOUSE:
 	// 	sink := clickhousedb.Sink{}
-	// 	return &sink, nil
-	// case constants.MONGODB:
-	// 	sink := mongodb.Sink{}
 	// 	return &sink, nil
 	// case constants.NATS:
 	// 	sink := nats.Sink{}

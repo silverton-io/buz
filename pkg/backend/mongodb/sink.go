@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
@@ -18,42 +19,37 @@ import (
 )
 
 type Sink struct {
-	id                *uuid.UUID
-	name              string
-	deliveryRequired  bool
-	client            *mongo.Client
-	validCollection   *mongo.Collection
-	invalidCollection *mongo.Collection
+	id                      *uuid.UUID
+	sinkType                string
+	name                    string
+	deliveryRequired        bool
+	client                  *mongo.Client
+	defaultEventsCollection *mongo.Collection
+	input                   chan []envelope.Envelope
+	shutdown                chan int
 }
 
-func (s *Sink) Id() *uuid.UUID {
-	return s.id
-}
-
-func (s *Sink) Name() string {
-	return s.name
-}
-
-func (s *Sink) Type() string {
-	return "mongodb"
-}
-
-func (s *Sink) DeliveryRequired() bool {
-	return s.deliveryRequired
+func (s *Sink) Metadata() backendutils.SinkMetadata {
+	return backendutils.SinkMetadata{
+		Id:               s.id,
+		Name:             s.name,
+		SinkType:         s.sinkType,
+		DeliveryRequired: s.deliveryRequired,
+	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing mongodb sink")
 	id := uuid.New()
-	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
+	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	ctx := context.Background()
 	opt := options.ClientOptions{
-		Hosts: conf.MongoHosts,
+		Hosts: conf.DbHosts,
 	}
-	if conf.MongoUser != "" {
+	if conf.DbUser != "" {
 		c := options.Credential{
-			Username: conf.MongoUser,
-			Password: conf.MongoPass,
+			Username: conf.DbUser,
+			Password: conf.DbPass,
 		}
 		opt.Auth = &c
 	}
@@ -62,19 +58,31 @@ func (s *Sink) Initialize(conf config.Sink) error {
 		log.Error().Err(err).Msg("🔴 could not connect to mongodb")
 	}
 	s.client = client
-	vCollection := s.client.Database(conf.MongoDbName).Collection(constants.BUZ_VALID_EVENTS)
-	iCollection := s.client.Database(conf.MongoDbName).Collection(constants.BUZ_INVALID_EVENTS)
-	s.validCollection, s.invalidCollection = vCollection, iCollection
+	vCollection := s.client.Database(conf.DbName).Collection(constants.BUZ_EVENTS)
+	s.defaultEventsCollection = vCollection
+	s.StartWorker()
 	return nil
 }
 
-func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) StartWorker() error {
+	err := backendutils.StartSinkWorker(s.input, s.shutdown, s)
+	return err
+}
+
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
+	s.input <- envelopes
+	return nil
+}
+
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
 	for _, e := range envelopes {
 		payload, err := bson.Marshal(e)
 		if err != nil {
 			return err
 		}
-		_, err = s.validCollection.InsertOne(ctx, payload) // FIXME - should batch these and shard them
+		_, err = s.defaultEventsCollection.InsertOne(ctx, payload) // FIXME - should batch these and shard them
 		if err != nil {
 			return err
 		}
@@ -82,6 +90,8 @@ func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) 
 	return nil
 }
 
-func (s *Sink) Close() {
-	log.Debug().Msg("🟡 closing mongodb sink")
+func (s *Sink) Shutdown() error {
+	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink")
+	s.shutdown <- 1
+	return nil
 }

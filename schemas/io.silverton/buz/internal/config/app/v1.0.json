@@ -526,10 +526,12 @@
                             "description": "The mongodb collection for schemas in the registry backend is mongodb",
                             "default": "registry"
                         },
-                        "dbHost": {
-                            "type": "string",
-                            "description": "The database host",
-                            "default": "localhost"
+                        "dbHosts": {
+                            "type": "array",
+                            "description": "The database host(s)",
+                            "default": [
+                                "localhost"
+                            ]
                         },
                         "dbPort": {
                             "type": "number",
@@ -549,35 +551,6 @@
                         "dbPass": {
                             "type": "string",
                             "description": "The database password",
-                            "default": "buz"
-                        },
-                        "mongoHosts": {
-                            "type": "array",
-                            "description": "The mongodb registry backend hosts",
-                            "default": [
-                                "mongodb1",
-                                "mongodb2",
-                                "mongodb3"
-                            ]
-                        },
-                        "mongoPort": {
-                            "type": "number",
-                            "description": "The mongodb registry backend port",
-                            "default": "27017"
-                        },
-                        "mongoDbName": {
-                            "type": "string",
-                            "description": "The mongodb registry backend db",
-                            "default": "buz"
-                        },
-                        "mongoUser": {
-                            "type": "string",
-                            "description": "The mongodb registry backend user",
-                            "default": "buz"
-                        },
-                        "mongoPass": {
-                            "type": "string",
-                            "description": "The mongodb registry backend pass",
                             "default": "buz"
                         },
                         "minioEndpoint": {
@@ -676,7 +649,7 @@
                                 }
                             },
                             "required": [
-                                "dbHost",
+                                "dbHosts",
                                 "dbPort",
                                 "dbName",
                                 "dbUser",
@@ -691,7 +664,7 @@
                                 }
                             },
                             "required": [
-                                "dbHost",
+                                "dbHosts",
                                 "dbPort",
                                 "dbName",
                                 "dbUser",
@@ -706,7 +679,7 @@
                                 }
                             },
                             "required": [
-                                "dbHost",
+                                "dbHosts",
                                 "dbPort",
                                 "dbName",
                                 "dbUser",
@@ -721,7 +694,7 @@
                                 }
                             },
                             "required": [
-                                "dbHost",
+                                "dbHosts",
                                 "dbPort",
                                 "dbName",
                                 "dbUser",
@@ -736,9 +709,9 @@
                                 }
                             },
                             "required": [
-                                "mongoHosts",
-                                "mongoPort",
-                                "mongoDbName",
+                                "dbHosts",
+                                "dbPort",
+                                "dbName",
                                 "registryCollection"
                             ]
                         }
@@ -883,10 +856,12 @@
                         "description": "The destination url",
                         "default": "https://somewheres.net/buz"
                     },
-                    "dbHost": {
-                        "type": "string",
-                        "description": "The database hostname",
-                        "default": "localhost"
+                    "dbHosts": {
+                        "type": "array",
+                        "description": "The database hostname(s)",
+                        "default": [
+                            "localhost"
+                        ]
                     },
                     "dbPort": {
                         "type": "number",
@@ -917,35 +892,6 @@
                         "type": "string",
                         "description": "The pubnub sub key",
                         "default": "YOUR-SUB-KEY"
-                    },
-                    "mongoHosts": {
-                        "type": "array",
-                        "description": "A list of the mongodb hosts",
-                        "default": [
-                            "mongodb1",
-                            "mongodb2",
-                            "mongodb3"
-                        ]
-                    },
-                    "mongoPort": {
-                        "type": "number",
-                        "description": "The mongo port",
-                        "default": "27017"
-                    },
-                    "mongoDbName": {
-                        "type": "string",
-                        "description": "The mongo database name",
-                        "default": "buz"
-                    },
-                    "mongoUser": {
-                        "type": "string",
-                        "description": "The mongo database user",
-                        "default": "buz"
-                    },
-                    "mongoPass": {
-                        "type": "string",
-                        "description": "The mongo database password",
-                        "default": "buz"
                     },
                     "natsHost": {
                         "type": "string",
@@ -1099,7 +1045,7 @@
                             }
                         },
                         "required": [
-                            "dbHost",
+                            "dbHosts",
                             "dbPort",
                             "dbName",
                             "dbUser",
@@ -1113,7 +1059,7 @@
                             }
                         },
                         "required": [
-                            "dbHost",
+                            "dbHosts",
                             "dbPort",
                             "dbName",
                             "dbUser",
@@ -1127,7 +1073,7 @@
                             }
                         },
                         "required": [
-                            "dbHost",
+                            "dbHosts",
                             "dbPort",
                             "dbName",
                             "dbUser",
@@ -1141,7 +1087,7 @@
                             }
                         },
                         "required": [
-                            "dbHost",
+                            "dbHosts",
                             "dbPort",
                             "dbName",
                             "dbUser",
@@ -1155,7 +1101,7 @@
                             }
                         },
                         "required": [
-                            "dbHost",
+                            "dbHosts",
                             "dbPort",
                             "dbName",
                             "dbUser",
@@ -1180,9 +1126,7 @@
                             }
                         },
                         "required": [
-                            "mongoHosts",
-                            "mongoPort",
-                            "mongoDbName"
+                            "dbHosts"
                         ]
                     },
                     {

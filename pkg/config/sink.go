@@ -24,20 +24,14 @@ type Sink struct {
 	ElasticsearchUsername string   `json:"-"`
 	ElasticsearchPassword string   `json:"-"`
 	// Postgres Database
-	DbHost string `json:"-"`
-	DbPort uint16 `json:"-"`
-	DbName string `json:"-"`
-	DbUser string `json:"-"`
-	DbPass string `json:"-"`
+	DbHosts []string `json:"-"`
+	DbPort  uint16   `json:"-"`
+	DbName  string   `json:"-"`
+	DbUser  string   `json:"-"`
+	DbPass  string   `json:"-"`
 	// Pubnub
 	PubnubPubKey string `json:"pubnubPubKey,omitempty"`
 	PubnubSubKey string `json:"pubnubSubKey,omitempty"`
-	// Mongodb
-	MongoHosts  []string `json:"mongoHosts,omitempty"`
-	MongoPort   string   `json:"mongoDbPort,omitempty"`
-	MongoDbName string   `json:"mongoDbName,omitempty"`
-	MongoUser   string   `json:"-"`
-	MongoPass   string   `json:"-"`
 	// Indicative
 	IndicativeApiKey string `json:"-"`
 	// Amplitude

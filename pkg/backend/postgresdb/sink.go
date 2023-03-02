@@ -43,7 +43,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	log.Debug().Msg("🟢 initializing " + s.sinkType + " sink")
 	connParams := db.ConnectionParams{
-		Host: conf.DbHost,
+		Host: conf.DbHosts[0], //Only use the first configured host.
 		Port: conf.DbPort,
 		Db:   conf.DbName,
 		User: conf.DbUser,
