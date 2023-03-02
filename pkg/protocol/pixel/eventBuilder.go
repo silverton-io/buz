@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 
 	"github.com/gin-gonic/gin"
-	"github.com/silverton-io/buz/pkg/event"
+	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/util"
 )
 
@@ -18,28 +18,28 @@ const (
 	ARBITRARY_PIXEL_SCHEMA    string = "io.silverton/buz/pixel/arbitrary/v1.0.json"
 )
 
-func buildEvent(c *gin.Context) (event.SelfDescribingPayload, error) {
+func buildEvent(c *gin.Context) (envelope.SelfDescribingPayload, error) {
 	params := util.MapUrlParams(c)
 	schemaName := util.GetSchemaNameFromRequest(c, ARBITRARY_PIXEL_SCHEMA)
 	base64EncodedPayload := params[B64_ENCODED_PAYLOAD_PARAM]
 	if base64EncodedPayload != nil {
 		p, err := b64.RawStdEncoding.DecodeString(base64EncodedPayload.(string))
 		if err != nil {
-			return event.SelfDescribingPayload{}, err
+			return envelope.SelfDescribingPayload{}, err
 		}
 		var payload map[string]interface{}
 		err = json.Unmarshal(p, &payload)
 		if err != nil {
-			return event.SelfDescribingPayload{}, err
+			return envelope.SelfDescribingPayload{}, err
 		}
-		sdp := event.SelfDescribingPayload{
+		sdp := envelope.SelfDescribingPayload{
 			Schema: schemaName,
 			Data:   payload,
 		}
 		return sdp, nil
 	}
 
-	sdp := event.SelfDescribingPayload{
+	sdp := envelope.SelfDescribingPayload{
 		Schema: schemaName,
 		Data:   params,
 	}

@@ -1,4 +1,4 @@
-package event
+package envelope
 
 import (
 	"encoding/json"

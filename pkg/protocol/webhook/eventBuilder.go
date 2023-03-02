@@ -6,16 +6,16 @@ package webhook
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/silverton-io/buz/pkg/event"
+	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
 const ARBITRARY_WEBHOOK_SCHEMA = "io.silverton/buz/hook/arbitrary/v1.0.json"
 
-func buildEvent(c *gin.Context, payload gjson.Result) (event.SelfDescribingPayload, error) {
+func buildEvent(c *gin.Context, payload gjson.Result) (envelope.SelfDescribingPayload, error) {
 	schemaName := util.GetSchemaNameFromRequest(c, ARBITRARY_WEBHOOK_SCHEMA)
-	sdp := event.SelfDescribingPayload{
+	sdp := envelope.SelfDescribingPayload{
 		Schema: schemaName,
 		Data:   payload.Value().(map[string]interface{}),
 	}

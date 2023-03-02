@@ -15,7 +15,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/event"
+	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/util"
 	"github.com/tidwall/gjson"
 )
@@ -107,8 +107,8 @@ func decodeB64Param(param string) ([]byte, error) {
 	return payload, nil
 }
 
-func getContexts(b64encodedContexts *string) *map[string]interface{} {
-	var contexts = make(map[string]interface{})
+func getContexts(b64encodedContexts *string) *envelope.Contexts {
+	var contexts = make(envelope.Contexts)
 	payload, err := decodeB64Param(*b64encodedContexts)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not decode b64 encoded contexts")
@@ -123,7 +123,7 @@ func getContexts(b64encodedContexts *string) *map[string]interface{} {
 	return &contexts
 }
 
-func getSdPayload(b64EncodedPayload *string) *event.SelfDescribingPayload {
+func getSdPayload(b64EncodedPayload *string) *envelope.SelfDescribingPayload {
 	if b64EncodedPayload != nil {
 		payload, err := decodeB64Param(*b64EncodedPayload)
 		if err != nil {
@@ -131,7 +131,7 @@ func getSdPayload(b64EncodedPayload *string) *event.SelfDescribingPayload {
 			return nil
 		}
 		schema := gjson.GetBytes(payload, "data.schema").String()
-		p := event.SelfDescribingPayload{
+		p := envelope.SelfDescribingPayload{
 			Schema: schema,
 			Data:   gjson.GetBytes(payload, "data.data").Value().(map[string]interface{}),
 		}

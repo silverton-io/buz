@@ -13,7 +13,6 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/envelope"
-	"github.com/silverton-io/buz/pkg/event"
 )
 
 const (
@@ -45,7 +44,7 @@ func PostPayload(url url.URL, payload interface{}) (resp *http.Response, err err
 	return resp, nil
 }
 
-func PostEvent(url url.URL, payload event.SelfDescribingEvent) (resp *http.Response, err error) {
+func PostEvent(url url.URL, payload envelope.SelfDescribingEvent) (resp *http.Response, err error) {
 	resp, err = PostPayload(url, payload)
 	return resp, err
 }
