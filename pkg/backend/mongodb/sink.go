@@ -60,6 +60,8 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	s.client = client
 	vCollection := s.client.Database(conf.DbName).Collection(constants.BUZ_EVENTS)
 	s.defaultEventsCollection = vCollection
+	s.input = make(chan []envelope.Envelope, 10000)
+	s.shutdown = make(chan int, 1)
 	s.StartWorker()
 	return nil
 }
