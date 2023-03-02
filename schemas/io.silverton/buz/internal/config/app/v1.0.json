@@ -777,7 +777,7 @@
             "type": "array",
             "description": "Configuration for the sinks",
             "minItems": 1,
-            "maxItems": 8,
+            "maxItems": 20,
             "items": {
                 "type": "object",
                 "description": "Configuration for an individual sink",
@@ -828,23 +828,6 @@
                             "BROKER2:9092",
                             "BROKER3:9092"
                         ]
-                    },
-                    "elasticsearchHosts": {
-                        "type": "array",
-                        "description": "A list of elasticsearch hosts",
-                        "default": [
-                            "http://es1:9200"
-                        ]
-                    },
-                    "elasticsearchUsername": {
-                        "type": "string",
-                        "description": "The elasticsearch username",
-                        "default": "elastic"
-                    },
-                    "elasticsearchPassword": {
-                        "type": "string",
-                        "description": "The elasticsearch password",
-                        "default": "elastic"
                     },
                     "project": {
                         "type": "string",
@@ -1017,9 +1000,9 @@
                             }
                         },
                         "required": [
-                            "elasticsearchHosts",
-                            "elasticsearchUsername",
-                            "elasticsearchPassword"
+                            "dbHosts",
+                            "dbUser",
+                            "dbPass"
                         ]
                     },
                     {

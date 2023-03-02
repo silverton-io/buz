@@ -19,11 +19,7 @@ type Sink struct {
 	NatsPass string `json:"-"`
 	// HTTP
 	Url string `json:"url,omitempty"`
-	// Elasticsearch
-	ElasticsearchHosts    []string `json:"elasticsearchHosts,omitempty"`
-	ElasticsearchUsername string   `json:"-"`
-	ElasticsearchPassword string   `json:"-"`
-	// Postgres Database
+	// Database
 	DbHosts []string `json:"-"`
 	DbPort  uint16   `json:"-"`
 	DbName  string   `json:"-"`

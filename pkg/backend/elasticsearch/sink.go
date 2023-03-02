@@ -13,50 +13,61 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 )
 
 type Sink struct {
-	id               *uuid.UUID
-	name             string
-	deliveryRequired bool
-	client           *elasticsearch.Client
-	validIndex       string
-	invalidIndex     string
+	id                 *uuid.UUID
+	sinkType           string
+	name               string
+	deliveryRequired   bool
+	client             *elasticsearch.Client
+	defaultEventsIndex string
+	input              chan []envelope.Envelope
+	shutdown           chan int
 }
 
-func (s *Sink) Id() *uuid.UUID {
-	return s.id
-}
-
-func (s *Sink) Name() string {
-	return s.name
-}
-
-func (s *Sink) Type() string {
-	return "elasticsearch"
-}
-
-func (s *Sink) DeliveryRequired() bool {
-	return s.deliveryRequired
+func (s *Sink) Metadata() backendutils.SinkMetadata {
+	return backendutils.SinkMetadata{
+		Id:               s.id,
+		Name:             s.name,
+		SinkType:         s.sinkType,
+		DeliveryRequired: s.deliveryRequired,
+	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	cfg := elasticsearch.Config{
-		Addresses: conf.ElasticsearchHosts,
-		Username:  conf.ElasticsearchUsername,
-		Password:  conf.ElasticsearchPassword,
+		Addresses: conf.DbHosts,
+		Username:  conf.DbUser,
+		Password:  conf.DbPass,
 	}
 	es, err := elasticsearch.NewClient(cfg)
 	id := uuid.New()
-	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	s.client, s.validIndex, s.invalidIndex = es, constants.BUZ_VALID_EVENTS, constants.BUZ_INVALID_EVENTS
+	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
+	s.client, s.defaultEventsIndex = es, constants.BUZ_EVENTS
+	s.input = make(chan []envelope.Envelope, 10000)
+	s.shutdown = make(chan int, 1)
+	s.StartWorker()
 	return err
 }
 
-func (s *Sink) batchPublish(ctx context.Context, index string, envelopes []envelope.Envelope) error {
+func (s *Sink) StartWorker() error {
+	err := backendutils.StartSinkWorker(s.input, s.shutdown, s)
+	return err
+}
+
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
+	s.input <- envelopes
+	return nil
+}
+
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
 	var wg sync.WaitGroup
 	for _, envelope := range envelopes {
 		eByte, err := json.Marshal(envelope)
@@ -67,12 +78,10 @@ func (s *Sink) batchPublish(ctx context.Context, index string, envelopes []envel
 		} else {
 			wg.Add(1)
 			envId := envelope.EventMeta.Uuid.String()
-			_, err := s.client.Create(index, envId, reader)
+			_, err := s.client.Create(s.defaultEventsIndex, envId, reader)
 			if err != nil {
 				log.Error().Interface("envelopeId", envId).Err(err).Msg("🔴 could not publish envelope to elasticsearch")
 				return err
-			} else {
-				log.Debug().Interface("🟡 envelopeId", envId).Interface("indexId", index).Msg("published envelope to index")
 			}
 			defer wg.Done()
 		}
@@ -81,11 +90,8 @@ func (s *Sink) batchPublish(ctx context.Context, index string, envelopes []envel
 	return nil
 }
 
-func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, s.validIndex, envelopes) // FIXME -> shard this by configured strategy
-	return err
-}
-
-func (s *Sink) Close() {
-	log.Debug().Msg("🟡 closing elasticsearch sink client")
+func (s *Sink) Shutdown() error {
+	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink")
+	s.shutdown <- 1
+	return nil
 }

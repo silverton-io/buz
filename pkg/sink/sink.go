@@ -11,6 +11,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/amplitude"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/backend/blackhole"
+	"github.com/silverton-io/buz/pkg/backend/elasticsearch"
 	"github.com/silverton-io/buz/pkg/backend/file"
 	"github.com/silverton-io/buz/pkg/backend/http"
 	"github.com/silverton-io/buz/pkg/backend/mongodb"
@@ -55,11 +56,11 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 	// case constants.KINESIS_FIREHOSE:
 	// 	sink := kinesisFirehose.Sink{}
 	// 	return &sink, nil
-	// case constants.ELASTICSEARCH:
-	// 	sink := elasticsearch.Sink{}
-	// 	return &sink, nil
 	// case constants.PUBNUB:
 	// 	sink := pubnub.Sink{}
+	// 	return &sink, nil
+	// case constants.NATS:
+	// 	sink := nats.Sink{}
 	// 	return &sink, nil
 	case constants.POSTGRES:
 		sink := postgresdb.Sink{}
@@ -76,11 +77,11 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 	case constants.MONGODB:
 		sink := mongodb.Sink{}
 		return &sink, nil
+	case constants.ELASTICSEARCH:
+		sink := elasticsearch.Sink{}
+		return &sink, nil
 	// case constants.CLICKHOUSE:
 	// 	sink := clickhousedb.Sink{}
-	// 	return &sink, nil
-	// case constants.NATS:
-	// 	sink := nats.Sink{}
 	// 	return &sink, nil
 	case constants.AMPLITUDE:
 		sink := amplitude.Sink{}
