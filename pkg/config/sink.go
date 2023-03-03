@@ -12,9 +12,11 @@ type Sink struct {
 	// Pub/Sub
 	Project string `json:"project,omitempty"`
 	// Kafka
-	KafkaBrokers []string `json:"kakfaBrokers,omitempty"`
-	// HTTP
-	Url string `json:"url,omitempty"`
+	Brokers []string `json:"kakfaBrokers,omitempty"`
+	// HTTP and API
+	Url    string `json:"url,omitempty"`
+	ApiKey string `json:"-"`
+	Region string `json:"-"`
 	// Database
 	Hosts    []string `json:"-"`
 	Port     uint16   `json:"-"`
@@ -24,9 +26,4 @@ type Sink struct {
 	// Pubnub
 	PubnubPubKey string `json:"pubnubPubKey,omitempty"`
 	PubnubSubKey string `json:"pubnubSubKey,omitempty"`
-	// Indicative
-	IndicativeApiKey string `json:"-"`
-	// Amplitude
-	AmplitudeApiKey string `json:"-"`
-	AmplitudeRegion string `json:"amplitudeRegion,omitempty"`
 }

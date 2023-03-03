@@ -14,6 +14,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/elasticsearch"
 	"github.com/silverton-io/buz/pkg/backend/file"
 	"github.com/silverton-io/buz/pkg/backend/http"
+	"github.com/silverton-io/buz/pkg/backend/kafka"
 	"github.com/silverton-io/buz/pkg/backend/mongodb"
 	"github.com/silverton-io/buz/pkg/backend/mysqldb"
 	"github.com/silverton-io/buz/pkg/backend/nats"
@@ -42,14 +43,14 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 		sink := http.Sink{}
 		return &sink, nil
 	// Streams
+	case constants.KAFKA:
+		sink := kafka.Sink{}
+		return &sink, nil
+	case constants.REDPANDA:
+		sink := kafka.Sink{}
+		return &sink, nil
 	// case constants.PUBSUB:
 	// 	sink := pubsub.Sink{}
-	// 	return &sink, nil
-	// case constants.KAFKA:
-	// 	sink := kafka.Sink{}
-	// 	return &sink, nil
-	// case constants.REDPANDA:
-	// 	sink := kafka.Sink{}
 	// 	return &sink, nil
 	// case constants.KINESIS:
 	// 	sink := kinesis.Sink{}

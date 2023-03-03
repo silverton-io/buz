@@ -67,9 +67,9 @@ func (ms *MockSink) Close() {
 
 func TestNewSink(t *testing.T) {
 	c := config.Sink{
-		Type:         constants.PUBSUB,
-		Project:      "myproject",
-		KafkaBrokers: []string{"broker1"},
+		Type:    constants.PUBSUB,
+		Project: "myproject",
+		Brokers: []string{"broker1"},
 	}
 
 	t.Run(constants.PUBSUB, func(t *testing.T) {
@@ -122,9 +122,9 @@ func TestNewSink(t *testing.T) {
 
 func TestInitializeSink(t *testing.T) {
 	c := config.Sink{
-		Type:         constants.PUBSUB,
-		Project:      "myproject",
-		KafkaBrokers: []string{"broker1"},
+		Type:    constants.PUBSUB,
+		Project: "myproject",
+		Brokers: []string{"broker1"},
 	}
 	mSink := MockSink{}
 	mSink.On("Initialize", c)

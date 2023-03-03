@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
@@ -26,37 +27,33 @@ const (
 
 type Sink struct {
 	id                 *uuid.UUID
+	sinkType           string
 	name               string
 	deliveryRequired   bool
 	client             *kgo.Client
-	validEventsTopic   string
-	invalidEventsTopic string
+	defaultEventsTopic string
+	input              chan []envelope.Envelope
+	shutdown           chan int
 }
 
-func (s *Sink) Id() *uuid.UUID {
-	return s.id
-}
-
-func (s *Sink) Name() string {
-	return s.name
-}
-
-func (s *Sink) Type() string {
-	return "kafka"
-}
-
-func (s *Sink) DeliveryRequired() bool {
-	return s.deliveryRequired
+func (s *Sink) Metadata() backendutils.SinkMetadata {
+	return backendutils.SinkMetadata{
+		Id:               s.id,
+		Name:             s.name,
+		SinkType:         s.sinkType,
+		DeliveryRequired: s.deliveryRequired,
+	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	id := uuid.New()
-	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
+	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	ctx := context.Background()
 	log.Debug().Msg("🟡 initializing kafka client")
 	client, err := kgo.NewClient(
-		kgo.SeedBrokers(conf.KafkaBrokers...),
+		kgo.SeedBrokers(conf.Brokers...),
 	)
+	s.client, s.defaultEventsTopic = client, constants.BUZ_EVENTS
 	if err != nil {
 		log.Debug().Stack().Err(err).Msg("could not create kafka sink client")
 		return err
@@ -69,7 +66,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	}
 	admClient := kadm.NewClient(client)
 	log.Debug().Msg("🟡 verifying topics exist")
-	topicDetails, err := admClient.DescribeTopicConfigs(ctx, constants.BUZ_VALID_EVENTS, constants.BUZ_INVALID_EVENTS)
+	topicDetails, err := admClient.DescribeTopicConfigs(ctx, s.defaultEventsTopic)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not describe topic configs")
 		return err
@@ -84,11 +81,24 @@ func (s *Sink) Initialize(conf config.Sink) error {
 			log.Debug().Interface("response", resp).Msg("🟡 topic created: " + d.Name)
 		}
 	}
-	s.client, s.validEventsTopic, s.invalidEventsTopic = client, constants.BUZ_VALID_EVENTS, constants.BUZ_INVALID_EVENTS
+	s.input = make(chan []envelope.Envelope, 10000)
+	s.shutdown = make(chan int, 1)
+	s.StartWorker()
 	return nil
 }
 
-func (s *Sink) batchPublish(ctx context.Context, topic string, envelopes []envelope.Envelope) error {
+func (s *Sink) StartWorker() error {
+	err := backendutils.StartSinkWorker(s.input, s.shutdown, s)
+	return err
+}
+
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
+	s.input <- envelopes
+	return nil
+}
+
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
 	for _, e := range envelopes {
 		payload, err := json.Marshal(e)
@@ -105,7 +115,7 @@ func (s *Sink) batchPublish(ctx context.Context, topic string, envelopes []envel
 		}
 		record := &kgo.Record{
 			Key:     []byte(e.EventMeta.Namespace),
-			Topic:   topic,
+			Topic:   s.defaultEventsTopic,
 			Value:   payload,
 			Headers: headers,
 		}
@@ -119,7 +129,7 @@ func (s *Sink) batchPublish(ctx context.Context, topic string, envelopes []envel
 			} else {
 				offset := strconv.FormatInt(r.Offset, 10)
 				partition := strconv.FormatInt(int64(r.Partition), 10)
-				log.Trace().Msg("published event " + offset + " to topic " + topic + " partition " + partition)
+				log.Trace().Msg("published event " + offset + " to topic " + s.defaultEventsTopic + " partition " + partition)
 			}
 		})
 		if produceErr != nil {
@@ -130,12 +140,9 @@ func (s *Sink) batchPublish(ctx context.Context, topic string, envelopes []envel
 	return nil
 }
 
-func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, s.validEventsTopic, envelopes) // FIXME -> shard this by configured strategy
-	return err
-}
-
-func (s *Sink) Close() {
-	log.Debug().Msg("🟡 closing kafka sink client")
+func (s *Sink) Shutdown() error {
+	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink")
+	s.shutdown <- 1
 	s.client.Close()
+	return nil
 }

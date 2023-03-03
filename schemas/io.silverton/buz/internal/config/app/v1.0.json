@@ -516,12 +516,12 @@
                             "type": "string",
                             "description": "The schema registry host, if applicable"
                         },
-                        "registryTable": {
+                        "table": {
                             "type": "string",
                             "description": "The database table that stores schemas",
                             "default": "registry"
                         },
-                        "registryCollection": {
+                        "collection": {
                             "type": "string",
                             "description": "The mongodb collection for schemas in the registry backend is mongodb",
                             "default": "registry"
@@ -654,7 +654,7 @@
                                 "database",
                                 "user",
                                 "password",
-                                "registryTable"
+                                "table"
                             ]
                         },
                         {
@@ -669,7 +669,7 @@
                                 "database",
                                 "user",
                                 "password",
-                                "registryTable"
+                                "table"
                             ]
                         },
                         {
@@ -684,7 +684,7 @@
                                 "database",
                                 "user",
                                 "password",
-                                "registryTable"
+                                "table"
                             ]
                         },
                         {
@@ -699,7 +699,7 @@
                                 "database",
                                 "user",
                                 "password",
-                                "registryTable"
+                                "table"
                             ]
                         },
                         {
@@ -712,7 +712,7 @@
                                 "hosts",
                                 "port",
                                 "database",
-                                "registryCollection"
+                                "collection"
                             ]
                         }
                     ]
@@ -812,7 +812,6 @@
                             "clickhouse",
                             "timescale",
                             "nats",
-                            "indicative",
                             "amplitude"
                         ]
                     },
@@ -820,9 +819,9 @@
                         "type": "boolean",
                         "default": "true"
                     },
-                    "kafkaBrokers": {
+                    "brokers": {
                         "type": "array",
-                        "description": "A list of kafka brokers (HOST:PORT)",
+                        "description": "A list of brokers",
                         "default": [
                             "BROKER1:9092",
                             "BROKER2:9092",
@@ -876,19 +875,14 @@
                         "description": "The pubnub sub key",
                         "default": "YOUR-SUB-KEY"
                     },
-                    "indicativeApiKey": {
+                    "apiKey": {
                         "type": "string",
-                        "description": "The Indicative API key",
+                        "description": "The API key",
                         "default": "YOUR_KEY_HERE"
                     },
-                    "amplitudeApiKey": {
+                    "region": {
                         "type": "string",
-                        "description": "The Amplitude API key",
-                        "default": "YOUR_KEY_HERE"
-                    },
-                    "amplitudeRegion": {
-                        "type": "string",
-                        "description": "The Amplitude region",
+                        "description": "The region",
                         "default": "standard",
                         "enum": ["standard", "eu"]
                     }
@@ -914,7 +908,7 @@
                                 "const": "kafka"
                             }
                         },
-                        "required": ["kafkaBrokers"]
+                        "required": ["brokers"]
                     },
                     {
                         "properties": {
@@ -922,7 +916,7 @@
                                 "const": "redpanda"
                             }
                         },
-                        "required": ["kafkaBrokers"]
+                        "required": ["brokers"]
                     },
                     {
                         "properties": {
@@ -1128,8 +1122,8 @@
                             }
                         },
                         "required": [
-                            "amplitudeApiKey",
-                            "amplitudeRegion"
+                            "apiKey",
+                            "region"
                         ]
                     }
                 ]

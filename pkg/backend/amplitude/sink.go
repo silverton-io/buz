@@ -99,7 +99,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
 	var e string
-	if conf.AmplitudeRegion == AMPLITUDE_EU {
+	if conf.Region == AMPLITUDE_EU {
 		e = AMPLITUDE_EU_ENDPOINT
 	} else {
 		e = AMPLITUDE_STANDARD_ENDPOINT
@@ -108,7 +108,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	if err != nil {
 		return err
 	}
-	s.endpoint, s.apiKey = *endpoint, conf.AmplitudeApiKey
+	s.endpoint, s.apiKey = *endpoint, conf.ApiKey
 	s.StartWorker()
 	return nil
 }
