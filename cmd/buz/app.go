@@ -174,7 +174,10 @@ func (a *App) initializeInputs() {
 		&snowplow.SnowplowInput{},
 	}
 	for _, i := range inputs {
-		i.Initialize(a.engine, &a.manifold, a.config, a.collectorMeta)
+		err := i.Initialize(a.engine, &a.manifold, a.config, a.collectorMeta)
+		if err != nil {
+			log.Fatal().Err(err).Msg("failed to initialize input")
+		}
 	}
 }
 
@@ -197,7 +200,10 @@ func (a *App) serverlessMode() {
 	if err != nil {
 		log.Fatal().Err(err)
 	}
-	a.manifold.Shutdown()
+	err = a.manifold.Shutdown()
+	if err != nil {
+		log.Error().Err(err).Msg("manifold failed to shut down safely")
+	}
 }
 
 func (a *App) standardMode() {
@@ -220,10 +226,16 @@ func (a *App) standardMode() {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		a.manifold.Shutdown()
+		err := a.manifold.Shutdown()
+		if err != nil {
+			log.Error().Err(err).Msg("manifold failed to shut down safely")
+		}
 		log.Fatal().Stack().Err(err).Msg("server forced to shutdown")
 	}
-	a.manifold.Shutdown()
+	err := a.manifold.Shutdown()
+	if err != nil {
+		log.Error().Err(err).Msg("manifold failed to shut down safely")
+	}
 	tele.Sis(a.collectorMeta)
 }
 

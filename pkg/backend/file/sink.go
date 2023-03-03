@@ -13,6 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 )
 
@@ -22,7 +23,7 @@ type Sink struct {
 	name             string
 	deliveryRequired bool
 	fanout           bool
-	outputFile       string
+	defaultFile      string
 	input            chan []envelope.Envelope
 	shutdown         chan int
 }
@@ -43,8 +44,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	s.deliveryRequired, s.fanout = conf.DeliveryRequired, conf.Fanout
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
-	s.outputFile = "buz_events.json"
-	s.StartWorker()
+	s.defaultFile = constants.BUZ_EVENTS + ".json"
 	return nil
 }
 
@@ -84,7 +84,7 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
-	err := s.batchPublish(ctx, s.outputFile, envelopes)
+	err := s.batchPublish(ctx, s.defaultFile, envelopes)
 	return err
 }
 

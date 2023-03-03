@@ -33,7 +33,7 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	id := uuid.New()
-	s.id, s.name, s.sinkType = &id, conf.Name, conf.Type
+	s.id, s.sinkType, s.name = &id, conf.Type, conf.Name
 	s.deliveryRequired, s.fanout = conf.DeliveryRequired, conf.Fanout
 	return nil
 }
@@ -47,7 +47,10 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
 	// This is a blackhole. It does nothing but dequeue
 	ctx := context.Background()
-	s.Dequeue(ctx, envelopes)
+	err := s.Dequeue(ctx, envelopes)
+	if err != nil {
+		log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("could not dequeue")
+	}
 	return nil
 }
 

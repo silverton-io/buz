@@ -65,7 +65,6 @@ func (s *Sink) Initialize(conf config.Sink) error {
 			return ensureErr
 		}
 	}
-	s.StartWorker()
 	return nil
 }
 

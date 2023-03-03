@@ -39,7 +39,10 @@ func (m *SimpleManifold) Enqueue(envelopes []envelope.Envelope) error {
 	for _, sink := range *m.sinks {
 		meta := sink.Metadata()
 		log.Debug().Interface("metadata", meta).Msg("🟡 enqueueing envelopes to sink")
-		sink.Enqueue(anonymizedEnvelopes)
+		err := sink.Enqueue(anonymizedEnvelopes)
+		if err != nil {
+			log.Error().Err(err).Interface("metadata", sink.Metadata()).Msg("failed to enqueue envelopes to sink")
+		}
 	}
 	return nil
 }

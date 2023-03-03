@@ -66,7 +66,6 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	s.deliveryRequired = conf.DeliveryRequired
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
-	s.StartWorker()
 	return nil
 }
 

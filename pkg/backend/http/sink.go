@@ -47,7 +47,6 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	s.url = *url
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
-	s.StartWorker()
 	return nil
 }
 
