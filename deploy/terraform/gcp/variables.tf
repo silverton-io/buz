@@ -25,9 +25,9 @@ variable "buz_domain" {
 }
 
 variable "buz_version" {
-  description = "The version of Buz to run. \n\nExample: v0.12.8"
+  description = "The version of Buz to run. \n\nExample: v0.13.0"
   type        = string
-  default     = "v0.12.8"
+  default     = "v0.13.0"
 }
 
 variable "buz_mode" {
