@@ -5,30 +5,28 @@
 package validator
 
 import (
-	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/registry"
 )
 
-func ValidatePayload(schemaName string, payload envelope.Payload, registry *registry.Registry) (isValid bool, validationError envelope.ValidationError, schema []byte) {
+func GetSchemaContents(schemaName string, registry *registry.Registry) (exists bool, validationError envelope.ValidationError, contents []byte) {
 	// FIXME- Short-circuit if the event is an unknown event
 	if schemaName == "" {
 		validationError := envelope.ValidationError{
-			ErrorType:       &InvalidPayload.Type,
-			ErrorResolution: &InvalidPayload.Resolution,
+			ErrorType:       &NoSchemaAssociated.Type,
+			ErrorResolution: &NoSchemaAssociated.Resolution,
 			Errors:          nil,
 		}
-		return false, validationError
+		return false, validationError, nil
 	}
-	if payload == nil {
+	schemaExists, schemaContents := registry.Get(schemaName)
+	if !schemaExists {
 		validationError := envelope.ValidationError{
-			ErrorType:       &PayloadNotPresent.Type,
-			ErrorResolution: &PayloadNotPresent.Resolution,
+			ErrorType:       &NoSchemaInBackend.Type,
+			ErrorResolution: &NoSchemaInBackend.Resolution,
 			Errors:          nil,
 		}
-		return false, validationError
+		return false, validationError, nil
 	}
-	isValid, validationError = validatePayload(payload, schemaContents)
-	return isValid, validationError
-
+	return schemaExists, envelope.ValidationError{}, schemaContents
 }

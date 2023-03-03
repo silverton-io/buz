@@ -35,27 +35,37 @@ func Annotate(envelopes []envelope.Envelope, registry *registry.Registry) []enve
 		// NOTE - this has the potential to be confusing in the case that
 		// schema-level validation is disabled.
 		// Payload validation is still executed in that case but the outcome is disregarded.
-		isValid, validationError, schemaContents := validator.ValidatePayload(envelope.EventMeta.Schema, envelope.Payload, registry)
-		m := getMetadataFromSchema(schemaContents)
-		if m.Namespace != "" {
-			envelope.EventMeta.Namespace = m.Namespace
-		}
-		envelope.EventMeta.Vendor = m.Vendor
-		envelope.EventMeta.Version = m.Version
-		envelope.EventMeta.Format = m.Format
-		if m.DisableValidation {
-			// If schema-level validation is disabled
-			// consider the payload valid.
-			valid := true
+		schemaExists, validationError, schemaContents := validator.GetSchemaContents(envelope.EventMeta.Schema, registry)
+		if !schemaExists {
+			// If schema doesn't exist
+			// consider the payload invalid as could have disabled validation if wanted
+			valid := false
 			envelope.Validation.IsValid = &valid
-			envelope.EventMeta.DisableValidation = m.DisableValidation
+			envelope.Validation.Error = &validationError
 		} else {
-			envelope.Validation.IsValid = &isValid
-			if !isValid {
-				// Annotate the envelope with associated validation errors
-				envelope.Validation.Error = &validationError
+			m := getMetadataFromSchema(schemaContents)
+			if m.Namespace != "" {
+				envelope.EventMeta.Namespace = m.Namespace
+			}
+			envelope.EventMeta.Vendor = m.Vendor
+			envelope.EventMeta.Version = m.Version
+			envelope.EventMeta.Format = m.Format
+			if m.DisableValidation {
+				// If schema-level validation is disabled
+				// consider the payload valid.
+				valid := true
+				envelope.Validation.IsValid = &valid
+				envelope.EventMeta.DisableValidation = m.DisableValidation
+			} else {
+				isValid, validationError := validator.ValidatePayload(schemaContents, envelope.Payload)
+				envelope.Validation.IsValid = &isValid
+				if !isValid {
+					// Annotate the envelope with associated validation errors
+					envelope.Validation.Error = &validationError
+				}
 			}
 		}
+
 		e = append(e, envelope)
 	}
 	return e
