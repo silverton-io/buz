@@ -86,12 +86,12 @@ func TestDecodeb64Param(t *testing.T) {
 
 func TestGetContexts(t *testing.T) {
 	b64contexts := "eyJzY2hlbWEiOiJpZ2x1OmNvbS5zbm93cGxvd2FuYWx5dGljcy5zbm93cGxvdy9jb250ZXh0cy9qc29uc2NoZW1hLzEtMC0wIiwiZGF0YSI6W3sic2NoZW1hIjoiaWdsdTpjb20uc25vd3Bsb3dhbmFseXRpY3Muc25vd3Bsb3cvd2ViX3BhZ2UvanNvbnNjaGVtYS8xLTAtMCIsImRhdGEiOnsiaWQiOiI0ZTRjM2UzMS05Y2FkLTQ1YjgtYTMzOC1kMzNiN2E4ODQwMzQifX0seyJzY2hlbWEiOiJpZ2x1Om9yZy53My9QZXJmb3JtYW5jZVRpbWluZy9qc29uc2NoZW1hLzEtMC0wIiwiZGF0YSI6eyJuYXZpZ2F0aW9uU3RhcnQiOjE2NDg2NzEwOTQ1MTksInJlZGlyZWN0U3RhcnQiOjAsInJlZGlyZWN0RW5kIjowLCJmZXRjaFN0YXJ0IjoxNjQ4NjcxMDk3MDk3LCJkb21haW5Mb29rdXBTdGFydCI6MTY0ODY3MTA5NzEwMiwiZG9tYWluTG9va3VwRW5kIjoxNjQ4NjcxMDk3MTAyLCJjb25uZWN0U3RhcnQiOjE2NDg2NzEwOTcxMDIsInNlY3VyZUNvbm5lY3Rpb25TdGFydCI6MCwiY29ubmVjdEVuZCI6MTY0ODY3MTA5NzEwMywicmVxdWVzdFN0YXJ0IjoxNjQ4NjcxMDk3MTAzLCJyZXNwb25zZVN0YXJ0IjoxNjQ4NjcxMDk3MTA3LCJyZXNwb25zZUVuZCI6MTY0ODY3MTA5NzEwNywidW5sb2FkRXZlbnRTdGFydCI6MTY0ODY3MTA5NzExMCwidW5sb2FkRXZlbnRFbmQiOjE2NDg2NzEwOTcxMTAsImRvbUxvYWRpbmciOjE2NDg2NzEwOTQ1MjAsImRvbUludGVyYWN0aXZlIjoxNjQ4NjcxMDk0NTMyLCJkb21Db250ZW50TG9hZGVkRXZlbnRTdGFydCI6MTY0ODY3MTA5NDU3MywiZG9tQ29udGVudExvYWRlZEV2ZW50RW5kIjoxNjQ4NjcxMDk0NTc0LCJkb21Db21wbGV0ZSI6MTY0ODY3MTA5OTg4OSwibG9hZEV2ZW50U3RhcnQiOjE2NDg2NzEwOTk4ODksImxvYWRFdmVudEVuZCI6MTY0ODY3MTA5OTg4OX19XX0"
-	var expectedContexts = make(map[string]interface{})
+	var expectedContexts = make(envelope.Contexts)
 	pl, _ := b64.RawStdEncoding.DecodeString(b64contexts)
 	contextPayload := gjson.ParseBytes(pl)
 	for _, pl := range contextPayload.Get("data").Array() {
 		schema := pl.Get("schema").String()
-		data := pl.Get("data").Value().(map[string]interface{})
+		data := pl.Get("data").Value()
 		expectedContexts[schema] = data
 	}
 	actualContexts := getContexts(&b64contexts)
