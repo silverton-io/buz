@@ -46,7 +46,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing nats jetstream sink")
 	id := uuid.New()
 	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	conn, err := nats.Connect(conf.NatsHost, nats.UserInfo(conf.NatsUser, conf.NatsPass))
+	conn, err := nats.Connect(conf.Hosts[0], nats.UserInfo(conf.User, conf.Password))
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not open nats connection")
 		return err

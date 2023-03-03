@@ -16,6 +16,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/http"
 	"github.com/silverton-io/buz/pkg/backend/mongodb"
 	"github.com/silverton-io/buz/pkg/backend/mysqldb"
+	"github.com/silverton-io/buz/pkg/backend/nats"
 	"github.com/silverton-io/buz/pkg/backend/postgresdb"
 	"github.com/silverton-io/buz/pkg/backend/stdout"
 	"github.com/silverton-io/buz/pkg/config"
@@ -59,9 +60,9 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 	// case constants.PUBNUB:
 	// 	sink := pubnub.Sink{}
 	// 	return &sink, nil
-	// case constants.NATS:
-	// 	sink := nats.Sink{}
-	// 	return &sink, nil
+	case constants.NATS:
+		sink := nats.Sink{}
+		return &sink, nil
 	case constants.POSTGRES:
 		sink := postgresdb.Sink{}
 		return &sink, nil

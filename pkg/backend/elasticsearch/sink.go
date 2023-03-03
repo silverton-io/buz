@@ -41,18 +41,21 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	cfg := elasticsearch.Config{
-		Addresses: conf.DbHosts,
-		Username:  conf.DbUser,
-		Password:  conf.DbPass,
+		Addresses: conf.Hosts,
+		Username:  conf.User,
+		Password:  conf.Password,
 	}
 	es, err := elasticsearch.NewClient(cfg)
+	if err != nil {
+		return err
+	}
 	id := uuid.New()
 	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	s.client, s.defaultEventsIndex = es, constants.BUZ_EVENTS
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
 	s.StartWorker()
-	return err
+	return nil
 }
 
 func (s *Sink) StartWorker() error {

@@ -526,29 +526,29 @@
                             "description": "The mongodb collection for schemas in the registry backend is mongodb",
                             "default": "registry"
                         },
-                        "dbHosts": {
+                        "hosts": {
                             "type": "array",
                             "description": "The database host(s)",
                             "default": [
                                 "localhost"
                             ]
                         },
-                        "dbPort": {
+                        "port": {
                             "type": "number",
                             "description": "The database port",
                             "default": 5432
                         },
-                        "dbName": {
+                        "database": {
                             "type": "string",
                             "description": "The database name",
                             "default": "buz"
                         },
-                        "dbUser": {
+                        "user": {
                             "type": "string",
                             "description": "The database user",
                             "default": "buz"
                         },
-                        "dbPass": {
+                        "password": {
                             "type": "string",
                             "description": "The database password",
                             "default": "buz"
@@ -649,11 +649,11 @@
                                 }
                             },
                             "required": [
-                                "dbHosts",
-                                "dbPort",
-                                "dbName",
-                                "dbUser",
-                                "dbPass",
+                                "hosts",
+                                "port",
+                                "database",
+                                "user",
+                                "password",
                                 "registryTable"
                             ]
                         },
@@ -664,11 +664,11 @@
                                 }
                             },
                             "required": [
-                                "dbHosts",
-                                "dbPort",
-                                "dbName",
-                                "dbUser",
-                                "dbPass",
+                                "hosts",
+                                "port",
+                                "database",
+                                "user",
+                                "password",
                                 "registryTable"
                             ]
                         },
@@ -679,11 +679,11 @@
                                 }
                             },
                             "required": [
-                                "dbHosts",
-                                "dbPort",
-                                "dbName",
-                                "dbUser",
-                                "dbPass",
+                                "hosts",
+                                "port",
+                                "database",
+                                "user",
+                                "password",
                                 "registryTable"
                             ]
                         },
@@ -694,11 +694,11 @@
                                 }
                             },
                             "required": [
-                                "dbHosts",
-                                "dbPort",
-                                "dbName",
-                                "dbUser",
-                                "dbPass",
+                                "hosts",
+                                "port",
+                                "database",
+                                "user",
+                                "password",
                                 "registryTable"
                             ]
                         },
@@ -709,9 +709,9 @@
                                 }
                             },
                             "required": [
-                                "dbHosts",
-                                "dbPort",
-                                "dbName",
+                                "hosts",
+                                "port",
+                                "database",
                                 "registryCollection"
                             ]
                         }
@@ -839,29 +839,29 @@
                         "description": "The destination url",
                         "default": "https://somewheres.net/buz"
                     },
-                    "dbHosts": {
+                    "hosts": {
                         "type": "array",
                         "description": "The database hostname(s)",
                         "default": [
                             "localhost"
                         ]
                     },
-                    "dbPort": {
+                    "port": {
                         "type": "number",
                         "description": "The database port",
                         "default": 5432
                     },
-                    "dbName": {
+                    "database": {
                         "type": "string",
                         "description": "The database name",
                         "default": "buz"
                     },
-                    "dbUser": {
+                    "user": {
                         "type": "string",
                         "description": "The database connection user",
                         "default": "buz"
                     },
-                    "dbPass": {
+                    "password": {
                         "type": "string",
                         "description": "The database connection password",
                         "default": "buz"
@@ -875,21 +875,6 @@
                         "type": "string",
                         "description": "The pubnub sub key",
                         "default": "YOUR-SUB-KEY"
-                    },
-                    "natsHost": {
-                        "type": "string",
-                        "description": "The NATS host",
-                        "default": "nats"
-                    },
-                    "natsUser": {
-                        "type": "string",
-                        "description": "The NATS user",
-                        "default": ""
-                    },
-                    "natsPass": {
-                        "type": "string",
-                        "description": "The NATS password",
-                        "default": ""
                     },
                     "indicativeApiKey": {
                         "type": "string",
@@ -1000,9 +985,9 @@
                             }
                         },
                         "required": [
-                            "dbHosts",
-                            "dbUser",
-                            "dbPass"
+                            "hosts",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1028,11 +1013,11 @@
                             }
                         },
                         "required": [
-                            "dbHosts",
-                            "dbPort",
-                            "dbName",
-                            "dbUser",
-                            "dbPass"
+                            "hosts",
+                            "port",
+                            "database",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1042,11 +1027,11 @@
                             }
                         },
                         "required": [
-                            "dbHosts",
-                            "dbPort",
-                            "dbName",
-                            "dbUser",
-                            "dbPass"
+                            "hosts",
+                            "port",
+                            "database",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1056,11 +1041,11 @@
                             }
                         },
                         "required": [
-                            "dbHosts",
-                            "dbPort",
-                            "dbName",
-                            "dbUser",
-                            "dbPass"
+                            "hosts",
+                            "port",
+                            "database",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1070,11 +1055,11 @@
                             }
                         },
                         "required": [
-                            "dbHosts",
-                            "dbPort",
-                            "dbName",
-                            "dbUser",
-                            "dbPass"
+                            "hosts",
+                            "port",
+                            "database",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1084,11 +1069,11 @@
                             }
                         },
                         "required": [
-                            "dbHosts",
-                            "dbPort",
-                            "dbName",
-                            "dbUser",
-                            "dbPass"
+                            "hosts",
+                            "port",
+                            "database",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1109,7 +1094,7 @@
                             }
                         },
                         "required": [
-                            "dbHosts"
+                            "hosts"
                         ]
                     },
                     {
@@ -1119,9 +1104,9 @@
                             }
                         },
                         "required": [
-                            "natsHost",
-                            "natsUser",
-                            "natsPass"
+                            "hosts",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1131,9 +1116,9 @@
                             }
                         },
                         "required": [
-                            "natsHost",
-                            "natsUser",
-                            "natsPass"
+                            "hosts",
+                            "user",
+                            "password"
                         ]
                     },
                     {

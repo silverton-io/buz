@@ -43,11 +43,11 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	log.Debug().Msg("🟢 initializing " + s.sinkType + " sink")
 	connParams := db.ConnectionParams{
-		Host: conf.DbHosts[0], //Only use the first configured host.
-		Port: conf.DbPort,
-		Db:   conf.DbName,
-		User: conf.DbUser,
-		Pass: conf.DbPass,
+		Host: conf.Hosts[0], //Only use the first configured host.
+		Port: conf.Port,
+		Db:   conf.Database,
+		User: conf.User,
+		Pass: conf.Password,
 	}
 	connString := GenerateDsn(connParams)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})

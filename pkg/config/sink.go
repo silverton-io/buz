@@ -13,18 +13,14 @@ type Sink struct {
 	Project string `json:"project,omitempty"`
 	// Kafka
 	KafkaBrokers []string `json:"kakfaBrokers,omitempty"`
-	// NATS
-	NatsHost string `json:"-"`
-	NatsUser string `json:"-"`
-	NatsPass string `json:"-"`
 	// HTTP
 	Url string `json:"url,omitempty"`
 	// Database
-	DbHosts []string `json:"-"`
-	DbPort  uint16   `json:"-"`
-	DbName  string   `json:"-"`
-	DbUser  string   `json:"-"`
-	DbPass  string   `json:"-"`
+	Hosts    []string `json:"-"`
+	Port     uint16   `json:"-"`
+	Database string   `json:"-"`
+	User     string   `json:"-"`
+	Password string   `json:"-"`
 	// Pubnub
 	PubnubPubKey string `json:"pubnubPubKey,omitempty"`
 	PubnubSubKey string `json:"pubnubSubKey,omitempty"`

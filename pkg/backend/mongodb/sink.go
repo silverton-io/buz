@@ -44,12 +44,12 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
 	ctx := context.Background()
 	opt := options.ClientOptions{
-		Hosts: conf.DbHosts,
+		Hosts: conf.Hosts,
 	}
-	if conf.DbUser != "" {
+	if conf.User != "" {
 		c := options.Credential{
-			Username: conf.DbUser,
-			Password: conf.DbPass,
+			Username: conf.User,
+			Password: conf.Password,
 		}
 		opt.Auth = &c
 	}
@@ -58,7 +58,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 		log.Error().Err(err).Msg("🔴 could not connect to mongodb")
 	}
 	s.client = client
-	vCollection := s.client.Database(conf.DbName).Collection(constants.BUZ_EVENTS)
+	vCollection := s.client.Database(conf.Name).Collection(constants.BUZ_EVENTS)
 	s.defaultEventsCollection = vCollection
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
