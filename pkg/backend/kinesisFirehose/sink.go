@@ -14,6 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/firehose/types"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
@@ -21,27 +22,22 @@ import (
 
 type Sink struct {
 	id               *uuid.UUID
+	sinkType         string
 	name             string
 	deliveryRequired bool
 	client           *firehose.Client
-	validStream      string
-	invalidStream    string
+	defaultStream    string
+	input            chan []envelope.Envelope
+	shutdown         chan int
 }
 
-func (s *Sink) Id() *uuid.UUID {
-	return s.id
-}
-
-func (s *Sink) Name() string {
-	return s.name
-}
-
-func (s *Sink) Type() string {
-	return "firehose"
-}
-
-func (s *Sink) DeliveryRequired() bool {
-	return s.deliveryRequired
+func (s *Sink) Metadata() backendutils.SinkMetadata {
+	return backendutils.SinkMetadata{
+		Id:               s.id,
+		Name:             s.name,
+		SinkType:         s.sinkType,
+		DeliveryRequired: s.deliveryRequired,
+	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
@@ -49,12 +45,26 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	cfg, err := awsconf.LoadDefaultConfig(ctx)
 	client := firehose.NewFromConfig(cfg)
 	id := uuid.New()
-	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	s.client, s.validStream, s.invalidStream = client, constants.BUZ_VALID_EVENTS, constants.BUZ_INVALID_EVENTS
+	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
+	s.client, s.defaultStream = client, constants.BUZ_EVENTS
+	s.input = make(chan []envelope.Envelope, 10000)
+	s.shutdown = make(chan int, 1)
+	s.StartWorker()
 	return err
 }
 
-func (s *Sink) batchPublish(ctx context.Context, stream string, envelopes []envelope.Envelope) error {
+func (s *Sink) StartWorker() error {
+	err := backendutils.StartSinkWorker(s.input, s.shutdown, s)
+	return err
+}
+
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
+	s.input <- envelopes
+	return nil
+}
+
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
 	var records []types.Record
 	for _, event := range envelopes {
@@ -67,7 +77,7 @@ func (s *Sink) batchPublish(ctx context.Context, stream string, envelopes []enve
 		records = append(records, record)
 	}
 	input := &firehose.PutRecordBatchInput{
-		DeliveryStreamName: &stream,
+		DeliveryStreamName: &s.defaultStream,
 		Records:            records,
 	}
 	wg.Add(1)
@@ -79,7 +89,7 @@ func (s *Sink) batchPublish(ctx context.Context, stream string, envelopes []enve
 			log.Error().Err(err).Msg("🔴 could not publish event to kinesis firehose")
 			pubErr <- err
 		} else {
-			log.Debug().Msgf("🟡 published event batch to stream " + stream)
+			log.Debug().Msgf("🟡 published event batch to stream " + s.defaultStream)
 			pubErr <- nil
 		}
 	}(pubErr)
@@ -91,11 +101,8 @@ func (s *Sink) batchPublish(ctx context.Context, stream string, envelopes []enve
 	return nil
 }
 
-func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, s.validStream, envelopes) // FIXME -> shard by configured strategy
-	return err
-}
-
-func (s *Sink) Close() {
-	log.Debug().Msg("🟡 closing kinesis firehose sink client")
+func (s *Sink) Shutdown() error {
+	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink")
+	s.shutdown <- 1
+	return nil
 }
