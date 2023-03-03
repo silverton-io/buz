@@ -15,6 +15,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/file"
 	"github.com/silverton-io/buz/pkg/backend/http"
 	"github.com/silverton-io/buz/pkg/backend/kafka"
+	"github.com/silverton-io/buz/pkg/backend/kinesis"
 	"github.com/silverton-io/buz/pkg/backend/mongodb"
 	"github.com/silverton-io/buz/pkg/backend/mysqldb"
 	"github.com/silverton-io/buz/pkg/backend/nats"
@@ -53,9 +54,9 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 	case constants.PUBSUB:
 		sink := pubsub.Sink{}
 		return &sink, nil
-	// case constants.KINESIS:
-	// 	sink := kinesis.Sink{}
-	// 	return &sink, nil
+	case constants.KINESIS:
+		sink := kinesis.Sink{}
+		return &sink, nil
 	// case constants.KINESIS_FIREHOSE:
 	// 	sink := kinesisFirehose.Sink{}
 	// 	return &sink, nil
