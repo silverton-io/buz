@@ -13,6 +13,7 @@ import (
 	"cloud.google.com/go/pubsub"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
@@ -23,27 +24,22 @@ const INIT_TIMEOUT_SECONDS = 10
 
 type Sink struct {
 	id                 *uuid.UUID
+	sinkType           string
 	name               string
 	deliveryRequired   bool
 	client             *pubsub.Client
-	validEventsTopic   *pubsub.Topic
-	invalidEventsTopic *pubsub.Topic
+	defaultEventsTopic *pubsub.Topic
+	input              chan []envelope.Envelope
+	shutdown           chan int
 }
 
-func (s *Sink) Id() *uuid.UUID {
-	return s.id
-}
-
-func (s *Sink) Name() string {
-	return s.name
-}
-
-func (s *Sink) Type() string {
-	return "pubsub"
-}
-
-func (s *Sink) DeliveryRequired() bool {
-	return s.deliveryRequired
+func (s *Sink) Metadata() backendutils.SinkMetadata {
+	return backendutils.SinkMetadata{
+		Id:               s.id,
+		Name:             s.name,
+		SinkType:         s.sinkType,
+		DeliveryRequired: s.deliveryRequired,
+	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
@@ -53,33 +49,37 @@ func (s *Sink) Initialize(conf config.Sink) error {
 		log.Debug().Err(err).Msg("🟡 could not initialize pubsub sink")
 		return err
 	}
-	validTopic := client.Topic(constants.BUZ_VALID_EVENTS)
-	invalidTopic := client.Topic(constants.BUZ_INVALID_EVENTS)
-	vTopicExists, err := validTopic.Exists(ctx)
+	defaultTopic := client.Topic(constants.BUZ_EVENTS)
+	dTopicExists, err := defaultTopic.Exists(ctx)
 	if err != nil {
 		log.Debug().Err(err).Msg("🟡 cannot check valid event topic existence")
 		return err
 	}
-	if !vTopicExists {
+	if !dTopicExists {
 		log.Debug().Err(err).Msg("🟡 valid event topic doesn't exist in project " + conf.Project)
 		return err
 	}
-	invTopicExists, err := invalidTopic.Exists(ctx)
-	if err != nil {
-		log.Debug().Err(err).Msg("🟡 cannot check invalid event topic existence")
-		return err
-	}
-	if !invTopicExists {
-		log.Debug().Err(err).Msg("🟡 invalid event topic doesn't exist in project " + conf.Project)
-		return err
-	}
 	id := uuid.New()
-	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	s.client, s.validEventsTopic, s.invalidEventsTopic = client, validTopic, invalidTopic
+	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
+	s.client, s.defaultEventsTopic = client, defaultTopic
+	s.input = make(chan []envelope.Envelope, 10000)
+	s.shutdown = make(chan int, 1)
+	s.StartWorker()
 	return nil
 }
 
-func (s *Sink) batchPublish(ctx context.Context, topic *pubsub.Topic, envelopes []envelope.Envelope) error {
+func (s *Sink) StartWorker() error {
+	err := backendutils.StartSinkWorker(s.input, s.shutdown, s)
+	return err
+}
+
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
+	s.input <- envelopes
+	return nil
+}
+
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
 	var wg sync.WaitGroup
 	for _, e := range envelopes {
 		payload, _ := json.Marshal(e)
@@ -94,7 +94,7 @@ func (s *Sink) batchPublish(ctx context.Context, topic *pubsub.Topic, envelopes 
 				envelope.SCHEMA:         e.EventMeta.Schema,
 			},
 		}
-		result := topic.Publish(ctx, msg)
+		result := s.defaultEventsTopic.Publish(ctx, msg)
 		wg.Add(1)
 		publishErr := make(chan error, 1)
 		go func(res *pubsub.PublishResult, pErr chan error) {
@@ -104,7 +104,7 @@ func (s *Sink) batchPublish(ctx context.Context, topic *pubsub.Topic, envelopes 
 				pErr <- err
 
 			} else {
-				log.Trace().Msgf("published event id " + id + " to topic " + topic.ID())
+				log.Trace().Msgf("published event id " + id + " to topic " + s.defaultEventsTopic.ID())
 				pErr <- nil
 			}
 		}(result, publishErr)
@@ -117,12 +117,9 @@ func (s *Sink) batchPublish(ctx context.Context, topic *pubsub.Topic, envelopes 
 	return nil
 }
 
-func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, s.invalidEventsTopic, envelopes)
-	return err
-}
-
-func (s *Sink) Close() {
-	log.Debug().Msg("🟡 closing pubsub sink client")
+func (s *Sink) Shutdown() error {
+	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink")
+	s.shutdown <- 1
 	s.client.Close() // Technically does not need to be called since it's available for lifetime
+	return nil
 }

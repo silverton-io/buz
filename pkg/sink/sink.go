@@ -19,6 +19,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/mysqldb"
 	"github.com/silverton-io/buz/pkg/backend/nats"
 	"github.com/silverton-io/buz/pkg/backend/postgresdb"
+	"github.com/silverton-io/buz/pkg/backend/pubsub"
 	"github.com/silverton-io/buz/pkg/backend/stdout"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
@@ -49,9 +50,9 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 	case constants.REDPANDA:
 		sink := kafka.Sink{}
 		return &sink, nil
-	// case constants.PUBSUB:
-	// 	sink := pubsub.Sink{}
-	// 	return &sink, nil
+	case constants.PUBSUB:
+		sink := pubsub.Sink{}
+		return &sink, nil
 	// case constants.KINESIS:
 	// 	sink := kinesis.Sink{}
 	// 	return &sink, nil

@@ -83,7 +83,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 }
 
 func (s *Sink) Shutdown() error {
-	log.Debug().Msg("🟡 closing nats sink")
+	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink")
 	s.shutdown <- 1
 	s.conn.Close()
 	s.encodedConn.Close()
