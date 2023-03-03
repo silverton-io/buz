@@ -21,6 +21,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/mysqldb"
 	"github.com/silverton-io/buz/pkg/backend/nats"
 	"github.com/silverton-io/buz/pkg/backend/postgresdb"
+	"github.com/silverton-io/buz/pkg/backend/pubnub"
 	"github.com/silverton-io/buz/pkg/backend/pubsub"
 	"github.com/silverton-io/buz/pkg/backend/stdout"
 	"github.com/silverton-io/buz/pkg/config"
@@ -61,16 +62,12 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 	case constants.KINESIS_FIREHOSE:
 		sink := kinesisFirehose.Sink{}
 		return &sink, nil
-	// case constants.PUBNUB:
-	// 	sink := pubnub.Sink{}
-	// 	return &sink, nil
+	// Message Brokers
 	case constants.NATS:
 		sink := nats.Sink{}
 		return &sink, nil
+	// Databases
 	case constants.POSTGRES:
-		sink := postgresdb.Sink{}
-		return &sink, nil
-	case constants.MATERIALIZE:
 		sink := postgresdb.Sink{}
 		return &sink, nil
 	case constants.TIMESCALE:
@@ -88,8 +85,15 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 	// case constants.CLICKHOUSE:
 	// 	sink := clickhousedb.Sink{}
 	// 	return &sink, nil
+	// Saas
 	case constants.AMPLITUDE:
 		sink := amplitude.Sink{}
+		return &sink, nil
+	case constants.PUBNUB:
+		sink := pubnub.Sink{}
+		return &sink, nil
+	case constants.MATERIALIZE:
+		sink := postgresdb.Sink{}
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)

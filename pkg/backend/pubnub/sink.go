@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
@@ -24,38 +25,47 @@ const (
 
 type Sink struct {
 	id               *uuid.UUID
+	sinkType         string
 	name             string
 	deliveryRequired bool
-	validChannel     string
-	invalidChannel   string
+	defaultChannel   string
 	pubKey           string
 	subKey           string
+	input            chan []envelope.Envelope
+	shutdown         chan int
 	// store            int    // nolint: unused
 	// callback         string // nolint: unused
 }
 
-func (s *Sink) Id() *uuid.UUID {
-	return s.id
-}
-
-func (s *Sink) Name() string {
-	return s.name
-}
-
-func (s *Sink) Type() string {
-	return "pubnub"
-}
-
-func (s *Sink) DeliveryRequired() bool {
-	return s.deliveryRequired
+func (s *Sink) Metadata() backendutils.SinkMetadata {
+	return backendutils.SinkMetadata{
+		Id:               s.id,
+		Name:             s.name,
+		SinkType:         s.sinkType,
+		DeliveryRequired: s.deliveryRequired,
+	}
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing pubnub sink")
 	id := uuid.New()
-	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
-	s.validChannel, s.invalidChannel = constants.BUZ_VALID_EVENTS, constants.BUZ_INVALID_EVENTS
+	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
+	s.defaultChannel = constants.BUZ_EVENTS
 	s.pubKey, s.subKey = conf.PubnubPubKey, conf.PubnubSubKey
+	s.input = make(chan []envelope.Envelope, 10000)
+	s.shutdown = make(chan int, 1)
+	s.StartWorker()
+	return nil
+}
+
+func (s *Sink) StartWorker() error {
+	err := backendutils.StartSinkWorker(s.input, s.shutdown, s)
+	return err
+}
+
+func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
+	s.input <- envelopes
 	return nil
 }
 
@@ -69,17 +79,14 @@ func (s *Sink) buildPublishUrl(channel string) *url.URL {
 	return u
 }
 
-func (s *Sink) batchPublish(ctx context.Context, channel string, envelopes []envelope.Envelope) error {
-	u := s.buildPublishUrl(channel)
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+	u := s.buildPublishUrl(s.defaultChannel)
 	_, err := request.PostEnvelopes(*u, envelopes)
 	return err
 }
 
-func (s *Sink) BatchPublish(ctx context.Context, envelopes []envelope.Envelope) error {
-	err := s.batchPublish(ctx, s.validChannel, envelopes) // FIXME -> shard
-	return err
-}
-
-func (s *Sink) Close() {
-	log.Debug().Msg("🟡 closing pubnub sink")
+func (s *Sink) Shutdown() error {
+	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink") // no-op
+	s.shutdown <- 1
+	return nil
 }
