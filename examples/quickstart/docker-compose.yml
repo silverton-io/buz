@@ -20,7 +20,7 @@ x-dependency:
 services:
   buz:
     container_name: buz
-    image: ghcr.io/silverton-io/buz:v0.12.8
+    image: ghcr.io/silverton-io/buz:v0.13.0
     volumes:
       - type: bind
         source: ./buz/quickstart.conf.yml
@@ -125,25 +125,3 @@ services:
     - 8082:8080
     depends_on:
       << : *redpanda-dep
-
-  materialize:
-    container_name: materialize
-    image: materialize/materialized:v0.26.4
-    init: true
-    command: -w2 --disable-telemetry --workers 1
-    ports:
-      - 6875:6875
-    healthcheck:
-      test: curl -f materialize:6875/status
-      interval: 1s
-
-  mzcli:
-    container_name: mzcli
-    image: materialize/cli
-    volumes:
-      - ./materialize/:/cmd
-    command: -h materialize -p 6875 -U materialize -f /cmd/create_sources_and_views.sql
-    depends_on:
-      << : *redpanda-dep
-      materialize:
-        condition: service_healthy

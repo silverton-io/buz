@@ -492,7 +492,7 @@
                                 "gcs",
                                 "s3",
                                 "minio",
-                                "fs",
+                                "file",
                                 "http",
                                 "https",
                                 "postgres",
@@ -516,143 +516,41 @@
                             "type": "string",
                             "description": "The schema registry host, if applicable"
                         },
-                        "registryTable": {
+                        "table": {
                             "type": "string",
                             "description": "The database table that stores schemas",
                             "default": "registry"
                         },
-                        "registryCollection": {
+                        "collection": {
                             "type": "string",
                             "description": "The mongodb collection for schemas in the registry backend is mongodb",
                             "default": "registry"
                         },
-                        "pgHost": {
-                            "type": "string",
-                            "description": "The postgres registry backend host",
-                            "default": "localhost"
-                        },
-                        "pgPort": {
-                            "type": "number",
-                            "description": "The postgres registry backend port",
-                            "default": 5432
-                        },
-                        "pgDbName": {
-                            "type": "string",
-                            "description": "The postgres registry backend db name",
-                            "default": "buz"
-                        },
-                        "pgUser": {
-                            "type": "string",
-                            "description": "The postgres registry backend user",
-                            "default": "buz"
-                        },
-                        "pgPass": {
-                            "type": "string",
-                            "description": "The postgres registry backend password",
-                            "default": "buz"
-                        },
-                        "mysqlHost": {
-                            "type": "string",
-                            "description": "The mysql registry backend host",
-                            "default": "localhost"
-                        },
-                        "mysqlPort": {
-                            "type": "number",
-                            "description": "The mysql registry backend port",
-                            "default": 3306
-                        },
-                        "mysqlDbName": {
-                            "type": "string",
-                            "description": "The mysql registry backend db name",
-                            "default": "buz"
-                        },
-                        "mysqlUser": {
-                            "type": "string",
-                            "description": "The mysql registry backend user",
-                            "default": "buz"
-                        },
-                        "mysqlPass": {
-                            "type": "string",
-                            "description": "The mysql registry backend password",
-                            "default": "buz"
-                        },
-                        "mzHost": {
-                            "type": "string",
-                            "description": "The materialize registry backend host",
-                            "default": "localhost"
-                        },
-                        "mzPort": {
-                            "type": "number",
-                            "description": "The materialize registry backend port",
-                            "default": 6875
-                        },
-                        "mzDbName": {
-                            "type": "string",
-                            "description": "The materialize registry backend db name",
-                            "default": "materialize"
-                        },
-                        "mzUser": {
-                            "type": "string",
-                            "description": "The materialize registry backend user",
-                            "default": "materialize"
-                        },
-                        "mzPass": {
-                            "type": "string",
-                            "description": "The materialize registry backend password",
-                            "default": ""
-                        },
-                        "clickhouseHost": {
-                            "type": "string",
-                            "description": "The clickhouse registry backend host",
-                            "default": "localhost"
-                        },
-                        "clickhousePort": {
-                            "type": "number",
-                            "description": "The clickhouse registry backend port",
-                            "default": 9000
-                        },
-                        "clickhouseDbName": {
-                            "type": "string",
-                            "description": "The clickhouse registry backend db",
-                            "default": "buz"
-                        },
-                        "clickhouseUser": {
-                            "type": "string",
-                            "description": "The clickhouse registry backend user",
-                            "default": "buz"
-                        },
-                        "clickhousePass": {
-                            "type": "string",
-                            "description": "The clickhouse registry backend pass",
-                            "default": "buz"
-                        },
-                        "mongoHosts": {
+                        "hosts": {
                             "type": "array",
-                            "description": "The mongodb registry backend hosts",
+                            "description": "The database host(s)",
                             "default": [
-                                "mongodb1",
-                                "mongodb2",
-                                "mongodb3"
+                                "localhost"
                             ]
                         },
-                        "mongoPort": {
+                        "port": {
                             "type": "number",
-                            "description": "The mongodb registry backend port",
-                            "default": "27017"
+                            "description": "The database port",
+                            "default": 5432
                         },
-                        "mongoDbName": {
+                        "database": {
                             "type": "string",
-                            "description": "The mongodb registry backend db",
+                            "description": "The database name",
                             "default": "buz"
                         },
-                        "mongoUser": {
+                        "user": {
                             "type": "string",
-                            "description": "The mongodb registry backend user",
+                            "description": "The database user",
                             "default": "buz"
                         },
-                        "mongoPass": {
+                        "password": {
                             "type": "string",
-                            "description": "The mongodb registry backend pass",
+                            "description": "The database password",
                             "default": "buz"
                         },
                         "minioEndpoint": {
@@ -737,7 +635,7 @@
                         {
                             "properties": {
                                 "type": {
-                                    "const": "fs"
+                                    "const": "file"
                                 }
                             },
                             "required": [
@@ -751,12 +649,12 @@
                                 }
                             },
                             "required": [
-                                "pgHost",
-                                "pgPort",
-                                "pgDbName",
-                                "pgUser",
-                                "pgPass",
-                                "registryTable"
+                                "hosts",
+                                "port",
+                                "database",
+                                "user",
+                                "password",
+                                "table"
                             ]
                         },
                         {
@@ -766,12 +664,12 @@
                                 }
                             },
                             "required": [
-                                "mysqlHost",
-                                "mysqlPort",
-                                "mysqlDbName",
-                                "mysqlUser",
-                                "mysqlPass",
-                                "registryTable"
+                                "hosts",
+                                "port",
+                                "database",
+                                "user",
+                                "password",
+                                "table"
                             ]
                         },
                         {
@@ -781,12 +679,12 @@
                                 }
                             },
                             "required": [
-                                "mzHost",
-                                "mzPort",
-                                "mzDbName",
-                                "mzUser",
-                                "mzPass",
-                                "registryTable"
+                                "hosts",
+                                "port",
+                                "database",
+                                "user",
+                                "password",
+                                "table"
                             ]
                         },
                         {
@@ -796,12 +694,12 @@
                                 }
                             },
                             "required": [
-                                "clickhouseHost",
-                                "clickhousePort",
-                                "clickhouseDbName",
-                                "clickhouseUser",
-                                "clickhousePass",
-                                "registryTable"
+                                "hosts",
+                                "port",
+                                "database",
+                                "user",
+                                "password",
+                                "table"
                             ]
                         },
                         {
@@ -811,10 +709,10 @@
                                 }
                             },
                             "required": [
-                                "mongoHosts",
-                                "mongoPort",
-                                "mongoDbName",
-                                "registryCollection"
+                                "hosts",
+                                "port",
+                                "database",
+                                "collection"
                             ]
                         }
                     ]
@@ -879,7 +777,7 @@
             "type": "array",
             "description": "Configuration for the sinks",
             "minItems": 1,
-            "maxItems": 8,
+            "maxItems": 20,
             "items": {
                 "type": "object",
                 "description": "Configuration for an individual sink",
@@ -914,7 +812,6 @@
                             "clickhouse",
                             "timescale",
                             "nats",
-                            "indicative",
                             "amplitude"
                         ]
                     },
@@ -922,255 +819,50 @@
                         "type": "boolean",
                         "default": "true"
                     },
-                    "kafkaBrokers": {
+                    "brokers": {
                         "type": "array",
-                        "description": "A list of kafka brokers (HOST:PORT), if sink type is kafka",
+                        "description": "A list of brokers",
                         "default": [
                             "BROKER1:9092",
                             "BROKER2:9092",
                             "BROKER3:9092"
                         ]
                     },
-                    "elasticsearchHosts": {
-                        "type": "array",
-                        "description": "A list of elasticsearch hosts, if sink type is elasticsearch",
-                        "default": [
-                            "http://es1:9200"
-                        ]
-                    },
-                    "elasticsearchUsername": {
-                        "type": "string",
-                        "description": "The elasticsearch username, if sink type is elasticsearch",
-                        "default": "elastic"
-                    },
-                    "elasticsearchPassword": {
-                        "type": "string",
-                        "description": "The elasticsearch password, if sink type is elasticsearch",
-                        "default": "elastic"
-                    },
-                    "validTopic": {
-                        "type": "string",
-                        "default": "buz-valid",
-                        "description": "The name of the valid event topic"
-                    },
-                    "validStream": {
-                        "type": "string",
-                        "default": "buz-valid",
-                        "description": "The name of the valid event stream, if sink type is kinesis"
-                    },
-                    "validUrl": {
-                        "type": "string",
-                        "description": "The url to sink valid envelopes to if sink type is http or https",
-                        "default": "https://your-endpoint.net/valid-events-here"
-                    },
-                    "validIndex": {
-                        "type": "string",
-                        "description": "The index to sink valid envelopes to if sink type is elasticsearch",
-                        "default": "buz-valid"
-                    },
-                    "validFile": {
-                        "type": "string",
-                        "description": "The file to sink valid envelopes to if sink type is file",
-                        "default": "buz-valid.json"
-                    },
-                    "validTable": {
-                        "type": "string",
-                        "description": "The table to sink valid envelopes to if using a db sink",
-                        "default": "buz_valid"
-                    },
-                    "validChannel": {
-                        "type": "string",
-                        "description": "The channel to sink valid envelopes to if sink type is pubnub",
-                        "default": "buz-valid"
-                    },
-                    "validCollection": {
-                        "type": "string",
-                        "description": "The collection to sink valid envelopes to if sink type is mongodb",
-                        "default": "buzValid"
-                    },
-                    "validSubject": {
-                        "type": "string",
-                        "description": "The subject to sink valid envelopes to",
-                        "default": "buz.valid"
-                    },
-                    "invalidTopic": {
-                        "type": "string",
-                        "description": "The name of the invalid event topic",
-                        "default": "buz-invalid"
-                    },
-                    "invalidStream": {
-                        "type": "string",
-                        "default": "buz-invalid",
-                        "description": "The name of the invalid event stream, if sink type is kinesis"
-                    },
-                    "invalidUrl": {
-                        "type": "string",
-                        "description": "The url to sink invalid envelopes if sink type is http or https",
-                        "default": "https://your-endpoint.net/invalid-events-here"
-                    },
-                    "invalidIndex": {
-                        "type": "string",
-                        "description": "The index to sink invalid envelopes to if sink type is elasticsearch",
-                        "default": "buz-invalid"
-                    },
-                    "invalidFile": {
-                        "type": "string",
-                        "description": "The file to sink invalid envelopes to if sink type is file",
-                        "default": "buz-invalid.json"
-                    },
-                    "invalidTable": {
-                        "type": "string",
-                        "description": "The table to sink invalid envelopes to if using a db sink",
-                        "default": "buz_invalid"
-                    },
-                    "invalidChannel": {
-                        "type": "string",
-                        "description": "The channel to sink invalid envelopes to if sink type is pubnub",
-                        "default": "buz-invalid"
-                    },
-                    "invalidCollection": {
-                        "type": "string",
-                        "description": "The collection to sink invalid envelopes to if sink type is mongodb",
-                        "default": "buzInvalid"
-                    },
-                    "invalidSubject": {
-                        "type": "string",
-                        "description": "The subject to sink invalid envelopes to",
-                        "default": "buz.invalid"
-                    },
                     "project": {
                         "type": "string",
                         "default": "buz-gcp-project",
-                        "description": "The name of the GCP project, if sink type is pubsub"
+                        "description": "The name of the GCP project"
                     },
-                    "relayUrl": {
+                    "url": {
                         "type": "string",
-                        "description": "The url to relay envelopes to, if sink type is relay",
-                        "default": "https://another-buz.net/relay"
+                        "description": "The destination url",
+                        "default": "https://somewheres.net/buz"
                     },
-                    "pgHost": {
-                        "type": "string",
-                        "description": "The database hostname to write envelopes to if sink type is postgres",
-                        "default": "localhost"
+                    "hosts": {
+                        "type": "array",
+                        "description": "The database hostname(s)",
+                        "default": [
+                            "localhost"
+                        ]
                     },
-                    "pgPort": {
+                    "port": {
                         "type": "number",
-                        "description": "The database port to write envelopes to if sink type is postgres",
+                        "description": "The database port",
                         "default": 5432
                     },
-                    "pgDbName": {
+                    "database": {
                         "type": "string",
-                        "description": "The database name if sink type is postgres",
+                        "description": "The database name",
                         "default": "buz"
                     },
-                    "pgUser": {
+                    "user": {
                         "type": "string",
-                        "description": "The database connection user if sink type is postgres",
+                        "description": "The database connection user",
                         "default": "buz"
                     },
-                    "pgPass": {
+                    "password": {
                         "type": "string",
-                        "description": "The database connection password if sink type is postgres",
-                        "default": "buz"
-                    },
-                    "mysqlHost": {
-                        "type": "string",
-                        "description": "The database hostname to write envelopes to if sink type is mysql",
-                        "default": "localhost"
-                    },
-                    "mysqlPort": {
-                        "type": "number",
-                        "description": "The database port to write envelopes to if sink type is mysql",
-                        "default": 3306
-                    },
-                    "mysqlDbName": {
-                        "type": "string",
-                        "description": "The database name if sink type is mysql",
-                        "default": "buz"
-                    },
-                    "mysqlUser": {
-                        "type": "string",
-                        "description": "The database connection user if sink type is mysql",
-                        "default": "buz"
-                    },
-                    "mysqlPass": {
-                        "type": "string",
-                        "description": "The database connection password if sink type is mysql",
-                        "default": "buz"
-                    },
-                    "mzHost": {
-                        "type": "string",
-                        "description": "The database hostname to write envelopes to if sink type is materialize",
-                        "default": "localhost"
-                    },
-                    "mzPort": {
-                        "type": "number",
-                        "description": "The database port to write envelopes to if sink type is materialize",
-                        "default": 6875
-                    },
-                    "mzDbName": {
-                        "type": "string",
-                        "description": "The database name if sink type is materialize",
-                        "default": "materialize"
-                    },
-                    "mzUser": {
-                        "type": "string",
-                        "description": "The database connection user if sink type is materialize",
-                        "default": "materialize"
-                    },
-                    "mzPass": {
-                        "type": "string",
-                        "description": "The database connection password if sink type is materialize",
-                        "default": ""
-                    },
-                    "timescaleHost": {
-                        "type": "string",
-                        "description": "The database hostname to write envelopes to if sink type is timescale",
-                        "default": "localhost"
-                    },
-                    "timescalePort": {
-                        "type": "number",
-                        "description": "The database port to write envelopes to if sink type is timescale",
-                        "default": 5433
-                    },
-                    "timescaleDbName": {
-                        "type": "string",
-                        "description": "The database name if sink type is timescale",
-                        "default": "buz"
-                    },
-                    "timescaleUser": {
-                        "type": "string",
-                        "description": "The database connection user if sink type is timescale",
-                        "default": "buz"
-                    },
-                    "timescalePass": {
-                        "type": "string",
-                        "description": "The database connection password if sink type is timescale",
-                        "default": "buz"
-                    },
-                    "clickhouseHost": {
-                        "type": "string",
-                        "description": "The database hostname to write envelopes to if sink type is clickhouse",
-                        "default": "localhost"
-                    },
-                    "clickhousePort": {
-                        "type": "number",
-                        "description": "The database port to write envelopes to if sink type is clickhouse",
-                        "default": 9000
-                    },
-                    "clickhouseDbName": {
-                        "type": "string",
-                        "description": "The database name if sink type is clickhouse",
-                        "default": "buz"
-                    },
-                    "clickhouseUser": {
-                        "type": "string",
-                        "description": "The database connection user if sink type is clickhouse",
-                        "default": "buz"
-                    },
-                    "clickhousePass": {
-                        "type": "string",
-                        "description": "The database connection password if sink type is clickhouse",
+                        "description": "The database connection password",
                         "default": "buz"
                     },
                     "pubnubPubKey": {
@@ -1183,63 +875,14 @@
                         "description": "The pubnub sub key",
                         "default": "YOUR-SUB-KEY"
                     },
-                    "mongoHosts": {
-                        "type": "array",
-                        "description": "A list of mongodb hosts",
-                        "default": [
-                            "mongodb1",
-                            "mongodb2",
-                            "mongodb3"
-                        ]
-                    },
-                    "mongoPort": {
-                        "type": "number",
-                        "description": "The mongo port if sink type is mongodb",
-                        "default": "27017"
-                    },
-                    "mongoDbName": {
+                    "apiKey": {
                         "type": "string",
-                        "description": "The mongo database name if sink type is mongodb",
-                        "default": "buz"
-                    },
-                    "mongoUser": {
-                        "type": "string",
-                        "description": "The mongo database user if sink type is mongodb",
-                        "default": "buz"
-                    },
-                    "mongoPass": {
-                        "type": "string",
-                        "description": "The mongo database password if sink type is mongodb",
-                        "default": "buz"
-                    },
-                    "natsHost": {
-                        "type": "string",
-                        "description": "The NATS host",
-                        "default": "nats"
-                    },
-                    "natsUser": {
-                        "type": "string",
-                        "description": "The NATS user",
-                        "default": ""
-                    },
-                    "natsPass": {
-                        "type": "string",
-                        "description": "The NATS password",
-                        "default": ""
-                    },
-                    "indicativeApiKey": {
-                        "type": "string",
-                        "description": "The Indicative API key",
+                        "description": "The API key",
                         "default": "YOUR_KEY_HERE"
                     },
-                    "amplitudeApiKey": {
+                    "region": {
                         "type": "string",
-                        "description": "The Amplitude API key",
-                        "default": "YOUR_KEY_HERE"
-                    },
-                    "amplitudeRegion": {
-                        "type": "string",
-                        "description": "The Amplitude region to send events",
+                        "description": "The region",
                         "default": "standard",
                         "enum": ["standard", "eu"]
                     }
@@ -1265,11 +908,7 @@
                                 "const": "kafka"
                             }
                         },
-                        "required": [
-                            "kafkaBrokers",
-                            "validTopic",
-                            "invalidTopic"
-                        ]
+                        "required": ["brokers"]
                     },
                     {
                         "properties": {
@@ -1277,11 +916,7 @@
                                 "const": "redpanda"
                             }
                         },
-                        "required": [
-                            "kafkaBrokers",
-                            "validTopic",
-                            "invalidTopic"
-                        ]
+                        "required": ["brokers"]
                     },
                     {
                         "properties": {
@@ -1289,11 +924,7 @@
                                 "const": "pubsub"
                             }
                         },
-                        "required": [
-                            "project",
-                            "validTopic",
-                            "invalidTopic"
-                        ]
+                        "required": ["project"]
                     },
                     {
                         "properties": {
@@ -1301,10 +932,7 @@
                                 "const": "kinesis"
                             }
                         },
-                        "required": [
-                            "validStream",
-                            "invalidStream"
-                        ]
+                        "required": []
                     },
                     {
                         "properties": {
@@ -1312,10 +940,7 @@
                                 "const": "kinesis-firehose"
                             }
                         },
-                        "required": [
-                            "validStream",
-                            "invalidStream"
-                        ]
+                        "required": []
                     },
                     {
                         "properties": {
@@ -1324,8 +949,7 @@
                             }
                         },
                         "required": [
-                            "validUrl",
-                            "invalidUrl"
+                            "url"
                         ]
                     },
                     {
@@ -1335,8 +959,7 @@
                             }
                         },
                         "required": [
-                            "validUrl",
-                            "invalidUrl"
+                            "url"
                         ]
                     },
                     {
@@ -1356,11 +979,9 @@
                             }
                         },
                         "required": [
-                            "elasticsearchHosts",
-                            "elasticsearchUsername",
-                            "elasticsearchPassword",
-                            "validIndex",
-                            "invalidIndex"
+                            "hosts",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1377,10 +998,7 @@
                                 "const": "file"
                             }
                         },
-                        "required": [
-                            "validFile",
-                            "invalidFile"
-                        ]
+                        "required": []
                     },
                     {
                         "properties": {
@@ -1389,13 +1007,11 @@
                             }
                         },
                         "required": [
-                            "pgHost",
-                            "pgPort",
-                            "pgDbName",
-                            "pgUser",
-                            "pgPass",
-                            "validTable",
-                            "invalidTable"
+                            "hosts",
+                            "port",
+                            "database",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1405,13 +1021,11 @@
                             }
                         },
                         "required": [
-                            "mzHost",
-                            "mzPort",
-                            "mzDbName",
-                            "mzUser",
-                            "mzPass",
-                            "validTable",
-                            "invalidTable"
+                            "hosts",
+                            "port",
+                            "database",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1421,13 +1035,11 @@
                             }
                         },
                         "required": [
-                            "timescaleHost",
-                            "timescalePort",
-                            "timescaleDbName",
-                            "timescaleUser",
-                            "timescalePass",
-                            "validTable",
-                            "invalidTable"
+                            "hosts",
+                            "port",
+                            "database",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1437,13 +1049,11 @@
                             }
                         },
                         "required": [
-                            "mysqlHost",
-                            "mysqlPort",
-                            "mysqlDbName",
-                            "mysqlUser",
-                            "mysqlPass",
-                            "validTable",
-                            "invalidTable"
+                            "hosts",
+                            "port",
+                            "database",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1453,13 +1063,11 @@
                             }
                         },
                         "required": [
-                            "clickhouseHost",
-                            "clickhousePort",
-                            "clickhouseDbName",
-                            "clickhouseUser",
-                            "clickhousePass",
-                            "validTable",
-                            "invalidTable"
+                            "hosts",
+                            "port",
+                            "database",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1469,8 +1077,6 @@
                             }
                         },
                         "required": [
-                            "validChannel",
-                            "invalidChannel",
                             "pubnubPubKey",
                             "pubnubSubKey"
                         ]
@@ -1482,11 +1088,7 @@
                             }
                         },
                         "required": [
-                            "mongoHosts",
-                            "mongoPort",
-                            "mongoDbName",
-                            "validCollection",
-                            "invalidCollection"
+                            "hosts"
                         ]
                     },
                     {
@@ -1496,11 +1098,9 @@
                             }
                         },
                         "required": [
-                            "natsHost",
-                            "natsUser",
-                            "natsPass",
-                            "validSubject",
-                            "invalidSubject"
+                            "hosts",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1510,21 +1110,9 @@
                             }
                         },
                         "required": [
-                            "natsHost",
-                            "natsUser",
-                            "natsPass",
-                            "validSubject",
-                            "invalidSubject"
-                        ]
-                    },
-                    {
-                        "properties": {
-                            "type": {
-                                "const": "indicative"
-                            }
-                        },
-                        "required": [
-                            "indicativeApiKey"
+                            "hosts",
+                            "user",
+                            "password"
                         ]
                     },
                     {
@@ -1534,8 +1122,8 @@
                             }
                         },
                         "required": [
-                            "amplitudeApiKey",
-                            "amplitudeRegion"
+                            "apiKey",
+                            "region"
                         ]
                     }
                 ]

@@ -21,19 +21,17 @@ import (
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/env"
 	"github.com/silverton-io/buz/pkg/handler"
-	inputcloudevents "github.com/silverton-io/buz/pkg/inputCloudevents"
-	inputpixel "github.com/silverton-io/buz/pkg/inputPixel"
-	"github.com/silverton-io/buz/pkg/inputSelfDescribing"
-	inputsnowplow "github.com/silverton-io/buz/pkg/inputSnowplow"
-	inputwebhook "github.com/silverton-io/buz/pkg/inputWebhook"
+	"github.com/silverton-io/buz/pkg/input"
 	"github.com/silverton-io/buz/pkg/manifold"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/middleware"
-	"github.com/silverton-io/buz/pkg/params"
-	"github.com/silverton-io/buz/pkg/protocol"
+	cloudevents "github.com/silverton-io/buz/pkg/protocol/cloudevents"
+	pixel "github.com/silverton-io/buz/pkg/protocol/pixel"
+	selfdescribing "github.com/silverton-io/buz/pkg/protocol/selfdescribing"
+	snowplow "github.com/silverton-io/buz/pkg/protocol/snowplow"
+	webhook "github.com/silverton-io/buz/pkg/protocol/webhook"
 	"github.com/silverton-io/buz/pkg/registry"
 	"github.com/silverton-io/buz/pkg/sink"
-	"github.com/silverton-io/buz/pkg/stats"
 	"github.com/silverton-io/buz/pkg/tele"
 	"github.com/spf13/viper"
 )
@@ -43,23 +41,9 @@ var VERSION string
 type App struct {
 	config        *config.Config
 	engine        *gin.Engine
-	registry      *registry.Registry
 	manifold      manifold.Manifold
-	sinks         []sink.Sink
 	collectorMeta *meta.CollectorMeta
-	stats         *stats.ProtocolStats
 	debug         bool
-}
-
-func (a *App) handlerParams() params.Handler {
-	params := params.Handler{
-		Config:        a.config,
-		Registry:      a.registry,
-		Manifold:      a.manifold,
-		CollectorMeta: a.collectorMeta,
-		ProtocolStats: a.stats,
-	}
-	return params
 }
 
 func (a *App) configure() {
@@ -98,39 +82,24 @@ func (a *App) configure() {
 	a.collectorMeta = meta
 }
 
-func (a *App) initializeStats() {
-	log.Info().Msg("🟢 initializing stats")
-	ps := stats.ProtocolStats{}
-	ps.Build()
-	a.stats = &ps
-}
-
-func (a *App) initializeRegistry() {
-	log.Info().Msg("🟢 initializing schema registry")
+func (a *App) initializeManifold() {
+	log.Info().Msg("🟢 initializing manifold")
+	m := &manifold.ChannelManifold{}
+	log.Info().Msg("🟢 initializing registry")
 	registry := registry.Registry{}
 	if err := registry.Initialize(a.config.Registry); err != nil {
-		panic(err)
+		log.Fatal().Err(err).Msg("could not initialize registry")
 	}
-	a.registry = &registry
-}
-
-func (a *App) initializeSinks() {
 	log.Info().Msg("🟢 initializing sinks")
 	sinks, err := sink.BuildAndInitializeSinks(a.config.Sinks)
 	if err != nil {
-		log.Fatal().Err(err).Msg("could not build and init sinks")
+		log.Fatal().Err(err).Msg("could not build and initialize sinks")
 	}
-	a.sinks = sinks
-}
-
-func (a *App) initializeManifold() {
-	log.Info().Msg("🟢 initializing manifold")
-	manifold := manifold.SimpleManifold{}
-	err := manifold.Initialize(&a.sinks)
+	err = m.Initialize(&registry, &sinks, a.config, a.collectorMeta)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("could not build manifold")
 	}
-	a.manifold = &manifold
+	a.manifold = m
 }
 
 func (a *App) initializeRouter() {
@@ -175,7 +144,7 @@ func (a *App) initializeOpsRoutes() {
 	log.Info().Msg("🟢 initializing health check route")
 	a.engine.GET(constants.HEALTH_PATH, handler.HealthcheckHandler)
 	log.Info().Msg("🟢 initializing stats route")
-	a.engine.GET(constants.STATS_PATH, handler.StatsHandler(a.collectorMeta, a.stats))
+	a.engine.GET(constants.STATS_PATH, handler.StatsHandler(a.collectorMeta)) // FIXME!! Pass manifold here, as it will have the statistics
 	log.Info().Msg("🟢 initializing overview routes")
 	a.engine.GET(constants.ROUTE_OVERVIEW_PATH, handler.RouteOverviewHandler(*a.config))
 	if a.config.App.EnableConfigRoute {
@@ -185,118 +154,54 @@ func (a *App) initializeOpsRoutes() {
 }
 
 func (a *App) initializeSchemaCacheRoutes() {
+	r := a.manifold.GetRegistry()
 	if a.config.Registry.Purge.Enabled {
 		log.Info().Msg("🟢 initializing schema registry cache purge route")
-		a.engine.GET(a.config.Registry.Purge.Path, registry.PurgeCacheHandler(a.registry))
+		a.engine.GET(a.config.Registry.Purge.Path, registry.PurgeCacheHandler(r))
 	}
 	if a.config.Registry.Http.Enabled {
 		log.Info().Msg("🟢 initializing schema registry routes")
-		a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, registry.GetSchemaHandler(a.registry))
+		a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, registry.GetSchemaHandler(r))
 	}
 }
 
-func (a *App) initializeSnowplowRoutes() {
-	identityMiddleware := middleware.Identity(a.config.Identity)
-	if a.config.Inputs.Snowplow.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("🟢 initializing snowplow routes")
-		if a.config.Inputs.Snowplow.StandardRoutesEnabled {
-			log.Info().Msg("🟢 initializing standard snowplow routes")
-			a.engine.GET(constants.SNOWPLOW_STANDARD_GET_PATH, identityMiddleware, inputsnowplow.Handler(handlerParams))
-			a.engine.POST(constants.SNOWPLOW_STANDARD_POST_PATH, identityMiddleware, inputsnowplow.Handler(handlerParams))
-			if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
-				log.Info().Msg("🟢 initializing standard open redirect route")
-				a.engine.GET(constants.SNOWPLOW_STANDARD_REDIRECT_PATH, identityMiddleware, inputsnowplow.Handler(handlerParams))
-			}
-		}
-		log.Info().Msg("🟢 initializing custom snowplow routes")
-		a.engine.GET(a.config.Inputs.Snowplow.GetPath, identityMiddleware, inputsnowplow.Handler(handlerParams))
-		a.engine.POST(a.config.Inputs.Snowplow.PostPath, identityMiddleware, inputsnowplow.Handler(handlerParams))
-		if a.config.Inputs.Snowplow.OpenRedirectsEnabled {
-			log.Info().Msg("🟢 initializing custom open redirect route")
-			a.engine.GET(a.config.Inputs.Snowplow.RedirectPath, identityMiddleware, inputsnowplow.Handler(handlerParams))
-		}
+func (a *App) initializeInputs() {
+	inputs := []input.Input{
+		&pixel.PixelInput{},
+		&webhook.WebhookInput{},
+		&selfdescribing.SelfDescribingInput{},
+		&cloudevents.CloudeventsInput{},
+		&snowplow.SnowplowInput{},
 	}
-}
-
-func (a *App) initializeSelfDescribingRoutes() {
-	if a.config.Inputs.SelfDescribing.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("🟢 initializing generic routes")
-		a.engine.POST(a.config.Inputs.SelfDescribing.Path, inputSelfDescribing.Handler(handlerParams))
-	}
-}
-
-func (a *App) initializeCloudeventsRoutes() {
-	if a.config.Inputs.Cloudevents.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("🟢 initializing cloudevents routes")
-		a.engine.POST(a.config.Inputs.Cloudevents.Path, inputcloudevents.Handler(handlerParams))
-	}
-}
-
-func (a *App) initializeWebhookRoutes() {
-	if a.config.Inputs.Webhook.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("🟢 initializing webhook routes")
-		a.engine.POST(a.config.Inputs.Webhook.Path, inputwebhook.Handler(handlerParams))
-		a.engine.POST(a.config.Inputs.Webhook.Path+"/*"+constants.BUZ_SCHEMA_PARAM, inputwebhook.Handler(handlerParams))
-	}
-}
-
-func (a *App) initializePixelRoutes() {
-	if a.config.Inputs.Pixel.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("🟢 initializing pixel routes")
-		a.engine.GET(a.config.Inputs.Pixel.Path, inputpixel.Handler(handlerParams))
-		a.engine.GET(a.config.Inputs.Pixel.Path+"/*"+constants.BUZ_SCHEMA_PARAM, inputpixel.Handler(handlerParams))
-	}
-}
-
-func (a *App) initializeSquawkboxRoutes() {
-	if a.config.Squawkbox.Enabled {
-		handlerParams := a.handlerParams()
-		log.Info().Msg("🟢 initializing squawkbox routes")
-		a.engine.POST(inputcloudevents.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.CLOUDEVENTS))
-		a.engine.POST(inputsnowplow.SQUAWKBOX_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
-		a.engine.GET(inputsnowplow.SQUAWKBOX_PATH, handler.SquawkboxHandler(handlerParams, protocol.SNOWPLOW))
-		a.engine.POST(inputSelfDescribing.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.SELF_DESCRIBING))
-		a.engine.GET(inputpixel.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.PIXEL))
-		a.engine.POST(inputwebhook.SQUAWK_PATH, handler.SquawkboxHandler(handlerParams, protocol.WEBHOOK))
+	for _, i := range inputs {
+		i.Initialize(a.engine, &a.manifold, a.config, a.collectorMeta)
 	}
 }
 
 func (a *App) Initialize() {
 	log.Info().Msg("🟢 initializing app")
 	a.configure()
-	a.initializeStats()
-	a.initializeSinks()
-	a.initializeManifold()
-	a.initializeRegistry()
 	a.initializeRouter()
+	a.initializeManifold()
 	a.initializeMiddleware()
 	a.initializeOpsRoutes()
 	a.initializeSchemaCacheRoutes()
-	a.initializeSnowplowRoutes()
-	a.initializeSelfDescribingRoutes()
-	a.initializeCloudeventsRoutes()
-	a.initializeWebhookRoutes()
-	a.initializePixelRoutes()
-	a.initializeSquawkboxRoutes()
+	a.initializeInputs()
 }
 
 func (a *App) serverlessMode() {
-	log.Debug().Msg("🟡 Running Buz in serverless mode")
+	log.Debug().Msg("🟡 running buz in serverless mode")
 	log.Info().Msg("🐝🐝🐝 buz is running 🐝🐝🐝")
 	err := gateway.ListenAndServe(":3000", a.engine)
 	tele.Sis(a.collectorMeta)
 	if err != nil {
 		log.Fatal().Err(err)
 	}
+	a.manifold.Shutdown()
 }
 
 func (a *App) standardMode() {
-	log.Debug().Msg("🟡 Running Buz in standard mode")
+	log.Debug().Msg("🟡 running Buz in standard mode")
 	srv := &http.Server{
 		Addr:    ":" + a.config.App.Port,
 		Handler: a.engine,
@@ -315,8 +220,10 @@ func (a *App) standardMode() {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
+		a.manifold.Shutdown()
 		log.Fatal().Stack().Err(err).Msg("server forced to shutdown")
 	}
+	a.manifold.Shutdown()
 	tele.Sis(a.collectorMeta)
 }
 

@@ -23,7 +23,7 @@ func (ps *ProtocolStats) Build() {
 	var invProtoStat = make(map[string]map[string]int64)
 	ps.Valid = vProtoStat
 	ps.Invalid = invProtoStat
-	for _, protocol := range protocol.GetIntputProtocols() {
+	for _, protocol := range protocol.GetInputProtocols() {
 		var vEventStat = make(map[string]int64)
 		var invEventStat = make(map[string]int64)
 		ps.Valid[protocol] = vEventStat

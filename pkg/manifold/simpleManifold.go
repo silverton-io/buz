@@ -5,63 +5,51 @@
 package manifold
 
 import (
-	"context"
-
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/annotator"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
+	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
-	"github.com/silverton-io/buz/pkg/sink"
-	"github.com/silverton-io/buz/pkg/stats"
+	"github.com/silverton-io/buz/pkg/meta"
+	"github.com/silverton-io/buz/pkg/privacy"
+	"github.com/silverton-io/buz/pkg/registry"
 )
 
 // A stupid-simple manifold with strict guarantees.
 // This manifold requires buffering at the client level for substantial event volumes.
-// Otherwise there is a change it will overload the configured sink(s).
+// Otherwise it will probably overload the configured sink(s).
 type SimpleManifold struct {
-	sinks *[]sink.Sink
+	registry         *registry.Registry
+	sinks            *[]backendutils.Sink
+	conf             *config.Config
+	collectorMetdata *meta.CollectorMeta
 }
 
-func (m *SimpleManifold) Initialize(sinks *[]sink.Sink) error {
+func (m *SimpleManifold) Initialize(registry *registry.Registry, sinks *[]backendutils.Sink, conf *config.Config, metadata *meta.CollectorMeta) error {
+	m.registry = registry
 	m.sinks = sinks
+	m.conf = conf
+	m.collectorMetdata = metadata
 	return nil
 }
 
-func (m *SimpleManifold) Distribute(envelopes []envelope.Envelope, s *stats.ProtocolStats) error {
-	var validEnvelopes []envelope.Envelope
-	var invalidEnvelopes []envelope.Envelope
-
-	for _, e := range envelopes {
-		isValid := e.Validation.IsValid
-		if *isValid {
-			s.IncrementValid(&e.EventMeta, 1)
-			validEnvelopes = append(validEnvelopes, e)
-		} else {
-			s.IncrementInvalid(&e.EventMeta, 1)
-			invalidEnvelopes = append(invalidEnvelopes, e)
-		}
+func (m *SimpleManifold) Enqueue(envelopes []envelope.Envelope) error {
+	annotatedEnvelopes := annotator.Annotate(envelopes, m.registry)
+	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.conf.Privacy)
+	for _, sink := range *m.sinks {
+		meta := sink.Metadata()
+		log.Debug().Interface("metadata", meta).Msg("🟡 enqueueing envelopes to sink")
+		sink.Enqueue(anonymizedEnvelopes)
 	}
+	return nil
+}
 
-	for _, s := range *m.sinks {
-		ctx := context.Background()
-		if len(validEnvelopes) > 0 {
-			log.Debug().Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🟡 purging valid envelopes to sink")
-			publishErr := s.BatchPublishValid(ctx, validEnvelopes)
-			if publishErr != nil {
-				log.Error().Err(publishErr).Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🔴 could not purge valid envelopes to sink")
-				if s.DeliveryRequired() {
-					return publishErr
-				}
-			}
-		}
-		if len(invalidEnvelopes) > 0 {
-			log.Debug().Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🟡 purging invalid envelopes to sink")
-			publishErr := s.BatchPublishInvalid(ctx, invalidEnvelopes)
-			if publishErr != nil {
-				log.Error().Err(publishErr).Interface("sinkId", s.Id()).Interface("sinkName", s.Name()).Interface("deliveryRequired", s.DeliveryRequired()).Interface("sinkType", s.Type()).Msg("🔴 could not purge invalid envelopes to sink")
-				if s.DeliveryRequired() {
-					return publishErr
-				}
-			}
-		}
-	}
+func (m *SimpleManifold) GetRegistry() *registry.Registry {
+	return m.registry
+}
+
+func (m *SimpleManifold) Shutdown() error {
+	log.Info().Msg("shutting down simple manifold")
+	log.Info().Msg("manifold shut down")
 	return nil
 }

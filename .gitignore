@@ -4,8 +4,8 @@ scratch/*
 testprofile.out
 cmd/scratch/*
 # File sink
-buz-valid.json
-buz-invalid.json
+*.json
+# Other
 notes/*
 *.sql
 examples/quickstart/minio/*

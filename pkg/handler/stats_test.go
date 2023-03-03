@@ -34,7 +34,7 @@ func TestStatsHandler(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(rec)
 
-	handler := StatsHandler(&m, &s)
+	handler := StatsHandler(&m)
 
 	handler(c)
 

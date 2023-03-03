@@ -5,12 +5,16 @@
 package manifold
 
 import (
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
+	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
-	"github.com/silverton-io/buz/pkg/sink"
-	"github.com/silverton-io/buz/pkg/stats"
+	"github.com/silverton-io/buz/pkg/meta"
+	"github.com/silverton-io/buz/pkg/registry"
 )
 
 type Manifold interface {
-	Initialize(sinks *[]sink.Sink) error
-	Distribute(e []envelope.Envelope, s *stats.ProtocolStats) error
+	Initialize(registry *registry.Registry, sinks *[]backendutils.Sink, conf *config.Config, metadata *meta.CollectorMeta) error
+	Enqueue(envelopes []envelope.Envelope) error
+	GetRegistry() *registry.Registry
+	Shutdown() error
 }

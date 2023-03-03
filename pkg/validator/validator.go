@@ -7,13 +7,12 @@ package validator
 import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/envelope"
-	"github.com/silverton-io/buz/pkg/event"
+	"github.com/silverton-io/buz/pkg/registry"
 )
 
-func ValidatePayload(schemaContents []byte, payLoad event.Payload) (isValid bool, validationError envelope.ValidationError) {
-	payload, err := payLoad.AsByte()
-	if err != nil {
-		log.Error().Stack().Err(err).Msg("🔴 could not marshal payload")
+func ValidatePayload(schemaName string, payload envelope.Payload, registry *registry.Registry) (isValid bool, validationError envelope.ValidationError, schema []byte) {
+	// FIXME- Short-circuit if the event is an unknown event
+	if schemaName == "" {
 		validationError := envelope.ValidationError{
 			ErrorType:       &InvalidPayload.Type,
 			ErrorResolution: &InvalidPayload.Resolution,

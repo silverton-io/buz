@@ -7,111 +7,94 @@ package sink
 import (
 	"errors"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/amplitude"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
+	"github.com/silverton-io/buz/pkg/backend/blackhole"
+	"github.com/silverton-io/buz/pkg/backend/elasticsearch"
+	"github.com/silverton-io/buz/pkg/backend/file"
+	"github.com/silverton-io/buz/pkg/backend/http"
+	"github.com/silverton-io/buz/pkg/backend/kafka"
+	"github.com/silverton-io/buz/pkg/backend/kinesis"
+	"github.com/silverton-io/buz/pkg/backend/kinesisFirehose"
+	"github.com/silverton-io/buz/pkg/backend/mongodb"
+	"github.com/silverton-io/buz/pkg/backend/mysqldb"
+	"github.com/silverton-io/buz/pkg/backend/nats"
+	"github.com/silverton-io/buz/pkg/backend/postgresdb"
+	"github.com/silverton-io/buz/pkg/backend/pubnub"
+	"github.com/silverton-io/buz/pkg/backend/pubsub"
+	"github.com/silverton-io/buz/pkg/backend/stdout"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/db"
-	"github.com/silverton-io/buz/pkg/envelope"
-	"golang.org/x/net/context"
+	"github.com/silverton-io/buz/pkg/constants"
 )
 
-const (
-	PUBSUB           string = "pubsub"
-	REDPANDA         string = "redpanda"
-	KAFKA            string = "kafka"
-	KINESIS          string = "kinesis"
-	KINESIS_FIREHOSE string = "kinesis-firehose"
-	STDOUT           string = "stdout"
-	HTTP             string = "http"
-	HTTPS            string = "https"
-	BLACKHOLE        string = "blackhole"
-	FILE             string = "file"
-	PUBNUB           string = "pubnub"
-	NATS             string = "nats"
-	NATS_JETSTREAM   string = "nats-jetstream"
-	INDICATIVE       string = "indicative"
-	AMPLITUDE        string = "amplitude"
-)
-
-type Sink interface {
-	Id() *uuid.UUID
-	Name() string
-	Type() string
-	DeliveryRequired() bool
-	Initialize(conf config.Sink) error
-	BatchPublishValid(ctx context.Context, envelopes []envelope.Envelope) error
-	BatchPublishInvalid(ctx context.Context, envelopes []envelope.Envelope) error
-	Close()
-}
-
-func BuildSink(conf config.Sink) (sink Sink, err error) {
+func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 	switch conf.Type {
-	case PUBSUB:
-		sink := PubsubSink{}
+	// System
+	case constants.BLACKHOLE:
+		sink := blackhole.Sink{}
 		return &sink, nil
-	case KAFKA:
-		sink := KafkaSink{}
+	case constants.FILE:
+		sink := file.Sink{}
 		return &sink, nil
-	case REDPANDA:
-		sink := KafkaSink{}
+	case constants.STDOUT:
+		sink := stdout.Sink{}
 		return &sink, nil
-	case KINESIS:
-		sink := KinesisSink{}
+	case constants.HTTP:
+		sink := http.Sink{}
 		return &sink, nil
-	case KINESIS_FIREHOSE:
-		sink := KinesisFirehoseSink{}
+	case constants.HTTPS:
+		sink := http.Sink{}
 		return &sink, nil
-	case STDOUT:
-		sink := StdoutSink{}
+	// Streams
+	case constants.KAFKA:
+		sink := kafka.Sink{}
 		return &sink, nil
-	case HTTP:
-		sink := HttpSink{}
+	case constants.REDPANDA:
+		sink := kafka.Sink{}
 		return &sink, nil
-	case HTTPS:
-		sink := HttpSink{}
+	case constants.PUBSUB:
+		sink := pubsub.Sink{}
 		return &sink, nil
-	case db.ELASTICSEARCH:
-		sink := ElasticsearchSink{}
+	case constants.KINESIS:
+		sink := kinesis.Sink{}
 		return &sink, nil
-	case BLACKHOLE:
-		sink := BlackholeSink{}
+	case constants.KINESIS_FIREHOSE:
+		sink := kinesisFirehose.Sink{}
 		return &sink, nil
-	case FILE:
-		sink := FileSink{}
+	// Message Brokers
+	case constants.NATS:
+		sink := nats.Sink{}
 		return &sink, nil
-	case PUBNUB:
-		sink := PubnubSink{}
+	// Databases
+	case constants.POSTGRES:
+		sink := postgresdb.Sink{}
 		return &sink, nil
-	case db.POSTGRES:
-		sink := PostgresSink{}
+	case constants.TIMESCALE:
+		sink := postgresdb.Sink{}
 		return &sink, nil
-	case db.MYSQL:
-		sink := MysqlSink{}
+	case constants.MYSQL:
+		sink := mysqldb.Sink{}
 		return &sink, nil
-	case db.MATERIALIZE:
-		sink := MaterializeSink{}
+	case constants.MONGODB:
+		sink := mongodb.Sink{}
 		return &sink, nil
-	case db.CLICKHOUSE:
-		sink := ClickhouseSink{}
+	case constants.ELASTICSEARCH:
+		sink := elasticsearch.Sink{}
 		return &sink, nil
-	case db.MONGODB:
-		sink := MongodbSink{}
-		return &sink, nil
-	case db.TIMESCALE:
-		sink := TimescaleSink{}
-		return &sink, nil
-	case NATS:
-		sink := NatsSink{}
-		return &sink, nil
-	case INDICATIVE:
-		sink := IndicativeSink{}
-		return &sink, nil
-	case AMPLITUDE:
-		sink := AmplitudeSink{}
-		return &sink, nil
-	// case NATS_JETSTREAM: // FIXME - there's something weird with this - lots of timeouts. Will come back to it later.
-	// 	sink := NatsJetstreamSink{}
+	// case constants.CLICKHOUSE:
+	// 	sink := clickhousedb.Sink{}
 	// 	return &sink, nil
+	// Saas
+	case constants.AMPLITUDE:
+		sink := amplitude.Sink{}
+		return &sink, nil
+	case constants.PUBNUB:
+		sink := pubnub.Sink{}
+		return &sink, nil
+	case constants.MATERIALIZE:
+		sink := postgresdb.Sink{}
+		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)
 		log.Error().Stack().Err(e).Msg("🔴 unsupported sink")
@@ -119,25 +102,21 @@ func BuildSink(conf config.Sink) (sink Sink, err error) {
 	}
 }
 
-func InitializeSink(conf config.Sink, s Sink) error {
-	err := s.Initialize(conf)
+func NewSink(conf config.Sink) (backendutils.Sink, error) {
+	sink, _ := getSink(conf)
+	err := sink.Initialize(conf)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not initialize sink")
-		return err
+		return nil, err
 	}
 	log.Info().Msg("🟢 " + conf.Type + " sink initialized")
-	return nil
+	return sink, nil
 }
 
-func BuildAndInitializeSinks(conf []config.Sink) ([]Sink, error) {
-	var sinks []Sink
+func BuildAndInitializeSinks(conf []config.Sink) ([]backendutils.Sink, error) {
+	var sinks []backendutils.Sink
 	for _, sConf := range conf {
-		sink, err := BuildSink(sConf)
-		if err != nil {
-			log.Error().Err(err).Msg("🔴 could not build sink")
-			return nil, err
-		}
-		err = InitializeSink(sConf, sink)
+		sink, err := NewSink(sConf)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not initialize sink")
 			return nil, err

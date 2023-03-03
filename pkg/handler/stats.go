@@ -15,11 +15,11 @@ type StatsResponse struct {
 	Stats         *stats.ProtocolStats `json:"stats"`
 }
 
-func StatsHandler(m *meta.CollectorMeta, s *stats.ProtocolStats) gin.HandlerFunc {
+func StatsHandler(m *meta.CollectorMeta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		resp := StatsResponse{
 			CollectorMeta: m,
-			Stats:         s,
+			// Stats:         s,
 		}
 		c.JSON(200, resp)
 	}

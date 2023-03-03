@@ -10,7 +10,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/event"
+	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/request"
 	"github.com/silverton-io/buz/pkg/util"
@@ -51,9 +51,9 @@ func heartbeat(t time.Ticker, m *meta.CollectorMeta) {
 			ElapsedSeconds: m.Elapsed(),
 		}
 		data := util.StructToMap(b)
-		heartbeatPayload := event.SelfDescribingEvent{
+		heartbeatPayload := envelope.SelfDescribingEvent{
 			Contexts: nil,
-			Payload: event.SelfDescribingPayload{
+			Payload: envelope.SelfDescribingPayload{
 				Schema: HEARTBEAT_1_0,
 				Data:   data,
 			},
@@ -74,9 +74,9 @@ func Sis(m *meta.CollectorMeta) {
 		ElapsedSeconds: m.Elapsed(),
 	}
 	data := util.StructToMap(shutdown)
-	shutdownPayload := event.SelfDescribingEvent{
+	shutdownPayload := envelope.SelfDescribingEvent{
 		Contexts: nil,
-		Payload: event.SelfDescribingPayload{
+		Payload: envelope.SelfDescribingPayload{
 			Schema: SHUTDOWN_1_0,
 			Data:   data,
 		},
@@ -97,9 +97,9 @@ func Metry(c *config.Config, m *meta.CollectorMeta) {
 			Config: *c,
 		}
 		data := util.StructToMap(startup)
-		startupPayload := event.SelfDescribingEvent{
+		startupPayload := envelope.SelfDescribingEvent{
 			Contexts: nil,
-			Payload: event.SelfDescribingPayload{
+			Payload: envelope.SelfDescribingPayload{
 				Schema: STARTUP_1_0,
 				Data:   data,
 			},
