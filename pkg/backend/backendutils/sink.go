@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
 )
@@ -35,7 +36,10 @@ func StartSinkWorker(input <-chan []envelope.Envelope, shutdown <-chan int, sink
 			select {
 			case envelopes := <-input:
 				ctx := context.Background()
-				sink.Dequeue(ctx, envelopes)
+				err := sink.Dequeue(ctx, envelopes)
+				if err != nil {
+					log.Error().Err(err).Interface("metadata", sink.Metadata()).Msg("could not dequeue")
+				}
 			case <-shutdown:
 				return
 			}

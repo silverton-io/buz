@@ -5,10 +5,15 @@
 package middleware
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/util"
 )
 
 type request struct {
@@ -37,35 +42,37 @@ func getIp(c *gin.Context) string {
 
 func RequestLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// start := time.Now().UTC()
-		// end := time.Now().UTC()
-		// duration := util.GetDuration(start, end)
-		// buf, _ := io.ReadAll(c.Request.Body)
-		// r1 := io.NopCloser(bytes.NewBuffer(buf))
-		// r2 := io.NopCloser(bytes.NewBuffer(buf))
-		// reqBody, err := io.ReadAll(r1)
-		// c.Request.Body = r2
+		start := time.Now().UTC()
+		end := time.Now().UTC()
+		duration := util.GetDuration(start, end)
+		buf, _ := io.ReadAll(c.Request.Body)
+		r1 := io.NopCloser(bytes.NewBuffer(buf))
+		r2 := io.NopCloser(bytes.NewBuffer(buf))
+		reqBody, err := io.ReadAll(r1)
+		c.Request.Body = r2
 		c.Next()
-		// if err != nil {
-		// 	log.Error().Err(err).Msg("could not read request body")
-		// }
+		if err != nil {
+			log.Error().Err(err).Msg("could not read request body")
+		}
 
-		// var b interface{}
-		// err = json.Unmarshal(reqBody, &b)
+		var b interface{}
+		if string(reqBody) != "" {
+			err = json.Unmarshal(reqBody, &b)
 
-		// if err != nil {
-		// 	log.Debug().Err(err).Msg("could not unmarshal request body")
-		// }
+			if err != nil {
+				log.Debug().Err(err).Interface("body", reqBody).Msg("could not unmarshal request body")
+			}
+		}
 
-		// r := request{
-		// 	ResponseCode:             c.Writer.Status(),
-		// 	RequestDuration:          duration,
-		// 	RequestDurationForHumans: duration.String(),
-		// 	ClientIp:                 getIp(c),
-		// 	RequestMethod:            c.Request.Method,
-		// 	RequestUri:               c.Request.RequestURI,
-		// 	Body:                     b,
-		// }
-		// log.Info().Interface("request", r).Msg("🟢")
+		r := request{
+			ResponseCode:             c.Writer.Status(),
+			RequestDuration:          duration,
+			RequestDurationForHumans: duration.String(),
+			ClientIp:                 getIp(c),
+			RequestMethod:            c.Request.Method,
+			RequestUri:               c.Request.RequestURI,
+			Body:                     b,
+		}
+		log.Info().Interface("request", r).Msg("🟢")
 	}
 }

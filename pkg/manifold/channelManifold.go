@@ -35,8 +35,11 @@ func (m *ChannelManifold) Initialize(registry *registry.Registry, sinks *[]backe
 		for {
 			select {
 			case envelopes := <-envelopes:
-				for _, s := range *m.sinks {
-					s.Enqueue(envelopes)
+				for _, sink := range *m.sinks {
+					err := sink.Enqueue(envelopes)
+					if err != nil {
+						log.Error().Err(err).Interface("metadata", sink.Metadata()).Msg("failed to enqueue envelopes to sink")
+					}
 				}
 			case <-shutdown:
 				// Read all envelopes from input channel and pass to all sinks

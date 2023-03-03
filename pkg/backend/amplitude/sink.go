@@ -109,7 +109,6 @@ func (s *Sink) Initialize(conf config.Sink) error {
 		return err
 	}
 	s.endpoint, s.apiKey = *endpoint, conf.ApiKey
-	s.StartWorker()
 	return nil
 }
 

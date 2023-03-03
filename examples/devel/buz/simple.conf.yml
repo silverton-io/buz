@@ -12,7 +12,7 @@ app:
   name: buz-bootstrap
   env: development
   port: 8080
-  trackerDomain: bootstrap.silverton.io
+  trackerDomain: bootstrap.buz.dev
   enableConfigRoute: true
 
 middleware:
@@ -91,6 +91,85 @@ sinks:
   - name: easyfeedback
     type: stdout
     deliveryRequired: true
+  - name: blackhole
+    type: blackhole
+    deliveryRequired: true
+  # - name: local
+  #   type: file
+  #   deliveryRequired: true
+  # - name: web
+  #   type: http
+  #   deliveryRequired: true
+  #   url: https://SOMEURL/squawk
+  # - name: pg1
+  #   type: postgres
+  #   deliveryRequired: true
+  #   hosts: 
+  #     - 127.0.0.1
+  #   port: 5432
+  #   database: buz
+  #   user: buz
+  #   password: buz
+  # - name: easyfeedback
+  #   type: stdout
+  #   deliveryRequired: true
+  # - name: productanalytics
+  #   type: amplitude
+  #   deliveryRequired: true
+  #   region: standard
+  #   apiKey: SOMEAPIKEY
+  # - name: msql1
+  #   type: mysql
+  #   deliveryRequired: true
+  #   hosts: 
+  #     - 127.0.0.1
+  #   port: 3306
+  #   database: buz
+  #   user: buz
+  #   password: buz
+  # - name: mongo
+  #   type: mongodb
+  #   deliveryRequired: true
+  #   hosts: 
+  #     - 127.0.0.1
+  #   port: 27017
+  #   database: buz
+  #   user: buz
+  #   password: buz
+  # - name: elastic
+  #   type: elasticsearch
+  #   deliveryRequired: true
+  #   hosts: 
+  #     - "http://127.0.0.1:9200"
+  #   user: elastic
+  #   password: elastic
+  # - name: broker
+  #   type: nats
+  #   deliveryRequired: true
+  #   hosts: 
+  #     - 127.0.0.1
+  #   user: buz
+  #   password: buz
+  # - name: kafka
+  #   type: kafka
+  #   deliveryRequired: true
+  #   brokers: 
+  #     - 127.0.0.1:9092
+  # - name: redpanda
+  #   type: redpanda
+  #   deliveryRequired: true
+  #   brokers: 
+  #     - 127.0.0.1:9092
+  # - name: pubsub
+  #   type: pubsub
+  #   deliveryRequired: true
+  #   project: YOURPROJECT
+  # - name: kinesis
+  #   type: kinesis
+  #   deliveryRequired: true
+  # - name: firehose
+  #   type: kinesis-firehose
+  #   deliveryRequired: true
 
 squawkBox:
   enabled: true

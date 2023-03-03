@@ -62,7 +62,6 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	s.defaultEventsCollection = vCollection
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
-	s.StartWorker()
 	return nil
 }
 

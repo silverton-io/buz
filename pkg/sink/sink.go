@@ -106,8 +106,12 @@ func NewSink(conf config.Sink) (backendutils.Sink, error) {
 	sink, _ := getSink(conf)
 	err := sink.Initialize(conf)
 	if err != nil {
-		log.Error().Err(err).Msg("🔴 could not initialize sink")
+		log.Fatal().Err(err).Msg("🔴 could not initialize sink")
 		return nil, err
+	}
+	err = sink.StartWorker()
+	if err != nil {
+		log.Fatal().Err(err).Interface("metadata", sink.Metadata()).Msg("could not start sink worker")
 	}
 	log.Info().Msg("🟢 " + conf.Type + " sink initialized")
 	return sink, nil
@@ -118,7 +122,7 @@ func BuildAndInitializeSinks(conf []config.Sink) ([]backendutils.Sink, error) {
 	for _, sConf := range conf {
 		sink, err := NewSink(sConf)
 		if err != nil {
-			log.Error().Err(err).Msg("🔴 could not initialize sink")
+			log.Fatal().Err(err).Msg("🔴 could not initialize sink")
 			return nil, err
 		}
 		sinks = append(sinks, sink)
