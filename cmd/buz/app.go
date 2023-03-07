@@ -113,7 +113,6 @@ func (a *App) initializeRouter() {
 
 func (a *App) initializeMiddleware() {
 	log.Info().Msg("🟢 initializing middleware")
-
 	a.engine.Use(gin.Recovery())
 	if a.config.Middleware.Timeout.Enabled {
 		log.Info().Msg("🟢 initializing request timeout middleware")
