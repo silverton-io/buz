@@ -5,6 +5,8 @@
 package selfdescribing
 
 import (
+	"bytes"
+	"compress/gzip"
 	"io"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +15,7 @@ import (
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/meta"
 	"github.com/silverton-io/buz/pkg/protocol"
+	"github.com/silverton-io/buz/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
@@ -21,8 +24,24 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 	reqBody, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not read request body")
+		util.Pprint(c.Request.Body)
 		return envelopes
 	}
+	// If the request body is gzipped, decompress it
+	if c.GetHeader("Content-Encoding") == "gzip" {
+		reader, err := gzip.NewReader(bytes.NewReader(reqBody))
+		if err != nil {
+			log.Error().Err(err).Msg("🔴 could not decompress gzipped request body")
+			return envelopes
+		}
+		defer reader.Close()
+		reqBody, err = io.ReadAll(reader)
+		if err != nil {
+			log.Error().Err(err).Msg("🔴 could not read decompressed gzipped request body")
+			return envelopes
+		}
+	}
+
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
 		n := envelope.BuildCommonEnvelope(c, conf.Middleware, m)
 		genEvent, err := buildEvent(e, conf.SelfDescribing)
