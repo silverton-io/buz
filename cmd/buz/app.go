@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/apex/gateway/v2"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -109,6 +110,7 @@ func (a *App) initializeRouter() {
 		panic(err)
 	}
 	a.engine.RedirectTrailingSlash = false
+	a.engine.Use(gzip.Gzip(gzip.DefaultCompression))
 }
 
 func (a *App) initializeMiddleware() {
