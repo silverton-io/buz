@@ -8,10 +8,10 @@ TEST_PROFILE=testprofile.out
 build:
 	go build -ldflags="-X main.VERSION=$(VERSION)" -o build/buz $(BUZ_DIR)
 
-run: build ## Run buz locally
+run: ## Run buz locally
 	go run -ldflags="-X 'main.VERSION=x.x.dev'" $(BUZ_DIR)
 
-debug: build  ## Run buz locally with debug
+debug: ## Run buz locally with debug
 	DEBUG=1 go run -ldflags="-X 'main.VERSION=x.x.dev'" $(BUZ_DIR)
 
 bootstrap: ## Bootstrap development environment
