@@ -5,6 +5,8 @@
 package inputSelfDescribing
 
 import (
+	"bytes"
+	"compress/gzip"
 	"io"
 
 	"github.com/gin-gonic/gin"
@@ -23,6 +25,21 @@ func BuildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 		log.Error().Err(err).Msg("🔴 could not read request body")
 		return envelopes
 	}
+	// If the request body is gzipped, decompress it
+	if c.GetHeader("Content-Encoding") == "gzip" {
+		reader, err := gzip.NewReader(bytes.NewReader(reqBody))
+		if err != nil {
+			log.Error().Err(err).Msg("🔴 could not decompress gzipped request body")
+			return envelopes
+		}
+		defer reader.Close()
+		reqBody, err = io.ReadAll(reader)
+		if err != nil {
+			log.Error().Err(err).Msg("🔴 could not read decompressed gzipped request body")
+			return envelopes
+		}
+	}
+
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
 		n := envelope.BuildCommonEnvelope(c, conf.Middleware, m)
 		genEvent, err := buildEvent(e, conf.SelfDescribing)

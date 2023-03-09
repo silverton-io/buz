@@ -11,6 +11,9 @@ build:
 run: ## Run buz locally
 	go run -ldflags="-X 'main.VERSION=x.x.dev'" $(BUZ_DIR)
 
+debug: ## Run buz locally with debug
+	DEBUG=1 go run -ldflags="-X 'main.VERSION=x.x.dev'" $(BUZ_DIR)
+
 bootstrap: ## Bootstrap development environment
 	test -f config.yml || cp ./examples/devel/buz/simple.conf.yml config.yml;
 	make run
