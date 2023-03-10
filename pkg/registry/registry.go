@@ -5,6 +5,8 @@
 package registry
 
 import (
+	"strings"
+
 	"github.com/coocood/freecache"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
@@ -37,7 +39,12 @@ func (r *Registry) Get(key string) (exists bool, data []byte) {
 		log.Debug().Msg("🟡 found cache key " + key)
 		return true, schemaContents
 	} else { // Schema not yet cached locally - getting from remote backend
-		schemaContents, err := r.Backend.GetRemote(key)
+		// Ensure schemaKey is key ending in .json (add if not present)
+		schemaKey := key
+		if !strings.HasSuffix(schemaKey, ".json") {
+			schemaKey = schemaKey + ".json"
+		}
+		schemaContents, err := r.Backend.GetRemote(schemaKey)
 		if err != nil { // Error when getting schema from remote backend
 			log.Debug().Msg("error when getting remote schema")
 			return false, nil
