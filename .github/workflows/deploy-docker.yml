@@ -2,8 +2,7 @@ name: Publish Buz image to ghcr.io
 
 on:
   push:
-    # branches: ['main']
-    branches: ["*"]
+    branches: ['main']
 
 env:
   GH_REGISTRY: ghcr.io
