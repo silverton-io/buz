@@ -20,11 +20,7 @@ x-dependency:
 services:
   buz:
     container_name: buz
-<<<<<<< HEAD
-    image: ghcr.io/silverton-io/buz:v0.12.8
-=======
-    image: ghcr.io/silverton-io/buz:v0.13.2
->>>>>>> a81edb8 (Wipe the erroneous git submodule (#485))
+    image: ghcr.io/silverton-io/buz:v0.13.3
     volumes:
       - type: bind
         source: ./buz/quickstart.conf.yml
