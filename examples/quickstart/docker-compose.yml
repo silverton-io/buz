@@ -20,7 +20,7 @@ x-dependency:
 services:
   buz:
     container_name: buz
-    image: ghcr.io/silverton-io/buz:v0.13.1
+    image: ghcr.io/silverton-io/buz:v0.13.2
     volumes:
       - type: bind
         source: ./buz/quickstart.conf.yml
@@ -30,6 +30,7 @@ services:
         target: /schemas/
     environment:
       - BUZ_CONFIG_PATH=/etc/buz/config.yml
+      - DEBUG=1
     ports:
       - 8080:8080
     deploy:
