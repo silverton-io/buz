@@ -88,18 +88,16 @@ registry:
     enabled: true
 
 sinks:
+  - name: stdout
+    type: stdout
+    deliveryRequired: true
   - name: primary
     type: kafka
     deliveryRequired: true
-    kafkaBrokers:
+    brokers:
       - redpanda-1:29092 # internally advertised
       - redpanda-2:29093 # internally advertised
       - redpanda-3:29094 # internally advertised
-    invalidTopic: hpt-invalid
-    validTopic: hpt-valid
-  - name: secondary
-    type: stdout
-    deliveryRequired: true
 
 squawkBox:
   enabled: true
