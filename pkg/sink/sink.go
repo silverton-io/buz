@@ -8,7 +8,6 @@ import (
 	"errors"
 
 	"github.com/rs/zerolog/log"
-	"github.com/silverton-io/buz/pkg/backend/amplitude"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/backend/blackhole"
 	"github.com/silverton-io/buz/pkg/backend/elasticsearch"
@@ -85,10 +84,6 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 	// case constants.CLICKHOUSE:
 	// 	sink := clickhousedb.Sink{}
 	// 	return &sink, nil
-	// Saas
-	case constants.AMPLITUDE:
-		sink := amplitude.Sink{}
-		return &sink, nil
 	case constants.PUBNUB:
 		sink := pubnub.Sink{}
 		return &sink, nil

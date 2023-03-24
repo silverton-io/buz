@@ -5,7 +5,10 @@
 package snowplow
 
 import (
+	"encoding/json"
 	"time"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/google/uuid"
 	"github.com/silverton-io/buz/pkg/envelope"
@@ -138,6 +141,20 @@ type SnowplowEvent struct {
 	EventName              *string                         `json:"event_name"`
 	EventFormat            *string                         `json:"event_format"`
 	EventVersion           *string                         `json:"event_version"`
+}
+
+func (e *SnowplowEvent) Map() map[string]interface{} {
+	var i map[string]interface{}
+	m, err := json.Marshal(e)
+	if err != nil {
+		log.Error().Err(err).Msg("could not marshal snowplow event")
+	} else {
+		err := json.Unmarshal(m, &i)
+		if err != nil {
+			log.Error().Err(err).Msg("could not unmarshal snowplow event to map[string]interface{}")
+		}
+	}
+	return i
 }
 
 type Page struct {

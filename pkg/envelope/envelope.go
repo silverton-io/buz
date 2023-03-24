@@ -6,33 +6,34 @@ package envelope
 
 import (
 	"encoding/json"
+	"time"
 
-	"github.com/silverton-io/buz/pkg/db"
+	"github.com/google/uuid"
 )
 
 const (
-	VENDOR         string = "vendor"
-	NAMESPACE      string = "namespace"
-	VERSION        string = "version"
-	FORMAT         string = "format"
-	PATH           string = "path"
-	INPUT_PROTOCOL string = "inputProtocol"
-	SCHEMA         string = "schema"
+	PROTOCOL  string = "protocol"
+	NAMESPACE string = "namespace"
+	VERSION   string = "version"
+	SCHEMA    string = "schema"
+	FORMAT    string = "format"
+	IS_VALID  string = "isValid"
 )
 
+// An envelope consisting of minimally-defined properties
 type Envelope struct {
-	db.BasePKeylessModel
-	EventMeta    `json:"event" gorm:"type:json"`
-	Pipeline     `json:"pipeline" gorm:"type:json"`
-	Device       `json:"device,omitempty" gorm:"type:json"`
-	*User        `json:"user,omitempty" gorm:"type:json"`
-	*Session     `json:"session,omitempty" gorm:"type:json"`
-	*Web         `json:"web,omitempty" gorm:"type:json"`
-	*Annotations `json:"annotations,omitempty" gorm:"type:json"`
-	*Enrichments `json:"enrichments,omitempty" gorm:"type:json"`
-	Validation   `json:"validation" gorm:"type:json"`
-	Contexts     *Contexts `json:"contexts,omitempty" gorm:"type:json"`
-	Payload      Payload   `json:"payload" gorm:"type:json"`
+	Uuid               uuid.UUID        `json:"uuid"`
+	Timestamp          time.Time        `json:"timestamp" sql:"index"`
+	CollectorTimestamp time.Time        `json:"collectorTimestamp" sql:"index"`
+	Protocol           string           `json:"protocol"`
+	Namespace          string           `json:"namespace"`
+	Version            string           `json:"version"`
+	Schema             string           `json:"schema"`
+	Format             string           `json:"format"`
+	IsValid            bool             `json:"isValid"`
+	ValidationError    *ValidationError `json:"validationError"`
+	Contexts           *Contexts        `json:"contexts"`
+	Payload            Payload          `json:"payload" gorm:"type:json"`
 }
 
 func (e *Envelope) AsMap() (map[string]interface{}, error) {
@@ -56,31 +57,42 @@ func (e *Envelope) AsByte() ([]byte, error) {
 }
 
 type JsonbEnvelope struct {
-	db.BasePKeylessModel
-	EventMeta    `json:"event" gorm:"type:jsonb"`
-	Pipeline     `json:"pipeline" gorm:"type:jsonb"`
-	*Device      `json:"device" gorm:"type:jsonb"`
-	*User        `json:"user" gorm:"type:jsonb"`
-	*Session     `json:"session" gorm:"type:jsonb"`
-	*Web         `json:"web" gorm:"type:jsonb"`
-	*Annotations `json:"annotations" gorm:"type:jsonb"`
-	*Enrichments `json:"enrichments" gorm:"type:jsonb"`
-	Validation   `json:"validation" gorm:"type:jsonb"`
-	Contexts     *Contexts `json:"contexts" gorm:"type:jsonb"`
-	Payload      Payload   `json:"payload" gorm:"type:jsonb"`
+	Uuid               uuid.UUID        `json:"uuid"`
+	Timestamp          time.Time        `json:"timestamp" sql:"index"`
+	CollectorTimestamp time.Time        `json:"collectorTimestamp" sql:"index"`
+	Protocol           string           `json:"protocol"`
+	Namespace          string           `json:"namespace"`
+	Version            string           `json:"version"`
+	Schema             string           `json:"schema"`
+	Format             string           `json:"format"`
+	IsValid            bool             `json:"isValid"`
+	ValidationError    *ValidationError `json:"validationError"`
+	Contexts           Contexts         `json:"contexts"`
+	Payload            Payload          `json:"payload" gorm:"type:jsonb"`
 }
 
 type StringEnvelope struct {
-	db.BasePKeylessModel
-	EventMeta    `json:"event" gorm:"type:string"`
-	Pipeline     `json:"pipeline" gorm:"type:string"`
-	*Device      `json:"device" gorm:"type:string"`
-	*User        `json:"user" gorm:"type:string"`
-	*Session     `json:"session" gorm:"type:string"`
-	*Web         `json:"web" gorm:"type:string"`
-	*Annotations `json:"annotations" gorm:"type:string"`
-	*Enrichments `json:"enrichments" gorm:"type:string"`
-	Validation   `json:"validation" gorm:"type:string"`
-	Contexts     *Contexts `json:"contexts" gorm:"type:string"`
-	Payload      Payload   `json:"payload" gorm:"type:string"`
+	Uuid               uuid.UUID        `json:"uuid"`
+	Timestamp          time.Time        `json:"timestamp" sql:"index"`
+	CollectorTimestamp time.Time        `json:"collectorTimestamp" sql:"index"`
+	Protocol           string           `json:"protocol"`
+	Namespace          string           `json:"namespace"`
+	Version            string           `json:"version"`
+	Schema             string           `json:"schema"`
+	Format             string           `json:"format"`
+	IsValid            bool             `json:"isValid"`
+	ValidationError    *ValidationError `json:"validationError"`
+	Contexts           Contexts         `json:"contexts"`
+	Payload            Payload          `json:"payload" gorm:"type:string"`
+}
+
+// Build a new envelope with base fields populated
+func NewEnvelope() Envelope {
+	now := time.Now().UTC()
+	envelope := Envelope{
+		Uuid:               uuid.New(),
+		Timestamp:          now,
+		CollectorTimestamp: now,
+	}
+	return envelope
 }

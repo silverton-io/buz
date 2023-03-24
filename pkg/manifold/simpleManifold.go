@@ -11,7 +11,6 @@ import (
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/meta"
-	"github.com/silverton-io/buz/pkg/privacy"
 	"github.com/silverton-io/buz/pkg/registry"
 )
 
@@ -35,11 +34,10 @@ func (m *SimpleManifold) Initialize(registry *registry.Registry, sinks *[]backen
 
 func (m *SimpleManifold) Enqueue(envelopes []envelope.Envelope) error {
 	annotatedEnvelopes := annotator.Annotate(envelopes, m.registry)
-	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.conf.Privacy)
 	for _, sink := range *m.sinks {
 		meta := sink.Metadata()
 		log.Debug().Interface("metadata", meta).Msg("🟡 enqueueing envelopes to sink")
-		err := sink.Enqueue(anonymizedEnvelopes)
+		err := sink.Enqueue(annotatedEnvelopes)
 		if err != nil {
 			log.Error().Err(err).Interface("metadata", sink.Metadata()).Msg("failed to enqueue envelopes to sink")
 		}

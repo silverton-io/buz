@@ -13,6 +13,14 @@ import (
 	"github.com/silverton-io/buz/pkg/protocol"
 )
 
+func newPixelEnvelope(event envelope.SelfDescribingPayload) envelope.Envelope {
+	n := envelope.NewEnvelope()
+	n.Protocol = protocol.PIXEL
+	n.Schema = event.Schema
+	n.Payload = event.Data
+	return n
+}
+
 // NOTE - one envelope per request
 func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []envelope.Envelope {
 	var envelopes []envelope.Envelope
@@ -20,15 +28,7 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not build pixel event")
 	}
-	contexts := envelope.BuildContextsFromRequest(c)
-	n := envelope.BuildCommonEnvelope(c, conf.Middleware, m)
-	// Event Meta
-	n.EventMeta.Protocol = protocol.PIXEL
-	n.EventMeta.Schema = sde.Schema
-	// Contexts
-	n.Contexts = &contexts
-	// Payload
-	n.Payload = sde.Data
+	n := newPixelEnvelope(sde)
 	envelopes = append(envelopes, n)
 	return envelopes
 }

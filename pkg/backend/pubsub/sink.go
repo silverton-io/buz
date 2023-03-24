@@ -6,6 +6,7 @@ package pubsub
 
 import (
 	"encoding/json"
+	"strconv"
 	"time"
 
 	"sync"
@@ -85,12 +86,12 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 		msg := &pubsub.Message{
 			Data: payload,
 			Attributes: map[string]string{
-				envelope.INPUT_PROTOCOL: e.EventMeta.Protocol,
-				envelope.VENDOR:         e.EventMeta.Vendor,
-				envelope.NAMESPACE:      e.EventMeta.Namespace,
-				envelope.VERSION:        e.EventMeta.Version,
-				envelope.FORMAT:         e.EventMeta.Format,
-				envelope.SCHEMA:         e.EventMeta.Schema,
+				envelope.PROTOCOL:  e.Protocol,
+				envelope.NAMESPACE: e.Namespace,
+				envelope.VERSION:   e.Version,
+				envelope.FORMAT:    e.Format,
+				envelope.SCHEMA:    e.Schema,
+				envelope.IS_VALID:  strconv.FormatBool(e.IsValid),
 			},
 		}
 		result := s.defaultEventsTopic.Publish(ctx, msg)

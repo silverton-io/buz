@@ -79,7 +79,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 			return err
 		} else {
 			wg.Add(1)
-			envId := envelope.EventMeta.Uuid.String()
+			envId := envelope.Uuid.String()
 			_, err := s.client.Create(s.defaultEventsIndex, envId, reader)
 			if err != nil {
 				log.Error().Interface("envelopeId", envId).Err(err).Msg("🔴 could not publish envelope to elasticsearch")

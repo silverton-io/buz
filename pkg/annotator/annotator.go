@@ -35,25 +35,23 @@ func Annotate(envelopes []envelope.Envelope, registry *registry.Registry) []enve
 		// NOTE - this has the potential to be confusing in the case that
 		// schema-level validation is disabled.
 		// Payload validation is still executed in that case but the outcome is disregarded.
-		isValid, validationError, schemaContents := validator.ValidatePayload(envelope.EventMeta.Schema, envelope.Payload, registry)
+		isValid, validationError, schemaContents := validator.ValidatePayload(envelope.Schema, envelope.Payload, registry)
 		m := getMetadataFromSchema(schemaContents)
 		if m.Namespace != "" {
-			envelope.EventMeta.Namespace = m.Namespace
+			envelope.Namespace = m.Namespace
 		}
-		envelope.EventMeta.Vendor = m.Vendor
-		envelope.EventMeta.Version = m.Version
-		envelope.EventMeta.Format = m.Format
+		envelope.Version = m.Version
+		envelope.Format = m.Format
 		if m.DisableValidation {
 			// If schema-level validation is disabled
 			// consider the payload valid.
 			valid := true
-			envelope.Validation.IsValid = &valid
-			envelope.EventMeta.DisableValidation = m.DisableValidation
+			envelope.IsValid = valid
 		} else {
-			envelope.Validation.IsValid = &isValid
+			envelope.IsValid = isValid
 			if !isValid {
 				// Annotate the envelope with associated validation errors
-				envelope.Validation.Error = &validationError
+				envelope.ValidationError = &validationError
 			}
 		}
 		e = append(e, envelope)
