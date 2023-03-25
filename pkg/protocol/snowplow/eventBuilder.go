@@ -212,7 +212,9 @@ func setEvent(e *SnowplowEvent, params map[string]interface{}) {
 	e.EventFingerprint = fingerprint
 }
 
-func setUser(c *gin.Context, e *SnowplowEvent, params map[string]interface{}) {
+func setUser(c *gin.Context, conf config.Middleware, e *SnowplowEvent, params map[string]interface{}) {
+	identity := util.GetIdentityOrFallback(c, conf)
+	e.NetworkUserid = &identity
 	e.DomainUserid = getStringParam(params, "duid")
 	e.Userid = getStringParam(params, "uid")
 }
@@ -376,7 +378,7 @@ func buildEventFromMappedParams(c *gin.Context, params map[string]interface{}, c
 	setTstamps(&event, params)
 	setPlatformMetadata(&event, params, conf)
 	setEvent(&event, params)
-	setUser(c, &event, params)
+	setUser(c, conf.Middleware, &event, params)
 	setSession(&event, params)
 	setPage(&event, params)
 	setReferrer(&event, params)

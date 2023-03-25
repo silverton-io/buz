@@ -19,7 +19,6 @@ type Sink struct {
 	sinkType         string
 	name             string
 	deliveryRequired bool
-	fanout           bool
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
@@ -34,7 +33,7 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 func (s *Sink) Initialize(conf config.Sink) error {
 	id := uuid.New()
 	s.id, s.sinkType, s.name = &id, conf.Type, conf.Name
-	s.deliveryRequired, s.fanout = conf.DeliveryRequired, conf.Fanout
+	s.deliveryRequired = conf.DeliveryRequired
 	return nil
 }
 

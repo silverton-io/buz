@@ -22,7 +22,6 @@ type Sink struct {
 	sinkType         string
 	name             string
 	deliveryRequired bool
-	fanout           bool
 	defaultFile      string
 	input            chan []envelope.Envelope
 	shutdown         chan int
@@ -41,7 +40,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing file sink")
 	id := uuid.New()
 	s.id, s.name, s.sinkType = &id, conf.Name, conf.Type
-	s.deliveryRequired, s.fanout = conf.DeliveryRequired, conf.Fanout
+	s.deliveryRequired = conf.DeliveryRequired
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
 	s.defaultFile = constants.BUZ_EVENTS + ".json"
