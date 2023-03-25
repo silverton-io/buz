@@ -31,8 +31,8 @@ type Envelope struct {
 	Namespace          string           `json:"namespace"`
 	Version            string           `json:"version"`
 	IsValid            bool             `json:"isValid"`
-	ValidationError    *ValidationError `json:"validationError,omitempty"`
-	Contexts           *Contexts        `json:"contexts,omitempty"`
+	ValidationError    *ValidationError `json:"validationError,omitempty" gorm:"type:json"`
+	Contexts           *Contexts        `json:"contexts,omitempty" gorm:"type:json"`
 	Payload            Payload          `json:"payload" gorm:"type:json"`
 }
 
@@ -57,7 +57,7 @@ func (e *Envelope) AsByte() ([]byte, error) {
 }
 
 type JsonbEnvelope struct {
-	Uuid               uuid.UUID        `json:"uuid"`
+	Uuid               uuid.UUID        `json:"uuid" gorm:"type:uuid"`
 	Timestamp          time.Time        `json:"timestamp" sql:"index"`
 	CollectorTimestamp time.Time        `json:"collectorTimestamp" sql:"index"`
 	Protocol           string           `json:"protocol"`
@@ -66,13 +66,13 @@ type JsonbEnvelope struct {
 	Namespace          string           `json:"namespace"`
 	Version            string           `json:"version"`
 	IsValid            bool             `json:"isValid"`
-	ValidationError    *ValidationError `json:"validationError,omitempty"`
-	Contexts           *Contexts        `json:"contexts,omitempty"`
+	ValidationError    *ValidationError `json:"validationError,omitempty" gorm:"type:jsonb"`
+	Contexts           *Contexts        `json:"contexts,omitempty" gorm:"type:jsonb"`
 	Payload            Payload          `json:"payload" gorm:"type:jsonb"`
 }
 
 type StringEnvelope struct {
-	Uuid               uuid.UUID        `json:"uuid"`
+	Uuid               uuid.UUID        `json:"uuid" gorm:"type:uuid"`
 	Timestamp          time.Time        `json:"timestamp" sql:"index"`
 	CollectorTimestamp time.Time        `json:"collectorTimestamp" sql:"index"`
 	Protocol           string           `json:"protocol"`
@@ -81,8 +81,8 @@ type StringEnvelope struct {
 	Namespace          string           `json:"namespace"`
 	Version            string           `json:"version"`
 	IsValid            bool             `json:"isValid"`
-	ValidationError    *ValidationError `json:"validationError,omitempty"`
-	Contexts           *Contexts        `json:"contexts,omitempty"`
+	ValidationError    *ValidationError `json:"validationError,omitempty" gorm:"type:string"`
+	Contexts           *Contexts        `json:"contexts,omitempty" gorm:"type:string"`
 	Payload            Payload          `json:"payload" gorm:"type:string"`
 }
 
