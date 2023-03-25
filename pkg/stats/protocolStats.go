@@ -4,13 +4,9 @@
 
 package stats
 
-import (
-	"sync"
-)
-
 type ProtocolStats struct {
-	vmu     sync.Mutex
-	imu     sync.Mutex
+	// vmu     sync.Mutex
+	// imu     sync.Mutex
 	Invalid map[string]map[string]int64 `json:"invalid"`
 	Valid   map[string]map[string]int64 `json:"valid"`
 }
