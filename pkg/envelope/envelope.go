@@ -103,7 +103,7 @@ func NewEnvelope(conf config.App) Envelope {
 		Uuid:         uuid.New(),
 		Timestamp:    now,
 		BuzTimestamp: now,
-		BuzVersion:   conf.Name,
+		BuzVersion:   conf.Version,
 		BuzName:      conf.Name,
 		BuzEnv:       conf.Env,
 	}
