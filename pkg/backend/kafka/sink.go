@@ -106,10 +106,10 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 		}
 		headers := []kgo.RecordHeader{
 			{Key: envelope.PROTOCOL, Value: []byte(e.Protocol)},
+			{Key: envelope.SCHEMA, Value: []byte(e.Schema)},
+			{Key: envelope.VENDOR, Value: []byte(e.Vendor)},
 			{Key: envelope.NAMESPACE, Value: []byte(e.Namespace)},
 			{Key: envelope.VERSION, Value: []byte(e.Version)},
-			{Key: envelope.FORMAT, Value: []byte(e.Format)},
-			{Key: envelope.SCHEMA, Value: []byte(e.Schema)},
 			{Key: envelope.IS_VALID, Value: []byte(strconv.FormatBool(e.IsValid))},
 		}
 		record := &kgo.Record{

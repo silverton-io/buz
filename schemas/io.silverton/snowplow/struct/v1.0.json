@@ -27,7 +27,7 @@
             "description": "The struct event property"
         },
         "se_value": {
-            "type": ["string","null"],
+            "type": ["number","null"],
             "description": "The struct event value"
         }
     },

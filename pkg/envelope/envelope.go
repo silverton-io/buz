@@ -13,10 +13,10 @@ import (
 
 const (
 	PROTOCOL  string = "protocol"
+	VENDOR    string = "vendor"
 	NAMESPACE string = "namespace"
 	VERSION   string = "version"
 	SCHEMA    string = "schema"
-	FORMAT    string = "format"
 	IS_VALID  string = "isValid"
 )
 
@@ -26,13 +26,13 @@ type Envelope struct {
 	Timestamp          time.Time        `json:"timestamp" sql:"index"`
 	CollectorTimestamp time.Time        `json:"collectorTimestamp" sql:"index"`
 	Protocol           string           `json:"protocol"`
+	Schema             string           `json:"schema"`
+	Vendor             string           `json:"vendor"`
 	Namespace          string           `json:"namespace"`
 	Version            string           `json:"version"`
-	Schema             string           `json:"schema"`
-	Format             string           `json:"format"`
 	IsValid            bool             `json:"isValid"`
-	ValidationError    *ValidationError `json:"validationError"`
-	Contexts           *Contexts        `json:"contexts"`
+	ValidationError    *ValidationError `json:"validationError,omitempty"`
+	Contexts           *Contexts        `json:"contexts,omitempty"`
 	Payload            Payload          `json:"payload" gorm:"type:json"`
 }
 
@@ -61,13 +61,13 @@ type JsonbEnvelope struct {
 	Timestamp          time.Time        `json:"timestamp" sql:"index"`
 	CollectorTimestamp time.Time        `json:"collectorTimestamp" sql:"index"`
 	Protocol           string           `json:"protocol"`
+	Schema             string           `json:"schema"`
+	Vendor             string           `json:"vendor"`
 	Namespace          string           `json:"namespace"`
 	Version            string           `json:"version"`
-	Schema             string           `json:"schema"`
-	Format             string           `json:"format"`
 	IsValid            bool             `json:"isValid"`
-	ValidationError    *ValidationError `json:"validationError"`
-	Contexts           Contexts         `json:"contexts"`
+	ValidationError    *ValidationError `json:"validationError,omitempty"`
+	Contexts           *Contexts        `json:"contexts,omitempty"`
 	Payload            Payload          `json:"payload" gorm:"type:jsonb"`
 }
 
@@ -76,13 +76,13 @@ type StringEnvelope struct {
 	Timestamp          time.Time        `json:"timestamp" sql:"index"`
 	CollectorTimestamp time.Time        `json:"collectorTimestamp" sql:"index"`
 	Protocol           string           `json:"protocol"`
+	Schema             string           `json:"schema"`
+	Vendor             string           `json:"vendor"`
 	Namespace          string           `json:"namespace"`
 	Version            string           `json:"version"`
-	Schema             string           `json:"schema"`
-	Format             string           `json:"format"`
 	IsValid            bool             `json:"isValid"`
-	ValidationError    *ValidationError `json:"validationError"`
-	Contexts           Contexts         `json:"contexts"`
+	ValidationError    *ValidationError `json:"validationError,omitempty"`
+	Contexts           *Contexts        `json:"contexts,omitempty"`
 	Payload            Payload          `json:"payload" gorm:"type:string"`
 }
 

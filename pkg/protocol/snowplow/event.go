@@ -26,7 +26,7 @@ const (
 	TRANSACTION_SCHEMA      = "io.silverton/snowplow/transaction/v1.0.json"
 	TRANSACTION_ITEM        = "transaction_item"
 	TRANSACTION_ITEM_SCHEMA = "io.silverton/snowplow/transaction_item/v1.0.json"
-	AD_IMPRESSION           = "ad_impression" // NOTE - already a self-describing envelope.
+	AD_IMPRESSION           = "ad_impression" // NOTE - already a self-describing event
 	UNKNOWN_EVENT           = "unknown_event"
 	UNKNOWN_SCHEMA          = "unknown_schema"
 	SELF_DESCRIBING_EVENT   = "self_describing"
@@ -69,78 +69,78 @@ type SnowplowEvent struct {
 	PageUrlPath            *string                         `json:"page_urlpath"`
 	PageUrlQuery           *map[string]interface{}         `json:"page_urlquery"`
 	PageUrlFragment        *string                         `json:"page_urlfragment"`
-	MktMedium              *string                         `json:"mkt_medium"`
-	MktSource              *string                         `json:"mkt_source"`
-	MktTerm                *string                         `json:"mkt_term"`
-	MktContent             *string                         `json:"mkt_content"`
-	MktCampaign            *string                         `json:"mkt_campaign"`
-	PageReferrer           *string                         `json:"page_referrer"`
-	RefrUrlScheme          *string                         `json:"refr_urlscheme"`
-	RefrUrlHost            *string                         `json:"refr_urlhost"`
-	RefrUrlPort            *string                         `json:"refr_urlport"`
-	RefrUrlPath            *string                         `json:"refr_urlpath"`
-	RefrUrlQuery           *map[string]interface{}         `json:"refr_urlquery"`
-	RefrUrlFragment        *string                         `json:"refr_urlfragment"`
-	RefrMedium             *string                         `json:"refr_medium"`
-	RefrSource             *string                         `json:"refr_source"`
-	RefrTerm               *string                         `json:"refr_term"`
-	RefrContent            *string                         `json:"refr_content"`
-	RefrCampaign           *string                         `json:"refr_campaign"`
-	RefrDomainUserId       *string                         `json:"refr_domain_userid"` // FIXME!
-	RefrDomainTstamp       *time.Time                      `json:"refr_domain_tstamp"` // FIXME!
-	BrCookies              *bool                           `json:"br_cookies"`
-	BrLang                 *string                         `json:"br_lang"`
-	BrFeaturesPdf          *bool                           `json:"br_features_pdf"`
-	BrFeaturesQuicktime    *bool                           `json:"br_features_quicktime"`
-	BrFeaturesRealplayer   *bool                           `json:"br_features_realplayer"`
-	BrFeaturesWindowsmedia *bool                           `json:"br_features_windowsmedia"`
-	BrFeaturesDirector     *bool                           `json:"br_features_director"`
-	BrFeaturesFlash        *bool                           `json:"br_features_flash"`
-	BrFeaturesJava         *bool                           `json:"br_features_java"`
-	BrFeaturesGears        *bool                           `json:"br_features_gears"`
-	BrFeaturesSilverlight  *bool                           `json:"br_features_silverlight"`
-	BrColordepth           *int64                          `json:"br_colordepth"`
-	ViewportSize           *string                         `json:"viewport_size"`
-	BrViewWidth            *int                            `json:"br_viewwidth"`
-	BrViewHeight           *int                            `json:"br_viewheight"`
-	DocCharset             *string                         `json:"doc_charset"`
-	DocSize                *string                         `json:"doc_size"`
-	DocWidth               *int                            `json:"doc_width"`
-	DocHeight              *int                            `json:"doc_height"`
-	DvceScreenResolution   *string                         `json:"dvce_screenresolution"`
-	DvceScreenWidth        *int                            `json:"dvce_screenwidth"`
-	DvceScreenHeight       *int                            `json:"dvce_screenheight"`
-	Contexts               *envelope.Contexts              `json:"contexts"`
+	MktMedium              *string                         `json:"mkt_medium,omitempty"`
+	MktSource              *string                         `json:"mkt_source,omitempty"`
+	MktTerm                *string                         `json:"mkt_term,omitempty"`
+	MktContent             *string                         `json:"mkt_content,omitempty"`
+	MktCampaign            *string                         `json:"mkt_campaign,omitempty"`
+	PageReferrer           *string                         `json:"page_referrer,omitempty"`
+	RefrUrlScheme          *string                         `json:"refr_urlscheme,omitempty"`
+	RefrUrlHost            *string                         `json:"refr_urlhost,omitempty"`
+	RefrUrlPort            *string                         `json:"refr_urlport,omitempty"`
+	RefrUrlPath            *string                         `json:"refr_urlpath,omitempty"`
+	RefrUrlQuery           *map[string]interface{}         `json:"refr_urlquery,omitempty"`
+	RefrUrlFragment        *string                         `json:"refr_urlfragment,omitempty"`
+	RefrMedium             *string                         `json:"refr_medium,omitempty"`
+	RefrSource             *string                         `json:"refr_source,omitempty"`
+	RefrTerm               *string                         `json:"refr_term,omitempty"`
+	RefrContent            *string                         `json:"refr_content,omitempty"`
+	RefrCampaign           *string                         `json:"refr_campaign,omitempty"`
+	RefrDomainUserId       *string                         `json:"refr_domain_userid,omitempty"`
+	RefrDomainTstamp       *time.Time                      `json:"refr_domain_tstamp,omitempty"`
+	BrCookies              *bool                           `json:"br_cookies,omitempty"`
+	BrLang                 *string                         `json:"br_lang,omitempty"`
+	BrFeaturesPdf          *bool                           `json:"br_features_pdf,omitempty"`
+	BrFeaturesQuicktime    *bool                           `json:"br_features_quicktime,omitempty"`
+	BrFeaturesRealplayer   *bool                           `json:"br_features_realplayer,omitempty"`
+	BrFeaturesWindowsmedia *bool                           `json:"br_features_windowsmedia,omitempty"`
+	BrFeaturesDirector     *bool                           `json:"br_features_director,omitempty"`
+	BrFeaturesFlash        *bool                           `json:"br_features_flash,omitempty"`
+	BrFeaturesJava         *bool                           `json:"br_features_java,omitempty"`
+	BrFeaturesGears        *bool                           `json:"br_features_gears,omitempty"`
+	BrFeaturesSilverlight  *bool                           `json:"br_features_silverlight,omitempty"`
+	BrColordepth           *int64                          `json:"br_colordepth,omitempty"`
+	ViewportSize           *string                         `json:"viewport_size,omitempty"`
+	BrViewWidth            *int                            `json:"br_viewwidth,omitempty"`
+	BrViewHeight           *int                            `json:"br_viewheight,omitempty"`
+	DocCharset             *string                         `json:"doc_charset,omitempty"`
+	DocSize                *string                         `json:"doc_size,omitempty"`
+	DocWidth               *int                            `json:"doc_width,omitempty"`
+	DocHeight              *int                            `json:"doc_height,omitempty"`
+	DvceScreenResolution   *string                         `json:"dvce_screenresolution,omitempty"`
+	DvceScreenWidth        *int                            `json:"dvce_screenwidth,omitempty"`
+	DvceScreenHeight       *int                            `json:"dvce_screenheight,omitempty"`
+	Contexts               *envelope.Contexts              `json:"contexts,omitempty"`
 	SelfDescribingEvent    *envelope.SelfDescribingPayload `json:"self_describing_event"`
-	PpXOffsetMin           *int64                          `json:"pp_xoffset_min"`
-	PpXOffsetMax           *int64                          `json:"pp_xoffset_max"`
-	PpYOffsetMin           *int64                          `json:"pp_yoffset_min"`
-	PpYOffsetMax           *int64                          `json:"pp_yoffset_max"`
-	SeCategory             *string                         `json:"se_category"`
-	SeAction               *string                         `json:"se_action"`
-	SeLabel                *string                         `json:"se_label"`
-	SeProperty             *string                         `json:"se_property"`
-	SeValue                *float64                        `json:"se_value"`
-	TrOrderId              *string                         `json:"tr_orderid"`
-	TrAffiliation          *string                         `json:"tr_affiliation"`
-	TrTotal                *float64                        `json:"tr_total"`
-	TrTax                  *float64                        `json:"tr_tax"`
-	TrShipping             *float64                        `json:"tr_shipping"`
-	TrCity                 *string                         `json:"tr_city"`
-	TrState                *string                         `json:"tr_state"`
-	TrCountry              *string                         `json:"tr_country"`
-	TrCurrency             *string                         `json:"tr_currency"`
-	TiOrderId              *string                         `json:"ti_orderid"`
-	TiSku                  *string                         `json:"ti_sku"`
-	TiName                 *string                         `json:"ti_name"`
-	TiCategory             *string                         `json:"ti_category"`
-	TiPrice                *float64                        `json:"ti_price,string"`
-	TiQuantity             *int64                          `json:"ti_quantity"`
-	TiCurrency             *string                         `json:"ti_currency"`
-	EventVendor            *string                         `json:"event_vendor"`
-	EventName              *string                         `json:"event_name"`
-	EventFormat            *string                         `json:"event_format"`
-	EventVersion           *string                         `json:"event_version"`
+	PpXOffsetMin           *int64                          `json:"pp_xoffset_min,omitempty"`
+	PpXOffsetMax           *int64                          `json:"pp_xoffset_max,omitempty"`
+	PpYOffsetMin           *int64                          `json:"pp_yoffset_min,omitempty"`
+	PpYOffsetMax           *int64                          `json:"pp_yoffset_max,omitempty"`
+	SeCategory             *string                         `json:"se_category,omitempty"`
+	SeAction               *string                         `json:"se_action,omitempty"`
+	SeLabel                *string                         `json:"se_label,omitempty"`
+	SeProperty             *string                         `json:"se_property,omitempty"`
+	SeValue                *float64                        `json:"se_value,omitempty"`
+	TrOrderId              *string                         `json:"tr_orderid,omitempty"`
+	TrAffiliation          *string                         `json:"tr_affiliation,omitempty"`
+	TrTotal                *float64                        `json:"tr_total,omitempty"`
+	TrTax                  *float64                        `json:"tr_tax,omitempty"`
+	TrShipping             *float64                        `json:"tr_shipping,omitempty"`
+	TrCity                 *string                         `json:"tr_city,omitempty"`
+	TrState                *string                         `json:"tr_state,omitempty"`
+	TrCountry              *string                         `json:"tr_country,omitempty"`
+	TrCurrency             *string                         `json:"tr_currency,omitempty"`
+	TiOrderId              *string                         `json:"ti_orderid,omitempty"`
+	TiSku                  *string                         `json:"ti_sku,omitempty"`
+	TiName                 *string                         `json:"ti_name,omitempty"`
+	TiCategory             *string                         `json:"ti_category,omitempty"`
+	TiPrice                *float64                        `json:"ti_price,string,omitempty"`
+	TiQuantity             *int64                          `json:"ti_quantity,omitempty"`
+	TiCurrency             *string                         `json:"ti_currency,omitempty"`
+	EventVendor            *string                         `json:"event_vendor,omitempty"`
+	EventName              *string                         `json:"event_name,omitempty"`
+	EventFormat            *string                         `json:"event_format,omitempty"`
+	EventVersion           *string                         `json:"event_version,omitempty"`
 }
 
 func (e *SnowplowEvent) Map() map[string]interface{} {

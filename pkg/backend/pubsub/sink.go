@@ -87,10 +87,10 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 			Data: payload,
 			Attributes: map[string]string{
 				envelope.PROTOCOL:  e.Protocol,
+				envelope.SCHEMA:    e.Schema,
+				envelope.VENDOR:    e.Vendor,
 				envelope.NAMESPACE: e.Namespace,
 				envelope.VERSION:   e.Version,
-				envelope.FORMAT:    e.Format,
-				envelope.SCHEMA:    e.Schema,
 				envelope.IS_VALID:  strconv.FormatBool(e.IsValid),
 			},
 		}

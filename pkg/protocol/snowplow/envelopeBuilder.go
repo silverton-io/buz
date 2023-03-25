@@ -22,7 +22,6 @@ func buildSnowplowEnvelope(e SnowplowEvent) envelope.Envelope {
 	n.Timestamp = *e.DvceCreatedTstamp
 	n.Protocol = protocol.SNOWPLOW
 	n.Schema = *e.SelfDescribingEvent.SchemaName()
-	n.Contexts = e.Contexts
 	n.Payload = e.Map()
 	return n
 }

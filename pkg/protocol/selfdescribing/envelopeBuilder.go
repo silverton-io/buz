@@ -46,12 +46,9 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not build generic event")
 		}
-		// Event meta
+
 		n.Protocol = protocol.SELF_DESCRIBING
 		n.Schema = genEvent.Payload.Schema
-		// Context
-		n.Contexts = &genEvent.Contexts
-		// Payload
 		n.Payload = genEvent.Payload.Data
 		envelopes = append(envelopes, n)
 	}
