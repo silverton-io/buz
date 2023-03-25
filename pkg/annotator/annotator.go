@@ -12,18 +12,23 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func getMetadataFromSchema(schema []byte) envelope.EventMeta {
+type schemaMetadata struct {
+	Vendor            string
+	Namespace         string
+	Version           string
+	DisableValidation bool
+}
+
+func getSchemaMetadata(schema []byte) schemaMetadata {
 	schemaContents := gjson.ParseBytes(schema)
 	vendor := schemaContents.Get("self.vendor").String()
 	namespace := schemaContents.Get("self.namespace").String()
 	version := schemaContents.Get("self.version").String()
-	format := schemaContents.Get("self.format").String()
 	disableValidation := schemaContents.Get("disableValidation").Bool()
-	return envelope.EventMeta{
+	return schemaMetadata{
 		Vendor:            vendor,
 		Namespace:         namespace,
 		Version:           version,
-		Format:            format,
 		DisableValidation: disableValidation,
 	}
 }
@@ -32,28 +37,23 @@ func Annotate(envelopes []envelope.Envelope, registry *registry.Registry) []enve
 	var e []envelope.Envelope
 	for _, envelope := range envelopes {
 		log.Debug().Msg("🟡 annotating event")
-		// NOTE - this has the potential to be confusing in the case that
-		// schema-level validation is disabled.
-		// Payload validation is still executed in that case but the outcome is disregarded.
-		isValid, validationError, schemaContents := validator.ValidatePayload(envelope.EventMeta.Schema, envelope.Payload, registry)
-		m := getMetadataFromSchema(schemaContents)
+		isValid, validationError, schemaContents := validator.Validate(envelope, registry)
+		m := getSchemaMetadata(schemaContents)
 		if m.Namespace != "" {
-			envelope.EventMeta.Namespace = m.Namespace
+			envelope.Vendor = m.Vendor
+			envelope.Namespace = m.Namespace
 		}
-		envelope.EventMeta.Vendor = m.Vendor
-		envelope.EventMeta.Version = m.Version
-		envelope.EventMeta.Format = m.Format
+		envelope.Version = m.Version
 		if m.DisableValidation {
 			// If schema-level validation is disabled
 			// consider the payload valid.
 			valid := true
-			envelope.Validation.IsValid = &valid
-			envelope.EventMeta.DisableValidation = m.DisableValidation
+			envelope.IsValid = valid
 		} else {
-			envelope.Validation.IsValid = &isValid
+			envelope.IsValid = isValid
 			if !isValid {
 				// Annotate the envelope with associated validation errors
-				envelope.Validation.Error = &validationError
+				envelope.ValidationError = &validationError
 			}
 		}
 		e = append(e, envelope)

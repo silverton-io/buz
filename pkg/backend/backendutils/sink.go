@@ -6,12 +6,15 @@ package backendutils
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
 )
+
+var DEFAULT_SINK_TIMEOUT_SECONDS int = 15
 
 type SinkMetadata struct {
 	Id               *uuid.UUID `json:"id"`
@@ -35,7 +38,8 @@ func StartSinkWorker(input <-chan []envelope.Envelope, shutdown <-chan int, sink
 		for {
 			select {
 			case envelopes := <-input:
-				ctx := context.Background()
+				ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(DEFAULT_SINK_TIMEOUT_SECONDS))
+				defer cancel()
 				err := sink.Dequeue(ctx, envelopes)
 				if err != nil {
 					log.Error().Err(err).Interface("metadata", sink.Metadata()).Msg("could not dequeue")

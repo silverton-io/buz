@@ -85,7 +85,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 	var validEnvelopes []envelope.Envelope
 	var invalidEnvelopes []envelope.Envelope
 	for _, e := range envelopes {
-		if *e.IsValid {
+		if e.IsValid {
 			validEnvelopes = append(validEnvelopes, e)
 		} else {
 			invalidEnvelopes = append(invalidEnvelopes, e)

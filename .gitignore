@@ -11,6 +11,7 @@ notes/*
 examples/quickstart/minio/*
 *.bin
 *.meta
+.idea/*
 
 # Terraform
 .terraform

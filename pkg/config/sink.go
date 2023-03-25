@@ -8,8 +8,9 @@ type Sink struct {
 	Name             string `json:"name"`
 	Type             string `json:"type"`
 	DeliveryRequired bool   `json:"deliveryRequired"`
-	Fanout           bool   `json:"fanout"`
-	// Pub/Sub
+	DefaultOutput    string `json:"defaultOutput"`
+	DeadletterOutput string `json:"deadletterOutput"`
+	// GCP
 	Project string `json:"project,omitempty"`
 	// Kafka
 	Brokers []string `json:"kakfaBrokers,omitempty"`

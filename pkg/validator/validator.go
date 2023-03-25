@@ -5,14 +5,18 @@
 package validator
 
 import (
+	"encoding/json"
+
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/envelope"
+	"github.com/silverton-io/buz/pkg/protocol"
 	"github.com/silverton-io/buz/pkg/registry"
 )
 
-func ValidatePayload(schemaName string, payload envelope.Payload, registry *registry.Registry) (isValid bool, validationError envelope.ValidationError, schema []byte) {
-	// FIXME- Short-circuit if the event is an unknown event
-	if schemaName == "" {
+// Validate an envelope's payload according to the corresponding schema
+func Validate(e envelope.Envelope, registry *registry.Registry) (isValid bool, validationError envelope.ValidationError, schema []byte) {
+	// If payload doesn't have a schema associated with it, consider the payload invalid
+	if e.Schema == "" {
 		validationError := envelope.ValidationError{
 			ErrorType:       &NoSchemaAssociated.Type,
 			ErrorResolution: &NoSchemaAssociated.Resolution,
@@ -20,7 +24,9 @@ func ValidatePayload(schemaName string, payload envelope.Payload, registry *regi
 		}
 		return false, validationError, nil
 	}
-	schemaExists, schemaContents := registry.Get(schemaName)
+	schemaExists, schemaContents := registry.Get(e.Schema)
+	// If the payload has a schema associated but the schema does not exist
+	// in the registry, consider the payload invalid.
 	if !schemaExists {
 		validationError := envelope.ValidationError{
 			ErrorType:       &NoSchemaInBackend.Type,
@@ -29,7 +35,17 @@ func ValidatePayload(schemaName string, payload envelope.Payload, registry *regi
 		}
 		return false, validationError, nil
 	} else {
-		payload, err := payload.AsByte()
+		var payloadToValidate []byte
+		var err error
+		// Snowplow events have to be handled separately, as `self_describing_event` is
+		// the only portion that is validated according to a jsonschema.
+		if e.Protocol == protocol.SNOWPLOW {
+			e := e.Payload["self_describing_event"].(map[string]interface{})["data"]
+			payloadToValidate, err = json.Marshal(e)
+		} else {
+			payloadToValidate, err = e.Payload.AsByte()
+		}
+		// If the payload cannot be marshaled it should be considered invalid.
 		if err != nil {
 			log.Error().Stack().Err(err).Msg("🔴 could not marshal payload")
 			validationError := envelope.ValidationError{
@@ -39,7 +55,8 @@ func ValidatePayload(schemaName string, payload envelope.Payload, registry *regi
 			}
 			return false, validationError, nil
 		}
-		if payload == nil {
+		// If the payload is not present at all it should be considered invalid.
+		if payloadToValidate == nil {
 			validationError := envelope.ValidationError{
 				ErrorType:       &PayloadNotPresent.Type,
 				ErrorResolution: &PayloadNotPresent.Resolution,
@@ -47,7 +64,7 @@ func ValidatePayload(schemaName string, payload envelope.Payload, registry *regi
 			}
 			return false, validationError, nil
 		}
-		isValid, validationError := validatePayload(payload, schemaContents)
+		isValid, validationError := validatePayload(payloadToValidate, schemaContents)
 		return isValid, validationError, schemaContents
 	}
 }

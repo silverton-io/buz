@@ -11,7 +11,6 @@ import (
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/meta"
-	"github.com/silverton-io/buz/pkg/privacy"
 	"github.com/silverton-io/buz/pkg/registry"
 )
 
@@ -63,8 +62,8 @@ func (m *ChannelManifold) Initialize(registry *registry.Registry, sinks *[]backe
 
 func (m *ChannelManifold) Enqueue(envelopes []envelope.Envelope) error {
 	annotatedEnvelopes := annotator.Annotate(envelopes, m.registry)
-	anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.conf.Privacy)
-	m.inputChan <- anonymizedEnvelopes
+	// anonymizedEnvelopes := privacy.AnonymizeEnvelopes(annotatedEnvelopes, m.conf.Privacy)
+	m.inputChan <- annotatedEnvelopes
 	return nil
 }
 
