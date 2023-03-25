@@ -6,9 +6,6 @@ package stats
 
 import (
 	"sync"
-
-	"github.com/silverton-io/buz/pkg/envelope"
-	"github.com/silverton-io/buz/pkg/protocol"
 )
 
 type ProtocolStats struct {
@@ -18,35 +15,35 @@ type ProtocolStats struct {
 	Valid   map[string]map[string]int64 `json:"valid"`
 }
 
-func (ps *ProtocolStats) Build() {
-	var vProtoStat = make(map[string]map[string]int64)
-	var invProtoStat = make(map[string]map[string]int64)
-	ps.Valid = vProtoStat
-	ps.Invalid = invProtoStat
-	for _, protocol := range protocol.GetInputProtocols() {
-		var vEventStat = make(map[string]int64)
-		var invEventStat = make(map[string]int64)
-		ps.Valid[protocol] = vEventStat
-		ps.Invalid[protocol] = invEventStat
-	}
-}
+// func (ps *ProtocolStats) Build() {
+// 	var vProtoStat = make(map[string]map[string]int64)
+// 	var invProtoStat = make(map[string]map[string]int64)
+// 	ps.Valid = vProtoStat
+// 	ps.Invalid = invProtoStat
+// 	for _, protocol := range protocol.GetInputProtocols() {
+// 		var vEventStat = make(map[string]int64)
+// 		var invEventStat = make(map[string]int64)
+// 		ps.Valid[protocol] = vEventStat
+// 		ps.Invalid[protocol] = invEventStat
+// 	}
+// }
 
-func (ps *ProtocolStats) IncrementValid(event *envelope.EventMeta, count int64) {
-	i := ps.Valid[event.Protocol][event.Namespace]
-	ps.vmu.Lock()
-	defer ps.vmu.Unlock()
-	ps.Valid[event.Protocol][event.Namespace] = i + count
-}
+// func (ps *ProtocolStats) IncrementValid(event *envelope.EventMeta, count int64) {
+// 	i := ps.Valid[event.Protocol][event.Namespace]
+// 	ps.vmu.Lock()
+// 	defer ps.vmu.Unlock()
+// 	ps.Valid[event.Protocol][event.Namespace] = i + count
+// }
 
-func (ps *ProtocolStats) IncrementInvalid(event *envelope.EventMeta, count int64) {
-	i := ps.Invalid[event.Protocol][event.Namespace]
-	ps.imu.Lock()
-	defer ps.imu.Unlock()
-	ps.Invalid[event.Protocol][event.Namespace] = i + count
-}
+// func (ps *ProtocolStats) IncrementInvalid(event *envelope.EventMeta, count int64) {
+// 	i := ps.Invalid[event.Protocol][event.Namespace]
+// 	ps.imu.Lock()
+// 	defer ps.imu.Unlock()
+// 	ps.Invalid[event.Protocol][event.Namespace] = i + count
+// }
 
-func BuildProtocolStats() *ProtocolStats {
-	ps := ProtocolStats{}
-	ps.Build()
-	return &ps
-}
+// func BuildProtocolStats() *ProtocolStats {
+// 	ps := ProtocolStats{}
+// 	ps.Build()
+// 	return &ps
+// }

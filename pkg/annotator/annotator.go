@@ -12,18 +12,23 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func getMetadataFromSchema(schema []byte) envelope.EventMeta {
+type schemaMetadata struct {
+	Vendor            string
+	Namespace         string
+	Version           string
+	DisableValidation bool
+}
+
+func getSchemaMetadata(schema []byte) schemaMetadata {
 	schemaContents := gjson.ParseBytes(schema)
 	vendor := schemaContents.Get("self.vendor").String()
 	namespace := schemaContents.Get("self.namespace").String()
 	version := schemaContents.Get("self.version").String()
-	format := schemaContents.Get("self.format").String()
 	disableValidation := schemaContents.Get("disableValidation").Bool()
-	return envelope.EventMeta{
+	return schemaMetadata{
 		Vendor:            vendor,
 		Namespace:         namespace,
 		Version:           version,
-		Format:            format,
 		DisableValidation: disableValidation,
 	}
 }
@@ -32,11 +37,8 @@ func Annotate(envelopes []envelope.Envelope, registry *registry.Registry) []enve
 	var e []envelope.Envelope
 	for _, envelope := range envelopes {
 		log.Debug().Msg("🟡 annotating event")
-		// NOTE - this has the potential to be confusing in the case that
-		// schema-level validation is disabled.
-		// Payload validation is still executed in that case but the outcome is disregarded.
-		isValid, validationError, schemaContents := validator.ValidatePayload(envelope, registry)
-		m := getMetadataFromSchema(schemaContents)
+		isValid, validationError, schemaContents := validator.Validate(envelope, registry)
+		m := getSchemaMetadata(schemaContents)
 		if m.Namespace != "" {
 			envelope.Vendor = m.Vendor
 			envelope.Namespace = m.Namespace
