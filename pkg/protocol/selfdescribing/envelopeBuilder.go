@@ -25,6 +25,7 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 		log.Error().Err(err).Msg("🔴 could not read request body")
 		return envelopes
 	}
+	contexts := envelope.BuildContextsFromRequest(c)
 	// If the request body is gzipped, decompress it
 	if c.GetHeader("Content-Encoding") == "gzip" {
 		reader, err := gzip.NewReader(bytes.NewReader(reqBody))
@@ -41,7 +42,7 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 	}
 
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
-		n := envelope.NewEnvelope()
+		n := envelope.NewEnvelope(conf.App)
 		genEvent, err := buildEvent(e, conf.SelfDescribing)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not build generic event")
@@ -49,6 +50,7 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 
 		n.Protocol = protocol.SELF_DESCRIBING
 		n.Schema = genEvent.Payload.Schema
+		n.Contexts = &contexts
 		n.Payload = genEvent.Payload.Data
 		envelopes = append(envelopes, n)
 	}

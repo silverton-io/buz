@@ -17,8 +17,8 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func buildSnowplowEnvelope(e SnowplowEvent) envelope.Envelope {
-	n := envelope.NewEnvelope()
+func buildSnowplowEnvelope(conf config.Config, e SnowplowEvent) envelope.Envelope {
+	n := envelope.NewEnvelope(conf.App)
 	n.Timestamp = *e.DvceCreatedTstamp
 	n.Protocol = protocol.SNOWPLOW
 	n.Schema = *e.SelfDescribingEvent.SchemaName()
@@ -37,13 +37,13 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 		payloadData := gjson.GetBytes(body, "data")
 		for _, event := range payloadData.Array() {
 			spEvent := buildEventFromMappedParams(c, event.Value().(map[string]interface{}), *conf)
-			e := buildSnowplowEnvelope(spEvent)
+			e := buildSnowplowEnvelope(*conf, spEvent)
 			envelopes = append(envelopes, e)
 		}
 	} else {
 		params := util.MapUrlParams(c)
 		spEvent := buildEventFromMappedParams(c, params, *conf)
-		e := buildSnowplowEnvelope(spEvent)
+		e := buildSnowplowEnvelope(*conf, spEvent)
 		envelopes = append(envelopes, e)
 	}
 	return envelopes

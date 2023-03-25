@@ -24,7 +24,7 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 		return envelopes
 	}
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
-		n := envelope.NewEnvelope()
+		n := envelope.NewEnvelope(conf.App)
 		contexts := envelope.BuildContextsFromRequest(c)
 		sde, err := buildEvent(c, e)
 		if err != nil {

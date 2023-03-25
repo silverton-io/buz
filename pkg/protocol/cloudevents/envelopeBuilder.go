@@ -16,23 +16,10 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func newCloudeventsEnvelope(event CloudEvent) envelope.Envelope {
-	n := envelope.NewEnvelope()
-	// Event Meta
-	n.Protocol = protocol.CLOUDEVENTS
-	n.Schema = event.DataSchema
-	// Set timestamp according to upstream source
-	if event.Time != nil {
-		n.Timestamp = *event.Time
-	}
-	// Payload
-	n.Payload = event.Data
-	return n
-}
-
 func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.CollectorMeta) []envelope.Envelope {
 	var envelopes []envelope.Envelope
 	reqBody, err := io.ReadAll(c.Request.Body)
+	contexts := envelope.BuildContextsFromRequest(c)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not read request body")
 		return envelopes
@@ -42,7 +29,14 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not build Cloudevent")
 		}
-		n := newCloudeventsEnvelope(cEvent)
+		n := envelope.NewEnvelope(conf.App)
+		n.Protocol = protocol.CLOUDEVENTS
+		n.Schema = cEvent.DataSchema
+		if cEvent.Time != nil {
+			n.Timestamp = *cEvent.Time
+		}
+		n.Contexts = &contexts
+		n.Payload = cEvent.Data
 		envelopes = append(envelopes, n)
 	}
 	return envelopes

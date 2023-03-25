@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/silverton-io/buz/pkg/config"
 )
 
 const (
@@ -22,18 +23,21 @@ const (
 
 // An envelope consisting of minimally-defined properties
 type Envelope struct {
-	Uuid               uuid.UUID        `json:"uuid"`
-	Timestamp          time.Time        `json:"timestamp" sql:"index"`
-	CollectorTimestamp time.Time        `json:"collectorTimestamp" sql:"index"`
-	Protocol           string           `json:"protocol"`
-	Schema             string           `json:"schema"`
-	Vendor             string           `json:"vendor"`
-	Namespace          string           `json:"namespace"`
-	Version            string           `json:"version"`
-	IsValid            bool             `json:"isValid"`
-	ValidationError    *ValidationError `json:"validationError,omitempty" gorm:"type:json"`
-	Contexts           *Contexts        `json:"contexts,omitempty" gorm:"type:json"`
-	Payload            Payload          `json:"payload" gorm:"type:json"`
+	Uuid            uuid.UUID        `json:"uuid"`
+	Timestamp       time.Time        `json:"timestamp" sql:"index"`
+	BuzTimestamp    time.Time        `json:"buzTimestamp" sql:"index"`
+	BuzVersion      string           `json:"buzVersion"`
+	BuzName         string           `json:"buzName"`
+	BuzEnv          string           `json:"buzEnv"`
+	Protocol        string           `json:"protocol"`
+	Schema          string           `json:"schema"`
+	Vendor          string           `json:"vendor"`
+	Namespace       string           `json:"namespace"`
+	Version         string           `json:"version"`
+	IsValid         bool             `json:"isValid"`
+	ValidationError *ValidationError `json:"validationError,omitempty" gorm:"type:json"`
+	Contexts        *Contexts        `json:"contexts,omitempty" gorm:"type:json"`
+	Payload         Payload          `json:"payload" gorm:"type:json"`
 }
 
 func (e *Envelope) AsMap() (map[string]interface{}, error) {
@@ -57,42 +61,51 @@ func (e *Envelope) AsByte() ([]byte, error) {
 }
 
 type JsonbEnvelope struct {
-	Uuid               uuid.UUID        `json:"uuid" gorm:"type:uuid"`
-	Timestamp          time.Time        `json:"timestamp" sql:"index"`
-	CollectorTimestamp time.Time        `json:"collectorTimestamp" sql:"index"`
-	Protocol           string           `json:"protocol"`
-	Schema             string           `json:"schema"`
-	Vendor             string           `json:"vendor"`
-	Namespace          string           `json:"namespace"`
-	Version            string           `json:"version"`
-	IsValid            bool             `json:"isValid"`
-	ValidationError    *ValidationError `json:"validationError,omitempty" gorm:"type:jsonb"`
-	Contexts           *Contexts        `json:"contexts,omitempty" gorm:"type:jsonb"`
-	Payload            Payload          `json:"payload" gorm:"type:jsonb"`
+	Uuid            uuid.UUID        `json:"uuid" gorm:"type:uuid"`
+	Timestamp       time.Time        `json:"timestamp" sql:"index"`
+	BuzTimestamp    time.Time        `json:"buzTimestamp" sql:"index"`
+	BuzVersion      string           `json:"buzVersion"`
+	BuzName         string           `json:"buzName"`
+	BuzEnv          string           `json:"buzEnv"`
+	Protocol        string           `json:"protocol"`
+	Schema          string           `json:"schema"`
+	Vendor          string           `json:"vendor"`
+	Namespace       string           `json:"namespace"`
+	Version         string           `json:"version"`
+	IsValid         bool             `json:"isValid"`
+	ValidationError *ValidationError `json:"validationError,omitempty" gorm:"type:jsonb"`
+	Contexts        *Contexts        `json:"contexts,omitempty" gorm:"type:jsonb"`
+	Payload         Payload          `json:"payload" gorm:"type:jsonb"`
 }
 
 type StringEnvelope struct {
-	Uuid               uuid.UUID        `json:"uuid" gorm:"type:uuid"`
-	Timestamp          time.Time        `json:"timestamp" sql:"index"`
-	CollectorTimestamp time.Time        `json:"collectorTimestamp" sql:"index"`
-	Protocol           string           `json:"protocol"`
-	Schema             string           `json:"schema"`
-	Vendor             string           `json:"vendor"`
-	Namespace          string           `json:"namespace"`
-	Version            string           `json:"version"`
-	IsValid            bool             `json:"isValid"`
-	ValidationError    *ValidationError `json:"validationError,omitempty" gorm:"type:string"`
-	Contexts           *Contexts        `json:"contexts,omitempty" gorm:"type:string"`
-	Payload            Payload          `json:"payload" gorm:"type:string"`
+	Uuid            uuid.UUID        `json:"uuid" gorm:"type:uuid"`
+	Timestamp       time.Time        `json:"timestamp" sql:"index"`
+	BuzTimestamp    time.Time        `json:"buzTimestamp" sql:"index"`
+	BuzVersion      string           `json:"buzVersion"`
+	BuzName         string           `json:"buzName"`
+	BuzEnv          string           `json:"buzEnv"`
+	Protocol        string           `json:"protocol"`
+	Schema          string           `json:"schema"`
+	Vendor          string           `json:"vendor"`
+	Namespace       string           `json:"namespace"`
+	Version         string           `json:"version"`
+	IsValid         bool             `json:"isValid"`
+	ValidationError *ValidationError `json:"validationError,omitempty" gorm:"type:string"`
+	Contexts        *Contexts        `json:"contexts,omitempty" gorm:"type:string"`
+	Payload         Payload          `json:"payload" gorm:"type:string"`
 }
 
 // Build a new envelope with base fields populated
-func NewEnvelope() Envelope {
+func NewEnvelope(conf config.App) Envelope {
 	now := time.Now().UTC()
 	envelope := Envelope{
-		Uuid:               uuid.New(),
-		Timestamp:          now,
-		CollectorTimestamp: now,
+		Uuid:         uuid.New(),
+		Timestamp:    now,
+		BuzTimestamp: now,
+		BuzVersion:   conf.Name,
+		BuzName:      conf.Name,
+		BuzEnv:       conf.Env,
 	}
 	return envelope
 }
