@@ -8,7 +8,6 @@ import (
 	"context"
 	"net/url"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
@@ -17,34 +16,27 @@ import (
 )
 
 type Sink struct {
-	id               *uuid.UUID
-	sinkType         string
-	name             string
-	deliveryRequired bool
-	url              url.URL
-	input            chan []envelope.Envelope
-	shutdown         chan int
+	metadata backendutils.SinkMetadata
+	input    chan []envelope.Envelope
+	shutdown chan int
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
-	return backendutils.SinkMetadata{
-		Id:               s.id,
-		Name:             s.name,
-		SinkType:         s.sinkType,
-		DeliveryRequired: s.deliveryRequired,
-	}
+	return s.metadata
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("🟢 initializing " + s.sinkType + " sink")
-	url, err := url.Parse(conf.Url)
+	_, err := url.Parse(conf.DefaultOutput)
 	if err != nil {
-		log.Debug().Err(err).Msg("🔴 " + conf.Url + " is not a valid url")
+		log.Error().Err(err).Msg("🔴 " + conf.DefaultOutput + " is not a valid url")
 		return err
 	}
-	id := uuid.New()
-	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
-	s.url = *url
+	_, err = url.Parse(conf.DeadletterOutput)
+	if err != nil {
+		log.Error().Err(err).Msg("🔴 " + conf.DeadletterOutput + " is not a valid url")
+		return err
+	}
+	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
 	return nil
@@ -61,9 +53,14 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	return nil
 }
 
-func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
-	_, err := request.PostEnvelopes(s.url, envelopes)
+	url, err := url.Parse(output)
+	if err != nil {
+		log.Error().Err(err).Msg("🔴 " + output + " is not a valid url")
+		return err
+	}
+	_, err = request.PostEnvelopes(*url, envelopes)
 	if err != nil {
 		log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("🔴 could not dequeue payloads")
 	}
@@ -71,7 +68,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 }
 
 func (s *Sink) Shutdown() error {
-	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink") // no-op
+	log.Debug().Interface("metadata", s.metadata).Msg("🟢 shutting down sink") // no-op
 	s.shutdown <- 1
 	return nil
 }

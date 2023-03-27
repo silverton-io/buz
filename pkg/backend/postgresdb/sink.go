@@ -7,11 +7,9 @@ package postgresdb
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/db"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"gorm.io/driver/postgres"
@@ -19,29 +17,18 @@ import (
 )
 
 type Sink struct {
-	id                 *uuid.UUID
-	sinkType           string
-	name               string
-	deliveryRequired   bool
-	gormDb             *gorm.DB
-	defaultEventsTable string
-	input              chan []envelope.Envelope
-	shutdown           chan int
+	metadata backendutils.SinkMetadata
+	gormDb   *gorm.DB
+	input    chan []envelope.Envelope
+	shutdown chan int
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
-	return backendutils.SinkMetadata{
-		Id:               s.id,
-		Name:             s.name,
-		SinkType:         s.sinkType,
-		DeliveryRequired: s.deliveryRequired,
-	}
+	return s.metadata
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
-	id := uuid.New()
-	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
-	log.Debug().Msg("🟢 initializing " + s.sinkType + " sink")
+	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
 	connParams := db.ConnectionParams{
 		Host: conf.Hosts[0], //Only use the first configured host.
 		Port: conf.Port,
@@ -52,13 +39,13 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	connString := GenerateDsn(connParams)
 	gormDb, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
-		log.Error().Err(err).Msg("🔴 could not open " + s.sinkType + " connection")
+		log.Error().Err(err).Msg("🔴 could not open " + s.metadata.SinkType + " connection")
 		return err
 	}
-	s.gormDb, s.defaultEventsTable = gormDb, constants.BUZ_EVENTS
+	s.gormDb = gormDb
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
-	for _, tbl := range []string{s.defaultEventsTable} {
+	for _, tbl := range []string{s.metadata.DefaultOutput, s.metadata.DeadletterOutput} {
 		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.JsonbEnvelope{})
 		if ensureErr != nil {
 			return ensureErr
@@ -78,14 +65,14 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	return nil
 }
 
-func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
-	err := s.gormDb.Table(s.defaultEventsTable).Create(envelopes).Error
+	err := s.gormDb.Table(output).Create(envelopes).Error
 	return err
 }
 
 func (s *Sink) Shutdown() error {
-	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink")
+	log.Debug().Interface("metadata", s.metadata).Msg("🟢 shutting down sink")
 	db, _ := s.gormDb.DB()
 	s.shutdown <- 1
 	err := db.Close()

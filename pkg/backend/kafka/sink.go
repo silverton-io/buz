@@ -9,11 +9,9 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/twmb/franz-go/pkg/kadm"
 	"github.com/twmb/franz-go/pkg/kgo"
@@ -26,34 +24,24 @@ const (
 )
 
 type Sink struct {
-	id                 *uuid.UUID
-	sinkType           string
-	name               string
-	deliveryRequired   bool
-	client             *kgo.Client
-	defaultEventsTopic string
-	input              chan []envelope.Envelope
-	shutdown           chan int
+	metadata backendutils.SinkMetadata
+	client   *kgo.Client
+	input    chan []envelope.Envelope
+	shutdown chan int
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
-	return backendutils.SinkMetadata{
-		Id:               s.id,
-		Name:             s.name,
-		SinkType:         s.sinkType,
-		DeliveryRequired: s.deliveryRequired,
-	}
+	return s.metadata
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
-	id := uuid.New()
-	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
+	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
 	ctx := context.Background()
 	log.Debug().Msg("🟡 initializing kafka client")
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(conf.Brokers...),
 	)
-	s.client, s.defaultEventsTopic = client, constants.BUZ_EVENTS
+	s.client = client
 	if err != nil {
 		log.Debug().Stack().Err(err).Msg("could not create kafka sink client")
 		return err
@@ -66,7 +54,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 	}
 	admClient := kadm.NewClient(client)
 	log.Debug().Msg("🟡 verifying topics exist")
-	topicDetails, err := admClient.DescribeTopicConfigs(ctx, s.defaultEventsTopic)
+	topicDetails, err := admClient.DescribeTopicConfigs(ctx, s.metadata.DefaultOutput, s.metadata.DeadletterOutput)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not describe topic configs")
 		return err
@@ -97,7 +85,7 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	return nil
 }
 
-func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
 	var wg sync.WaitGroup
 	for _, e := range envelopes {
 		payload, err := json.Marshal(e)
@@ -114,7 +102,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 		}
 		record := &kgo.Record{
 			Key:     []byte(e.Namespace),
-			Topic:   s.defaultEventsTopic,
+			Topic:   output,
 			Value:   payload,
 			Headers: headers,
 		}
@@ -128,7 +116,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 			} else {
 				offset := strconv.FormatInt(r.Offset, 10)
 				partition := strconv.FormatInt(int64(r.Partition), 10)
-				log.Trace().Msg("published event " + offset + " to topic " + s.defaultEventsTopic + " partition " + partition)
+				log.Trace().Msg("published event " + offset + " to topic " + output + " partition " + partition)
 			}
 		})
 		if produceErr != nil {
@@ -140,7 +128,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 }
 
 func (s *Sink) Shutdown() error {
-	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink")
+	log.Debug().Interface("metadata", s.metadata).Msg("🟢 shutting down sink")
 	s.shutdown <- 1
 	s.client.Close()
 	return nil

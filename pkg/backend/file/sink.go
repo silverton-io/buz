@@ -9,41 +9,27 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 )
 
 type Sink struct {
-	id               *uuid.UUID
-	sinkType         string
-	name             string
-	deliveryRequired bool
-	defaultFile      string
-	input            chan []envelope.Envelope
-	shutdown         chan int
+	metadata backendutils.SinkMetadata
+	input    chan []envelope.Envelope
+	shutdown chan int
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
-	return backendutils.SinkMetadata{
-		Id:               s.id,
-		Name:             s.name,
-		SinkType:         s.sinkType,
-		DeliveryRequired: s.deliveryRequired,
-	}
+	return s.metadata
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing file sink")
-	id := uuid.New()
-	s.id, s.name, s.sinkType = &id, conf.Name, conf.Type
-	s.deliveryRequired = conf.DeliveryRequired
+	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
-	s.defaultFile = constants.BUZ_EVENTS + ".json"
 	return nil
 }
 
@@ -81,9 +67,9 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	return nil
 }
 
-func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
-	err := s.batchPublish(ctx, s.defaultFile, envelopes)
+	err := s.batchPublish(ctx, output, envelopes)
 	return err
 }
 

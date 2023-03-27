@@ -12,57 +12,54 @@ import (
 	"sync"
 
 	"cloud.google.com/go/pubsub"
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"golang.org/x/net/context"
 )
 
 const INIT_TIMEOUT_SECONDS = 10
 
+// See whether or not a topic exists.
+func checkTopicExistence(topic *pubsub.Topic) bool {
+	ctx := context.Background()
+	exists, err := topic.Exists(ctx)
+	if err != nil {
+		log.Debug().Err(err).Msg("🟡 cannot check valid event topic existence")
+		return false
+	}
+	if !exists {
+		return false
+	}
+	return true
+}
+
 type Sink struct {
-	id                 *uuid.UUID
-	sinkType           string
-	name               string
-	deliveryRequired   bool
-	client             *pubsub.Client
-	defaultEventsTopic *pubsub.Topic
-	input              chan []envelope.Envelope
-	shutdown           chan int
+	metadata backendutils.SinkMetadata
+	client   *pubsub.Client
+	input    chan []envelope.Envelope
+	shutdown chan int
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
-	return backendutils.SinkMetadata{
-		Id:               s.id,
-		Name:             s.name,
-		SinkType:         s.sinkType,
-		DeliveryRequired: s.deliveryRequired,
-	}
+	return s.metadata
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
+	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
 	ctx, _ := context.WithTimeout(context.Background(), INIT_TIMEOUT_SECONDS*time.Second)
 	client, err := pubsub.NewClient(ctx, conf.Project)
 	if err != nil {
 		log.Debug().Err(err).Msg("🟡 could not initialize pubsub sink")
 		return err
 	}
-	defaultTopic := client.Topic(constants.BUZ_EVENTS)
-	dTopicExists, err := defaultTopic.Exists(ctx)
-	if err != nil {
-		log.Debug().Err(err).Msg("🟡 cannot check valid event topic existence")
-		return err
+	defaultTopic := client.Topic(s.metadata.DefaultOutput)
+	deadletterTopic := client.Topic(s.metadata.DeadletterOutput)
+	for _, i := range []pubsub.Topic{*defaultTopic, *deadletterTopic} {
+		checkTopicExistence(&i)
 	}
-	if !dTopicExists {
-		log.Debug().Err(err).Msg("🟡 valid event topic doesn't exist in project " + conf.Project)
-		return err
-	}
-	id := uuid.New()
-	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
-	s.client, s.defaultEventsTopic = client, defaultTopic
+	s.client = client
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
 	return nil
@@ -79,7 +76,7 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	return nil
 }
 
-func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
 	var wg sync.WaitGroup
 	for _, e := range envelopes {
 		payload, _ := json.Marshal(e)
@@ -94,7 +91,8 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 				envelope.IS_VALID:  strconv.FormatBool(e.IsValid),
 			},
 		}
-		result := s.defaultEventsTopic.Publish(ctx, msg)
+		topic := s.client.Topic(output)
+		result := topic.Publish(ctx, msg)
 		wg.Add(1)
 		publishErr := make(chan error, 1)
 		go func(res *pubsub.PublishResult, pErr chan error) {
@@ -104,7 +102,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 				pErr <- err
 
 			} else {
-				log.Trace().Msgf("published event id " + id + " to topic " + s.defaultEventsTopic.ID())
+				log.Trace().Msgf("published event id " + id + " to topic " + topic.ID())
 				pErr <- nil
 			}
 		}(result, publishErr)
@@ -118,7 +116,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 }
 
 func (s *Sink) Shutdown() error {
-	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink")
+	log.Debug().Interface("metadata", s.metadata).Msg("🟢 shutting down sink")
 	s.shutdown <- 1
 	s.client.Close() // Technically does not need to be called since it's available for lifetime
 	return nil
