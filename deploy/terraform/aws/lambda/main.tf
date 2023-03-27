@@ -165,14 +165,14 @@ resource "null_resource" "build_and_push_image" {
   ]
 }
 
-# resource "null_resource" "config_cleanup" {
-#   provisioner "local-exec" {
-#     command = "rm ${local_file.dockerfile.filename} || true && rm ${local_file.config.filename} || true"
-#   }
-#   depends_on = [
-#     null_resource.build_and_push_image
-#   ]
-# }
+resource "null_resource" "config_cleanup" {
+  provisioner "local-exec" {
+    command = "rm ${local_file.dockerfile.filename} || true && rm ${local_file.config.filename} || true"
+  }
+  depends_on = [
+    null_resource.build_and_push_image
+  ]
+}
 
 resource "aws_lambda_function" "buz" {
   function_name = local.service_name
