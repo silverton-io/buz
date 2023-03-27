@@ -55,10 +55,9 @@ func (s *Sink) Initialize(conf config.Sink) error {
 		return err
 	}
 	defaultTopic := client.Topic(s.metadata.DefaultOutput)
+	checkTopicExistence(defaultTopic)
 	deadletterTopic := client.Topic(s.metadata.DeadletterOutput)
-	for _, i := range []pubsub.Topic{*defaultTopic, *deadletterTopic} {
-		checkTopicExistence(&i)
-	}
+	checkTopicExistence((deadletterTopic))
 	s.client = client
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
