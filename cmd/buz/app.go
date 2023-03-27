@@ -84,7 +84,7 @@ func (a *App) configure() {
 
 func (a *App) initializeManifold() {
 	log.Info().Msg("🟢 initializing manifold")
-	m := &manifold.ChannelManifold{}
+	m := &manifold.SimpleManifold{}
 	log.Info().Msg("🟢 initializing registry")
 	registry := registry.Registry{}
 	if err := registry.Initialize(a.config.Registry); err != nil {

@@ -3,8 +3,8 @@ module "template_files" {
   base_dir = "../../../../schemas/"
 }
 
-resource "aws_kinesis_firehose_delivery_stream" "buz_valid" {
-  name        = local.valid_stream
+resource "aws_kinesis_firehose_delivery_stream" "default" {
+  name        = local.default_output
   destination = "extended_s3"
 
   extended_s3_configuration {
@@ -33,15 +33,15 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_valid" {
         }
         parameters {
           parameter_name  = "MetadataExtractionQuery"
-          parameter_value = "{vendor:.event.vendor,namespace:.event.namespace,version:.event.version}"
+          parameter_value = local.metadata_extraction_params
         }
       }
     }
   }
 }
 
-resource "aws_kinesis_firehose_delivery_stream" "buz_invalid" {
-  name        = local.invalid_stream
+resource "aws_kinesis_firehose_delivery_stream" "deadletter" {
+  name        = local.deadletter_output
   destination = "extended_s3"
 
   extended_s3_configuration {
@@ -51,8 +51,8 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_invalid" {
     buffer_interval    = var.firehose_buffer_interval
     compression_format = "GZIP"
 
-    prefix              = "invalid/${local.s3_dynamic_prefix}"
-    error_output_prefix = "err/invalid/"
+    prefix              = "deadletter/${local.s3_dynamic_prefix}"
+    error_output_prefix = "err/deadletter/"
 
     dynamic_partitioning_configuration {
       enabled = true
@@ -69,7 +69,7 @@ resource "aws_kinesis_firehose_delivery_stream" "buz_invalid" {
         }
         parameters {
           parameter_name  = "MetadataExtractionQuery"
-          parameter_value = "{vendor:.event.vendor,namespace:.event.namespace,version:.event.version}"
+          parameter_value = local.metadata_extraction_params
         }
       }
     }
@@ -141,8 +141,8 @@ resource "local_file" "config" {
     trackerDomain = var.buz_domain,
     cookieDomain  = local.cookie_domain,
     schemaBucket  = local.schema_bucket,
-    validStream   = local.valid_stream,
-    invalidStream = local.invalid_stream,
+    defaultOutput   = local.default_output,
+    deadletterOutput = local.deadletter_output,
   })
 }
 
@@ -165,14 +165,14 @@ resource "null_resource" "build_and_push_image" {
   ]
 }
 
-resource "null_resource" "config_cleanup" {
-  provisioner "local-exec" {
-    command = "rm ${local_file.dockerfile.filename} || true && rm ${local_file.config.filename} || true"
-  }
-  depends_on = [
-    null_resource.build_and_push_image
-  ]
-}
+# resource "null_resource" "config_cleanup" {
+#   provisioner "local-exec" {
+#     command = "rm ${local_file.dockerfile.filename} || true && rm ${local_file.config.filename} || true"
+#   }
+#   depends_on = [
+#     null_resource.build_and_push_image
+#   ]
+# }
 
 resource "aws_lambda_function" "buz" {
   function_name = local.service_name

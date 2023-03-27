@@ -64,6 +64,7 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 }
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
 	var wg sync.WaitGroup
 	var records []types.Record
 	for _, event := range envelopes {
