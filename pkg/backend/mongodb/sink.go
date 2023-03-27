@@ -70,7 +70,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 			return err
 		}
 		collection := s.client.Database(s.metadata.Name).Collection(output)
-		_, err = collection.InsertOne(ctx, payload) // FIXME - should batch these and shard them
+		_, err = collection.InsertOne(ctx, payload)
 		if err != nil {
 			return err
 		}
