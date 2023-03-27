@@ -7,7 +7,6 @@ package blackhole
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
@@ -15,11 +14,7 @@ import (
 )
 
 type Sink struct {
-	metadata         backendutils.SinkMetadata
-	id               *uuid.UUID
-	sinkType         string
-	name             string
-	deliveryRequired bool
+	metadata backendutils.SinkMetadata
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
@@ -27,9 +22,7 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
-	id := uuid.New()
-	s.id, s.sinkType, s.name = &id, conf.Type, conf.Name
-	s.deliveryRequired = conf.DeliveryRequired
+	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
 	return nil
 }
 
