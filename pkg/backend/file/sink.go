@@ -74,7 +74,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 }
 
 func (s *Sink) Shutdown() error {
-	log.Info().Msg("🟢 shutting down file sink")
+	log.Debug().Interface("metadata", s.metadata).Msg("🟢 shutting down sink")
 	s.shutdown <- 1
 	return nil
 }

@@ -56,6 +56,6 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 }
 
 func (s *Sink) Shutdown() error {
-	log.Info().Msg("🟢 shutting down blackhole sink")
+	log.Debug().Interface("metadata", s.metadata).Msg("🟢 shutting down sink")
 	return nil
 }

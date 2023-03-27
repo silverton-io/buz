@@ -45,6 +45,16 @@ type Sink interface {
 	Shutdown() error
 }
 
+func publish(ctx context.Context, sink Sink, envelopes []envelope.Envelope, output string) error {
+	if len(envelopes) > 0 {
+		err := sink.Dequeue(ctx, envelopes, output)
+		if err != nil {
+			log.Error().Err(err).Interface("metadata", sink.Metadata()).Msg("could not dequeue envelopes to output " + output)
+		}
+	}
+	return nil
+}
+
 // Each sink runs an associated worker goroutine, which is responsible
 // for dequeuing envelopes.
 func StartSinkWorker(input <-chan []envelope.Envelope, shutdown <-chan int, sink Sink) error {
@@ -64,14 +74,10 @@ func StartSinkWorker(input <-chan []envelope.Envelope, shutdown <-chan int, sink
 				}
 				ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(DEFAULT_SINK_TIMEOUT_SECONDS))
 				defer cancel()
-				vPublishErr := sink.Dequeue(ctx, validEnvelopes, sink.Metadata().DefaultOutput)
-				if vPublishErr != nil {
-					log.Error().Err(vPublishErr).Interface("metadata", sink.Metadata()).Msg("could not dequeue valid envelopes")
-				}
-				invPublishErr := sink.Dequeue(ctx, invalidEnvelopes, sink.Metadata().DeadletterOutput)
-				if invPublishErr != nil {
-					log.Error().Err(vPublishErr).Interface("metadata", sink.Metadata()).Msg("could not dequeue invalid envelopes")
-				}
+				// Send good events along
+				publish(ctx, sink, validEnvelopes, sink.Metadata().DefaultOutput)
+				// Send bad events to deadletter
+				publish(ctx, sink, invalidEnvelopes, sink.Metadata().DeadletterOutput)
 			case <-shutdown:
 				return
 			}
