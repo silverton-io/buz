@@ -15,21 +15,15 @@ import (
 )
 
 type Sink struct {
+	metadata         backendutils.SinkMetadata
 	id               *uuid.UUID
 	sinkType         string
 	name             string
 	deliveryRequired bool
-	defaultOutput    string
-	deadletterOutput string
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
-	return backendutils.SinkMetadata{
-		Id:               uuid.New(),
-		Name:             s.name,
-		SinkType:         s.sinkType,
-		DeliveryRequired: s.deliveryRequired,
-	}
+	return s.metadata
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
