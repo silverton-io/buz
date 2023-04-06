@@ -186,7 +186,8 @@ resource "aws_lambda_function" "buz" {
 
   environment {
     variables = {
-      (local.buz_config_var) = local.buz_config_path
+      (local.buz_config_var) = local.buz_config_path,
+      (local.buz_debug_var) = var.debug
     }
   }
 
