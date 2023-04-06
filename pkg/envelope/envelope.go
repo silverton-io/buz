@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/constants"
 )
 
 const (
@@ -106,6 +107,10 @@ func NewEnvelope(conf config.App) Envelope {
 		BuzVersion:   conf.Version,
 		BuzName:      conf.Name,
 		BuzEnv:       conf.Env,
+		Schema:       constants.UNKNOWN,
+		Vendor:       constants.UNKNOWN,
+		Namespace:    constants.UNKNOWN,
+		Version:      constants.UNKNOWN,
 	}
 	return envelope
 }

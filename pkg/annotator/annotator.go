@@ -42,8 +42,8 @@ func Annotate(envelopes []envelope.Envelope, registry *registry.Registry) []enve
 		if m.Namespace != "" {
 			envelope.Vendor = m.Vendor
 			envelope.Namespace = m.Namespace
+			envelope.Version = m.Version
 		}
-		envelope.Version = m.Version
 		if m.DisableValidation {
 			// If schema-level validation is disabled
 			// consider the payload valid.
