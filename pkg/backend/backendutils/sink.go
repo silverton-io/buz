@@ -6,7 +6,6 @@ package backendutils
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -72,8 +71,7 @@ func StartSinkWorker(input <-chan []envelope.Envelope, shutdown <-chan int, sink
 						invalidEnvelopes = append(invalidEnvelopes, envelope)
 					}
 				}
-				ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(DEFAULT_SINK_TIMEOUT_SECONDS))
-				defer cancel()
+				ctx := context.Background()
 				// Send good events along
 				publish(ctx, sink, validEnvelopes, sink.Metadata().DefaultOutput)
 				// Send bad events to deadletter
