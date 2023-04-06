@@ -83,6 +83,8 @@ sinks:
   - name: stdout
     type: stdout
     deliveryRequired: true
+    defaultOutput: console
+    deadletterOutput: console
   - name: primary
     type: kafka
     deliveryRequired: true
@@ -90,6 +92,8 @@ sinks:
       - redpanda-1:29092 # internally advertised
       - redpanda-2:29093 # internally advertised
       - redpanda-3:29094 # internally advertised
+    defaultOutput: buz_events
+    deadletterOutput: buz_invalid_events
 
 squawkBox:
   enabled: true

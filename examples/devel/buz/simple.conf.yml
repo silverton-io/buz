@@ -83,16 +83,18 @@ sinks:
   - name: easyfeedback
     type: stdout
     deliveryRequired: true
+    defaultOutput: console
+    deadletterOutput: console
   - name: blackhole
     type: blackhole
     deliveryRequired: true
+    defaultOutput: nowheres
+    deadletterOutput: nowheres
   - name: local
     type: file
     deliveryRequired: true
-  # - name: web
-  #   type: http
-  #   deliveryRequired: true
-  #   url: https://SOMEURL/squawk
+    defaultOutput: buz_events.json
+    deadletterOutput: buz_invalid_events.json
   # - name: pg1
   #   type: postgres
   #   deliveryRequired: true
@@ -102,14 +104,8 @@ sinks:
   #   database: buz
   #   user: buz
   #   password: buz
-  # - name: easyfeedback
-  #   type: stdout
-  #   deliveryRequired: true
-  # - name: productanalytics
-  #   type: amplitude
-  #   deliveryRequired: true
-  #   region: standard
-  #   apiKey: SOMEAPIKEY
+  #   defaultOutput: buz_events
+  #   deadletterOutput: buz_invalid_events
   # - name: msql1
   #   type: mysql
   #   deliveryRequired: true
@@ -119,6 +115,8 @@ sinks:
   #   database: buz
   #   user: buz
   #   password: buz
+  #   defaultOutput: buz_events
+  #   deadletterOutput: buz_invalid_events
   # - name: mongo
   #   type: mongodb
   #   deliveryRequired: true
@@ -128,6 +126,8 @@ sinks:
   #   database: buz
   #   user: buz
   #   password: buz
+  #   defaultOutput: buz_events
+  #   deadletterOutput: buz_invalid_events
   # - name: elastic
   #   type: elasticsearch
   #   deliveryRequired: true
@@ -135,6 +135,8 @@ sinks:
   #     - "http://127.0.0.1:9200"
   #   user: elastic
   #   password: elastic
+  #   defaultOutput: buz_events
+  #   deadletterOutput: buz_invalid_events
   # - name: broker
   #   type: nats
   #   deliveryRequired: true
@@ -142,26 +144,38 @@ sinks:
   #     - 127.0.0.1
   #   user: buz
   #   password: buz
+  #   defaultOutput: buz_events
+  #   deadletterOutput: buz_invalid_events
   # - name: kafka
   #   type: kafka
   #   deliveryRequired: true
   #   brokers: 
   #     - 127.0.0.1:9092
+  #   defaultOutput: buz_events
+  #   deadletterOutput: buz_invalid_events
   # - name: redpanda
   #   type: redpanda
   #   deliveryRequired: true
   #   brokers: 
   #     - 127.0.0.1:9092
+  #   defaultOutput: buz_events
+  #   deadletterOutput: buz_invalid_events
   # - name: pubsub
   #   type: pubsub
   #   deliveryRequired: true
   #   project: YOURPROJECT
+  #   defaultOutput: buz_events
+  #   deadletterOutput: buz_invalid_events
   # - name: kinesis
   #   type: kinesis
   #   deliveryRequired: true
+  #   defaultOutput: buz_events
+  #   deadletterOutput: buz_invalid_events
   # - name: firehose
   #   type: kinesis-firehose
   #   deliveryRequired: true
+  #   defaultOutput: buz_events
+  #   deadletterOutput: buz_invalid_events
 
 squawkBox:
   enabled: true
