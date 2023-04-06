@@ -73,9 +73,15 @@ func StartSinkWorker(input <-chan []envelope.Envelope, shutdown <-chan int, sink
 				}
 				ctx := context.Background()
 				// Send good events along
-				publish(ctx, sink, validEnvelopes, sink.Metadata().DefaultOutput)
+				err := publish(ctx, sink, validEnvelopes, sink.Metadata().DefaultOutput)
+				if err != nil {
+					log.Error().Err(err).Interface("metadata", sink.Metadata()).Msg("could not publish envelopes to sink")
+				}
 				// Send bad events to deadletter
-				publish(ctx, sink, invalidEnvelopes, sink.Metadata().DeadletterOutput)
+				err = publish(ctx, sink, invalidEnvelopes, sink.Metadata().DeadletterOutput)
+				if err != nil {
+					log.Error().Err(err).Interface("metadata", sink.Metadata()).Msg("could not publish envelopes to sink")
+				}
 			case <-shutdown:
 				return
 			}
