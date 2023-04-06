@@ -15,6 +15,12 @@ variable "env" {
   default     = "dev"
 }
 
+variable "debug" {
+  description = "The debug environment variable"
+  type        = string
+  default     = "1"
+}
+
 variable "buz_domain" {
   description = "The subdomain to map Buz to. \n\nExample: track.yourdomain.com"
   type        = string
