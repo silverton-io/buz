@@ -16,7 +16,7 @@ debug: ## Run buz locally with debug
 
 bootstrap: ## Bootstrap development environment
 	test -f config.yml || cp ./examples/devel/buz/simple.conf.yml config.yml;
-	make run
+	make debug
 
 bootstrap-destinations: ## Bootstrap various containerized database/stream systems
 	docker-compose -f examples/devel/docker-compose.yml up -d

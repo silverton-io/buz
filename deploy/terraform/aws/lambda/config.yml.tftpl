@@ -8,14 +8,6 @@ app:
   enableConfigRoute: false
   serverless: true
 
-privacy:
-  anonymize:
-    device:
-      ip: false
-      useragent: false
-    user:
-      id: false
-
 middleware:
   timeout:
     enabled: false
@@ -93,8 +85,8 @@ sinks:
   - name: primary
     type: kinesis-firehose
     deliveryRequired: true
-    validStream: ${validStream}
-    invalidStream: ${invalidStream}
+    defaultOutput: ${defaultOutput}
+    deadletterOutput: ${deadletterOutput}
 
 squawkBox:
   enabled: true

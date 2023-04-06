@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
@@ -42,28 +41,18 @@ func Colorize(colorString string) func(...interface{}) string {
 }
 
 type Sink struct {
-	id               *uuid.UUID
-	sinkType         string
-	name             string
-	deliveryRequired bool
-	input            chan []envelope.Envelope
-	shutdown         chan int
+	metadata backendutils.SinkMetadata
+	input    chan []envelope.Envelope
+	shutdown chan int
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
-	return backendutils.SinkMetadata{
-		Id:               s.id,
-		Name:             s.name,
-		SinkType:         s.sinkType,
-		DeliveryRequired: s.deliveryRequired,
-	}
+	return s.metadata
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing stdout sink")
-	id := uuid.New()
-	s.id, s.name, s.sinkType = &id, conf.Name, conf.Type
-	s.deliveryRequired = conf.DeliveryRequired
+	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
 	return nil
@@ -80,7 +69,7 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	return nil
 }
 
-func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
 	var validEnvelopes []envelope.Envelope
 	var invalidEnvelopes []envelope.Envelope
@@ -103,7 +92,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error
 }
 
 func (s *Sink) Shutdown() error {
-	log.Debug().Msg("🟢 shutting down stdout sink")
+	log.Debug().Interface("metadata", s.metadata).Msg("🟢 shutting down sink")
 	s.shutdown <- 1
 	return nil
 }

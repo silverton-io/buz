@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/apex/gateway/v2"
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -107,6 +108,10 @@ func (a *App) initializeRouter() {
 	a.engine = gin.New()
 	if err := a.engine.SetTrustedProxies(nil); err != nil {
 		panic(err)
+	}
+	if a.debug {
+		log.Info().Msg("setting up pprof at /debug/pprof")
+		pprof.Register(a.engine)
 	}
 	a.engine.RedirectTrailingSlash = false
 }

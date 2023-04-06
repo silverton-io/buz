@@ -885,13 +885,25 @@
                         "description": "The region",
                         "default": "standard",
                         "enum": ["standard", "eu"]
+                    },
+                    "defaultOutput": {
+                        "type": "string",
+                        "description": "Where good events go (by default).",
+                        "default": "buz_events"
+                    },
+                    "deadletterOutput": {
+                        "type": "string",
+                        "description": "Where the bad events go (otherwise known as purgatory).",
+                        "default": "buz_invalid_events"
                     }
                 },
                 "additionalProperties": false,
                 "required": [
                     "name",
                     "type",
-                    "deliveryRequired"
+                    "deliveryRequired",
+                    "defaultOutput",
+                    "deadletterOutput"
                 ],
                 "anyOf": [
                     {

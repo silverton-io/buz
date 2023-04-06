@@ -7,7 +7,6 @@ package blackhole
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
@@ -15,25 +14,15 @@ import (
 )
 
 type Sink struct {
-	id               *uuid.UUID
-	sinkType         string
-	name             string
-	deliveryRequired bool
+	metadata backendutils.SinkMetadata
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
-	return backendutils.SinkMetadata{
-		Id:               s.id,
-		Name:             s.name,
-		SinkType:         s.sinkType,
-		DeliveryRequired: s.deliveryRequired,
-	}
+	return s.metadata
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
-	id := uuid.New()
-	s.id, s.sinkType, s.name = &id, conf.Type, conf.Name
-	s.deliveryRequired = conf.DeliveryRequired
+	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
 	return nil
 }
 
@@ -46,20 +35,20 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
 	// This is a blackhole. It does nothing but dequeue
 	ctx := context.Background()
-	err := s.Dequeue(ctx, envelopes)
+	err := s.Dequeue(ctx, envelopes, "nothingness")
 	if err != nil {
 		log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("could not dequeue")
 	}
 	return nil
 }
 
-func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
 	// This is a blackhole. It does nothing.
 	return nil
 }
 
 func (s *Sink) Shutdown() error {
-	log.Info().Msg("🟢 shutting down blackhole sink")
+	log.Debug().Interface("metadata", s.metadata).Msg("🟢 shutting down sink")
 	return nil
 }

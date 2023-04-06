@@ -50,8 +50,8 @@ data "aws_iam_policy_document" "lambda_role_policy" {
     actions = ["firehose:Put*"]
     effect  = "Allow"
     resources = [
-      aws_kinesis_firehose_delivery_stream.buz_valid.arn,
-      aws_kinesis_firehose_delivery_stream.buz_invalid.arn
+      aws_kinesis_firehose_delivery_stream.default.arn,
+      aws_kinesis_firehose_delivery_stream.deadletter.arn
     ]
   }
 

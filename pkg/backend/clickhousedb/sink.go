@@ -7,10 +7,9 @@ package clickhousedb
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/db"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"gorm.io/driver/clickhouse"
@@ -18,34 +17,13 @@ import (
 )
 
 type Sink struct {
-	id               *uuid.UUID
-	name             string
-	deliveryRequired bool
-	gormDb           *gorm.DB
-	validTable       string
-	invalidTable     string
-}
-
-func (s *Sink) Id() *uuid.UUID {
-	return s.id
-}
-
-func (s *Sink) Name() string {
-	return s.name
-}
-
-func (s *Sink) Type() string {
-	return "clickhousedb"
-}
-
-func (s *Sink) DeliveryRequired() bool {
-	return s.deliveryRequired
+	metadata backendutils.SinkMetadata
+	gormDb   *gorm.DB
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing clickhouse sink")
-	id := uuid.New()
-	s.id, s.name, s.deliveryRequired = &id, conf.Name, conf.DeliveryRequired
+	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
 	connParams := db.ConnectionParams{
 		Host: conf.Hosts[0], // Only use the first configured host
 		Port: conf.Port,
@@ -59,8 +37,8 @@ func (s *Sink) Initialize(conf config.Sink) error {
 		log.Error().Err(err).Msg("🔴 could not open clickhouse connection")
 		return err
 	}
-	s.gormDb, s.validTable, s.invalidTable = gormDb, constants.BUZ_VALID_EVENTS, constants.BUZ_INVALID_EVENTS
-	for _, tbl := range []string{s.validTable, s.invalidTable} {
+	s.gormDb = gormDb
+	for _, tbl := range []string{s.metadata.DefaultOutput, s.metadata.DeadletterOutput} {
 		ensureErr := db.EnsureTable(s.gormDb, tbl, &envelope.StringEnvelope{})
 		if ensureErr != nil {
 			return ensureErr

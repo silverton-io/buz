@@ -9,11 +9,9 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
-	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/request"
 )
@@ -24,33 +22,22 @@ const (
 )
 
 type Sink struct {
-	id               *uuid.UUID
-	sinkType         string
-	name             string
-	deliveryRequired bool
-	defaultChannel   string
-	pubKey           string
-	subKey           string
-	input            chan []envelope.Envelope
-	shutdown         chan int
+	metadata backendutils.SinkMetadata
+	pubKey   string
+	subKey   string
+	input    chan []envelope.Envelope
+	shutdown chan int
 	// store            int    // nolint: unused
 	// callback         string // nolint: unused
 }
 
 func (s *Sink) Metadata() backendutils.SinkMetadata {
-	return backendutils.SinkMetadata{
-		Id:               s.id,
-		Name:             s.name,
-		SinkType:         s.sinkType,
-		DeliveryRequired: s.deliveryRequired,
-	}
+	return s.metadata
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	log.Debug().Msg("🟡 initializing pubnub sink")
-	id := uuid.New()
-	s.id, s.sinkType, s.name, s.deliveryRequired = &id, conf.Type, conf.Name, conf.DeliveryRequired
-	s.defaultChannel = constants.BUZ_EVENTS
+	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
 	s.pubKey, s.subKey = conf.PubnubPubKey, conf.PubnubSubKey
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
@@ -70,7 +57,7 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 
 func (s *Sink) buildPublishUrl(channel string) *url.URL {
 	p := path.Join(PUBNUB_PUBLISH_URL, s.pubKey, s.subKey, "1", channel, "0")
-	p = "https://" + p + "?uuid=" + s.id.String()
+	p = "https://" + p + "?uuid=" + s.metadata.Id.String()
 	u, err := url.Parse(p)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not parse publish url")
@@ -78,14 +65,14 @@ func (s *Sink) buildPublishUrl(channel string) *url.URL {
 	return u
 }
 
-func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope) error {
-	u := s.buildPublishUrl(s.defaultChannel)
+func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
+	u := s.buildPublishUrl(output)
 	_, err := request.PostEnvelopes(*u, envelopes)
 	return err
 }
 
 func (s *Sink) Shutdown() error {
-	log.Debug().Msg("🟢 shutting down " + s.sinkType + " sink") // no-op
+	log.Debug().Interface("metadata", s.metadata).Msg("🟢 shutting down sink")
 	s.shutdown <- 1
 	return nil
 }
