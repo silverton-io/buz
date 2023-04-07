@@ -43,15 +43,17 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 
 	for _, e := range gjson.ParseBytes(reqBody).Array() {
 		n := envelope.NewEnvelope(conf.App)
-		genEvent, err := buildEvent(e, conf.SelfDescribing)
+		evnt, err := buildEvent(e, conf.SelfDescribing)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not build generic event")
 		}
 
 		n.Protocol = protocol.SELF_DESCRIBING
-		n.Schema = genEvent.Payload.Schema
+		if evnt.Payload.Schema != "" {
+			n.Schema = evnt.Payload.Schema
+		}
 		n.Contexts = &contexts
-		n.Payload = genEvent.Payload.Data
+		n.Payload = evnt.Payload.Data
 		envelopes = append(envelopes, n)
 	}
 	return envelopes

@@ -12,10 +12,11 @@ variable "gcp_region" {
 variable "system" {
   description = "The name of the Buz implementation. \n\nExample: buz"
   type        = string
+  default     = "buz"
 }
 
 variable "env" {
-  description = "The name of the Buz environment. \n\nExample: dev/stg/prd"
+  description = "The name of the Buz environment. \n\nExample: development/staging/production"
   type        = string
 }
 
@@ -25,15 +26,9 @@ variable "buz_domain" {
 }
 
 variable "buz_version" {
-  description = "The version of Buz to run. \n\nExample: v0.13.1"
+  description = "The version of Buz to run. \n\nExample: v0.14.2"
   type        = string
-  default     = "v0.13.1"
-}
-
-variable "buz_mode" {
-  description = "The mode of Buz to run. \n\nExamples: ['debug', 'release']"
-  type        = string
-  default     = "release"
+  default     = "v0.14.2"
 }
 
 variable "buz_service_timeout_seconds" {
@@ -77,7 +72,6 @@ variable "schema_bucket_name" {
   type        = string
 }
 
-
 variable "bigquery_location" {
   description = "The location to store data in BigQuery"
   type        = string
@@ -90,14 +84,14 @@ variable "bigquery_dataset_name" {
   default     = "buz"
 }
 
-variable "bigquery_invalid_events_table_name" {
-  description = "The name of the Bigquery invalid events table"
+variable "default_bigquery_table" {
+  description = "The name of the default BigQuery table"
   type        = string
   default     = "invalid_events"
 }
 
-variable "bigquery_valid_events_table_name" {
-  description = "The name of the Bigquery valid events table"
+variable "deadletter_bigquery_table" {
+  description = "The name of the deadletter BigQuery table"
   type        = string
   default     = "events"
 }

@@ -10,7 +10,7 @@ variable "system" {
 }
 
 variable "env" {
-  description = "The name of the Buz environment"
+  description = "The name of the Buz environment. \n\nExample: development/staging/production"
   type        = string
   default     = "dev"
 }

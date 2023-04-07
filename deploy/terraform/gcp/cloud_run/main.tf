@@ -37,12 +37,12 @@ resource "google_storage_bucket_object" "schemas" {
   source   = each.value.source_path
 }
 
-resource "google_pubsub_topic" "valid_topic" {
-  name = local.valid_topic
+resource "google_pubsub_topic" "default_output" {
+  name = local.default_output
 }
 
-resource "google_pubsub_topic" "invalid_topic" {
-  name = local.invalid_topic
+resource "google_pubsub_topic" "deadletter_output" {
+  name = local.deadletter_output
 }
 
 resource "google_secret_manager_secret" "buz_config" {
@@ -64,16 +64,15 @@ resource "google_secret_manager_secret" "buz_config" {
 resource "google_secret_manager_secret_version" "buz_config" {
   secret = google_secret_manager_secret.buz_config.id
   secret_data = templatefile("config.yml.tftpl", {
-    project       = var.gcp_project,
-    system        = var.system,
-    env           = var.env,
-    mode          = var.buz_mode,
-    port          = var.buz_service_container_port
-    trackerDomain = var.buz_domain,
-    cookieDomain  = local.cookie_domain,
-    schemaBucket  = local.schema_bucket,
-    validTopic    = local.valid_topic,
-    invalidTopic  = local.invalid_topic,
+    project          = var.gcp_project,
+    system           = var.system,
+    env              = var.env,
+    port             = var.buz_service_container_port
+    trackerDomain    = var.buz_domain,
+    cookieDomain     = local.cookie_domain,
+    schemaBucket     = local.schema_bucket,
+    defaultOutput    = local.default_output,
+    deadletterOutput = local.deadletter_output,
   })
 }
 
@@ -166,7 +165,7 @@ resource "google_cloud_run_service" "buz" {
 
         volume_mounts {
           name       = local.config
-          mount_path = local.buz_config_path
+          mount_path = local.buz_config_dir
         }
       }
     }
@@ -175,8 +174,8 @@ resource "google_cloud_run_service" "buz" {
   depends_on = [
     google_project_service.project_services,
     google_storage_bucket.schemas,
-    google_pubsub_topic.invalid_topic,
-    google_pubsub_topic.valid_topic,
+    google_pubsub_topic.deadletter_output,
+    google_pubsub_topic.default_output,
     null_resource.pull_and_push_image,
   ]
 }
@@ -234,36 +233,42 @@ resource "google_bigquery_dataset" "buz" {
   location      = var.bigquery_location
 }
 
-resource "google_bigquery_table" "events" {
-  table_id   = var.bigquery_valid_events_table_name
+resource "google_bigquery_table" "default" {
+  table_id   = local.default_table
   dataset_id = google_bigquery_dataset.buz.dataset_id
   schema     = file("schema.json")
+  depends_on = [
+    google_bigquery_dataset.buz
+  ]
 }
 
-resource "google_bigquery_table" "invalid_events" {
-  table_id   = var.bigquery_invalid_events_table_name
+resource "google_bigquery_table" "deadletter" {
+  table_id   = local.deadletter_table
   dataset_id = google_bigquery_dataset.buz.dataset_id
   schema     = file("schema.json")
+  depends_on = [
+    google_bigquery_dataset.buz
+  ]
 }
 
-resource "google_pubsub_subscription" "events" {
-  name  = local.valid_events_subscription
-  topic = local.valid_topic
+resource "google_pubsub_subscription" "default" {
+  name  = local.default_subscription
+  topic = google_pubsub_topic.default_output.name
   bigquery_config {
-    table            = local.events_table_fqn
+    table            = "${google_bigquery_table.default.project}.${google_bigquery_table.default.dataset_id}.${google_bigquery_table.default.table_id}"
     use_topic_schema = true
     write_metadata   = true
   }
-  depends_on = [google_project_iam_member.bigquery_viewer, google_project_iam_member.bigquery_editor]
+  depends_on = [google_project_iam_member.bigquery_viewer, google_project_iam_member.bigquery_editor, google_bigquery_table.default]
 }
 
-resource "google_pubsub_subscription" "invalid_events" {
-  name  = local.invalid_events_subscription
-  topic = local.invalid_topic
+resource "google_pubsub_subscription" "deadletter" {
+  name  = local.deadletter_subscription
+  topic = google_pubsub_topic.deadletter_output.name
   bigquery_config {
-    table            = local.invalid_events_table_fqn
+    table            = "${google_bigquery_table.deadletter.project}.${google_bigquery_table.deadletter.dataset_id}.${google_bigquery_table.deadletter.table_id}"
     use_topic_schema = true
     write_metadata   = true
   }
-  depends_on = [google_project_iam_member.bigquery_viewer, google_project_iam_member.bigquery_editor]
+  depends_on = [google_project_iam_member.bigquery_viewer, google_project_iam_member.bigquery_editor, google_bigquery_table.deadletter]
 }

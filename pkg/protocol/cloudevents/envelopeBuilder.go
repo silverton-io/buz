@@ -25,18 +25,20 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 		return envelopes
 	}
 	for _, ce := range gjson.ParseBytes(reqBody).Array() {
-		cEvent, err := buildEvent(ce)
+		evnt, err := buildEvent(ce)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not build Cloudevent")
 		}
 		n := envelope.NewEnvelope(conf.App)
 		n.Protocol = protocol.CLOUDEVENTS
-		n.Schema = cEvent.DataSchema
-		if cEvent.Time != nil {
-			n.Timestamp = *cEvent.Time
+		if evnt.DataSchema != "" {
+			n.Schema = evnt.DataSchema
+		}
+		if evnt.Time != nil {
+			n.Timestamp = *evnt.Time
 		}
 		n.Contexts = &contexts
-		n.Payload = cEvent.Data
+		n.Payload = evnt.Data
 		envelopes = append(envelopes, n)
 	}
 	return envelopes
