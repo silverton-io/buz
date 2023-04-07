@@ -18,12 +18,12 @@ output "schema_bucket" {
   value = local.schema_bucket
 }
 
-output "valid_topic" {
-  value = local.valid_topic
+output "default_topic" {
+  value = local.default_output
 }
 
-output "invalid_topic" {
-  value = local.invalid_topic
+output "deadletter_topic" {
+  value = local.deadletter_output
 }
 
 output "buz_service_id" {
@@ -38,10 +38,10 @@ output "bigquery_dataset" {
   value = var.bigquery_dataset_name
 }
 
-output "bigquery_valid_events_table" {
-  value = var.bigquery_valid_events_table_name
+output "default_table" {
+  value = local.default_table
 }
 
-output "bigquery_invalid_events_table" {
-  value = var.bigquery_invalid_events_table_name
+output "deadletter_table" {
+  value = local.deadletter_table
 }

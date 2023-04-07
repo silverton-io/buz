@@ -18,14 +18,16 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
 	var envelopes []envelope.Envelope
 	contexts := envelope.BuildContextsFromRequest(c)
 	n := envelope.NewEnvelope(conf.App)
-	sde, err := buildEvent(c)
+	evnt, err := buildEvent(c)
 	if err != nil {
 		log.Error().Err(err).Msg("🔴 could not build pixel event")
 	}
 	n.Protocol = protocol.PIXEL
-	n.Schema = sde.Schema
+	if evnt.Schema != "" {
+		n.Schema = evnt.Schema
+	}
 	n.Contexts = &contexts
-	n.Payload = sde.Data
+	n.Payload = evnt.Data
 	envelopes = append(envelopes, n)
 	return envelopes
 }

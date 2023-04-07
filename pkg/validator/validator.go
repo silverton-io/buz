@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 
 	"github.com/rs/zerolog/log"
+	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/protocol"
 	"github.com/silverton-io/buz/pkg/registry"
@@ -16,7 +17,7 @@ import (
 // Validate an envelope's payload according to the corresponding schema
 func Validate(e envelope.Envelope, registry *registry.Registry) (isValid bool, validationError envelope.ValidationError, schema []byte) {
 	// If payload doesn't have a schema associated with it, consider the payload invalid
-	if e.Schema == "" {
+	if e.Schema == constants.UNKNOWN {
 		validationError := envelope.ValidationError{
 			ErrorType:       &NoSchemaAssociated.Type,
 			ErrorResolution: &NoSchemaAssociated.Resolution,

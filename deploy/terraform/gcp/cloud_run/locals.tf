@@ -1,6 +1,7 @@
 locals {
   buz_config_var  = "BUZ_CONFIG_PATH"
-  buz_config_path = "/etc/buz/config.yml"
+  buz_config_dir  = "/etc/buz/"
+  buz_config_path = "${local.buz_config_dir}config.yml"
   activate_apis = [
     "artifactregistry.googleapis.com",
     "run.googleapis.com",
@@ -18,10 +19,10 @@ locals {
   service_name                 = "${local.system_env_base}collector"
   config                       = "${local.system_env_base}config"
   schema_bucket                = "${local.system_env_base}${var.schema_bucket_name}"
-  invalid_topic                = "${local.system_env_base}invalid-events"
-  valid_topic                  = "${local.system_env_base}events"
-  valid_events_subscription    = "${local.system_env_base}events"
-  invalid_events_subscription  = "${local.system_env_base}invalid-events"
-  events_table_fqn             = "${var.gcp_project}.${var.bigquery_dataset_name}.${var.bigquery_valid_events_table_name}"
-  invalid_events_table_fqn     = "${var.gcp_project}.${var.bigquery_dataset_name}.${var.bigquery_invalid_events_table_name}"
+  default_output               = "${local.system_env_base}events"
+  default_subscription         = "${local.system_env_base}events"
+  default_table                = var.default_bigquery_table
+  deadletter_output            = "${local.system_env_base}invalid-events"
+  deadletter_subscription      = "${local.system_env_base}invalid-events"
+  deadletter_table             = var.deadletter_bigquery_table
 }
