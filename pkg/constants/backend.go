@@ -21,6 +21,7 @@ const (
 	KINESIS_FIREHOSE string = "kinesis-firehose"
 	NATS             string = "nats"
 	NATS_JETSTREAM   string = "nats-jetstream"
+	EVENTBRIDGE      string = "eventbridge"
 	// Object Stores
 	GCS   string = "gcs"
 	S3    string = "s3"

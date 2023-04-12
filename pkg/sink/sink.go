@@ -11,6 +11,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/backend/blackhole"
 	"github.com/silverton-io/buz/pkg/backend/elasticsearch"
+	"github.com/silverton-io/buz/pkg/backend/eventbridge"
 	"github.com/silverton-io/buz/pkg/backend/file"
 	"github.com/silverton-io/buz/pkg/backend/http"
 	"github.com/silverton-io/buz/pkg/backend/kafka"
@@ -60,6 +61,9 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 		return &sink, nil
 	case constants.KINESIS_FIREHOSE:
 		sink := kinesisFirehose.Sink{}
+		return &sink, nil
+	case constants.EVENTBRIDGE:
+		sink := eventbridge.Sink{}
 		return &sink, nil
 	// Message Brokers
 	case constants.NATS:
