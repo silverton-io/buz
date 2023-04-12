@@ -30,13 +30,8 @@
                 },
                 "env": {
                     "type": "string",
-                    "default": "dev",
-                    "description": "Collector environment",
-                    "enum": [
-                        "development",
-                        "staging",
-                        "production"
-                    ]
+                    "default": "development",
+                    "description": "Collector environment"
                 },
                 "port": {
                     "type": "integer",
