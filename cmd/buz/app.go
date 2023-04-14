@@ -108,8 +108,8 @@ func (a *App) initializeManifold() {
 func (a *App) initializeRouter() {
 	log.Info().Msg("🟢 initializing router")
 	a.engine = gin.New()
-	a.publicRouterGroup = a.engine.Group("/")
-	a.switchableRouterGroup = a.engine.Group("/")
+	a.publicRouterGroup = a.engine.Group("")
+	a.switchableRouterGroup = a.engine.Group("")
 	if err := a.engine.SetTrustedProxies(nil); err != nil {
 		panic(err)
 	}
