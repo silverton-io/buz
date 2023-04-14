@@ -37,6 +37,12 @@ middleware:
     maxAge: 86400
   requestLogger:
     enabled: true
+  auth:
+    enabled: false
+    tokens:
+      - YnV6OmJ1enp6enp6eg== # basic
+      - eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJidXoiLCJpYXQiOjE2ODE1MDg4MTMsImV4cCI6MTcxMzA0NDgxMywiYXVkIjoiYnV6LmRldiIsInN1YiI6ImJ1ekBidXouZGV2Iiwic3lzdGVtIjoiYnV6Iiwicm9sZSI6ImJ1eiIsInRvcGljIjoiYnV6In0.6I1iRZeYlw_lNWQr1EMJf3VcEMoWd9kPtmxIUMvUST0 # jwt
+      - buzkKLfwI2bgKSAO6maJVol51rUsmM3bkdHzfZ5EgNyo9tyHPlU3zfA9Qacj7KVi # fake api key
   yeet:
     enabled: false
 
@@ -98,7 +104,7 @@ sinks:
   # - name: pg1
   #   type: postgres
   #   deliveryRequired: true
-  #   hosts: 
+  #   hosts:
   #     - 127.0.0.1
   #   port: 5432
   #   database: buz
@@ -109,7 +115,7 @@ sinks:
   # - name: msql1
   #   type: mysql
   #   deliveryRequired: true
-  #   hosts: 
+  #   hosts:
   #     - 127.0.0.1
   #   port: 3306
   #   database: buz
@@ -120,7 +126,7 @@ sinks:
   # - name: mongo
   #   type: mongodb
   #   deliveryRequired: true
-  #   hosts: 
+  #   hosts:
   #     - 127.0.0.1
   #   port: 27017
   #   database: buz
@@ -131,7 +137,7 @@ sinks:
   # - name: elastic
   #   type: elasticsearch
   #   deliveryRequired: true
-  #   hosts: 
+  #   hosts:
   #     - "http://127.0.0.1:9200"
   #   user: elastic
   #   password: elastic
@@ -140,7 +146,7 @@ sinks:
   # - name: broker
   #   type: nats
   #   deliveryRequired: true
-  #   hosts: 
+  #   hosts:
   #     - 127.0.0.1
   #   user: buz
   #   password: buz
@@ -149,14 +155,14 @@ sinks:
   # - name: kafka
   #   type: kafka
   #   deliveryRequired: true
-  #   brokers: 
+  #   brokers:
   #     - 127.0.0.1:9092
   #   defaultOutput: buz_events
   #   deadletterOutput: buz_invalid_events
   # - name: redpanda
   #   type: redpanda
   #   deliveryRequired: true
-  #   brokers: 
+  #   brokers:
   #     - 127.0.0.1:9092
   #   defaultOutput: buz_events
   #   deadletterOutput: buz_invalid_events
