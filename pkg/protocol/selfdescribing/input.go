@@ -18,10 +18,10 @@ import (
 
 type SelfDescribingInput struct{}
 
-func (i *SelfDescribingInput) Initialize(engine *gin.Engine, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
+func (i *SelfDescribingInput) Initialize(routerGroup *gin.RouterGroup, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
 	if conf.Inputs.SelfDescribing.Enabled {
 		log.Info().Msg("🟢 initializing self-describing input")
-		engine.POST(conf.Inputs.SelfDescribing.Path, i.Handler(*manifold, *conf, metadata))
+		routerGroup.POST(conf.Inputs.SelfDescribing.Path, i.Handler(*manifold, *conf, metadata))
 	}
 	if conf.Squawkbox.Enabled {
 		log.Info().Msg("🟢 initializing self-describing input squawkbox")

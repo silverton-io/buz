@@ -13,7 +13,10 @@ import (
 	"github.com/silverton-io/buz/pkg/response"
 )
 
-const BEARER = "Bearer"
+const (
+	BASIC  = "Basic"
+	BEARER = "Bearer"
+)
 
 type authHeader struct {
 	Token string `header:"Authorization"`
@@ -51,13 +54,15 @@ func Auth(conf config.Auth) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if tokenParts[0] != BEARER {
+		scheme := tokenParts[0]
+		token := tokenParts[1]
+		if scheme != BEARER && scheme != BASIC {
 			// Auth scheme isn't supported
 			c.JSON(http.StatusUnauthorized, response.InvalidAuthScheme)
 			c.Abort()
 			return
 		}
-		isValid := tokenIsValid(tokenParts[1], conf)
+		isValid := tokenIsValid(token, conf)
 		if !isValid {
 			// Invalid token
 			c.JSON(http.StatusUnauthorized, response.InvalidAuthToken)

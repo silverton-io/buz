@@ -20,31 +20,31 @@ import (
 
 type SnowplowInput struct{}
 
-func (i *SnowplowInput) Initialize(engine *gin.Engine, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
+func (i *SnowplowInput) Initialize(routerGroup *gin.RouterGroup, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
 	identityMiddleware := middleware.Identity(conf.Identity)
 	log.Info().Msg("🟢 initializing snowplow input")
 	if conf.Inputs.Snowplow.Enabled {
 		if conf.Inputs.Snowplow.StandardRoutesEnabled {
 			log.Info().Msg("🟢 initializing standard snowplow routes")
-			engine.GET(constants.SNOWPLOW_STANDARD_GET_PATH, identityMiddleware, i.Handler(*manifold, *conf, metadata))
-			engine.POST(constants.SNOWPLOW_STANDARD_POST_PATH, identityMiddleware, i.Handler(*manifold, *conf, metadata))
+			routerGroup.GET(constants.SNOWPLOW_STANDARD_GET_PATH, identityMiddleware, i.Handler(*manifold, *conf, metadata))
+			routerGroup.POST(constants.SNOWPLOW_STANDARD_POST_PATH, identityMiddleware, i.Handler(*manifold, *conf, metadata))
 			if conf.Inputs.Snowplow.OpenRedirectsEnabled {
 				log.Info().Msg("🟢 initializing standard open redirect route")
-				engine.GET(constants.SNOWPLOW_STANDARD_REDIRECT_PATH, identityMiddleware, i.Handler(*manifold, *conf, metadata))
+				routerGroup.GET(constants.SNOWPLOW_STANDARD_REDIRECT_PATH, identityMiddleware, i.Handler(*manifold, *conf, metadata))
 			}
 		}
 		log.Info().Msg("🟢 initializing custom snowplow routes")
-		engine.GET(conf.Inputs.Snowplow.GetPath, identityMiddleware, i.Handler(*manifold, *conf, metadata))
-		engine.POST(conf.Inputs.Snowplow.PostPath, identityMiddleware, i.Handler(*manifold, *conf, metadata))
+		routerGroup.GET(conf.Inputs.Snowplow.GetPath, identityMiddleware, i.Handler(*manifold, *conf, metadata))
+		routerGroup.POST(conf.Inputs.Snowplow.PostPath, identityMiddleware, i.Handler(*manifold, *conf, metadata))
 		if conf.Inputs.Snowplow.OpenRedirectsEnabled {
 			log.Info().Msg("🟢 initializing custom open redirect route")
-			engine.GET(conf.Inputs.Snowplow.RedirectPath, identityMiddleware, i.Handler(*manifold, *conf, metadata))
+			routerGroup.GET(conf.Inputs.Snowplow.RedirectPath, identityMiddleware, i.Handler(*manifold, *conf, metadata))
 		}
 	}
 	if conf.Squawkbox.Enabled {
 		log.Info().Msg("🟢 initializing snowplow squawkbox")
-		engine.GET("snowplow/squawkbox", identityMiddleware, i.Handler(*manifold, *conf, metadata))
-		engine.POST("snowplow/squawkbox", identityMiddleware, i.Handler(*manifold, *conf, metadata))
+		routerGroup.GET("snowplow/squawkbox", identityMiddleware, i.Handler(*manifold, *conf, metadata))
+		routerGroup.POST("snowplow/squawkbox", identityMiddleware, i.Handler(*manifold, *conf, metadata))
 	}
 	return nil
 }
