@@ -151,7 +151,7 @@ func (a *App) initializeMiddleware() {
 	}
 }
 
-// 🐝 route and healthcheck route are always public
+// 🐝 and healthcheck route are always public
 func (a *App) initializePublicRoutes() {
 	log.Info().Msg("🟢 initializing buz route")
 	a.publicRouterGroup.GET("/", handler.BuzHandler())
