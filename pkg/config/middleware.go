@@ -10,6 +10,7 @@ type Middleware struct {
 	Identity      `json:"identity"`
 	Cors          `json:"cors"`
 	RequestLogger `json:"requestLogger"`
+	Auth          `json:"auth"`
 	Yeet          `json:"yeet"`
 }
 
@@ -49,6 +50,11 @@ type Cors struct {
 
 type RequestLogger struct {
 	Enabled bool `json:"enabled"`
+}
+
+type Auth struct {
+	Enabled bool     `json:"enabled"`
+	Tokens  []string `json:"-"`
 }
 
 type Yeet struct {

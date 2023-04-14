@@ -23,14 +23,15 @@ const PX string = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8X
 type PixelInput struct{}
 
 func (i *PixelInput) Initialize(engine *gin.Engine, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
+	pixelGroup := engine.Group(conf.Inputs.Pixel.Path)
 	if conf.Inputs.Pixel.Enabled {
 		log.Info().Msg("🟢 initializing pixel input")
-		engine.GET(conf.Inputs.Pixel.Path, i.Handler(*manifold, *conf, metadata))
-		engine.GET(conf.Inputs.Pixel.Path+"/*"+constants.BUZ_SCHEMA_PARAM, i.Handler(*manifold, *conf, metadata))
+		pixelGroup.GET("", i.Handler(*manifold, *conf, metadata))
+		pixelGroup.GET("*"+constants.BUZ_SCHEMA_PARAM, i.Handler(*manifold, *conf, metadata))
 	}
 	if conf.Squawkbox.Enabled {
 		log.Info().Msg("🟢 initializing pixel input squawkbox")
-		engine.GET("/squawkbox/pixel", i.SquawkboxHandler(*manifold, *conf, metadata))
+		pixelGroup.GET("squawkbox/pixel", i.SquawkboxHandler(*manifold, *conf, metadata))
 	}
 	return nil
 }

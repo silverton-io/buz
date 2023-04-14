@@ -39,3 +39,19 @@ var RateLimitExceeded = Response{
 var ManifoldDistributionError = Response{
 	Message: "distribution error",
 }
+
+var MissingAuthHeader = Response{
+	Message: "missing authorization header",
+}
+
+var MissingAuthSchemeOrToken = Response{
+	Message: "missing auth scheme or token",
+}
+
+var InvalidAuthScheme = Response{
+	Message: "invalid scheme",
+}
+
+var InvalidAuthToken = Response{
+	Message: "invalid token",
+}

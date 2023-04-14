@@ -160,13 +160,17 @@ func (a *App) initializeOpsRoutes() {
 
 func (a *App) initializeSchemaCacheRoutes() {
 	r := a.manifold.GetRegistry()
-	if a.config.Registry.Purge.Enabled {
-		log.Info().Msg("🟢 initializing schema registry cache purge route")
-		a.engine.GET(a.config.Registry.Purge.Path, registry.PurgeCacheHandler(r))
+	registryGroup := a.engine.Group(registry.SCHEMAS_ROUTE)
+	if a.config.Middleware.Auth.Enabled {
+		registryGroup.Use(middleware.Auth(a.config.Middleware.Auth))
 	}
+	// if a.config.Registry.Purge.Enabled {
+	// 	log.Info().Msg("🟢 initializing schema registry cache purge route")
+	// 	registryGroup.GET(a.config.Registry.Purge.Path, registry.PurgeCacheHandler(r))
+	// }
 	if a.config.Registry.Http.Enabled {
 		log.Info().Msg("🟢 initializing schema registry routes")
-		a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, registry.GetSchemaHandler(r))
+		registryGroup.GET("*"+registry.SCHEMA_PARAM, registry.GetSchemaHandler(r))
 	}
 }
 
