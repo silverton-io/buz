@@ -12,6 +12,5 @@ type Config struct {
 	Manifold   `json:"manifold,omitempty"`
 	Sinks      []Sink `json:"sinks"`
 	Squawkbox  `json:"squawkBox"`
-	Privacy    `json:"privacy"`
 	Tele       `json:"tele"`
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Silverton Data, Inconf.
+// Copyright (c) 2023 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
@@ -22,15 +22,15 @@ const PX string = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8X
 
 type PixelInput struct{}
 
-func (i *PixelInput) Initialize(engine *gin.Engine, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
+func (i *PixelInput) Initialize(routerGroup *gin.RouterGroup, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
 	if conf.Inputs.Pixel.Enabled {
 		log.Info().Msg("🟢 initializing pixel input")
-		engine.GET(conf.Inputs.Pixel.Path, i.Handler(*manifold, *conf, metadata))
-		engine.GET(conf.Inputs.Pixel.Path+"/*"+constants.BUZ_SCHEMA_PARAM, i.Handler(*manifold, *conf, metadata))
+		routerGroup.GET(conf.Inputs.Pixel.Path, i.Handler(*manifold, *conf, metadata))
+		routerGroup.GET(conf.Inputs.Pixel.Path+"/*"+constants.BUZ_SCHEMA_PARAM, i.Handler(*manifold, *conf, metadata))
 	}
 	if conf.Squawkbox.Enabled {
 		log.Info().Msg("🟢 initializing pixel input squawkbox")
-		engine.GET("/squawkbox/pixel", i.SquawkboxHandler(*manifold, *conf, metadata))
+		routerGroup.GET("/squawkbox/pixel", i.SquawkboxHandler(*manifold, *conf, metadata))
 	}
 	return nil
 }

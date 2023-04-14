@@ -18,14 +18,14 @@ import (
 
 type CloudeventsInput struct{}
 
-func (i *CloudeventsInput) Initialize(engine *gin.Engine, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
+func (i *CloudeventsInput) Initialize(routerGroup *gin.RouterGroup, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
 	if conf.Inputs.Cloudevents.Enabled {
 		log.Info().Msg("🟢 initializing cloudevents input")
-		engine.POST(conf.Inputs.Cloudevents.Path, i.Handler(*manifold, *conf, metadata))
+		routerGroup.POST(conf.Inputs.Cloudevents.Path, i.Handler(*manifold, *conf, metadata))
 	}
 	if conf.Squawkbox.Enabled {
 		log.Info().Msg("🟢 initializing cloudevents input squawkbox")
-		engine.POST("/squawkbox/cloudevents", i.SquawkboxHandler(*manifold, *conf, metadata))
+		routerGroup.POST("/squawkbox/cloudevents", i.SquawkboxHandler(*manifold, *conf, metadata))
 	}
 	return nil
 }
