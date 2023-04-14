@@ -154,9 +154,9 @@ func (a *App) initializeMiddleware() {
 // 🐝 route and healthcheck route are always public
 func (a *App) initializePublicRoutes() {
 	log.Info().Msg("🟢 initializing buz route")
-	a.engine.GET("/", handler.BuzHandler())
+	a.publicRouterGroup.GET("/", handler.BuzHandler())
 	log.Info().Msg("🟢 initializing health check route")
-	a.engine.GET(constants.HEALTH_PATH, handler.HealthcheckHandler)
+	a.publicRouterGroup.GET(constants.HEALTH_PATH, handler.HealthcheckHandler)
 }
 
 func (a *App) initializeOpsRoutes() {
