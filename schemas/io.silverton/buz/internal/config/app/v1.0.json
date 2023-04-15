@@ -800,7 +800,7 @@
                     },
                     "type": {
                         "type": "string",
-                        "default": "pubsub",
+                        "default": "redpanda",
                         "description": "The sink configuration",
                         "enum": [
                             "kafka",
@@ -823,7 +823,8 @@
                             "clickhouse",
                             "timescale",
                             "nats",
-                            "amplitude"
+                            "amplitude",
+                            "eventbridge"
                         ]
                     },
                     "deliveryRequired": {

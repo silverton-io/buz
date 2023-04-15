@@ -2,21 +2,24 @@
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
-package file
+package eventbridge
 
 import (
 	"context"
-	"encoding/json"
-	"os"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/eventbridge"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 )
 
 type Sink struct {
 	metadata backendutils.SinkMetadata
+	client   *eventbridge.EventBridge
 	input    chan []envelope.Envelope
 	shutdown chan int
 }
@@ -26,8 +29,10 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
-	log.Debug().Msg("🟡 initializing file sink")
+	es := session.Must(session.NewSession())
+	svc := eventbridge.New(es)
 	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
+	s.client = svc
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
 	return nil
@@ -38,28 +43,6 @@ func (s *Sink) StartWorker() error {
 	return err
 }
 
-func (s *Sink) batchPublish(ctx context.Context, filePath string, envelopes []envelope.Envelope) error {
-	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Error().Err(err).Msg("🔴 could not open file")
-		return err
-	}
-	defer f.Close() // nolint
-	for _, envelope := range envelopes {
-		b, err := json.Marshal(envelope)
-		if err != nil {
-			log.Error().Err(err).Msg("🔴 could not marshal envelope")
-			return err
-		}
-		newline := []byte("\n")
-		b = append(b, newline...)
-		if _, err := f.Write(b); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("enqueueing envelopes")
 	s.input <- envelopes
@@ -67,9 +50,31 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 }
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
-	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
-	err := s.batchPublish(ctx, output, envelopes)
-	return err
+	log.Info().Msg("made it here")
+	var entries []*eventbridge.PutEventsRequestEntry
+	for _, e := range envelopes {
+		byteString, err := e.AsByte()
+		if err != nil {
+			log.Error().Err(err).Msg("could not cast envelope to bytes")
+		}
+		entry := eventbridge.PutEventsRequestEntry{
+			EventBusName: &output,
+			Time:         &e.Timestamp,
+			Source:       aws.String(constants.BUZ),
+			DetailType:   &e.Schema,
+			Detail:       aws.String(string(byteString)),
+		}
+		entries = append(entries, &entry)
+	}
+	input := eventbridge.PutEventsInput{
+		Entries: entries,
+	}
+	result, err := s.client.PutEvents(&input)
+	if err != nil {
+		log.Error().Err(err).Interface("result", result).Msg("could not dequeue")
+		return err
+	}
+	return nil
 }
 
 func (s *Sink) Shutdown() error {
