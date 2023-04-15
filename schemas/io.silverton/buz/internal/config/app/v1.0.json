@@ -43,12 +43,12 @@
                     "default": "test.silverton.io",
                     "description": "The collector domain"
                 },
-                "enableConfigRoute" : {
+                "enableConfigRoute": {
                     "type": "boolean",
                     "default": false,
                     "description": "Whether or not to enable the config route"
                 },
-                "serverless" : {
+                "serverless": {
                     "type": "boolean",
                     "default": false,
                     "description": "Whether or not to run buz in serverless mode"
@@ -189,7 +189,10 @@
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["cookie", "fallback"]
+                    "required": [
+                        "cookie",
+                        "fallback"
+                    ]
                 },
                 "cors": {
                     "type": "object",
@@ -262,14 +265,24 @@
                         "enabled"
                     ]
                 },
-                "yeet": {
+                "auth": {
                     "type": "object",
-                    "description": "Yeet configuration",
+                    "description": "Auth middleware configuration",
                     "properties": {
                         "enabled": {
                             "type": "boolean",
-                            "default": "false",
-                            "description": "Whether or not to activate the yeet middleware"
+                            "default": "true",
+                            "description": "Whether or not to activate auth middleware"
+                        },
+                        "tokens": {
+                            "type": "array",
+                            "default": [
+                                "YnV6OmJ1enp6enp6eg=="
+                            ],
+                            "description": "A list of tokens to allow via auth middleware",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     },
                     "additionalProperties": false,
@@ -284,7 +297,7 @@
                 "identity",
                 "cors",
                 "requestLogger",
-                "yeet"
+                "auth"
             ]
         },
         "inputs": {
@@ -324,7 +337,7 @@
                             "type": "string",
                             "default": "/plw/r",
                             "description": "The path by which to process redirect-based events"
-                    }
+                        }
                     },
                     "additionalProperties": false,
                     "required": [
@@ -459,7 +472,10 @@
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["enabled", "path"]
+                    "required": [
+                        "enabled",
+                        "path"
+                    ]
                 }
             },
             "additionalProperties": false,
@@ -739,7 +755,7 @@
                     },
                     "additionalProperties": false,
                     "required": [
-                    "enabled",
+                        "enabled",
                         "path"
                     ]
                 },
@@ -879,7 +895,10 @@
                         "type": "string",
                         "description": "The region",
                         "default": "standard",
-                        "enum": ["standard", "eu"]
+                        "enum": [
+                            "standard",
+                            "eu"
+                        ]
                     },
                     "defaultOutput": {
                         "type": "string",
@@ -915,7 +934,9 @@
                                 "const": "kafka"
                             }
                         },
-                        "required": ["brokers"]
+                        "required": [
+                            "brokers"
+                        ]
                     },
                     {
                         "properties": {
@@ -923,7 +944,9 @@
                                 "const": "redpanda"
                             }
                         },
-                        "required": ["brokers"]
+                        "required": [
+                            "brokers"
+                        ]
                     },
                     {
                         "properties": {
@@ -931,7 +954,9 @@
                                 "const": "pubsub"
                             }
                         },
-                        "required": ["project"]
+                        "required": [
+                            "project"
+                        ]
                     },
                     {
                         "properties": {
