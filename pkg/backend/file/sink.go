@@ -46,7 +46,6 @@ func (s *Sink) batchPublish(ctx context.Context, filePath string, envelopes []en
 	}
 	defer f.Close() // nolint
 	for _, envelope := range envelopes {
-		log.Debug().Msg("🟡 writing envelope to file " + filePath)
 		b, err := json.Marshal(envelope)
 		if err != nil {
 			log.Error().Err(err).Msg("🔴 could not marshal envelope")

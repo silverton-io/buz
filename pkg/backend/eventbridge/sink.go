@@ -49,6 +49,7 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 }
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
+	log.Info().Msg("made it here")
 	var entries []*eventbridge.PutEventsRequestEntry
 	for _, e := range envelopes {
 		byteString, err := e.AsByte()
@@ -59,7 +60,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 			EventBusName: &output,
 			Time:         &e.Timestamp,
 			Source:       aws.String("buz"),
-			DetailType:   &e.Namespace,
+			DetailType:   &e.Schema,
 			Detail:       aws.String(string(byteString)),
 		}
 		entries = append(entries, &entry)
@@ -67,7 +68,11 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 	input := eventbridge.PutEventsInput{
 		Entries: entries,
 	}
-	s.client.PutEvents(&input)
+	result, err := s.client.PutEvents(&input)
+	if err != nil {
+		log.Error().Err(err).Interface("result", result).Msg("could not dequeue")
+		return err
+	}
 	return nil
 }
 
