@@ -94,6 +94,11 @@ sinks:
       - redpanda-3:29094 # internally advertised
     defaultOutput: buz_events
     deadletterOutput: buz_invalid_events
+  - name: secondary
+    type: file
+    deliveryRequired: true
+    defaultOutput: buz_events.json
+    deadletterOutput: buz_invalid_events.json
 
 squawkBox:
   enabled: true
