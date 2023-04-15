@@ -180,6 +180,11 @@ sinks:
   #   deliveryRequired: true
   #   defaultOutput: buz_events
   #   deadletterOutput: buz_invalid_events
+  # - name: eventbridge
+  #   type: eventbridge
+  #   deliveryRequired: true
+  #   defaultOutput: buz
+  #   deadletterOutput: buz
 
 squawkBox:
   enabled: true
