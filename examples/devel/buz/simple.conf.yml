@@ -43,8 +43,6 @@ middleware:
       - YnV6OmJ1enp6enp6eg== # basic
       - eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJidXoiLCJpYXQiOjE2ODE1MDg4MTMsImV4cCI6MTcxMzA0NDgxMywiYXVkIjoiYnV6LmRldiIsInN1YiI6ImJ1ekBidXouZGV2Iiwic3lzdGVtIjoiYnV6Iiwicm9sZSI6ImJ1eiIsInRvcGljIjoiYnV6In0.6I1iRZeYlw_lNWQr1EMJf3VcEMoWd9kPtmxIUMvUST0 # jwt
       - buzkKLfwI2bgKSAO6maJVol51rUsmM3bkdHzfZ5EgNyo9tyHPlU3zfA9Qacj7KVi # fake api key
-  yeet:
-    enabled: false
 
 inputs:
   snowplow:

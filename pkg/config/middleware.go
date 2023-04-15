@@ -11,7 +11,6 @@ type Middleware struct {
 	Cors          `json:"cors"`
 	RequestLogger `json:"requestLogger"`
 	Auth          `json:"auth"`
-	Yeet          `json:"yeet"`
 }
 
 type Timeout struct {
@@ -55,8 +54,4 @@ type RequestLogger struct {
 type Auth struct {
 	Enabled bool     `json:"enabled"`
 	Tokens  []string `json:"-"`
-}
-
-type Yeet struct {
-	Enabled bool `json:"enabled"`
 }
