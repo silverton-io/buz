@@ -20,7 +20,7 @@ x-dependency:
 services:
   buz:
     container_name: buz
-    image: ghcr.io/silverton-io/buz:v0.15.0
+    image: ghcr.io/silverton-io/buz:v0.15.1
     volumes:
       - type: bind
         source: ./buz/quickstart.conf.yml

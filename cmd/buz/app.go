@@ -141,10 +141,6 @@ func (a *App) initializeMiddleware() {
 		log.Info().Msg("🟢 initializing request logger middleware")
 		a.engine.Use(middleware.RequestLogger())
 	}
-	if a.config.Middleware.Yeet.Enabled {
-		log.Info().Msg("🟢 initializing yeet middleware")
-		a.engine.Use(middleware.Yeet())
-	}
 	if a.config.Middleware.Auth.Enabled {
 		log.Info().Msg("🟢 initializing auth middleware")
 		a.switchableRouterGroup.Use(middleware.Auth(a.config.Middleware.Auth))
