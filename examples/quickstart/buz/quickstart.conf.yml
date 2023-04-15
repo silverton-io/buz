@@ -37,8 +37,10 @@ middleware:
     maxAge: 86400
   requestLogger:
     enabled: false
-  yeet:
+  auth:
     enabled: false
+    tokens:
+      - "YnV6OmJ1enp6enp6eg=="
 
 inputs:
   snowplow:
@@ -94,6 +96,11 @@ sinks:
       - redpanda-3:29094 # internally advertised
     defaultOutput: buz_events
     deadletterOutput: buz_invalid_events
+  - name: secondary
+    type: file
+    deliveryRequired: true
+    defaultOutput: buz_events.json
+    deadletterOutput: buz_invalid_events.json
 
 squawkBox:
   enabled: true

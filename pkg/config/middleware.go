@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Silverton Data, Inc.
+// Copyright (c) 2023 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
@@ -10,7 +10,7 @@ type Middleware struct {
 	Identity      `json:"identity"`
 	Cors          `json:"cors"`
 	RequestLogger `json:"requestLogger"`
-	Yeet          `json:"yeet"`
+	Auth          `json:"auth"`
 }
 
 type Timeout struct {
@@ -51,6 +51,7 @@ type RequestLogger struct {
 	Enabled bool `json:"enabled"`
 }
 
-type Yeet struct {
-	Enabled bool `json:"enabled"`
+type Auth struct {
+	Enabled bool     `json:"enabled"`
+	Tokens  []string `json:"-"`
 }

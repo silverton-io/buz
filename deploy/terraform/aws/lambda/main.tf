@@ -51,7 +51,7 @@ resource "aws_kinesis_firehose_delivery_stream" "deadletter" {
     buffer_interval    = var.firehose_buffer_interval
     compression_format = "GZIP"
 
-    prefix              = "deadletter/${local.s3_dynamic_prefix}"
+    prefix              = local.s3_dynamic_prefix
     error_output_prefix = "err/deadletter/"
 
     dynamic_partitioning_configuration {
@@ -133,22 +133,22 @@ resource "null_resource" "configure_docker" {
 
 resource "local_file" "config" {
   filename = "config.yml.build"
-  content = templatefile("config.yml.tftpl", {
-    system        = var.system,
-    env           = var.env,
-    mode          = "debug",
-    port          = "8080",
-    trackerDomain = var.buz_domain,
-    cookieDomain  = local.cookie_domain,
-    schemaBucket  = local.schema_bucket,
-    defaultOutput   = local.default_output,
+  content = templatefile("${path.module}/config.yml.tftpl", {
+    system           = var.system,
+    env              = var.env,
+    mode             = "debug",
+    port             = "8080",
+    trackerDomain    = var.buz_domain,
+    cookieDomain     = local.cookie_domain,
+    schemaBucket     = local.schema_bucket,
+    defaultOutput    = local.default_output,
     deadletterOutput = local.deadletter_output,
   })
 }
 
 resource "local_file" "dockerfile" {
   filename = "Dockerfile.build"
-  content = templatefile("Dockerfile.tftpl", {
+  content = templatefile("${path.module}/Dockerfile.tftpl", {
     sourceImage = local.buz_source_image
   })
 }
@@ -187,7 +187,7 @@ resource "aws_lambda_function" "buz" {
   environment {
     variables = {
       (local.buz_config_var) = local.buz_config_path,
-      (local.buz_debug_var) = var.debug
+      (local.buz_debug_var)  = var.debug
     }
   }
 

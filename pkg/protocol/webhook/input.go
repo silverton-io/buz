@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Silverton Data, Inconf.
+// Copyright (c) 2023 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
@@ -19,15 +19,15 @@ import (
 
 type WebhookInput struct{}
 
-func (i *WebhookInput) Initialize(engine *gin.Engine, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
+func (i *WebhookInput) Initialize(routerGroup *gin.RouterGroup, manifold *manifold.Manifold, conf *config.Config, metadata *meta.CollectorMeta) error {
 	if conf.Inputs.Webhook.Enabled {
 		log.Info().Msg("🟢 initializing webhook input")
-		engine.POST(conf.Inputs.Webhook.Path, i.Handler(*manifold, *conf, metadata))
-		engine.POST(conf.Inputs.Webhook.Path+"/*"+constants.BUZ_SCHEMA_PARAM, i.Handler(*manifold, *conf, metadata))
+		routerGroup.POST(conf.Inputs.Webhook.Path, i.Handler(*manifold, *conf, metadata))
+		routerGroup.POST(conf.Inputs.Webhook.Path+"/*"+constants.BUZ_SCHEMA_PARAM, i.Handler(*manifold, *conf, metadata))
 	}
 	if conf.Squawkbox.Enabled {
 		log.Info().Msg("🟢 initializing webhook input squawkbox")
-		engine.POST("/squawkbox/webhook", i.SquawkboxHandler(*manifold, *conf, metadata))
+		routerGroup.POST("/squawkbox/webhook", i.SquawkboxHandler(*manifold, *conf, metadata))
 	}
 	return nil
 }

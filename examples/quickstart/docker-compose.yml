@@ -20,7 +20,7 @@ x-dependency:
 services:
   buz:
     container_name: buz
-    image: ghcr.io/silverton-io/buz:v0.14.2
+    image: ghcr.io/silverton-io/buz:v0.15.1
     volumes:
       - type: bind
         source: ./buz/quickstart.conf.yml
@@ -38,15 +38,26 @@ services:
         condition: on-failure
     healthcheck:
       test: ./healthcheck --host=localhost --port=8080 --path=/health
-      interval: 15s
+      interval: 1s
     depends_on:
       << : *redpanda-dep
 
-  sample-ui:
-    container_name: sample-ui
-    image: ghcr.io/silverton-io/sample-tracked-ui:0.1.2
+  buz-quickstart-ui:
+    container_name: buz-quickstart-ui
+    image: ghcr.io/silverton-io/sample-tracked-ui:0.1.5
+
+  buz-quickstart-proxy:
+    container_name: buz-quickstart-proxy
+    image: nginx:latest
+    volumes:
+      - type: bind
+        source: ./nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
     ports:
-      - 8081:8080
+      - 8081:8081
+    depends_on:
+      buz:
+        condition: service_healthy
 
   redpanda-1:
     << : *redpanda

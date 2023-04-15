@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Silverton Data, Inc.
+// Copyright (c) 2023 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
@@ -40,11 +40,13 @@ import (
 var VERSION string
 
 type App struct {
-	config        *config.Config
-	engine        *gin.Engine
-	manifold      manifold.Manifold
-	collectorMeta *meta.CollectorMeta
-	debug         bool
+	config                *config.Config
+	engine                *gin.Engine
+	manifold              manifold.Manifold
+	collectorMeta         *meta.CollectorMeta
+	debug                 bool
+	publicRouterGroup     *gin.RouterGroup
+	switchableRouterGroup *gin.RouterGroup
 }
 
 func (a *App) configure() {
@@ -106,6 +108,8 @@ func (a *App) initializeManifold() {
 func (a *App) initializeRouter() {
 	log.Info().Msg("🟢 initializing router")
 	a.engine = gin.New()
+	a.publicRouterGroup = a.engine.Group("")
+	a.switchableRouterGroup = a.engine.Group("")
 	if err := a.engine.SetTrustedProxies(nil); err != nil {
 		panic(err)
 	}
@@ -137,24 +141,28 @@ func (a *App) initializeMiddleware() {
 		log.Info().Msg("🟢 initializing request logger middleware")
 		a.engine.Use(middleware.RequestLogger())
 	}
-	if a.config.Middleware.Yeet.Enabled {
-		log.Info().Msg("🟢 initializing yeet middleware")
-		a.engine.Use(middleware.Yeet())
+	if a.config.Middleware.Auth.Enabled {
+		log.Info().Msg("🟢 initializing auth middleware")
+		a.switchableRouterGroup.Use(middleware.Auth(a.config.Middleware.Auth))
 	}
 }
 
-func (a *App) initializeOpsRoutes() {
+// 🐝 and healthcheck route are always public
+func (a *App) initializePublicRoutes() {
 	log.Info().Msg("🟢 initializing buz route")
-	a.engine.GET("/", handler.BuzHandler())
+	a.publicRouterGroup.GET("/", handler.BuzHandler())
 	log.Info().Msg("🟢 initializing health check route")
-	a.engine.GET(constants.HEALTH_PATH, handler.HealthcheckHandler)
+	a.publicRouterGroup.GET(constants.HEALTH_PATH, handler.HealthcheckHandler)
+}
+
+func (a *App) initializeOpsRoutes() {
 	log.Info().Msg("🟢 initializing stats route")
-	a.engine.GET(constants.STATS_PATH, handler.StatsHandler(a.collectorMeta)) // FIXME!! Pass manifold here, as it will have the statistics
+	a.switchableRouterGroup.GET(constants.STATS_PATH, handler.StatsHandler(a.collectorMeta)) // FIXME!! Pass manifold here, as it will have the statistics
 	log.Info().Msg("🟢 initializing overview routes")
-	a.engine.GET(constants.ROUTE_OVERVIEW_PATH, handler.RouteOverviewHandler(*a.config))
+	a.switchableRouterGroup.GET(constants.ROUTE_OVERVIEW_PATH, handler.RouteOverviewHandler(*a.config))
 	if a.config.App.EnableConfigRoute {
 		log.Info().Msg("🟢 initializing config overview")
-		a.engine.GET(constants.CONFIG_OVERVIEW_PATH, handler.ConfigOverviewHandler(*a.config))
+		a.switchableRouterGroup.GET(constants.CONFIG_OVERVIEW_PATH, handler.ConfigOverviewHandler(*a.config))
 	}
 }
 
@@ -162,11 +170,11 @@ func (a *App) initializeSchemaCacheRoutes() {
 	r := a.manifold.GetRegistry()
 	if a.config.Registry.Purge.Enabled {
 		log.Info().Msg("🟢 initializing schema registry cache purge route")
-		a.engine.GET(a.config.Registry.Purge.Path, registry.PurgeCacheHandler(r))
+		a.switchableRouterGroup.GET(a.config.Registry.Purge.Path, registry.PurgeCacheHandler(r))
 	}
 	if a.config.Registry.Http.Enabled {
 		log.Info().Msg("🟢 initializing schema registry routes")
-		a.engine.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, registry.GetSchemaHandler(r))
+		a.switchableRouterGroup.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, registry.GetSchemaHandler(r))
 	}
 }
 
@@ -179,7 +187,7 @@ func (a *App) initializeInputs() {
 		&snowplow.SnowplowInput{},
 	}
 	for _, i := range inputs {
-		err := i.Initialize(a.engine, &a.manifold, a.config, a.collectorMeta)
+		err := i.Initialize(a.switchableRouterGroup, &a.manifold, a.config, a.collectorMeta)
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to initialize input")
 		}
@@ -192,6 +200,7 @@ func (a *App) Initialize() {
 	a.initializeRouter()
 	a.initializeManifold()
 	a.initializeMiddleware()
+	a.initializePublicRoutes()
 	a.initializeOpsRoutes()
 	a.initializeSchemaCacheRoutes()
 	a.initializeInputs()
