@@ -13,6 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
+	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 )
 
@@ -59,7 +60,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 		entry := eventbridge.PutEventsRequestEntry{
 			EventBusName: &output,
 			Time:         &e.Timestamp,
-			Source:       aws.String("buz"),
+			Source:       aws.String(constants.BUZ),
 			DetailType:   &e.Schema,
 			Detail:       aws.String(string(byteString)),
 		}
