@@ -31,7 +31,7 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 func (s *Sink) Initialize(conf config.Sink) error {
 	url, err := url.Parse(conf.Url)
 	if err != nil {
-		log.Error().Err(err).Interface("metadata", s.Metadata()).Msg(conf.Url + " is not a valid url")
+		log.Fatal().Err(err).Interface("metadata", s.Metadata()).Msg(conf.Url + " is not a valid url")
 	}
 	s.url = url
 	s.apiKey = conf.ApiKey
