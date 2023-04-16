@@ -60,7 +60,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 		log.Error().Err(err).Msg("🔴 " + output + " is not a valid url")
 		return err
 	}
-	_, err = request.PostEnvelopes(*url, envelopes)
+	_, err = request.PostEnvelopes(*url, envelopes, nil)
 	if err != nil {
 		log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("🔴 could not dequeue payloads")
 	}

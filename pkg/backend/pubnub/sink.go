@@ -67,7 +67,7 @@ func (s *Sink) buildPublishUrl(channel string) *url.URL {
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
 	u := s.buildPublishUrl(output)
-	_, err := request.PostEnvelopes(*u, envelopes)
+	_, err := request.PostEnvelopes(*u, envelopes, nil)
 	return err
 }
 

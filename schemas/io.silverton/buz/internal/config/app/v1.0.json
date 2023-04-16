@@ -824,7 +824,8 @@
                             "timescale",
                             "nats",
                             "amplitude",
-                            "eventbridge"
+                            "eventbridge",
+                            "splunk"
                         ]
                     },
                     "deliveryRequired": {
@@ -891,6 +892,11 @@
                         "type": "string",
                         "description": "The API key",
                         "default": "YOUR_KEY_HERE"
+                    },
+                    "token": {
+                        "type": "string",
+                        "description": "The API token",
+                        "default": "YOUR_TOKEN_HERE"
                     },
                     "region": {
                         "type": "string",
