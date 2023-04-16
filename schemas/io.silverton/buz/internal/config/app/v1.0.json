@@ -824,7 +824,8 @@
                             "timescale",
                             "nats",
                             "amplitude",
-                            "eventbridge"
+                            "eventbridge",
+                            "splunk"
                         ]
                     },
                     "deliveryRequired": {

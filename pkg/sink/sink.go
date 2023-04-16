@@ -23,6 +23,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/postgresdb"
 	"github.com/silverton-io/buz/pkg/backend/pubnub"
 	"github.com/silverton-io/buz/pkg/backend/pubsub"
+	"github.com/silverton-io/buz/pkg/backend/splunk"
 	"github.com/silverton-io/buz/pkg/backend/stdout"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/constants"
@@ -93,6 +94,9 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 		return &sink, nil
 	case constants.MATERIALIZE:
 		sink := postgresdb.Sink{}
+		return &sink, nil
+	case constants.SPLUNK:
+		sink := splunk.Sink{}
 		return &sink, nil
 	default:
 		e := errors.New("unsupported sink: " + conf.Type)

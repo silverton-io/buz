@@ -15,6 +15,7 @@ type Sink struct {
 	// Kafka
 	Brokers []string `json:"kakfaBrokers,omitempty"`
 	// Http / API
+	Url    string `json:"url"`
 	ApiKey string `json:"-"`
 	// Misc
 	Region string `json:"-"`

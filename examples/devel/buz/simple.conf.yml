@@ -185,6 +185,13 @@ sinks:
   #   deliveryRequired: true
   #   defaultOutput: buz
   #   deadletterOutput: buz
+  # - name: splunk
+  #   type: splunk
+  #   deliveryRequired: true
+  #   url: https://<HOST>.splunkcloud.com:8088/services/collector/raw
+  #   apiKey: abdf41b4-f6e8-46a7-bb80-d349181af78c
+  #   defaultOutput: main # This is tied to splunk HEC so it's moot
+  #   deadletterOutput: main # This is tied to splunk HEC so it's moot
 
 squawkBox:
   enabled: true

@@ -50,7 +50,6 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 }
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
-	log.Info().Msg("made it here")
 	var entries []*eventbridge.PutEventsRequestEntry
 	for _, e := range envelopes {
 		byteString, err := e.AsByte()

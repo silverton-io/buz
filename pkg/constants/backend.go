@@ -38,4 +38,5 @@ const (
 	AMPLITUDE  string = "amplitude"
 	PUBNUB     string = "pubnub"
 	IGLU       string = "iglu"
+	SPLUNK     string = "splunk"
 )
