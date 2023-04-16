@@ -19,7 +19,7 @@ import (
 type Sink struct {
 	metadata backendutils.SinkMetadata
 	url      *url.URL
-	apiKey   string
+	token    string
 	input    chan []envelope.Envelope
 	shutdown chan int
 }
@@ -34,7 +34,7 @@ func (s *Sink) Initialize(conf config.Sink) error {
 		log.Fatal().Err(err).Interface("metadata", s.Metadata()).Msg(conf.Url + " is not a valid url")
 	}
 	s.url = url
-	s.apiKey = conf.ApiKey
+	s.token = conf.Token
 	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
@@ -55,7 +55,7 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
 	log.Debug().Interface("metadata", s.Metadata()).Msg("dequeueing envelopes")
 	splunkHeader := http.Header{
-		"Authorization": {"Splunk " + s.apiKey},
+		"Authorization": {"Splunk " + s.token},
 	}
 	resp, err := request.PostEnvelopes(*s.url, envelopes, splunkHeader)
 	if err != nil {

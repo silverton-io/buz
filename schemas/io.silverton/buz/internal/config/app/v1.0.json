@@ -893,6 +893,11 @@
                         "description": "The API key",
                         "default": "YOUR_KEY_HERE"
                     },
+                    "token": {
+                        "type": "string",
+                        "description": "The API token",
+                        "default": "YOUR_TOKEN_HERE"
+                    },
                     "region": {
                         "type": "string",
                         "description": "The region",
