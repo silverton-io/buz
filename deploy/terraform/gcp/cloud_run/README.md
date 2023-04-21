@@ -29,5 +29,5 @@ gcp_project = "my-project-23456"
 gcp_region  = "us-central1"
 system      = "buz"
 buz_domain  = "track.yourdomain.com"
-buz_version = "v0.15.4"
+buz_version = "v0.15.6"
 ```
