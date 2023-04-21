@@ -1,4 +1,4 @@
-name: Publish Schema to Registry
+name: Publish Schemas to Registry
 
 on:
   push:
