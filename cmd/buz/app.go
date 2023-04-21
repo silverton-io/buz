@@ -170,7 +170,8 @@ func (a *App) initializeSchemaCacheRoutes() {
 	r := a.manifold.GetRegistry()
 	if a.config.Registry.Purge.Enabled {
 		log.Info().Msg("🟢 initializing schema registry cache purge route")
-		a.switchableRouterGroup.GET(a.config.Registry.Purge.Path, registry.PurgeCacheHandler(r))
+		a.switchableRouterGroup.GET(registry.CACHE_PURGE_ROUTE, registry.PurgeCacheHandler(r))
+		a.switchableRouterGroup.POST(registry.CACHE_PURGE_ROUTE, registry.PurgeCacheHandler(r))
 	}
 	if a.config.Registry.Http.Enabled {
 		log.Info().Msg("🟢 initializing schema registry routes")

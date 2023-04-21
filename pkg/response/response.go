@@ -28,6 +28,10 @@ var SchemaNotAvailable = Response{
 	Message: "schema not available",
 }
 
+var CachePurged = Response{
+	Message: "cache purged",
+}
+
 var Timeout = Response{
 	Message: "request timed out",
 }
