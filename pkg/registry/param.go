@@ -5,6 +5,7 @@
 package registry
 
 const (
-	SCHEMAS_ROUTE = "/s/"
-	SCHEMA_PARAM  = "schema"
+	SCHEMAS_ROUTE     = "/s/"
+	CACHE_PURGE_ROUTE = "/c/purge"
+	SCHEMA_PARAM      = "schema"
 )

@@ -15,6 +15,7 @@ func PurgeCacheHandler(r *Registry) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		log.Debug().Msg("🟡 schema cache purged")
 		r.Cache.Clear()
+		c.JSON(200, response.CachePurged)
 	}
 	return gin.HandlerFunc(fn)
 }

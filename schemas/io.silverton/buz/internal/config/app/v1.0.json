@@ -746,17 +746,11 @@
                             "type": "boolean",
                             "default": "false",
                             "description": "Whether or not to enable schema cache purge endpoints"
-                        },
-                        "path": {
-                            "type": "string",
-                            "default": "/c/purge",
-                            "description": "The path by which to purge the schema cache"
                         }
                     },
                     "additionalProperties": false,
                     "required": [
-                        "enabled",
-                        "path"
+                        "enabled"
                     ]
                 },
                 "http": {
