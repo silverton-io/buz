@@ -1,9 +1,9 @@
-name: Releaser
+name: Release
 
 on:
   push:
     branches:
-      - main
+      - "*"
 
 jobs:
   cut-release:
@@ -13,11 +13,11 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.5.2
 
       - name: Get Version from file
         id: get-version
-        uses: juliangruber/read-file-action@v1
+        uses: juliangruber/read-file-action@v1.1.6
         with:
           path: ./.VERSION
 
@@ -28,7 +28,7 @@ jobs:
 
       - name: Set Reftag
         id: tag-version
-        uses: mathieudutour/github-tag-action@v6.0
+        uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           custom_tag: ${{ steps.get-version.outputs.content }}
@@ -55,16 +55,16 @@ jobs:
             goos: windows
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.5.2
 
       - name: Get Version from file
         id: get-version
-        uses: juliangruber/read-file-action@v1
+        uses: juliangruber/read-file-action@v1.1.6
         with:
           path: ./.VERSION
 
       - name: Release Binaries
-        uses: wangyoucao577/go-release-action@v1.25
+        uses: wangyoucao577/go-release-action@v1.37
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
