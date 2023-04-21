@@ -9,8 +9,7 @@ type Http struct {
 }
 
 type Purge struct {
-	Enabled bool   `json:"enabled"`
-	Path    string `json:"path"`
+	Enabled bool `json:"enabled"`
 }
 
 type Backend struct {
