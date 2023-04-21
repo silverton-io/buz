@@ -1,4 +1,4 @@
-.PHONY: help run bootstrap-destinations build-docker buildx-deploy test-cover-pkg
+.PHONY: run debug bootstrap bootstrap-destinations build-docker buildx-deploy lint test test-cover-pkg help
 S=silverton
 REGISTRY:=us-east1-docker.pkg.dev/silverton-io/docker
 VERSION:=$(shell cat .VERSION)
@@ -6,7 +6,7 @@ BUZ_DIR="./cmd/buz/"
 TEST_PROFILE=testprofile.out
 
 build:
-	go build -ldflags="-X main.VERSION=$(VERSION)" -o build/buz $(BUZ_DIR)
+	go build -ldflags="-X main.VERSION=$(VERSION)" -o buz $(BUZ_DIR)
 
 run: ## Run buz locally
 	go run -ldflags="-X 'main.VERSION=x.x.dev'" $(BUZ_DIR)

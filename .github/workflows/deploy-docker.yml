@@ -1,8 +1,9 @@
-name: Publish Buz image to ghcr.io
+name: Publish Container Image
 
 on:
   push:
-    branches: ['main']
+    branches:
+      - main
 
 env:
   GH_REGISTRY: ghcr.io
@@ -20,7 +21,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
+
       - name: Get Version from file
         id: get-version
         uses: juliangruber/read-file-action@v1

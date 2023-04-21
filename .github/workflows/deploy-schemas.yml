@@ -1,20 +1,19 @@
-# name: Publish schemas to registry
+name: Publish Schemas to Registry
 
-# on:
-#   push:
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - main
 
-# jobs:
-#   deploy-schemas:
-#     runs-on: ubuntu-latest
-#     permissions:
-#       contents: read
-#       id-token: write
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v2
-
+jobs:
+  deploy-schemas:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.5.2
 #       - name: Auth to GCP
 #         uses: google-github-actions/auth@v0
 #         with:
