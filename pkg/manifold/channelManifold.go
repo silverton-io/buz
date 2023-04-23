@@ -42,7 +42,6 @@ func (m *ChannelManifold) Initialize(registry *registry.Registry, sinks *[]backe
 				}
 			case <-shutdown:
 				// Read all envelopes from input channel and pass to all sinks
-				// FIXME
 				// Then send shutdown sig to all sinks
 				log.Info().Msg("🟢 shutting down all sinks")
 				for _, s := range *m.sinks {
