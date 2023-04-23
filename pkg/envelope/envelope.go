@@ -6,8 +6,6 @@ package envelope
 
 import (
 	"encoding/json"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -65,16 +63,6 @@ func (e *Envelope) AsByte() ([]byte, error) {
 
 func (e *Envelope) OutputLocation() OutputLocation {
 	return NewOutputLocationFromEnvelope(e)
-}
-
-func (e *Envelope) NamespacedOutputPath() string {
-	year, month, day := e.BuzTimestamp.Date()
-	datePath := "/year=" + strconv.Itoa(year) + "/month=" + month.String() + "/day=" + strconv.Itoa(day)
-	return "isValid=" + strconv.FormatBool(e.IsValid) + "/vendor=" + e.Vendor + "/namespace=" + e.Namespace + "/version=" + e.Version + datePath
-}
-
-func (e *Envelope) NamespacedDbFqn() string {
-	return strings.Replace(e.Vendor, ".", "_", -1) + strings.Replace(e.Namespace, ".", "_", -1) + strings.Split(e.Version, ".")[0]
 }
 
 // The only reason for this struct's existence is to properly create
