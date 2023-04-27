@@ -1,0 +1,23 @@
+builds:
+  - id: buz
+    main: ./cmd/buz/
+    binary: buz
+    goos: [windows, darwin, linux, freebsd, openbsd]
+    goarch: [amd64, arm64]
+    ldflags: >
+      -s -w
+      -X main.VERSION={{.Version}}
+archives:
+  - id: buz
+    builds: [buz]
+    format: tar.gz
+    files:
+      - README.md
+      - LICENSE
+dist: target/dist
+release:
+  github:
+    owner: silverton-io
+    name: buz
+  prerelease: auto
+  disable: false
