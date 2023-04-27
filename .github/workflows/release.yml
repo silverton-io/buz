@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - main
+      - "*"
 
 jobs:
   cut-release:
@@ -14,6 +14,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3.5.2
+
+      - name: Fetch Tags
+        run: git fetch --force --tags
 
       - name: Get Version from file
         id: get-version
