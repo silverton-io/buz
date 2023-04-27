@@ -27,9 +27,9 @@ variable "buz_domain" {
 }
 
 variable "buz_version" {
-  description = "The version of Buz to run. \n\nExample: v0.15.6"
+  description = "The version of Buz to run."
   type        = string
-  default     = "v0.15.6"
+  default     = "v0.15.7"
 }
 
 variable "buz_lambda_memory_limit" {

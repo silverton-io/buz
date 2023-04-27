@@ -61,6 +61,12 @@ func (e *Envelope) AsByte() ([]byte, error) {
 	return eBytes, nil
 }
 
+func (e *Envelope) OutputLocation() OutputLocation {
+	return NewOutputLocationFromEnvelope(e)
+}
+
+// The only reason for this struct's existence is to properly create
+// database tables with jsonb columns.
 type JsonbEnvelope struct {
 	Uuid            uuid.UUID        `json:"uuid" gorm:"type:uuid"`
 	Timestamp       time.Time        `json:"timestamp" sql:"index"`
@@ -79,6 +85,8 @@ type JsonbEnvelope struct {
 	Payload         Payload          `json:"payload" gorm:"type:jsonb"`
 }
 
+// The only reason for this struct's existence is to properly create
+// database tables with string columns.
 type StringEnvelope struct {
 	Uuid            uuid.UUID        `json:"uuid" gorm:"type:uuid"`
 	Timestamp       time.Time        `json:"timestamp" sql:"index"`
