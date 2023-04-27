@@ -37,6 +37,6 @@ jobs:
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v4
         with:
-          version: ${{ steps.get-version.outputs.content }}
+          version: latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
