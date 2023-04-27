@@ -2,8 +2,8 @@ name: Tag
 
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - main
 
 jobs:
   cut-release:
