@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "*"
 
 jobs:
   cut-release:
@@ -17,24 +17,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get Version from file
-        id: get-version
-        uses: juliangruber/read-file-action@v1.1.6
-        with:
-          path: ./.VERSION
-
       - name: Configure Git
         run: |
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git config user.name "$GITHUB_ACTOR"
-
-      - name: Set Reftag
-        id: tag-version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          custom_tag: ${{ steps.get-version.outputs.content }}
-          tag_prefix: ""
 
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v4
