@@ -1,7 +1,9 @@
 name: Release
 
 on:
-  create:
+  push:
+    branches:
+      - main
 
 jobs:
   cut-release:
