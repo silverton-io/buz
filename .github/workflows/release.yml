@@ -6,7 +6,7 @@ on:
 jobs:
   cut-release:
     runs-on: ubuntu-latest
-    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    # if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     permissions:
       contents: write
       pull-requests: write
