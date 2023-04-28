@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  cut-release:
+  tag-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
