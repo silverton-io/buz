@@ -21,3 +21,9 @@ release:
     name: buz
   prerelease: auto
   disable: false
+announce:
+  discord:
+    enabled: true
+    message_template: "🐝 {{.Tag}} now available at {{ .ReleaseURL }}"
+    author: "Queen Bee"
+    icon_url: "https://raw.githubusercontent.com/silverton-io/buz/main/img/buzz.png"
