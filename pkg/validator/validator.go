@@ -56,7 +56,10 @@ func Validate(e envelope.Envelope, registry *registry.Registry) (isValid bool, v
 			payloadToValidate = e.Payload["self_describing_event"].(map[string]interface{})["data"]
 		} else {
 			contents, _ := e.Payload.AsByte()
-			json.Unmarshal(contents, &payloadToValidate)
+			err := json.Unmarshal(contents, &payloadToValidate)
+			if err != nil {
+				log.Error().Err(err).Msg("could not unmarshal payload")
+			}
 		}
 		// If the payload is not present at all it should be considered invalid.
 		if payloadToValidate == nil {
