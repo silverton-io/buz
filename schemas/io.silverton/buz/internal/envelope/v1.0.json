@@ -1,5 +1,5 @@
 {
-    "$schema": "https://raw.githubusercontent.com/silverton-io/buz/main/schemas/io.silverton/buz/internal/meta/v1.0.json",
+    "$schema": "https://r.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
     "$id": "io.silverton/buz/envelope/v1.0.json",
     "title": "io.silverton/buz/envelope/v1.0.json",
     "description": "Buz envelope",
