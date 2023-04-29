@@ -1,13 +1,13 @@
 {
-    "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$schema": "https://raw.githubusercontent.com/silverton-io/buz/main/schemas/io.silverton/buz/internal/meta/v1.0.json",
     "$id": "io.silverton/snowplow/struct/v1.0.json",
     "title": "io.silverton/snowplow/struct/v1.0.json",
     "description": "Snowplow Struct Event",
-	"self": {
-		"vendor": "io.silverton",
+    "self": {
+        "vendor": "io.silverton",
         "namespace": "snowplow.structEvent",
-		"version": "1.0"
-	},
+        "version": "1.0"
+    },
     "type": "object",
     "properties": {
         "se_category": {
@@ -19,18 +19,30 @@
             "description": "The struct event action"
         },
         "se_label": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The struct event label"
         },
         "se_property": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The struct event property"
         },
         "se_value": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "The struct event value"
         }
     },
-    "required": ["se_category", "se_action"],
+    "required": [
+        "se_category",
+        "se_action"
+    ],
     "additionalProperties": false
 }

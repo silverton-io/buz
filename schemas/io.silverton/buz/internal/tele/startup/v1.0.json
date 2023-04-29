@@ -1,5 +1,5 @@
 {
-    "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$schema": "https://raw.githubusercontent.com/silverton-io/buz/main/schemas/io.silverton/buz/internal/meta/v1.0.json",
     "$id": "io.silverton/buz/internal/tele/startup/v1.0.json",
     "title": "io.silverton/buz/internal/tele/startup/v1.0.json",
     "description": "Buz startup event",
@@ -8,11 +8,11 @@
         "team": "buz",
         "individual": "jakthom"
     },
-	"self": {
-		"vendor": "io.silverton",
+    "self": {
+        "vendor": "io.silverton",
         "namespace": "buz.internal.tele.startup",
-		"version": "1.0"
-	},
+        "version": "1.0"
+    },
     "type": "object",
     "properties": {
         "config": {
@@ -30,5 +30,9 @@
         }
     },
     "additionalProperties": false,
-    "required": ["meta", "time", "config"]
+    "required": [
+        "meta",
+        "time",
+        "config"
+    ]
 }

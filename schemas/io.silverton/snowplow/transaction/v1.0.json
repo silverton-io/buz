@@ -1,13 +1,13 @@
 {
-    "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$schema": "https://raw.githubusercontent.com/silverton-io/buz/main/schemas/io.silverton/buz/internal/meta/v1.0.json",
     "$id": "io.silverton/snowplow/transaction/v1.0.json",
     "title": "io.silverton/snowplow/transaction/v1.0.json",
     "description": "Snowplow Transaction Event",
-	"self": {
-		"vendor": "io.silverton",
+    "self": {
+        "vendor": "io.silverton",
         "namespace": "snowplow.transaction",
-		"version": "1.0"
-	},
+        "version": "1.0"
+    },
     "type": "object",
     "properties": {
         "tr_orderid": {
@@ -15,7 +15,10 @@
             "description": "The transaction order id"
         },
         "tr_affiliation": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The transaction affiliation"
         },
         "tr_total": {
@@ -23,30 +26,51 @@
             "description": "The transaction total"
         },
         "tr_tax": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "The transaction tax"
         },
         "tr_shipping": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "The transaction shipping"
         },
         "tr_city": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "The transaction city"
         },
         "tr_state": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "The transaction state"
         },
         "tr_country": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "The transaction country"
         },
         "tr_currency": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "The transaction currency"
         }
     },
-    "required": ["tr_orderid", "tr_total"],
+    "required": [
+        "tr_orderid",
+        "tr_total"
+    ],
     "additionalProperties": false
 }
