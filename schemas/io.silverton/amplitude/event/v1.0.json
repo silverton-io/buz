@@ -1,21 +1,27 @@
 {
-    "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$schema": "https://raw.githubusercontent.com/silverton-io/buz/main/schemas/io.silverton/buz/internal/meta/v1.0.json",
     "$id": "io.silverton/amplitude/event/v1.0.json",
     "title": "io.silverton/amplitude/event/v1.0.json",
     "description": "Amplitude event spec",
-	"self": {
-		"vendor": "io.silverton",
+    "self": {
+        "vendor": "io.silverton",
         "namespace": "amplitude.spec.event",
-		"version": "1.0"
-	},
+        "version": "1.0"
+    },
     "type": "object",
     "properties": {
         "user_id": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "A readable ID specified by you. Must have a minimum length of 5 characters."
         },
         "device_id": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "A device-specific identifier, such as the Identifier for Vendor on iOS. 2 anonymous users sharing the same device_id will be merged, so the device_id has to uniquely identify physical devices, and should not be set to your server's machine name. If a device_id is not sent with the event (which is ok), it will be automatically set to a hashed version of the user_id."
         },
         "event_type": {
@@ -27,132 +33,228 @@
             "description": "The timestamp of the event in milliseconds since epoch. If time is not sent with the event, it will be set to the request upload time"
         },
         "event_properties": {
-            "type": ["object","null"],
+            "type": [
+                "object",
+                "null"
+            ],
             "description": "A dictionary of key-value pairs that represent additional data to be sent along with the event. You can store property values in an array. Date values are transformed into string values. Object depth may not exceed 40 layers."
         },
         "user_properties": {
-            "type": ["object","null"],
+            "type": [
+                "object",
+                "null"
+            ],
             "description": "A dictionary of key-value pairs that represent additional data tied to the user. You can store property values in an array. Date values are transformed into string values. Object depth may not exceed 40 layers."
         },
         "groups": {
-            "type": ["object","null"],
+            "type": [
+                "object",
+                "null"
+            ],
             "description": "This feature is only available to Enterprise customers who have purchased the Accounts add-on. This field adds a dictionary of key-value pairs that represent groups of users to the event as an event-level group. Note: You can only track up to 5 unique group types and 10 total group values. Any groups past that threshold will not be tracked."
         },
         "app_version": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The current version of your application."
         },
         "platform": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "Platform of the device."
         },
         "os_name": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The name of the mobile operating system or browser that the user is using."
         },
         "os_version": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The version of the mobile operating system or browser the user is using."
         },
         "device_brand": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The device brand that the user is using."
         },
         "device_manufacturer": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The device manufacturer that the user is using."
         },
         "device_model": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The device model that the user is using."
         },
         "carrier": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The carrier that the user is using."
         },
         "country": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The current country of the user."
         },
         "region": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The current region of the user."
         },
         "city": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The current city of the user."
         },
         "dma": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The current Designated Market Area of the user."
         },
         "language": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The language set by the user."
         },
         "price": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "The price of the item purchased. Required for revenue data if the revenue field is not sent. You can use negative values to indicate refunds."
         },
         "quantity": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "default": "1",
             "description": "The quantity of the item purchased. Defaults to 1 if not specified."
         },
         "revenue": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "revenue = price * quantity. If you send all 3 fields of price, quantity, and revenue, then (price * quantity) will be used as the revenue value. You can use negative values to indicate refunds."
         },
         "productId": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "An identifier for the item purchased. You must send a price and quantity or revenue with this field."
         },
         "revenueType": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The type of revenue for the item purchased. You must send a price and quantity or revenue with this field."
         },
         "location_lat": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "The current Latitude of the user."
         },
         "location_lng": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "The current Longitude of the user."
         },
         "ip": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The IP address of the user. Use $remote to use the IP address on the upload request. We will use the IP address to reverse lookup a user's location (city, country, region, and DMA). Amplitude has the ability to drop the location and IP address from events once it reaches our servers. You can submit a request to our platform specialist team here to configure this for you."
         },
         "idfa": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "(iOS) Identifier for Advertiser."
         },
         "idfv": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "(iOS) Identifier for Vendor."
         },
         "adid": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "Google Play Services advertising ID"
         },
         "android_id": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "Android ID (not the advertising ID)"
         },
         "event_id": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "An incrementing counter to distinguish events with the same user_id and timestamp from each other. We recommend you send an event_id, increasing over time, especially if you expect events to occur simultanenously."
         },
         "session_id": {
-            "type": ["number","null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "The start time of the session in milliseconds since epoch (Unix Timestamp), necessary if you want to associate events with a particular system. A session_id of -1 is the same as no session_id specified."
         },
         "insert_id": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "A unique identifier for the event. We will deduplicate subsequent events sent with the same insert_id and device_id we have already seen before within the past 7 days. We recommend generation a UUID or using some combination of device_id, user_id, event_type, event_id, and time."
         },
         "plan": {
-            "type": ["object","null"],
+            "type": [
+                "object",
+                "null"
+            ],
             "description": "Tracking plan properties.",
             "properties": {
                 "branch": {

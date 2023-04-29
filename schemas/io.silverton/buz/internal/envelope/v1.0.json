@@ -1,5 +1,5 @@
 {
-    "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$schema": "https://raw.githubusercontent.com/silverton-io/buz/main/schemas/io.silverton/buz/internal/meta/v1.0.json",
     "$id": "io.silverton/buz/envelope/v1.0.json",
     "title": "io.silverton/buz/envelope/v1.0.json",
     "description": "Buz envelope",
@@ -9,7 +9,9 @@
         "individual": "jakthom"
     },
     "privacy": {
-        "isPii": ["user.id"]
+        "isPii": [
+            "user.id"
+        ]
     },
     "self": {
         "vendor": "io.silverton",
@@ -52,7 +54,10 @@
                     "description": "The event schema"
                 }
             },
-            "required": ["protocol", "uuid"]
+            "required": [
+                "protocol",
+                "uuid"
+            ]
         },
         "pipeline": {
             "type": "object",
@@ -81,7 +86,12 @@
                             "description": "Source version"
                         }
                     },
-                    "required": ["generatedTstamp", "sentTstamp", "name", "version"]
+                    "required": [
+                        "generatedTstamp",
+                        "sentTstamp",
+                        "name",
+                        "version"
+                    ]
                 },
                 "collector": {
                     "type": "object",
@@ -101,7 +111,11 @@
                             "description": "The version of the collector"
                         }
                     },
-                    "required": ["tstamp", "name", "version"]
+                    "required": [
+                        "tstamp",
+                        "name",
+                        "version"
+                    ]
                 }
             }
         },
@@ -194,7 +208,10 @@
                     "description": "Additional device traits"
                 }
             },
-            "required": ["ip", "useragent"]
+            "required": [
+                "ip",
+                "useragent"
+            ]
         },
         "user": {
             "type": "object",
@@ -422,6 +439,10 @@
             "description": "Event payload"
         }
     },
-    "required": ["eventMeta", "pipeline", "payload"],
+    "required": [
+        "eventMeta",
+        "pipeline",
+        "payload"
+    ],
     "additionalProperties": false
 }

@@ -4,7 +4,8 @@ scratch/*
 testprofile.out
 cmd/scratch/*
 # File sink
-*.json
+buz_events.json
+buz_invalid_events.json
 # Other
 notes/*
 *.sql

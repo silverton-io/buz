@@ -1,5 +1,5 @@
 {
-    "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$schema": "https://raw.githubusercontent.com/silverton-io/buz/main/schemas/io.silverton/buz/internal/meta/v1.0.json",
     "$id": "io.silverton/buz/tele/meta/v1.0.json",
     "title": "io.silverton/buz/tele/meta/v1.0.json",
     "owner": {
@@ -7,16 +7,16 @@
         "team": "buz",
         "individual": "jakthom"
     },
-	"self": {
-		"vendor": "io.silverton",
+    "self": {
+        "vendor": "io.silverton",
         "namespace": "buz.internal.tele.meta",
-		"version": "1.0"
-	},
+        "version": "1.0"
+    },
     "type": "object",
     "properties": {
         "version": {
             "type": "string",
-            "description":"Buz version"
+            "description": "Buz version"
         },
         "instanceId": {
             "type": "string",
@@ -62,5 +62,17 @@
         }
     },
     "additionalProperties": false,
-    "required": ["version", "instanceId", "startTime", "trackerDomain", "cookieDomain", "validSnowplowEventsProcessed", "invalidSnowplowEventsProcessed", "validGenericEventsProcessed", "invalidGenericEventsProcessed", "validCloudEventsProcessed", "invalidCloudEventsProcessed"]
+    "required": [
+        "version",
+        "instanceId",
+        "startTime",
+        "trackerDomain",
+        "cookieDomain",
+        "validSnowplowEventsProcessed",
+        "invalidSnowplowEventsProcessed",
+        "validGenericEventsProcessed",
+        "invalidGenericEventsProcessed",
+        "validCloudEventsProcessed",
+        "invalidCloudEventsProcessed"
+    ]
 }

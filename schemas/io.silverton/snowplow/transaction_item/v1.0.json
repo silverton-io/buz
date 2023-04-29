@@ -1,13 +1,13 @@
 {
-    "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$schema": "https://raw.githubusercontent.com/silverton-io/buz/main/schemas/io.silverton/buz/internal/meta/v1.0.json",
     "$id": "io.silverton/snowplow/transaction_item/v1.0.json",
     "title": "io.silverton/snowplow/transaction_item/v1.0.json",
     "description": "Snowplow Transaction Item Event",
-	"self": {
-		"vendor": "io.silverton",
+    "self": {
+        "vendor": "io.silverton",
         "namespace": "snowplow.transactionItem",
-		"version": "1.0"
-	},
+        "version": "1.0"
+    },
     "type": "object",
     "properties": {
         "ti_orderid": {
@@ -19,11 +19,17 @@
             "description": "The transaction item sku"
         },
         "ti_name": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The transaction item name"
         },
         "ti_category": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The transaction item category"
         },
         "ti_price": {
@@ -35,7 +41,10 @@
             "description": "The transaction item quantity"
         },
         "ti_currency": {
-            "type": ["string","null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "The transaction item currency"
         }
     },

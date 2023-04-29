@@ -1,26 +1,26 @@
 {
-	"$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$schema": "https://raw.githubusercontent.com/silverton-io/buz/main/schemas/io.silverton/buz/internal/meta/v1.0.json",
     "$id": "io.silverton/buz/example/productView/v1.0.json",
     "title": "io.silverton/buz/example/productView/v1.0.json",
-	"description": "Schema for product views",
+    "description": "Schema for product views",
     "owner": {
         "org": "silverton",
         "team": "buz",
         "individual": "jakthom"
     },
-	"self": {
-		"vendor": "io.silverton",
+    "self": {
+        "vendor": "io.silverton",
         "namespace": "buz.example.productView",
-		"version": "1.0"
-	},
-	"type": "object",
-	"properties": {
-		"productId": {
-			"description": "The product id",
-			"type": "string",
-			"minLength": 0,
-			"maxLength": 4096
-		},
+        "version": "1.0"
+    },
+    "type": "object",
+    "properties": {
+        "productId": {
+            "description": "The product id",
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 4096
+        },
         "category": {
             "description": "The category",
             "type": "string"
@@ -49,7 +49,15 @@
             "type": "string",
             "format": "date-time"
         }
-	},
-	"required": ["productId", "category", "brand", "returning", "price", "sizes", "availableSince"],
-	"additionalProperties": false
+    },
+    "required": [
+        "productId",
+        "category",
+        "brand",
+        "returning",
+        "price",
+        "sizes",
+        "availableSince"
+    ],
+    "additionalProperties": false
 }

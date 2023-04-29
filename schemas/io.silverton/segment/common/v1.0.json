@@ -1,17 +1,20 @@
 {
-    "$schema": "https://registry.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$schema": "https://raw.githubusercontent.com/silverton-io/buz/main/schemas/io.silverton/buz/internal/meta/v1.0.json",
     "$id": "io.silverton/segment/spec/common/v1.0.json",
     "title": "io.silverton/segment/spec/common/v1.0.json",
     "description": "Segment common fields spec",
-	"self": {
-		"vendor": "io.silverton",
+    "self": {
+        "vendor": "io.silverton",
         "namespace": "segment.spec.common",
-		"version": "1.0"
-	},
+        "version": "1.0"
+    },
     "type": "object",
     "properties": {
         "anonymousId": {
-            "type": ["string", "null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "A pseudo-unique substitute for a User ID, for cases when you don’t have an absolutely unique identifier. A userId or an anonymousId is required. See the Identities docs for more details."
         },
         "context": {
@@ -27,7 +30,7 @@
                     "description": "Dictionary of information about the current application",
                     "properties": {
                         "name": {
-                            "type":"string",
+                            "type": "string",
                             "description": "The name of the application"
                         },
                         "version": {
@@ -45,7 +48,7 @@
                     "description": "Dictionary of information about the campaign that resulted in the API call",
                     "properties": {
                         "name": {
-                            "type":"string",
+                            "type": "string",
                             "description": "The value of the utm campaign param"
                         },
                         "source": {
@@ -71,31 +74,52 @@
                     "description": "Dictionary of information about the device",
                     "properties": {
                         "id": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The device id"
                         },
                         "advertisingId": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The device ad id"
                         },
                         "manufacturer": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The device manufacturer"
                         },
                         "model": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The device model"
                         },
                         "name": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The device name"
                         },
                         "type": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The device type"
                         },
                         "version": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The device version"
                         }
                     }
@@ -127,27 +151,45 @@
                     "description": "Information about current location",
                     "properties": {
                         "city": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The current city"
                         },
                         "country": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The current country"
                         },
                         "latitude": {
-                            "type": ["number", "null"],
+                            "type": [
+                                "number",
+                                "null"
+                            ],
                             "description": "The current latitude"
                         },
                         "longitude": {
-                            "type": ["number", "null"],
+                            "type": [
+                                "number",
+                                "null"
+                            ],
                             "description": "The current longitude"
                         },
                         "region": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The current region"
                         },
                         "speed": {
-                            "type": ["number", "null"],
+                            "type": [
+                                "number",
+                                "null"
+                            ],
                             "description": "The current speed"
                         }
                     }
@@ -157,19 +199,31 @@
                     "description": "Information about the current network connection",
                     "properties": {
                         "bluetooth": {
-                            "type": ["boolean", "null"],
+                            "type": [
+                                "boolean",
+                                "null"
+                            ],
                             "description": "Whether or not the connection is via bluetooth"
                         },
                         "carrier": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The name of the network carrier"
                         },
                         "cellular": {
-                            "type": ["boolean", "null"],
+                            "type": [
+                                "boolean",
+                                "null"
+                            ],
                             "description": "Whether or not the connection is via cellular"
                         },
                         "wifi": {
-                            "type": ["boolean", "null"],
+                            "type": [
+                                "boolean",
+                                "null"
+                            ],
                             "description": "Whether or not the connection is via wifi"
                         }
                     }
@@ -179,11 +233,17 @@
                     "description": "Information about the operating system",
                     "properties": {
                         "name": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The os name"
                         },
                         "version": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The os version"
                         }
                     }
@@ -219,19 +279,31 @@
                     "description": "Dictionary of information about the way the user was referred to the website or app",
                     "properties": {
                         "type": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The referrer type"
                         },
                         "name": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The referrer name"
                         },
                         "url": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The referrer url"
                         },
                         "link": {
-                            "type": ["string", "null"],
+                            "type": [
+                                "string",
+                                "null"
+                            ],
                             "description": "The referrer link"
                         }
                     }
@@ -262,7 +334,7 @@
                     "type": "string",
                     "description": "Group / Account ID."
                 },
-                "traits":{
+                "traits": {
                     "type": "object",
                     "description": "Dictionary of traits of the current user"
                 },
@@ -300,7 +372,10 @@
             "description": "Type of message, corresponding to the API method: 'identify', 'group', 'track', 'page', 'screen' or 'alias'."
         },
         "userId": {
-            "type": ["string", "null"],
+            "type": [
+                "string",
+                "null"
+            ],
             "description": "Unique identifier for the user in your database. A userId or an anonymousId is required. See the Identities docs for more details."
         },
         "version": {
