@@ -59,6 +59,13 @@ func Validate(e envelope.Envelope, registry *registry.Registry) (isValid bool, v
 			err := json.Unmarshal(contents, &payloadToValidate)
 			if err != nil {
 				log.Error().Err(err).Msg("could not unmarshal payload")
+				// If the payload cannot be unmarshaled it should be considered invalid
+				validationError := envelope.ValidationError{
+					ErrorType:       &InvalidPayload.Type,
+					ErrorResolution: &InvalidPayload.Resolution,
+					Errors:          nil,
+				}
+				return false, validationError, nil
 			}
 		}
 		// If the payload is not present at all it should be considered invalid.
