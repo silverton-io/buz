@@ -7,7 +7,6 @@ package mysqldb
 import (
 	"context"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
