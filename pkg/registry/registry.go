@@ -9,12 +9,15 @@ import (
 
 	"github.com/coocood/freecache"
 	"github.com/rs/zerolog/log"
+	"github.com/santhosh-tekuri/jsonschema/v5"
+	_ "github.com/santhosh-tekuri/jsonschema/v5/httploader"
 	"github.com/silverton-io/buz/pkg/config"
 )
 
 type Registry struct {
 	Cache        *freecache.Cache
 	Backend      SchemaCacheBackend
+	Compiler     *jsonschema.Compiler
 	maxSizeBytes int
 	ttlSeconds   int
 }
@@ -29,6 +32,8 @@ func (r *Registry) Initialize(conf config.Registry) error {
 	r.Cache = freecache.NewCache(conf.MaxSizeBytes)
 	r.maxSizeBytes = conf.MaxSizeBytes
 	r.ttlSeconds = conf.TtlSeconds
+	// Initialize default resources
+	r.Compiler = jsonschema.NewCompiler()
 	return nil
 }
 
@@ -55,6 +60,11 @@ func (r *Registry) Get(key string) (exists bool, data []byte) {
 			log.Error().Err(err).Msg("🔴 error when setting key " + key)
 		}
 		log.Debug().Msg("🟡 " + key + " cached successfully")
+		log.Debug().Msg("🟡 adding schema to compiler " + key)
+		err = r.Compiler.AddResource(key, strings.NewReader(string(schemaContents)))
+		if err != nil {
+			log.Error().Err(err).Msg("🔴 error when compiling schema " + key)
+		}
 		return true, schemaContents // Schema was aquired from remote backed and cached successfully
 	}
 }

@@ -6,6 +6,7 @@ package validator
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/constants"
@@ -36,25 +37,24 @@ func Validate(e envelope.Envelope, registry *registry.Registry) (isValid bool, v
 		}
 		return false, validationError, nil
 	} else {
-		var payloadToValidate []byte
-		var err error
+		schema, err := registry.Compiler.Compile(e.Schema)
+		if err != nil {
+			log.Error().Err(err).Msg("could not compile schema")
+			validationError := envelope.ValidationError{
+				ErrorType:       &InvalidSchema.Type,
+				ErrorResolution: &InvalidSchema.Resolution,
+				Errors:          nil,
+			}
+			return false, validationError, schemaContents
+		}
+		var payloadToValidate interface{}
 		// Snowplow events have to be handled separately, as `self_describing_event` is
 		// the only portion that is validated according to a jsonschema.
 		if e.Protocol == protocol.SNOWPLOW {
-			e := e.Payload["self_describing_event"].(map[string]interface{})["data"]
-			payloadToValidate, err = json.Marshal(e)
+			payloadToValidate = e.Payload["self_describing_event"].(map[string]interface{})["data"]
 		} else {
-			payloadToValidate, err = e.Payload.AsByte()
-		}
-		// If the payload cannot be marshaled it should be considered invalid.
-		if err != nil {
-			log.Error().Stack().Err(err).Msg("🔴 could not marshal payload")
-			validationError := envelope.ValidationError{
-				ErrorType:       &InvalidPayload.Type,
-				ErrorResolution: &InvalidPayload.Resolution,
-				Errors:          nil,
-			}
-			return false, validationError, nil
+			contents, _ := e.Payload.AsByte()
+			json.Unmarshal(contents, &payloadToValidate)
 		}
 		// If the payload is not present at all it should be considered invalid.
 		if payloadToValidate == nil {
@@ -65,7 +65,17 @@ func Validate(e envelope.Envelope, registry *registry.Registry) (isValid bool, v
 			}
 			return false, validationError, nil
 		}
-		isValid, validationError := validatePayload(payloadToValidate, schemaContents)
-		return isValid, validationError, schemaContents
+		startTime := time.Now().UTC()
+		vErr := schema.Validate(payloadToValidate)
+		log.Debug().Msg("🟡 event validated in " + time.Now().UTC().Sub(startTime).String())
+		if vErr != nil {
+			validationError := envelope.ValidationError{
+				ErrorType:       &InvalidPayload.Type,
+				ErrorResolution: &InvalidPayload.Resolution,
+				Errors:          []envelope.PayloadValidationError{}, // FIXME -> append errors
+			}
+			return false, validationError, schemaContents
+		}
+		return true, envelope.ValidationError{}, schemaContents
 	}
 }
