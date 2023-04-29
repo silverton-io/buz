@@ -32,7 +32,6 @@ func (r *Registry) Initialize(conf config.Registry) error {
 	r.Cache = freecache.NewCache(conf.MaxSizeBytes)
 	r.maxSizeBytes = conf.MaxSizeBytes
 	r.ttlSeconds = conf.TtlSeconds
-	// Initialize default resources
 	r.Compiler = jsonschema.NewCompiler()
 	return nil
 }

@@ -6,9 +6,11 @@ package validator
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
 
 	"github.com/rs/zerolog/log"
+	"github.com/santhosh-tekuri/jsonschema/v5"
 	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/protocol"
@@ -68,13 +70,26 @@ func Validate(e envelope.Envelope, registry *registry.Registry) (isValid bool, v
 		startTime := time.Now().UTC()
 		vErr := schema.Validate(payloadToValidate)
 		log.Debug().Msg("🟡 event validated in " + time.Now().UTC().Sub(startTime).String())
+		jsonschemaValidationErr := &jsonschema.ValidationError{}
 		if vErr != nil {
-			validationError := envelope.ValidationError{
-				ErrorType:       &InvalidPayload.Type,
-				ErrorResolution: &InvalidPayload.Resolution,
-				Errors:          []envelope.PayloadValidationError{}, // FIXME -> append errors
+			if errors.As(vErr, &jsonschemaValidationErr) {
+				var validationErrs = []envelope.PayloadValidationError{}
+				for _, cause := range jsonschemaValidationErr.Causes {
+					validationErr := envelope.PayloadValidationError{
+						Field:       cause.InstanceLocation,
+						Description: cause.Message,
+						ErrorType:   cause.KeywordLocation,
+					}
+					validationErrs = append(validationErrs, validationErr)
+				}
+				validationError := envelope.ValidationError{
+					ErrorType:       &InvalidPayload.Type,
+					ErrorResolution: &InvalidPayload.Resolution,
+					Errors:          validationErrs,
+				}
+				return false, validationError, schemaContents
 			}
-			return false, validationError, schemaContents
+			return false, envelope.ValidationError{}, schemaContents
 		}
 		return true, envelope.ValidationError{}, schemaContents
 	}
