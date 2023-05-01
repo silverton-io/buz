@@ -4,8 +4,13 @@
 
 package util
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
+// HttpHeadersToMap returns a map of http headers,
+// but treats single-element headers as strings instead
+// of slices of length 1
 func HttpHeadersToMap(c *gin.Context) map[string]interface{} {
 	headers := make(map[string]interface{})
 	for k, v := range c.Request.Header {
