@@ -7,6 +7,8 @@ package util
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type testStruct struct {
@@ -15,7 +17,7 @@ type testStruct struct {
 
 // TestStructToMap ensures the proper map[string]interface{} is
 // generated after calling it with an arbitrary struct.
-func TestStructToMap(t *testing.T) {
+func TestStructToMapGood(t *testing.T) {
 	var s string = "something"
 	ts := testStruct{
 		A: s,
@@ -23,10 +25,20 @@ func TestStructToMap(t *testing.T) {
 	want := map[string]interface{}{
 		"a": s,
 	}
-	got := StructToMap(ts)
+	got, _ := StructToMap(ts)
 	equivalent := reflect.DeepEqual(got, want)
 	if !equivalent {
 		t.Fatalf(`StructToMap(%v) = %v, want %v`, ts, got, want)
 	}
 
+}
+
+func TestStructToMapBad(t *testing.T) {
+	something := "this"
+	want := map[string]interface{}{}
+
+	got, err := StructToMap(something)
+
+	assert.Equal(t, want, got)
+	assert.Error(t, err)
 }
