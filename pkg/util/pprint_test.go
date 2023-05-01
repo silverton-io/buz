@@ -7,7 +7,21 @@ package util
 import (
 	"encoding/json"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
+
+func TestPprint(t *testing.T) {
+	something := map[string]interface{}{
+		"this": "that",
+	}
+	marshaled, _ := json.MarshalIndent(something, "", "\t")
+	want := string(marshaled)
+
+	got := Pprint(something)
+
+	assert.Equal(t, want, got)
+}
 
 func TestStringify(t *testing.T) {
 	somethingToStringify := map[string]interface{}{

@@ -9,6 +9,8 @@ import (
 	"github.com/silverton-io/buz/pkg/constants"
 )
 
+const JSON_EXTENSION = ".json"
+
 func GetSchemaNameFromRequest(c *gin.Context, fallback string) string {
 	schemaName := c.Param(constants.BUZ_SCHEMA_PARAM)
 	if schemaName == "" || schemaName == "/" { // Handle no param, or trailing slash
