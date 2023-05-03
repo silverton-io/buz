@@ -4,6 +4,7 @@
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/silverton-io/buz)
 ![test](https://github.com/silverton-io/buz/actions/workflows/test.yml/badge.svg)
 ![lint](https://github.com/silverton-io/buz/actions/workflows/lint.yml/badge.svg)
+[![ref](https://pkg.go.dev/badge/github.com/silverton-io/buz/pkg.svg)](https://pkg.go.dev/github.com/silverton-io/buz/pkg)
 
 ![buz](img/buzz.png)
 
