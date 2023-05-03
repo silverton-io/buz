@@ -10,10 +10,11 @@ data "google_project" "project" {}
 #   }
 # }
 
+
 module "template_files" {
   source = "hashicorp/dir/template"
 
-  base_dir = "../../../schemas"
+  base_dir = "../../../../schemas"
 }
 
 resource "google_project_service" "project_services" {
