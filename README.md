@@ -66,7 +66,7 @@ Buz ships with a lightweight schema registry that supports [multiple schema back
 * [Local filesystem](https://buz.dev/schema-registry/backends/buz/filesystem)
 * ..and more
 
-Schemas are [cached locally](https://buz.dev/schema-registry/overview#onboard-schema-registry-cache) once sourced from the configured backend. The cache ttl and maximum size is configurable, but ships with sane defaults.
+Schemas are [cached locally](https://buz.dev/schema-registry/overview#onboard-schema-registry-cache) once sourced from the configured backend. Cache ttl and maximum size are configurable bu have sane defaults.
 
 Schemas are available via HTTP at `/s/$PATH_TO_SCHEMA` or `/s/$SCHEMA_NAME`, depending on the backend.
 
@@ -113,7 +113,7 @@ Buz doesn't care what your existing systems look like or what you want them to l
 
 It helps with the "now", and helps get your infrastructure to where you'd like it to be (without another migration).
 
-## Time and Cost Efficiences
+## It saves time and money
 
 Buz aims to **improve the lives of pipeline maintainers** and **drastically reduce long-term maintenance of event collection systems.**
 
@@ -121,12 +121,61 @@ Buz saves time and money.
 
 Roll it out fast, keep it going without much thought, and shut it off when it isn't doing anything.
 
+# Try it out
 
-# Quickstart
+(No, you don't need to talk to anyone...)
 
-Quickstart documentation for setting up a lightweight streaming stack with Buz, Redpanda, and Kowl can [be found here](https://buz.dev/examples/quickstart).
+You'll need [go](https://go.dev/doc/install) on your machine but don't need to be a [gopher](https://go.dev/blog/gopher).
+
+
+## Clone the Buz repo
+
+    $ git clone git@github.com:silverton-io/buz.git && cd buz
+
+## Bootstrap Buz
+
+    $ make bootstrap
+
+
+## Send some events!
+
+Events will be sent to two sinks by default - colorized envelopes will be sent to `stdout` and sent to `buz_events.json` or `buz_invalid_events.json` files.
+
+### POST a cloudevent
+
+    $ curl -X POST localhost:8080/cloudevents -H 'Content-Type:application/cloudevents+json' -d '{"dataschema":"io.silverton/buz/example/gettingStarted/v1.0.json", "data": {"userId": 10, "name": "you", "action": "didSomething"}}'
+
+### POST an arbitrary webhook
+
+    $ curl -X POST "localhost:8080/webhook" -H 'Content-Type:application/json' -d '{"arbitrary": "thing"}'
+
+
+### POST a named (schematized) webhook
+
+    $ curl -X POST "localhost:8080/webhook/io.silverton/buz/example/generic/sample/v1.0" -H 'Content-Type:application/json' -d '{"id": "10"}'
+
+
+### GET an arbitrary pixel
+
+    $ curl "localhost:8080/pixel?msg=hello&subject=world"
+
+
+### GET a named (schematized) pixel
+
+    $ curl -X GET "localhost:8080/pixel/io.silverton/buz/example/generic/sample/v1.0?id=10"
+
+
+### 
+
+
+# Want to see it playing well with others (Docker, Redpanda, Snowplow Analytics, Nginx, etc)?
+
+Quickstart documentation for setting up a lightweight streaming stack with Buz, a sample ui, Redpanda, and Kowl can [be found here](https://buz.dev/examples/quickstart).
 
 
 # Documentation
 
-Documentation can [be found here](https://buz.dev).
+Full documentation can [be found here](https://buz.dev).
+
+
+🍻🐝
