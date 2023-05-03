@@ -22,9 +22,9 @@ Buz supports [multiple input protocols](https://buz.dev/inputs/overview) includi
 * [Snowplow Analytics](https://buz.dev/inputs/saas/snowplow)
 * [Cloudevents](https://buz.dev/inputs/cloudNative/cloudevents)
 * [Self-describing JSON](https://buz.dev/inputs/buz/self-describing)
-* [Webhooks](https://buz.dev/inputs/buz/webhook).
+* [Webhooks](https://buz.dev/inputs/buz/webhook)
 
-It even hosts a [Pixel](https://buz.dev/inputs/buz/pixel) for use in constrained tracking environments.
+It even hosts a [pixel](https://buz.dev/inputs/buz/pixel) for use in constrained tracking environments.
 
 SDK's are supported out of the box so you can point existing Snowplow Analytics or Cloudevents tracking directly to Buz and it will just work™.
 
@@ -52,6 +52,24 @@ Every incoming payload is validated in microseconds using [JSON Schema](https://
 If a payload doesn't conform to the associated schema, it is marked as such.
 
 If a payload doesn't have an associated schema (such as the case with arbitrary webhooks and pixels) payload contents are not validated. But are still enveloped as `arbitrary` for downstream processing.
+
+## Onboard Schema Registry
+
+Buz ships with an onboard schema registry cache, and supports [multiple schema backends](https://buz.dev/schema-registry/overview) including:
+
+* [GCS](https://buz.dev/schema-registry/backends/object/gcs)
+* [S3](https://buz.dev/schema-registry/backends/object/s3)
+* [Minio](https://buz.dev/schema-registry/backends/object/minio)
+* [Postgres](https://buz.dev/schema-registry/backends/database/postgres)
+* [Mysql](https://buz.dev/schema-registry/backends/database/mysql)
+* [Mongodb](https://buz.dev/schema-registry/backends/database/mongodb)
+* [Local filesystem](https://buz.dev/schema-registry/backends/buz/filesystem)
+* ..and more
+
+
+Schemas are available via HTTP at `/s/$PATH_TO_SCHEMA` or `/s/$SCHEMA_NAME`, depending on the backend.
+
+The onboard schema cache can be purged via a `GET` or `POST` to the `/c/purge` route.
 
 ## Payload Enveloping
 
