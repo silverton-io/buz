@@ -11,13 +11,24 @@
 
 Buz is a system for multi-protocol event collection, validation, annotation, and delivery.
 
-It ships as a single lightweight binary for deployment flexibility. Toss Buz into an [AWS lambda function](https://aws.amazon.com/lambda/), [GCP Cloud Run](https://cloud.google.com/run) service, or K8s pod and immediately start collecting events.
+It ships as a single lightweight binary for deployment flexibility.
+
+Toss Buz into an [AWS lambda function](https://aws.amazon.com/lambda/), [GCP Cloud Run](https://cloud.google.com/run) service, or K8s pod and start collecting events in minutes.
 
 ## Multiple Input Protocols
 
-Buz supports [multiple input protocols](https://buz.dev/inputs/overview) including [Snowplow Analytics](https://buz.dev/inputs/saas/snowplow), [Cloudevents](https://buz.dev/inputs/cloudNative/cloudevents), [Self-describing JSON](https://buz.dev/inputs/buz/self-describing), and [Webhooks](https://buz.dev/inputs/buz/webhook). It even hosts a [Pixel](https://buz.dev/inputs/buz/pixel) for use in constrained tracking environments.
+Buz supports [multiple input protocols](https://buz.dev/inputs/overview) including:
 
-SDK's are supported out of the box so you can point Snowplow Analytics and Cloudevents tracking directly to Buz and it will just work™. Or point your in-house SDK to it using self-describing JSON.
+* [Snowplow Analytics](https://buz.dev/inputs/saas/snowplow)
+* [Cloudevents](https://buz.dev/inputs/cloudNative/cloudevents)
+* [Self-describing JSON](https://buz.dev/inputs/buz/self-describing)
+* [Webhooks](https://buz.dev/inputs/buz/webhook).
+
+It even hosts a [Pixel](https://buz.dev/inputs/buz/pixel) for use in constrained tracking environments.
+
+SDK's are supported out of the box so you can point existing Snowplow Analytics or Cloudevents tracking directly to Buz and it will just work™.
+
+Or point your in-house SDK to it using self-describing JSON.
 
 ## Multiple (Simultaneous) Destinations
 
@@ -38,6 +49,29 @@ If a payload doesn't have an associated schema (such as the case with arbitrary 
 Each incoming payload is wrapped in a lightweight envelope. This envelope appends metadata such as `isValid`, `buzTimestamp`, schema `vendor`, `namespace`, `version`, an event `uuid`, the associated `protocol`, etc.
 
 Envelope metadata is used to power routing and sharding far downstream of collection, as well as rich internal statistics.
+
+As an example of an `arbitrary pixel` event, wrapped in said envelope:
+
+```
+{
+    "uuid": "1f9a7a20-8fa7-4179-a0c2-35a80783854a",
+    "timestamp": "2023-05-03T02:50:59.464042Z",
+    "buzTimestamp": "2023-05-03T02:50:59.464042Z",
+    "buzVersion": "x.x.dev",
+    "buzName": "buz-bootstrap",
+    "buzEnv": "development",
+    "protocol": "pixel",
+    "schema": "io.silverton/buz/pixel/arbitrary/v1.0.json",
+    "vendor": "io.silverton",
+    "namespace": "buz.pixel.arbitrary",
+    "version": "1.0",
+    "isValid": true,
+    "payload": {
+        "msg": "hello",
+        "subject": "zander"
+    }
+}
+```
 
 ## Time and Cost Efficiences
 
