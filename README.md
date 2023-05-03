@@ -123,9 +123,9 @@ Roll it out fast, keep it going without much thought, and shut it off when it is
 
 # Try it out
 
-(No, you don't need to talk to anyone...)
+(No, you don't need to talk to anyone. Though we're relatively friendly and there's a [Discord](https://discord.com/invite/JFKVnVdF2m) if you want to...)
 
-You'll need [go](https://go.dev/doc/install) on your machine but don't need to be a [gopher](https://go.dev/blog/gopher).
+You'll need [go](https://go.dev/doc/install) on your machine. But don't need to be a [gopher](https://go.dev/blog/gopher).
 
 
 ## Bootstrapping Buz
