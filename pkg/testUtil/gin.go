@@ -28,3 +28,9 @@ func BuildTestServer(handlerFuncs ...gin.HandlerFunc) *httptest.Server {
 	r.GET(URL, TestHandler)
 	return httptest.NewServer(r)
 }
+
+func BuildRecordedEngine() (*httptest.ResponseRecorder, *gin.Context, *gin.Engine) {
+	rec := httptest.NewRecorder()
+	context, engine := gin.CreateTestContext(rec)
+	return rec, context, engine
+}

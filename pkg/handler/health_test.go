@@ -8,17 +8,15 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"testing"
 
-	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/buz/pkg/response"
+	testutil "github.com/silverton-io/buz/pkg/testUtil"
 )
 
 func TestHealthcheckHandler(t *testing.T) {
-	rec := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(rec)
+	rec, c, _ := testutil.BuildRecordedEngine()
 
 	HealthcheckHandler(c)
 

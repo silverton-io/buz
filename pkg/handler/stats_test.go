@@ -8,13 +8,12 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/silverton-io/buz/pkg/meta"
+	testutil "github.com/silverton-io/buz/pkg/testUtil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,8 +28,7 @@ func TestStatsHandler(t *testing.T) {
 		CookieDomain:  "somewhere.io",
 	}
 
-	rec := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(rec)
+	rec, c, _ := testutil.BuildRecordedEngine()
 
 	handler := StatsHandler(&m)
 
