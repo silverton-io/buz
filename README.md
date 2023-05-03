@@ -105,9 +105,11 @@ This envelope appends a bit of metadata such as `isValid`, `buzTimestamp`, schem
 
 ### It's lightweight
 
+
 It minimizes the typical infrastructure footprint of collecting events from many different sources and allows for low-infrastructure, highly-flexible rollouts.
 
 ### It's flexible
+
 
 Buz doesn't care what your existing systems look like or what you want them to look like in the future.
 
@@ -115,9 +117,9 @@ It helps with the "now", and helps get your infrastructure to where you'd like i
 
 ### It saves time and money
 
+
 Buz aims to **improve the lives of pipeline maintainers** and **drastically reduce long-term maintenance of event collection systems.**
 
-Buz saves time and money.
 
 Roll it out fast, keep it going without much thought, and shut it off when it isn't doing anything.
 
