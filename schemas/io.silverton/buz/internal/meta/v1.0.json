@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/silverton-io/buz/main/schemas/io.silverton/buz/internal/meta/v1.0.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "io.silverton/buz/internal/meta/v1.0.json",
   "description": "The Buz Metaschema",
   "self": {
