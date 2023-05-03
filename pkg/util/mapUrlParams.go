@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Silverton Data, Inc.
+// Copyright (c) 2023 Silverton Data, Inc.
 // You may use, distribute, and modify this code under the terms of the Apache-2.0 license, a copy of
 // which may be found at https://github.com/silverton-io/buz/blob/main/LICENSE
 
@@ -12,11 +12,19 @@ import (
 
 // Coerce query params to a map[string]interface{}.
 // Only use the first val of each key.
-func MapUrlParams(c *gin.Context) map[string]interface{} {
+func MapUrlParams(c *gin.Context, excludeParams ...string) map[string]interface{} {
 	mappedParams := make(map[string]interface{})
 	params := c.Request.URL.Query()
 	for k, v := range params {
-		mappedParams[k] = v[0]
+		if excludeParams != nil {
+			for _, excludeParam := range excludeParams {
+				if k != excludeParam {
+					mappedParams[k] = v[0]
+				}
+			}
+		} else {
+			mappedParams[k] = v[0]
+		}
 	}
 	return mappedParams
 }
