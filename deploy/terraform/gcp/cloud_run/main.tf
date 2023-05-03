@@ -10,7 +10,6 @@ data "google_project" "project" {}
 #   }
 # }
 
-
 module "template_files" {
   source = "hashicorp/dir/template"
 
