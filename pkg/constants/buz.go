@@ -12,5 +12,5 @@ const (
 	BUZ_VALID_EVENTS                 string = "buz_valid_events"
 	BUZ_INVALID_EVENTS               string = "buz_invalid_events"
 	BUZ                              string = "buz"
-	BUZ_REDIRECT_PARAM               string = "z"
+	BUZ_REDIRECT_TO_PARAM            string = "rto"
 )

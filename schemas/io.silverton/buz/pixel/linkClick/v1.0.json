@@ -15,9 +15,9 @@
     },
     "type": "object",
     "properties": {
-        "link": {
+        "rto": {
             "type": "string",
-            "description": "The link"
+            "description": "The link that was redirected to"
         }
     },
     "additionalProperties": true,

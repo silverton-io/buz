@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 
 	"github.com/gin-gonic/gin"
-	"github.com/silverton-io/buz/pkg/constants"
 	"github.com/silverton-io/buz/pkg/envelope"
 	"github.com/silverton-io/buz/pkg/util"
 )
@@ -20,7 +19,7 @@ const (
 )
 
 func buildEvent(c *gin.Context) (envelope.SelfDescribingPayload, error) {
-	params := util.MapUrlParams(c, constants.BUZ_REDIRECT_PARAM) // Remove reserved redirect param
+	params := util.MapUrlParams(c)
 	schemaName := util.GetSchemaNameFromRequest(c, ARBITRARY_PIXEL_SCHEMA)
 	base64EncodedPayload := params[B64_ENCODED_PAYLOAD_PARAM]
 	if base64EncodedPayload != nil {
