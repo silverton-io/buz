@@ -6,6 +6,7 @@ package snowplow
 
 import (
 	"io"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -19,7 +20,11 @@ import (
 
 func buildSnowplowEnvelope(conf config.Config, e SnowplowEvent) envelope.Envelope {
 	n := envelope.NewEnvelope(conf.App)
-	n.Timestamp = *e.DvceCreatedTstamp
+	if e.DvceCreatedTstamp != nil {
+		n.Timestamp = *e.DvceCreatedTstamp
+	} else {
+		n.Timestamp = time.Now()
+	}
 	n.Protocol = protocol.SNOWPLOW
 	n.Schema = *e.SelfDescribingEvent.SchemaName()
 	n.Payload = e.Map()
