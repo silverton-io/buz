@@ -87,11 +87,11 @@ variable "bigquery_dataset_name" {
 variable "default_bigquery_table" {
   description = "The name of the default BigQuery table"
   type        = string
-  default     = "invalid_events"
+  default     = "events"
 }
 
 variable "deadletter_bigquery_table" {
   description = "The name of the deadletter BigQuery table"
   type        = string
-  default     = "events"
+  default     = "invalid_events"
 }
