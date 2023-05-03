@@ -16,7 +16,7 @@ func MapUrlParams(c *gin.Context, excludeParams ...string) map[string]interface{
 	mappedParams := make(map[string]interface{})
 	params := c.Request.URL.Query()
 	for k, v := range params {
-		if len(excludeParams) > 0 {
+		if excludeParams != nil {
 			for _, excludeParam := range excludeParams {
 				if k != excludeParam {
 					mappedParams[k] = v[0]
