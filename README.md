@@ -101,13 +101,25 @@ Envelope metadata is used to power **routing** and **sharding** far downstream o
 }
 ```
 
+# Why Buz?
+
+## It's lightweight
+
+It minimizes the typical infrastructure footprint of collecting events from many different sources and allows for low-infrastructure, highly-flexible rollouts.
+
+## It's flexible
+
+Buz doesn't care what your existing systems look like or what you want them to look like in the future.
+
+It helps with the "now", and helps get your infrastructure to where you'd like it to be (without another migration).
+
 ## Time and Cost Efficiences
 
 Buz aims to **improve the lives of pipeline maintainers** and **drastically reduce long-term maintenance of event collection systems.**
 
-It minimizes the typical infrastructure footprint of collecting events from many different sources and allows for low-infrastructure, highly-flexible rollouts.
+Buz saves time and money.
 
-When deployed in serverless environments such as AWS Lambda or GCP Cloud Run, Buz is able to follow the utilization curve closely. Which drastically minimizes cost.
+Roll it out fast, keep it going without much thought, and shut it off when it isn't doing anything.
 
 
 # Quickstart
