@@ -74,9 +74,9 @@ The onboard schema cache can be purged via a `GET` or `POST` to the `/c/purge` r
 
 ## Payload Enveloping
 
-Each incoming payload is wrapped in a lightweight envelope. This envelope appends metadata such as `isValid`, `buzTimestamp`, schema `vendor`, `namespace`, `version`, an event `uuid`, the associated `protocol`, etc.
+Each incoming payload is wrapped in a lightweight envelope.
 
-Envelope metadata is used to power **routing** and **sharding** far downstream of collection, as well as **namespace-level statistics**.
+This envelope appends a bit of metadata such as `isValid`, `buzTimestamp`, schema `vendor`, `namespace`, `version`, an event `uuid`, the associated `protocol`, etc. Metadata is then used to power payload **routing** and **sharding** as well as **namespace-level statistics**.
 
 **As an example of an `arbitrary pixel` event, wrapped in said envelope:**
 
