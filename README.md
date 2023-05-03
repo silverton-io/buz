@@ -32,9 +32,18 @@ Or point your in-house SDK to it using self-describing JSON.
 
 ## Multiple (Simultaneous) Destinations
 
-Buz supports [two dozen different destinations](https://buz.dev/outputs/overview) including [Redpanda](https://buz.dev/outputs/stream/redpanda), [Postgres](https://buz.dev/outputs/database/postgres), [Kinesis Firehose](https://buz.dev/outputs/stream/aws-kinesis-firehose), [Google Pub/Sub](https://buz.dev/outputs/stream/google-pubsub), [Splunk](https://buz.dev/outputs/database/splunk), [AWS EventBridge](https://buz.dev/outputs/messageBus/aws-eventbridge), [TimescaleDB](https://buz.dev/outputs/timeseries/timescaledb), and many more.
+Buz supports [two dozen different destinations](https://buz.dev/outputs/overview) including:
+* [Redpanda](https://buz.dev/outputs/stream/redpanda)
+* [Postgres](https://buz.dev/outputs/database/postgres)
+* [Kinesis Firehose](https://buz.dev/outputs/stream/aws-kinesis-firehose)
+* [Google Pub/Sub](https://buz.dev/outputs/stream/google-pubsub)
+* [Splunk](https://buz.dev/outputs/database/splunk)
+* [AWS EventBridge](https://buz.dev/outputs/messageBus/aws-eventbridge)
+* [TimescaleDB](https://buz.dev/outputs/timeseries/timescaledb)
+* [NATS](https://buz.dev/outputs/messageBus/nats)
+* ...and many more.
 
-You can send events to **one or more** destinations.
+You can send events to **one or more** destinations, so fanning events out to where they need to Bee is simple. As is using Buz to migrate from one system to another.
 
 ## Jsonschema-based validation
 
@@ -48,9 +57,9 @@ If a payload doesn't have an associated schema (such as the case with arbitrary 
 
 Each incoming payload is wrapped in a lightweight envelope. This envelope appends metadata such as `isValid`, `buzTimestamp`, schema `vendor`, `namespace`, `version`, an event `uuid`, the associated `protocol`, etc.
 
-Envelope metadata is used to power routing and sharding far downstream of collection, as well as rich internal statistics.
+Envelope metadata is used to power **routing** and **sharding** far downstream of collection, as well as **namespace-level statistics**.
 
-As an example of an `arbitrary pixel` event, wrapped in said envelope:
+**As an example of an `arbitrary pixel` event, wrapped in said envelope:**
 
 ```
 {
