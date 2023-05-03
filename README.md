@@ -143,26 +143,31 @@ Events will be sent to two sinks by default - colorized envelopes will be sent t
 
 ### POST a cloudevent
 
-    $ curl -X POST localhost:8080/cloudevents -H 'Content-Type:application/cloudevents+json' -d '{"dataschema":"io.silverton/buz/example/gettingStarted/v1.0.json", "data": {"userId": 10, "name": "you", "action": "didSomething"}}'
+    curl -X POST localhost:8080/cloudevents -H 'Content-Type:application/cloudevents+json' -d '{"dataschema":"io.silverton/buz/example/gettingStarted/v1.0.json", "data": {"userId": 10, "name": "you", "action": "didSomething"}}'
 
 ### POST an arbitrary webhook
 
-    $ curl -X POST "localhost:8080/webhook" -H 'Content-Type:application/json' -d '{"arbitrary": "thing"}'
+    curl -X POST "localhost:8080/webhook" -H 'Content-Type:application/json' -d '{"arbitrary": "thing"}'
 
 
 ### POST a named (schematized) webhook
 
-    $ curl -X POST "localhost:8080/webhook/io.silverton/buz/example/generic/sample/v1.0" -H 'Content-Type:application/json' -d '{"id": "10"}'
+    curl -X POST "localhost:8080/webhook/io.silverton/buz/example/generic/sample/v1.0" -H 'Content-Type:application/json' -d '{"id": "10"}'
 
 
 ### GET an arbitrary pixel
 
-    $ curl "localhost:8080/pixel?msg=hello&subject=world"
+    curl "localhost:8080/pixel?msg=hello&subject=world"
 
 
 ### GET a named (schematized) pixel
 
-    $ curl -X GET "localhost:8080/pixel/io.silverton/buz/example/generic/sample/v1.0?id=10"
+    curl -X GET "localhost:8080/pixel/io.silverton/buz/example/generic/sample/v1.0?id=10"
+
+
+### POST self-describing JSON
+
+    curl -X POST "localhost:8080/self-describing" -H 'Content-Type:application/json' -d '{"payload": {"schema": "io.silverton/buz/example/generic/sample/v1.0.json", "data": {"id": "10"}}}'
 
 
 ### 
