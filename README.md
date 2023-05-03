@@ -14,18 +14,18 @@ Buz is a system for multi-protocol event collection, validation, annotation, and
 
 It ships as a single lightweight binary for deployment flexibility.
 
-Toss Buz into an [AWS lambda function](https://aws.amazon.com/lambda/), [GCP Cloud Run](https://cloud.google.com/run) service, or K8s pod and start collecting events in minutes.
+Toss Buz into an [AWS lambda function](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=snowplow&source=aws-lambda&location=README&rto=https://aws.amazon.com/lambda/), [GCP Cloud Run](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=gcp-cloud-run&source=github&location=README&rto=https://cloud.google.com/run) service, or K8s pod and start collecting events in minutes.
 
 ## Multiple Input Protocols
 
-Buz supports [multiple input protocols](https://buz.dev/inputs/overview) including:
+Buz supports [multiple input protocols](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=multiple-event-protocols&source=github&location=README&rto=https://buz.dev/inputs/overview) including:
 
-* [Snowplow Analytics](https://buz.dev/inputs/saas/snowplow)
-* [Cloudevents](https://buz.dev/inputs/cloudNative/cloudevents)
-* [Self-describing JSON](https://buz.dev/inputs/buz/self-describing)
-* [Webhooks](https://buz.dev/inputs/buz/webhook)
+* [Snowplow Analytics](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=snowplow-analytics&source=github&location=README&rto=https://buz.dev/inputs/saas/snowplow)
+* [Cloudevents](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=cloudevents&source=github&location=README&rto=https://buz.dev/inputs/cloudNative/cloudevents)
+* [Self-describing JSON](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=self-describing-json&source=github&location=README&rto=https://buz.dev/inputs/buz/self-describing)
+* [Webhooks](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=webhooks&source=github&location=README&rto=https://buz.dev/inputs/buz/webhook)
 
-It even hosts a [pixel](https://buz.dev/inputs/buz/pixel) for use in constrained tracking environments.
+It even hosts a [pixel](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=pixel&source=github&location=README&rto=https://buz.dev/inputs/buz/pixel) for use in constrained tracking environments.
 
 SDK's are supported out of the box so you can point existing Snowplow Analytics or Cloudevents tracking directly to Buz and it will just work™.
 
@@ -33,15 +33,15 @@ Or point your in-house SDK to it using self-describing JSON.
 
 ## Multiple (Simultaneous) Destinations
 
-Buz supports [two dozen different destinations](https://buz.dev/outputs/overview) including:
-* [Redpanda](https://buz.dev/outputs/stream/redpanda)
-* [Postgres](https://buz.dev/outputs/database/postgres)
-* [Kinesis Firehose](https://buz.dev/outputs/stream/aws-kinesis-firehose)
-* [Google Pub/Sub](https://buz.dev/outputs/stream/google-pubsub)
-* [Splunk](https://buz.dev/outputs/database/splunk)
-* [AWS EventBridge](https://buz.dev/outputs/messageBus/aws-eventbridge)
-* [TimescaleDB](https://buz.dev/outputs/timeseries/timescaledb)
-* [NATS](https://buz.dev/outputs/messageBus/nats)
+Buz supports [two dozen different destinations](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=destination-overview&source=github&location=README&rto=https://buz.dev/outputs/overview) including:
+* [Redpanda](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=dest-redpanda&source=github&location=README&rto=https://buz.dev/outputs/stream/redpanda)
+* [Postgres](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=dest-postgres&source=github&location=README&rto=https://buz.dev/outputs/database/postgres)
+* [Kinesis Firehose](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=dest-firehose&source=github&location=README&rto=https://buz.dev/outputs/stream/aws-kinesis-firehose)
+* [Google Pub/Sub](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=dest-pubsub&source=github&location=README&rto=https://buz.dev/outputs/stream/google-pubsub)
+* [Splunk](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=dest-splunk&source=github&location=README&rto=https://buz.dev/outputs/database/splunk)
+* [AWS EventBridge](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=dest-eventbridge&source=github&location=README&rto=https://buz.dev/outputs/messageBus/aws-eventbridge)
+* [TimescaleDB](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=dest-timescale&source=github&location=README&rto=https://buz.dev/outputs/timeseries/timescaledb)
+* [NATS](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=dest-nats&source=github&location=README&rto=https://buz.dev/outputs/messageBus/nats)
 * ...and many more.
 
 You can send events to **one or more** destinations, so fanning them out to where they need to Bee is simple. As is using Buz to migrate from one destination system to another.
@@ -58,16 +58,16 @@ If a payload doesn't have an explicitly-associated schema (such as the case with
 
 Buz ships with a lightweight schema registry that supports [multiple schema backends](https://buz.dev/schema-registry/overview) including:
 
-* [GCS](https://buz.dev/schema-registry/backends/object/gcs)
-* [S3](https://buz.dev/schema-registry/backends/object/s3)
-* [Minio](https://buz.dev/schema-registry/backends/object/minio)
-* [Postgres](https://buz.dev/schema-registry/backends/database/postgres)
-* [Mysql](https://buz.dev/schema-registry/backends/database/mysql)
-* [Mongodb](https://buz.dev/schema-registry/backends/database/mongodb)
-* [Local filesystem](https://buz.dev/schema-registry/backends/buz/filesystem)
+* [GCS](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=registry-gcs&source=github&location=README&rto=https://buz.dev/schema-registry/backends/object/gcs)
+* [S3](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=registry-s3&source=github&location=README&rto=https://buz.dev/schema-registry/backends/object/s3)
+* [Minio](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=registry-minio&source=github&location=README&rto=https://buz.dev/schema-registry/backends/object/minio)
+* [Postgres](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=registry-postgres&source=github&location=README&rto=https://buz.dev/schema-registry/backends/database/postgres)
+* [Mysql](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=registry-mysql&source=github&location=README&rto=https://buz.dev/schema-registry/backends/database/mysql)
+* [Mongodb](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=registry-mongodb&source=github&location=README&rto=https://buz.dev/schema-registry/backends/database/mongodb)
+* [Local filesystem](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=registry-filesystem&source=github&location=README&rto=https://buz.dev/schema-registry/backends/buz/filesystem)
 * ..and more
 
-Schemas are [cached locally](https://buz.dev/schema-registry/overview#onboard-schema-registry-cache) once sourced from the configured backend. Cache ttl and maximum size are configurable bu have sane defaults.
+Schemas are [cached locally](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=registry-cache&source=github&location=README&rto=https://buz.dev/schema-registry/overview#onboard-schema-registry-cache) once sourced from the configured backend. Cache ttl and maximum size are configurable bu have sane defaults.
 
 Schemas are available via HTTP at `/s/$PATH_TO_SCHEMA` or `/s/$SCHEMA_NAME`, depending on the backend.
 
@@ -126,9 +126,9 @@ Roll it out fast, keep it going without much thought, and shut it off when it is
 
 # Try it out
 
-(No, you don't need to talk to anyone. Though we're relatively friendly and there's a [Discord](https://discord.com/invite/JFKVnVdF2m) if you want to...)
+(No, you don't need to talk to anyone. Though we're relatively friendly and there's a [Discord](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=discord&source=github&location=README&rto=https://discord.com/invite/JFKVnVdF2m) if you want to...)
 
-You'll need [go](https://go.dev/doc/install) on your machine. But don't need to be a [gopher](https://go.dev/blog/gopher).
+You'll need [go](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=golang&source=github&location=README&rto=https://go.dev/doc/install) on your machine. But don't need to be a [gopher](https://go.dev/blog/gopher).
 
 
 ## Bootstrapping Buz
@@ -179,19 +179,20 @@ Events will be sent to two sinks by default - colorized envelopes will be sent t
 
 # Buz plays nicely with others
 
-Quickstart documentation for setting up a lightweight streaming stack with Buz, a sample ui, nginx, Redpanda, and Kowl can [be found here](https://buz.dev/examples/quickstart).
+Quickstart documentation for setting up a lightweight streaming stack with Buz, a sample ui, nginx, Redpanda, and Kowl can [be found here](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=quickstart&source=github&location=README&rto=https://buz.dev/examples/quickstart).
 
 
 # Deploying Buz
 
-Buz can be deployed in a [variety of ways](https://buz.dev/deploying/overview). We've included end-to-end (terraformed) samples for AWS and GCP:
+Buz can be deployed in a [variety of ways](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=deployment-overview&source=github&location=README&rto=https://buz.dev/deploying/overview). We've included end-to-end (terraformed) samples for AWS and GCP:
 
-* [Buz on AWS Lambda](https://buz.dev/deploying/aws/lambda)
-* [Buz on GCP Cloud Run](https://buz.dev/deploying/gcp/cloud_run)
+* [Buz on AWS Lambda](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=deploy-aws&source=github&location=README&rto=https://buz.dev/deploying/aws/lambda)
+* [Buz on GCP Cloud Run](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=deploy-gcp&source=github&location=README&rto=https://buz.dev/deploying/gcp/cloud_run)
 
 # Documentation
 
-Full documentation can [be found here](https://buz.dev).
+Full documentation can [be found here](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=full-documentation&source=github&location=README&rto=https://buz.dev).
 
 
 🍻🐝
+![bee](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/pageView/v1.0)
