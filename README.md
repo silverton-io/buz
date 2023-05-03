@@ -43,7 +43,7 @@ Buz supports [two dozen different destinations](https://buz.dev/outputs/overview
 * [NATS](https://buz.dev/outputs/messageBus/nats)
 * ...and many more.
 
-You can send events to **one or more** destinations, so fanning events out to where they need to Bee is simple. As is using Buz to migrate from one system to another.
+You can send events to **one or more** destinations, so fanning them out to where they need to Bee is simple. As is using Buz to migrate from one destination system to another.
 
 ## Jsonschema-based validation
 
@@ -51,7 +51,7 @@ Every incoming payload is validated in microseconds using [JSON Schema](https://
 
 If a payload doesn't conform to the associated schema, it is marked as such.
 
-If a payload doesn't have an associated schema (such as the case with arbitrary webhooks and pixels) payload contents are not validated. But are still enveloped as `arbitrary` for downstream processing.
+If a payload doesn't have an explicitly-associated schema (such as the case with arbitrary webhooks and pixels), payload contents are not validated. It is enveloped as `arbitrary` for downstream processing.
 
 ## Onboard Schema Registry
 
