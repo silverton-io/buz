@@ -1,0 +1,27 @@
+{
+    "$schema": "https://r.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "io.silverton/buz/pixel/pageView/v1.0.json",
+    "title": "io.silverton/buz/pixel/pageView/v1.0.json",
+    "description": "A generalized schema for page views tracked via pixel",
+    "owner": {
+        "org": "silverton",
+        "team": "buz",
+        "individual": "jakthom"
+    },
+    "self": {
+        "vendor": "io.silverton",
+        "namespace": "buz.pixel.pageView",
+        "version": "1.0"
+    },
+    "type": "object",
+    "properties": {
+        "page": {
+            "type": "string",
+            "description": "The page"
+        }
+    },
+    "additionalProperties": true,
+    "required": [
+        "page"
+    ]
+}
