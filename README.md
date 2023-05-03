@@ -179,19 +179,20 @@ Events will be sent to two sinks by default - colorized envelopes will be sent t
 
 # Buz plays nicely with others
 
-Quickstart documentation for setting up a lightweight streaming stack with Buz, a sample ui, nginx, Redpanda, and Kowl can [be found here](https://buz.dev/examples/quickstart).
+Quickstart documentation for setting up a lightweight streaming stack with Buz, a sample ui, nginx, Redpanda, and Kowl can [be found here](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=quickstart&source=github&location=README&rto=https://buz.dev/examples/quickstart).
 
 
 # Deploying Buz
 
-Buz can be deployed in a [variety of ways](https://buz.dev/deploying/overview). We've included end-to-end (terraformed) samples for AWS and GCP:
+Buz can be deployed in a [variety of ways](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=deployment-overview&source=github&location=README&rto=https://buz.dev/deploying/overview). We've included end-to-end (terraformed) samples for AWS and GCP:
 
-* [Buz on AWS Lambda](https://buz.dev/deploying/aws/lambda)
-* [Buz on GCP Cloud Run](https://buz.dev/deploying/gcp/cloud_run)
+* [Buz on AWS Lambda](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=deploy-aws&source=github&location=README&rto=https://buz.dev/deploying/aws/lambda)
+* [Buz on GCP Cloud Run](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=deploy-gcp&source=github&location=README&rto=https://buz.dev/deploying/gcp/cloud_run)
 
 # Documentation
 
-Full documentation can [be found here](https://buz.dev).
+Full documentation can [be found here](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/linkClick/v1.0?link=full-documentation&source=github&location=README&rto=https://buz.dev).
 
 
 🍻🐝
+![bee](https://docstream.buz.dev/pixel/io.silverton/buz/pixel/pageView/v1.0)
