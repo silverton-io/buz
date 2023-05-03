@@ -28,7 +28,7 @@ variable "buz_domain" {
 variable "buz_version" {
   description = "The version of Buz to run."
   type        = string
-  default     = "v0.16.3"
+  default     = "v0.16.4"
 }
 
 variable "buz_service_timeout_seconds" {
@@ -87,11 +87,11 @@ variable "bigquery_dataset_name" {
 variable "default_bigquery_table" {
   description = "The name of the default BigQuery table"
   type        = string
-  default     = "invalid_events"
+  default     = "events"
 }
 
 variable "deadletter_bigquery_table" {
   description = "The name of the deadletter BigQuery table"
   type        = string
-  default     = "events"
+  default     = "invalid_events"
 }
