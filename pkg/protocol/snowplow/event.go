@@ -37,7 +37,7 @@ type SnowplowEvent struct {
 	// Application parameters - https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/snowplow-tracker-protocol/#common-parameters-platform-and-event-independent
 	NameTracker            *string                         `json:"name_tracker"`
 	AppId                  *string                         `json:"app_id"`
-	Platform               string                          `json:"platform"`
+	Platform               *string                         `json:"platform"`
 	EtlTstamp              *time.Time                      `json:"etl_tstamp"`
 	DvceCreatedTstamp      *time.Time                      `json:"dvce_created_tstamp"`
 	DvceSentTstamp         *time.Time                      `json:"dvce_sent_tstamp"`
@@ -158,19 +158,19 @@ func (e *SnowplowEvent) Map() map[string]interface{} {
 }
 
 type Page struct {
-	Url      string                 `json:"url"`
-	Title    *string                `json:"title"`
-	Scheme   string                 `json:"scheme"`
-	Host     string                 `json:"host"`
-	Port     string                 `json:"port"`
-	Path     string                 `json:"path"`
-	Query    map[string]interface{} `json:"query"`
-	Fragment *string                `json:"fragment"`
-	Medium   *string                `json:"medium"`
-	Source   *string                `json:"source"`
-	Term     *string                `json:"term"`
-	Content  *string                `json:"content"`
-	Campaign *string                `json:"campaign"`
+	Url      *string                 `json:"url"`
+	Title    *string                 `json:"title"`
+	Scheme   *string                 `json:"scheme"`
+	Host     *string                 `json:"host"`
+	Port     *string                 `json:"port"`
+	Path     *string                 `json:"path"`
+	Query    *map[string]interface{} `json:"query"`
+	Fragment *string                 `json:"fragment"`
+	Medium   *string                 `json:"medium"`
+	Source   *string                 `json:"source"`
+	Term     *string                 `json:"term"`
+	Content  *string                 `json:"content"`
+	Campaign *string                 `json:"campaign"`
 }
 
 type PageViewEvent struct{}

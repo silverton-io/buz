@@ -161,13 +161,14 @@ func getPageFromParam(params map[string]interface{}, k string) (Page, error) {
 		}
 		qParams := util.QueryToMap(parsedUrl.Query())
 		frag := parsedUrl.Fragment
+		port := parsedUrl.Port()
 		page := Page{
-			Url:      *p,
-			Scheme:   parsedUrl.Scheme,
-			Host:     parsedUrl.Host,
-			Port:     parsedUrl.Port(),
-			Path:     parsedUrl.Path,
-			Query:    qParams,
+			Url:      p,
+			Scheme:   &parsedUrl.Scheme,
+			Host:     &parsedUrl.Host,
+			Port:     &port,
+			Path:     &parsedUrl.Path,
+			Query:    &qParams,
 			Fragment: &frag,
 			Medium:   getQueryParam(*parsedUrl, "utm_medium"),
 			Source:   getQueryParam(*parsedUrl, "utm_source"),
@@ -205,7 +206,7 @@ func setEvent(e *SnowplowEvent, params map[string]interface{}) {
 	eName := getStringParam(params, "e")
 	fingerprint := uuid.New()
 	e.AppId = getStringParam(params, "aid")
-	e.Platform = *getStringParam(params, "p")
+	e.Platform = getStringParam(params, "p")
 	e.Event = getEventType(*eName)
 	e.TxnId = getStringParam(params, "tid")
 	e.EventId = getStringParam(params, "eid")
@@ -230,13 +231,13 @@ func setPage(e *SnowplowEvent, params map[string]interface{}) {
 	page, _ := getPageFromParam(params, "url")
 	title := getStringParam(params, "page")
 	page.Title = title
-	e.PageUrl = &page.Url
+	e.PageUrl = page.Url
 	e.PageTitle = page.Title
-	e.PageUrlScheme = &page.Scheme
-	e.PageUrlHost = &page.Host
-	e.PageUrlPort = &page.Port
-	e.PageUrlPath = &page.Path
-	e.PageUrlQuery = &page.Query
+	e.PageUrlScheme = page.Scheme
+	e.PageUrlHost = page.Host
+	e.PageUrlPort = page.Port
+	e.PageUrlPath = page.Path
+	e.PageUrlQuery = page.Query
 	e.PageUrlFragment = page.Fragment
 	e.MktCampaign = page.Campaign
 	e.MktContent = page.Content
@@ -247,12 +248,12 @@ func setPage(e *SnowplowEvent, params map[string]interface{}) {
 
 func setReferrer(e *SnowplowEvent, params map[string]interface{}) {
 	refr, _ := getPageFromParam(params, "refr")
-	e.PageReferrer = &refr.Url
-	e.RefrUrlScheme = &refr.Scheme
-	e.RefrUrlHost = &refr.Host
-	e.RefrUrlPort = &refr.Port
-	e.RefrUrlPath = &refr.Path
-	e.RefrUrlQuery = &refr.Query
+	e.PageReferrer = refr.Url
+	e.RefrUrlScheme = refr.Scheme
+	e.RefrUrlHost = refr.Host
+	e.RefrUrlPort = refr.Port
+	e.RefrUrlPath = refr.Path
+	e.RefrUrlQuery = refr.Query
 	e.RefrUrlFragment = refr.Fragment
 	e.RefrCampaign = refr.Campaign
 	e.RefrContent = refr.Content
