@@ -1,0 +1,27 @@
+{
+    "$schema": "https://r.buz.dev/s/io.silverton/buz/internal/meta/v1.0.json",
+    "$id": "io.silverton/buz/pixel/linkClick/v1.0.json",
+    "title": "io.silverton/buz/pixel/linkClick/v1.0.json",
+    "description": "A generalized schema for link clicks tracked via pixel",
+    "owner": {
+        "org": "silverton",
+        "team": "buz",
+        "individual": "jakthom"
+    },
+    "self": {
+        "vendor": "io.silverton",
+        "namespace": "buz.pixel.linkClick",
+        "version": "1.0"
+    },
+    "type": "object",
+    "properties": {
+        "link": {
+            "type": "string",
+            "description": "The link"
+        }
+    },
+    "additionalProperties": true,
+    "required": [
+        "link"
+    ]
+}
