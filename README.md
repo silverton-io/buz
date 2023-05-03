@@ -128,16 +128,19 @@ Roll it out fast, keep it going without much thought, and shut it off when it is
 You'll need [go](https://go.dev/doc/install) on your machine but don't need to be a [gopher](https://go.dev/blog/gopher).
 
 
-## Clone the Buz repo
+## Bootstrapping Buz
+
+**Clone:**
 
     $ git clone git@github.com:silverton-io/buz.git && cd buz
 
-## Bootstrap Buz
+
+**Bootstrap:**
 
     $ make bootstrap
 
 
-## Send some events
+## Sending sample events
 
 Events will be sent to two sinks by default - colorized envelopes will be sent to `stdout` and sent to `buz_events.json` or `buz_invalid_events.json` files.
 
