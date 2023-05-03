@@ -174,9 +174,9 @@ Events will be sent to two sinks by default - colorized envelopes will be sent t
 
 
 
-# Want to see Buz play well with others (Docker, Redpanda, Snowplow Analytics, Nginx, etc)?
+# Buz plays nicely with others
 
-Quickstart documentation for setting up a lightweight streaming stack with Buz, a sample ui, Redpanda, and Kowl can [be found here](https://buz.dev/examples/quickstart).
+Quickstart documentation for setting up a lightweight streaming stack with Buz, a sample ui, nginx, Redpanda, and Kowl can [be found here](https://buz.dev/examples/quickstart).
 
 
 # Documentation
