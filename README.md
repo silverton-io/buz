@@ -103,17 +103,17 @@ Envelope metadata is used to power **routing** and **sharding** far downstream o
 
 # Why Buz?
 
-## It's lightweight
+### It's lightweight
 
 It minimizes the typical infrastructure footprint of collecting events from many different sources and allows for low-infrastructure, highly-flexible rollouts.
 
-## It's flexible
+### It's flexible
 
 Buz doesn't care what your existing systems look like or what you want them to look like in the future.
 
 It helps with the "now", and helps get your infrastructure to where you'd like it to be (without another migration).
 
-## It saves time and money
+### It saves time and money
 
 Buz aims to **improve the lives of pipeline maintainers** and **drastically reduce long-term maintenance of event collection systems.**
 
@@ -137,7 +137,7 @@ You'll need [go](https://go.dev/doc/install) on your machine but don't need to b
     $ make bootstrap
 
 
-## Send some events!
+## Send some events
 
 Events will be sent to two sinks by default - colorized envelopes will be sent to `stdout` and sent to `buz_events.json` or `buz_invalid_events.json` files.
 
@@ -162,7 +162,7 @@ Events will be sent to two sinks by default - colorized envelopes will be sent t
 
 ### GET a named (schematized) pixel
 
-    curl -X GET "localhost:8080/pixel/io.silverton/buz/example/generic/sample/v1.0?id=10"
+    curl "localhost:8080/pixel/io.silverton/buz/example/generic/sample/v1.0?id=10"
 
 
 ### POST self-describing JSON
@@ -170,10 +170,8 @@ Events will be sent to two sinks by default - colorized envelopes will be sent t
     curl -X POST "localhost:8080/self-describing" -H 'Content-Type:application/json' -d '{"payload": {"schema": "io.silverton/buz/example/generic/sample/v1.0.json", "data": {"id": "10"}}}'
 
 
-### 
 
-
-# Want to see it playing well with others (Docker, Redpanda, Snowplow Analytics, Nginx, etc)?
+# Want to see Buz play well with others (Docker, Redpanda, Snowplow Analytics, Nginx, etc)?
 
 Quickstart documentation for setting up a lightweight streaming stack with Buz, a sample ui, Redpanda, and Kowl can [be found here](https://buz.dev/examples/quickstart).
 
