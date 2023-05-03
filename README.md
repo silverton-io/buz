@@ -55,7 +55,7 @@ If a payload doesn't have an explicitly-associated schema (such as the case with
 
 ## Onboard Schema Registry
 
-Buz ships with an onboard schema registry cache, and supports [multiple schema backends](https://buz.dev/schema-registry/overview) including:
+Buz ships with a lightweight schema registry that supports [multiple schema backends](https://buz.dev/schema-registry/overview) including:
 
 * [GCS](https://buz.dev/schema-registry/backends/object/gcs)
 * [S3](https://buz.dev/schema-registry/backends/object/s3)
@@ -66,6 +66,7 @@ Buz ships with an onboard schema registry cache, and supports [multiple schema b
 * [Local filesystem](https://buz.dev/schema-registry/backends/buz/filesystem)
 * ..and more
 
+Schemas are [cached locally](https://buz.dev/schema-registry/overview#onboard-schema-registry-cache) once sourced from the configured backend. The cache ttl and maximum size is configurable, but ships with sane defaults.
 
 Schemas are available via HTTP at `/s/$PATH_TO_SCHEMA` or `/s/$SCHEMA_NAME`, depending on the backend.
 
