@@ -43,6 +43,11 @@ func (i *PixelInput) Handler(m manifold.Manifold, conf config.Config, metadata *
 			c.Header("Retry-After", response.RETRY_AFTER_60)
 			c.JSON(http.StatusServiceUnavailable, response.ManifoldDistributionError)
 		} else {
+			redirectUrl, _ := c.GetQuery(constants.BUZ_REDIRECT_PARAM)
+			if redirectUrl != "" {
+				log.Debug().Msg("🟢 redirecting to " + redirectUrl)
+				c.Redirect(http.StatusFound, redirectUrl)
+			}
 			b, _ := base64.StdEncoding.DecodeString(PX)
 			c.Data(http.StatusOK, "image/png", b)
 		}
