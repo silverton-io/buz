@@ -7,13 +7,13 @@ package middleware
 import (
 	"net/http"
 	"net/http/cookiejar"
-	"net/http/httptest"
 	"testing"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/response"
+	testutil "github.com/silverton-io/buz/pkg/testUtil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,19 +22,11 @@ func testHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, response.Ok)
 }
 
-const TEST_URL = "/somepath"
-
-func buildTestServer(conf config.Identity) *httptest.Server {
-	// Set up gin, router, middleware
-	gin.SetMode(gin.TestMode)
-	r := gin.New()
-	r.Use(Identity(conf))
-	r.GET(TEST_URL, testHandler)
-	return httptest.NewServer(r)
-}
+const (
+	TEST_COOKIE_FALLBACK = "some-cookie-fallback"
+)
 
 func TestIdentityNoCookie(t *testing.T) {
-	fallback := "some-id"
 	cookie := config.IdentityCookie{
 		Enabled:  true,
 		Name:     "nuid",
@@ -51,15 +43,15 @@ func TestIdentityNoCookie(t *testing.T) {
 
 	noneConf := config.Identity{
 		Cookie:   noneCookie,
-		Fallback: fallback,
+		Fallback: TEST_COOKIE_FALLBACK,
 	}
 	laxConf := config.Identity{
 		Cookie:   cookie,
-		Fallback: fallback,
+		Fallback: TEST_COOKIE_FALLBACK,
 	}
 	strictConf := config.Identity{
 		Cookie:   strictCookie,
-		Fallback: fallback,
+		Fallback: TEST_COOKIE_FALLBACK,
 	}
 
 	testCases := []struct {
@@ -72,9 +64,9 @@ func TestIdentityNoCookie(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		testServer := buildTestServer(tc.identityConf)
+		testServer := testutil.BuildTestServer(Identity(tc.identityConf))
 		// Make request
-		resp, _ := http.Get(testServer.URL + TEST_URL)
+		resp, _ := http.Get(testServer.URL + testutil.URL)
 		if resp.StatusCode != http.StatusOK {
 			t.Fatalf(`got status code %v, want %v`, resp.StatusCode, http.StatusOK)
 		}
@@ -89,7 +81,6 @@ func TestIdentityNoCookie(t *testing.T) {
 }
 
 func TestIdentityWithCookie(t *testing.T) {
-	fallback := "some-id"
 	someCookieVal := "some-cookie-val"
 	cookie := config.IdentityCookie{
 		Enabled:  true,
@@ -102,9 +93,9 @@ func TestIdentityWithCookie(t *testing.T) {
 	}
 	conf := config.Identity{
 		Cookie:   cookie,
-		Fallback: fallback,
+		Fallback: TEST_COOKIE_FALLBACK,
 	}
-	testServer := buildTestServer(conf)
+	testServer := testutil.BuildTestServer(Identity(conf))
 	// Set up cookiejar
 	jar, _ := cookiejar.New(nil)
 	client := &http.Client{
@@ -117,7 +108,7 @@ func TestIdentityWithCookie(t *testing.T) {
 		MaxAge: 300,
 	}
 
-	req, _ := http.NewRequest("GET", testServer.URL+TEST_URL, nil)
+	req, _ := http.NewRequest("GET", testServer.URL+testutil.URL, nil)
 	req.AddCookie(c)
 	resp, _ := client.Do(req)
 	if resp.StatusCode != http.StatusOK {
