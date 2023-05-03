@@ -4,44 +4,50 @@
 
 package handler
 
-// func TestStatsHandler(t *testing.T) {
-// u := uuid.New()
-// now := time.Now().UTC()
-// m := meta.CollectorMeta{
-// 	Version:       "1.0.x",
-// 	InstanceId:    u,
-// 	StartTime:     now,
-// 	TrackerDomain: "somewhere.net",
-// 	CookieDomain:  "somewhere.io",
-// }
-// s := stats.ProtocolStats{}
-// s.Build()
-// rec := httptest.NewRecorder()
-// c, _ := gin.CreateTestContext(rec)
+import (
+	"encoding/json"
+	"io"
+	"net/http"
+	"testing"
+	"time"
 
-// handler := StatsHandler(&m)
+	"github.com/google/uuid"
+	"github.com/silverton-io/buz/pkg/meta"
+	testutil "github.com/silverton-io/buz/pkg/testUtil"
+	"github.com/stretchr/testify/assert"
+)
 
-// handler(c)
+func TestStatsHandler(t *testing.T) {
+	u := uuid.New()
+	now := time.Now().UTC()
+	m := meta.CollectorMeta{
+		Version:       "1.0.x",
+		InstanceId:    u,
+		StartTime:     now,
+		TrackerDomain: "somewhere.net",
+		CookieDomain:  "somewhere.io",
+	}
 
-// resp := rec.Result()
-// defer resp.Body.Close()
-// if resp.StatusCode != http.StatusOK {
-// 	t.Fatalf(`StatsHandler returned %d, want %d`, resp.StatusCode, http.StatusOK)
-// }
-// b, err := io.ReadAll(resp.Body)
-// if err != nil {
-// 	t.Fatalf("Could not read response: %v", err)
-// }
-// expectedResponse := StatsResponse{
-// 	CollectorMeta: &m,
-// 	Stats:         &s,
-// }
-// expected, err := json.Marshal(expectedResponse)
-// if err != nil {
-// 	t.Fatalf(`Could not marshal expected response`)
-// }
-// equiv := reflect.DeepEqual(b, expected)
-// if !equiv {
-// 	t.Fatalf(`StatsHandler returned %v, want %v`, b, expected)
-// }
-// }
+	rec, c, _ := testutil.BuildRecordedEngine()
+
+	handler := StatsHandler(&m)
+
+	handler(c)
+
+	resp := rec.Result()
+	defer resp.Body.Close()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("Could not read response: %v", err)
+	}
+	expectedResponse := StatsResponse{
+		CollectorMeta: &m,
+		// Stats:         &s,
+	}
+	expected, err := json.Marshal(expectedResponse)
+	if err != nil {
+		t.Fatalf(`Could not marshal expected response`)
+	}
+	assert.Equal(t, expected, b)
+}
