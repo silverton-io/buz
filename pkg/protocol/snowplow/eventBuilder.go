@@ -213,7 +213,7 @@ func setEvent(e *SnowplowEvent, params map[string]interface{}) {
 }
 
 func setUser(c *gin.Context, conf config.Middleware, e *SnowplowEvent, params map[string]interface{}) {
-	identity := util.GetIdentityOrFallback(c, conf)
+	identity := util.GetIdentityOrFallback(c, conf.Identity)
 	e.NetworkUserid = &identity
 	e.DomainUserid = getStringParam(params, "duid")
 	e.Userid = getStringParam(params, "uid")

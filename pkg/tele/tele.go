@@ -50,7 +50,7 @@ func heartbeat(t time.Ticker, m *meta.CollectorMeta) {
 			Time:           time.Now().UTC(),
 			ElapsedSeconds: m.Elapsed(),
 		}
-		data := util.StructToMap(b)
+		data, _ := util.StructToMap(b)
 		heartbeatPayload := envelope.SelfDescribingEvent{
 			Contexts: nil,
 			Payload: envelope.SelfDescribingPayload{
@@ -73,7 +73,7 @@ func Sis(m *meta.CollectorMeta) {
 		Time:           time.Now().UTC(),
 		ElapsedSeconds: m.Elapsed(),
 	}
-	data := util.StructToMap(shutdown)
+	data, _ := util.StructToMap(shutdown)
 	shutdownPayload := envelope.SelfDescribingEvent{
 		Contexts: nil,
 		Payload: envelope.SelfDescribingPayload{
@@ -96,7 +96,7 @@ func Metry(c *config.Config, m *meta.CollectorMeta) {
 			Time:   time.Now().UTC(),
 			Config: *c,
 		}
-		data := util.StructToMap(startup)
+		data, _ := util.StructToMap(startup)
 		startupPayload := envelope.SelfDescribingEvent{
 			Contexts: nil,
 			Payload: envelope.SelfDescribingPayload{

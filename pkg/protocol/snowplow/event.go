@@ -190,9 +190,13 @@ type PagePingEvent struct {
 }
 
 func (e *PagePingEvent) toSelfDescribing() envelope.SelfDescribingPayload {
+	data, err := util.StructToMap(e)
+	if err != nil {
+		log.Error().Err(err).Msg("could not coerce page ping event to map")
+	}
 	return envelope.SelfDescribingPayload{
 		Schema: PAGE_PING_SCHEMA,
-		Data:   util.StructToMap(e),
+		Data:   data,
 	}
 }
 
@@ -205,9 +209,13 @@ type StructEvent struct {
 }
 
 func (e *StructEvent) toSelfDescribing() envelope.SelfDescribingPayload {
+	data, err := util.StructToMap(e)
+	if err != nil {
+		log.Error().Err(err).Msg("could not coerce struct event to map")
+	}
 	return envelope.SelfDescribingPayload{
 		Schema: STRUCT_EVENT_SCHEMA,
-		Data:   util.StructToMap(e),
+		Data:   data,
 	}
 }
 
@@ -224,9 +232,13 @@ type TransactionEvent struct {
 }
 
 func (e *TransactionEvent) toSelfDescribing() envelope.SelfDescribingPayload {
+	data, err := util.StructToMap(e)
+	if err != nil {
+		log.Error().Err(err).Msg("could not coerce transaction event to map")
+	}
 	return envelope.SelfDescribingPayload{
 		Schema: TRANSACTION_SCHEMA,
-		Data:   util.StructToMap(e),
+		Data:   data,
 	}
 }
 
@@ -241,9 +253,13 @@ type TransactionItemEvent struct {
 }
 
 func (e *TransactionItemEvent) toSelfDescribing() envelope.SelfDescribingPayload {
+	data, err := util.StructToMap(e)
+	if err != nil {
+		log.Error().Err(err).Msg("could not coerce transaction item event to map")
+	}
 	return envelope.SelfDescribingPayload{
 		Schema: TRANSACTION_ITEM_SCHEMA,
-		Data:   util.StructToMap(e),
+		Data:   data,
 	}
 }
 

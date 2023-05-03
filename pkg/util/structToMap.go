@@ -4,14 +4,15 @@
 
 package util
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
-func StructToMap(v interface{}) map[string]interface{} {
+func StructToMap(v interface{}) (map[string]interface{}, error) {
 	var m map[string]interface{}
 	i, _ := json.Marshal(v)
-	// FIXME! Don't love it. Don't love it at all.
 	if err := json.Unmarshal(i, &m); err != nil {
-		panic(err)
+		return map[string]interface{}{}, err
 	}
-	return m
+	return m, nil
 }
