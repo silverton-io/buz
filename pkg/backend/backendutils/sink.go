@@ -29,10 +29,11 @@ func RetryWithBackoff(f func(ctx context.Context, envelopes []envelope.Envelope,
 	for i := 0; i < DEFAULT_RETRY_COUNT; i++ {
 		err = f(ctx, envelopes, output)
 		if err == nil {
+			log.Trace().Msg("dequeued successfully")
 			return nil
 		}
 		sleepDuration := time.Duration(time.Duration(math.Pow(2, float64(i))) * DEFAULT_RETRY_DELAY)
-		log.Debug().Msg("failed to dequeue - retrying in " + strconv.Itoa(int(sleepDuration)) + " seconds")
+		log.Debug().Msg("failed to dequeue - retrying in " + sleepDuration.String())
 		time.Sleep(sleepDuration)
 	}
 	log.Debug().Msg("exhausted " + strconv.Itoa(DEFAULT_RETRY_COUNT) + " retries")

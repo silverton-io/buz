@@ -30,9 +30,9 @@ func getEnvelopeSchema() bigquery.Schema {
 		{Name: "namespace", Type: bigquery.StringFieldType},
 		{Name: "version", Type: bigquery.StringFieldType},
 		{Name: "is_valid", Type: bigquery.BooleanFieldType},
-		{Name: "validation_error", Type: bigquery.StringFieldType},
-		{Name: "contexts", Type: bigquery.StringFieldType},
-		{Name: "payload", Type: bigquery.StringFieldType},
+		{Name: "validation_error", Type: bigquery.JSONFieldType},
+		{Name: "contexts", Type: bigquery.JSONFieldType},
+		{Name: "payload", Type: bigquery.JSONFieldType},
 	}
 }
 
@@ -134,7 +134,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 
 func (s *Sink) Shutdown() error {
 	log.Debug().Interface("metadata", s.metadata).Msg("🟢 shutting down sink")
-	err := s.client.Close()
 	s.shutdown <- 1
+	err := s.client.Close()
 	return err
 }
