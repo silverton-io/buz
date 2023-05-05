@@ -6,6 +6,9 @@ package backendutils
 
 import (
 	"context"
+	"math"
+	"strconv"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -13,7 +16,29 @@ import (
 	"github.com/silverton-io/buz/pkg/envelope"
 )
 
-var DEFAULT_SINK_TIMEOUT_SECONDS int = 15
+const (
+	DEFAULT_SINK_TIMEOUT_SECONDS int           = 15
+	DEFAULT_RETRY_COUNT          int           = 15              // A sane default
+	DEFAULT_RETRY_DELAY          time.Duration = 5 * time.Second // A sane default
+)
+
+// RetryWithBackoff retries the provided function up to N times on an exponential backoff
+// NOTE - this function considers all errors as retriable. They are not so.
+func RetryWithBackoff(f func(ctx context.Context, envelopes []envelope.Envelope, output string) error, ctx context.Context, envelopes []envelope.Envelope, output string) error {
+	var err error
+	for i := 0; i < DEFAULT_RETRY_COUNT; i++ {
+		err = f(ctx, envelopes, output)
+		if err == nil {
+			log.Trace().Msg("dequeued successfully")
+			return nil
+		}
+		sleepDuration := time.Duration(time.Duration(math.Pow(2, float64(i))) * DEFAULT_RETRY_DELAY)
+		log.Debug().Msg("failed to dequeue - retrying in " + sleepDuration.String())
+		time.Sleep(sleepDuration)
+	}
+	log.Debug().Msg("exhausted " + strconv.Itoa(DEFAULT_RETRY_COUNT) + " retries")
+	return err
+}
 
 type SinkMetadata struct {
 	Id               uuid.UUID `json:"id"`
@@ -46,7 +71,7 @@ type Sink interface {
 
 func publish(ctx context.Context, sink Sink, envelopes []envelope.Envelope, output string) error {
 	if len(envelopes) > 0 {
-		err := sink.Dequeue(ctx, envelopes, output)
+		err := RetryWithBackoff(sink.Dequeue, ctx, envelopes, output)
 		if err != nil {
 			log.Error().Err(err).Interface("metadata", sink.Metadata()).Msg("could not dequeue envelopes to output " + output)
 		}

@@ -43,3 +43,7 @@ func (e *ValidationError) Value() (driver.Value, error) {
 func (e *ValidationError) Scan(input interface{}) error {
 	return json.Unmarshal(input.([]byte), e)
 }
+
+func (e *ValidationError) AsByte() ([]byte, error) {
+	return json.Marshal(e)
+}
