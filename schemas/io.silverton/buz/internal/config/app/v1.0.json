@@ -819,7 +819,8 @@
                             "nats",
                             "amplitude",
                             "eventbridge",
-                            "splunk"
+                            "splunk",
+                            "bigquery"
                         ]
                     },
                     "deliveryRequired": {
@@ -839,6 +840,11 @@
                         "type": "string",
                         "default": "buz-gcp-project",
                         "description": "The name of the GCP project"
+                    },
+                    "dataset": {
+                        "type": "string",
+                        "default": "buz-gcp-dataset",
+                        "description": "The name of the BigQuery dataset"
                     },
                     "url": {
                         "type": "string",
@@ -1151,12 +1157,23 @@
                     {
                         "properties": {
                             "type": {
-                                "const": "amplitude"
+                                "const": "splunk"
                             }
                         },
                         "required": [
-                            "apiKey",
-                            "region"
+                            "url",
+                            "apiKey"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "bigquery"
+                            }
+                        },
+                        "required": [
+                            "project",
+                            "dataset"
                         ]
                     }
                 ]
