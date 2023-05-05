@@ -192,6 +192,13 @@ sinks:
   #   apiKey: abdf41b4-f6e8-46a7-bb80-d349181af78c
   #   defaultOutput: main # This is tied to splunk HEC so it's moot
   #   deadletterOutput: main # This is tied to splunk HEC so it's moot
+  # - name: bigquery
+  #   type: bigquery
+  #   deliveryRequired: true
+  #   project: $YOUR_PROJECT
+  #   dataset: buz
+  #   defaultOutput: events
+  #   deadletterOutput: invalid_events
 
 squawkBox:
   enabled: true

@@ -10,6 +10,13 @@ data "google_project" "project" {}
 #   }
 # }
 
+terraform {
+  backend "gcs" {
+    bucket = "silverton-tfstate"
+    prefix = "buz/production/"
+  }
+}
+
 module "template_files" {
   source = "hashicorp/dir/template"
 
@@ -37,14 +44,6 @@ resource "google_storage_bucket_object" "schemas" {
   source   = each.value.source_path
 }
 
-resource "google_pubsub_topic" "default_output" {
-  name = local.default_output
-}
-
-resource "google_pubsub_topic" "deadletter_output" {
-  name = local.deadletter_output
-}
-
 resource "google_secret_manager_secret" "buz_config" {
   secret_id = local.config
 
@@ -65,6 +64,7 @@ resource "google_secret_manager_secret_version" "buz_config" {
   secret = google_secret_manager_secret.buz_config.id
   secret_data = templatefile("${path.module}/config.yml.tftpl", {
     project          = var.gcp_project,
+    dataset          = var.bigquery_dataset_name,
     system           = var.system,
     env              = var.env,
     port             = var.buz_service_container_port
@@ -174,8 +174,6 @@ resource "google_cloud_run_service" "buz" {
   depends_on = [
     google_project_service.project_services,
     google_storage_bucket.schemas,
-    google_pubsub_topic.deadletter_output,
-    google_pubsub_topic.default_output,
     null_resource.pull_and_push_image,
   ]
 }
@@ -231,44 +229,4 @@ resource "google_bigquery_dataset" "buz" {
   friendly_name = var.bigquery_dataset_name
   description   = "A dataset for Buz events"
   location      = var.bigquery_location
-}
-
-resource "google_bigquery_table" "default" {
-  table_id   = local.default_table
-  dataset_id = google_bigquery_dataset.buz.dataset_id
-  schema     = file("schema.json")
-  depends_on = [
-    google_bigquery_dataset.buz
-  ]
-}
-
-resource "google_bigquery_table" "deadletter" {
-  table_id   = local.deadletter_table
-  dataset_id = google_bigquery_dataset.buz.dataset_id
-  schema     = file("schema.json")
-  depends_on = [
-    google_bigquery_dataset.buz
-  ]
-}
-
-resource "google_pubsub_subscription" "default" {
-  name  = local.default_subscription
-  topic = google_pubsub_topic.default_output.name
-  bigquery_config {
-    table            = "${google_bigquery_table.default.project}.${google_bigquery_table.default.dataset_id}.${google_bigquery_table.default.table_id}"
-    use_topic_schema = true
-    write_metadata   = true
-  }
-  depends_on = [google_project_iam_member.bigquery_viewer, google_project_iam_member.bigquery_editor, google_bigquery_table.default]
-}
-
-resource "google_pubsub_subscription" "deadletter" {
-  name  = local.deadletter_subscription
-  topic = google_pubsub_topic.deadletter_output.name
-  bigquery_config {
-    table            = "${google_bigquery_table.deadletter.project}.${google_bigquery_table.deadletter.dataset_id}.${google_bigquery_table.deadletter.table_id}"
-    use_topic_schema = true
-    write_metadata   = true
-  }
-  depends_on = [google_project_iam_member.bigquery_viewer, google_project_iam_member.bigquery_editor, google_bigquery_table.deadletter]
 }

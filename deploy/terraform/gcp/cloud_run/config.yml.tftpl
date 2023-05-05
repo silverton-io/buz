@@ -85,9 +85,10 @@ registry:
 
 sinks:
   - name: primary
-    type: pubsub
+    type: bigquery
     deliveryRequired: true
     project: ${project}
+    dataset: ${dataset}
     defaultOutput: ${defaultOutput}
     deadletterOutput: ${deadletterOutput}
 
