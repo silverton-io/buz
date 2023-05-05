@@ -10,6 +10,13 @@ data "google_project" "project" {}
 #   }
 # }
 
+terraform {
+  backend "gcs" {
+    bucket = "silverton-tfstate"
+    prefix = "buz/production/"
+  }
+}
+
 module "template_files" {
   source = "hashicorp/dir/template"
 

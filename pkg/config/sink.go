@@ -12,6 +12,7 @@ type Sink struct {
 	DeadletterOutput string `json:"deadletterOutput"`
 	// GCP
 	Project string `json:"project,omitempty"`
+	Dataset string `json:"dataset,omitempty"`
 	// Kafka
 	Brokers []string `json:"kakfaBrokers,omitempty"`
 	// Http / API

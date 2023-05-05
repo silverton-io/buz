@@ -13,6 +13,7 @@ const (
 	MONGODB       string = "mongodb"
 	ELASTICSEARCH string = "elasticsearch"
 	TIMESCALE     string = "timescale"
+	BIGQUERY      string = "bigquery"
 	// Streams and Queues
 	PUBSUB           string = "pubsub"
 	REDPANDA         string = "redpanda"

@@ -9,6 +9,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
+	bq "github.com/silverton-io/buz/pkg/backend/bigquery"
 	"github.com/silverton-io/buz/pkg/backend/blackhole"
 	"github.com/silverton-io/buz/pkg/backend/elasticsearch"
 	"github.com/silverton-io/buz/pkg/backend/eventbridge"
@@ -85,6 +86,9 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 		return &sink, nil
 	case constants.ELASTICSEARCH:
 		sink := elasticsearch.Sink{}
+		return &sink, nil
+	case constants.BIGQUERY:
+		sink := bq.Sink{}
 		return &sink, nil
 	// case constants.CLICKHOUSE:
 	// 	sink := clickhousedb.Sink{}

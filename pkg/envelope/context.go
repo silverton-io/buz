@@ -32,3 +32,7 @@ func BuildContextsFromRequest(c *gin.Context) Contexts {
 	}
 	return context
 }
+
+func (c *Contexts) AsByte() ([]byte, error) {
+	return json.Marshal(c)
+}

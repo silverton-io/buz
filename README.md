@@ -161,20 +161,19 @@ Events will be sent to two sinks by default - colorized envelopes will be sent t
     curl -X POST "localhost:8080/webhook/io.silverton/buz/example/generic/sample/v1.0" -H 'Content-Type:application/json' -d '{"id": "10"}'
 
 
-### GET an arbitrary pixel
-
-    curl "localhost:8080/pixel?msg=hello&subject=world"
-
-
-### GET a named (schematized) pixel
-
-    curl "localhost:8080/pixel/io.silverton/buz/example/generic/sample/v1.0?id=10"
-
-
 ### POST self-describing JSON
 
     curl -X POST "localhost:8080/self-describing" -H 'Content-Type:application/json' -d '{"payload": {"schema": "io.silverton/buz/example/generic/sample/v1.0.json", "data": {"id": "10"}}}'
 
+
+### GET an arbitrary pixel
+
+[localhost:8080/pixel?msg=hello&subject=world](http://localhost:8080/pixel?msg=hello&subject=world)
+
+
+### GET a named (schematized) pixel
+
+[localhost:8080/pixel/io.silverton/buz/example/generic/sample/v1.0?id=10](http://localhost:8080/pixel/io.silverton/buz/example/generic/sample/v1.0?id=10)
 
 
 # Buz plays nicely with others
