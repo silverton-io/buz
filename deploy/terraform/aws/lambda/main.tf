@@ -81,8 +81,17 @@ resource "aws_s3_bucket" "events" {
 }
 
 resource "aws_s3_bucket_acl" "events_acl" {
+  bucket     = aws_s3_bucket.events.id
+  acl        = "private"
+  depends_on = [aws_s3_bucket_ownership_controls.events_acl_ownership]
+}
+
+# Resource to avoid error "AccessControlListNotSupported: The bucket does not allow ACLs"
+resource "aws_s3_bucket_ownership_controls" "events_acl_ownership" {
   bucket = aws_s3_bucket.events.id
-  acl    = "private"
+  rule {
+    object_ownership = "ObjectWriter"
+  }
 }
 
 resource "aws_s3_object" "schemas" {
@@ -98,8 +107,17 @@ resource "aws_s3_bucket" "buz_schemas" {
 }
 
 resource "aws_s3_bucket_acl" "schemas_acl" {
+  bucket     = aws_s3_bucket.buz_schemas.id
+  acl        = "private"
+  depends_on = [aws_s3_bucket_ownership_controls.schemas_acl_ownership]
+}
+
+# Resource to avoid error "AccessControlListNotSupported: The bucket does not allow ACLs"
+resource "aws_s3_bucket_ownership_controls" "schemas_acl_ownership" {
   bucket = aws_s3_bucket.buz_schemas.id
-  acl    = "private"
+  rule {
+    object_ownership = "ObjectWriter"
+  }
 }
 
 resource "aws_ecr_repository" "buz_repository" {
