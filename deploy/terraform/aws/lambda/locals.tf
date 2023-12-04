@@ -9,7 +9,6 @@ locals {
   image                      = "buz:${var.buz_version}"
   buz_source_image           = "${var.buz_image_repo}/${local.image}"
   service_name               = "${local.system_env_base}collector"
-  policy_name                = "${local.system_env_base}policy"
   config                     = "${local.system_env_base}config"
   schema_bucket              = "${local.system_env_base}${var.schema_bucket_name}"
   events_bucket              = "${local.system_env_base}${var.events_bucket_name}"
