@@ -5,7 +5,9 @@
 package snowplow
 
 import (
+	"crypto/sha256"
 	b64 "encoding/base64"
+	"encoding/hex"
 	"net/url"
 	"strconv"
 	"strings"
@@ -182,12 +184,30 @@ func getPageFromParam(params map[string]interface{}, k string) (Page, error) {
 	}
 }
 
+func addValueToSignature(sb *strings.Builder, value interface{}) {
+	switch v := value.(type) {
+	case *string:
+		if v != nil {
+			sb.WriteString(*v)
+		} else {
+			sb.WriteString("none")
+		}
+	case *bool:
+		if v != nil {
+			sb.WriteString(strconv.FormatBool(*v))
+		} else {
+			sb.WriteString("none")
+		}
+	}
+	sb.WriteString("|")
+}
+
 func setTstamps(e *SnowplowEvent, params map[string]interface{}) {
-	now := time.Now().UTC()
+	e.CollectorTstamp = time.Now().UTC()
 	e.DvceCreatedTstamp = getTimeParam(params, "dtm")
 	e.DvceSentTstamp = getTimeParam(params, "stm")
 	e.TrueTstamp = getTimeParam(params, "ttm")
-	e.CollectorTstamp = time.Now().UTC()
+	now := time.Now().UTC()
 	e.EtlTstamp = &now
 	if e.DvceCreatedTstamp != nil {
 		timeOnDevice := e.DvceSentTstamp.Sub(*e.DvceCreatedTstamp)
@@ -260,6 +280,35 @@ func setReferrer(e *SnowplowEvent, params map[string]interface{}) {
 	e.RefrMedium = refr.Medium
 	e.RefrSource = refr.Source
 	e.RefrTerm = refr.Term
+}
+
+func setIP(c *gin.Context, e *SnowplowEvent) {
+	ip := c.ClientIP()
+	realIP := c.GetHeader("X-Real-IP")
+	forwardedIP := c.GetHeader("X-Forwarded-For")
+	cloudfrontForwardedIP := c.GetHeader("CloudFront-Viewer-Address")
+	log.Debug().Msgf("🟡 ip: '%s', realIP: '%s', forwardedIP: '%s', cloudfrontForwardedIP: '%s'", ip, realIP, forwardedIP, cloudfrontForwardedIP)
+
+	if realIP != "" {
+		e.UserIpAddress = &realIP
+		return
+	}
+
+	if forwardedIP != "" {
+		partsIP := strings.Split(forwardedIP, ",")
+		if len(partsIP) > 0 && partsIP[0] != "" {
+			ip := strings.TrimSpace(partsIP[0])
+			e.UserIpAddress = &ip
+			return
+		}
+	}
+
+	if cloudfrontForwardedIP != "" {
+		e.UserIpAddress = &cloudfrontForwardedIP
+		return
+	}
+
+	e.UserIpAddress = &ip
 }
 
 func setDevice(c *gin.Context, e *SnowplowEvent, params map[string]interface{}) {
@@ -374,6 +423,29 @@ func setSelfDescribing(e *SnowplowEvent, params map[string]interface{}) {
 	e.SelfDescribingEvent = getSdPayload(b64EncodedPayload)
 }
 
+func setFingerprint(e *SnowplowEvent) {
+	var signature strings.Builder
+	addValueToSignature(&signature, e.Useragent)
+	addValueToSignature(&signature, e.MacAddress)
+	addValueToSignature(&signature, e.OsTimezone)
+	addValueToSignature(&signature, e.BrLang)
+	addValueToSignature(&signature, e.BrCookies)
+	addValueToSignature(&signature, e.BrFeaturesPdf)
+	addValueToSignature(&signature, e.BrFeaturesQuicktime)
+	addValueToSignature(&signature, e.BrFeaturesRealplayer)
+	addValueToSignature(&signature, e.BrFeaturesWindowsmedia)
+	addValueToSignature(&signature, e.BrFeaturesDirector)
+	addValueToSignature(&signature, e.BrFeaturesFlash)
+	addValueToSignature(&signature, e.BrFeaturesJava)
+	addValueToSignature(&signature, e.BrFeaturesGears)
+	addValueToSignature(&signature, e.BrFeaturesSilverlight)
+	addValueToSignature(&signature, e.BrColordepth)
+	addValueToSignature(&signature, e.DvceScreenResolution)
+	hash := sha256.Sum256([]byte(signature.String()))
+	fingerprint := hex.EncodeToString(hash[:])
+	e.UserFingerprint = &fingerprint
+}
+
 func buildEventFromMappedParams(c *gin.Context, params map[string]interface{}, conf config.Config) SnowplowEvent {
 	event := SnowplowEvent{}
 	setTstamps(&event, params)
@@ -383,10 +455,12 @@ func buildEventFromMappedParams(c *gin.Context, params map[string]interface{}, c
 	setSession(&event, params)
 	setPage(&event, params)
 	setReferrer(&event, params)
+	setIP(c, &event)
 	setDevice(c, &event, params)
 	setBrowser(&event, params)
 	setScreen(&event, params)
 	setContexts(&event, params)
+	setFingerprint(&event)
 	switch event.Event {
 	case PAGE_VIEW:
 		setPageView(&event, params)
