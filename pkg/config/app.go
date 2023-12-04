@@ -12,4 +12,5 @@ type App struct {
 	TrackerDomain     string `json:"trackerDomain"`
 	EnableConfigRoute bool   `json:"enableConfigRoute"`
 	Serverless        bool   `json:"serverless"`
+	SchemaRoute       string `json:"schemaRoute"`
 }
