@@ -52,6 +52,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Whether or not to run buz in serverless mode"
+                },
+                "schemaRoute": {
+                  "type": "string",
+                  "default": "/schemas/",
+                  "description": "Alternate route for the schemas"
                 }
             },
             "additionalProperties": false,
