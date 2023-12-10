@@ -4,14 +4,10 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "aws_access_key" {
-  description = "AWS Access Key"
+variable "aws_profile" {
+  description = "AWS Profile"
   type        = string
-}
-
-variable "aws_secret_key" {
-  description = "AWS Secret Key"
-  type        = string
+  default     = "default"
 }
 
 variable "system" {
