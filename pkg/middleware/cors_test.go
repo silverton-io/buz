@@ -18,8 +18,8 @@ func TestCors(t *testing.T) {
 	u := "/test"
 	conf := config.Cors{
 		Enabled:          true,
-		AllowOrigin:      []string{"*"},
-		AllowCredentials: false,
+		AllowOrigin:      []string{"http://allowed-origin.com"},
+		AllowCredentials: true,
 		AllowMethods:     []string{"GET", "OPTIONS"},
 		MaxAge:           86400,
 	}
@@ -29,14 +29,28 @@ func TestCors(t *testing.T) {
 	ts := httptest.NewServer(r)
 	defer ts.Close()
 
-	t.Run("preflight", func(t *testing.T) {
+	t.Run("preflight success", func(t *testing.T) {
 		var client = &http.Client{}
 		req, _ := http.NewRequest(http.MethodOptions, ts.URL+u, nil)
+		req.Header.Set("Origin", "http://allowed-origin.com")
 		resp, _ := client.Do(req)
 
-		assert.Equal(t, []string{"false"}, resp.Header["Access-Control-Allow-Credentials"])
+		assert.Equal(t, []string{"true"}, resp.Header["Access-Control-Allow-Credentials"])
 		assert.Equal(t, []string{"GET, OPTIONS"}, resp.Header["Access-Control-Allow-Methods"])
-		assert.Equal(t, []string{"*"}, resp.Header["Access-Control-Allow-Origin"])
+		assert.Equal(t, []string{"http://allowed-origin.com"}, resp.Header["Access-Control-Allow-Origin"])
+		assert.Equal(t, []string{"86400"}, resp.Header["Access-Control-Max-Age"])
+		assert.Equal(t, http.StatusNoContent, resp.StatusCode)
+	})
+
+	t.Run("preflight fail", func(t *testing.T) {
+		var client = &http.Client{}
+		req, _ := http.NewRequest(http.MethodOptions, ts.URL+u, nil)
+		req.Header.Set("Origin", "http://not-allowed-origin.com")
+		resp, _ := client.Do(req)
+
+		assert.Equal(t, []string{"true"}, resp.Header["Access-Control-Allow-Credentials"])
+		assert.Equal(t, []string{"GET, OPTIONS"}, resp.Header["Access-Control-Allow-Methods"])
+		assert.Equal(t, []string([]string(nil)), resp.Header["Access-Control-Allow-Origin"])
 		assert.Equal(t, []string{"86400"}, resp.Header["Access-Control-Max-Age"])
 		assert.Equal(t, http.StatusNoContent, resp.StatusCode)
 	})
