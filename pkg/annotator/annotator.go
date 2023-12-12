@@ -25,6 +25,7 @@ func getSchemaMetadata(schema []byte) schemaMetadata {
 	namespace := schemaContents.Get("self.namespace").String()
 	version := schemaContents.Get("self.version").String()
 	disableValidation := schemaContents.Get("disableValidation").Bool()
+	log.Debug().Msgf("🟡 vendor: %s, namespace: %s, version: %s, disableValidation: %t", vendor, namespace, version, disableValidation)
 	return schemaMetadata{
 		Vendor:            vendor,
 		Namespace:         namespace,

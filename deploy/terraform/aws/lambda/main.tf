@@ -139,7 +139,7 @@ data "aws_ecr_image" "buz_image" {
 
 resource "null_resource" "configure_docker" {
   triggers = {
-    build_number = var.buz_version
+    always_run = timestamp()
   }
   provisioner "local-exec" {
     command = "aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com"
@@ -228,6 +228,14 @@ resource "aws_cloudwatch_log_group" "buz" {
   }
 }
 
+data "aws_cloudfront_origin_request_policy" "buz" {
+  name = "Managed-AllViewerExceptHostHeader"
+}
+
+data "aws_cloudfront_cache_policy" "buz" {
+  name = "Managed-CachingDisabled"
+}
+
 resource "aws_cloudfront_distribution" "buz" {
   enabled         = true
   is_ipv6_enabled = true
@@ -248,25 +256,20 @@ resource "aws_cloudfront_distribution" "buz" {
   }
 
   default_cache_behavior {
-    viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
-    target_origin_id       = replace(replace(aws_lambda_function_url.buz.function_url, "https://", ""), "/", "")
-    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods         = ["HEAD", "GET"]
-    forwarded_values {
-      query_string = true
-      cookies {
-        forward = "all"
-      }
-    }
+    viewer_protocol_policy   = "redirect-to-https"
+    min_ttl                  = 0
+    default_ttl              = 3600
+    max_ttl                  = 86400
+    target_origin_id         = replace(replace(aws_lambda_function_url.buz.function_url, "https://", ""), "/", "")
+    allowed_methods          = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods           = ["HEAD", "GET"]
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.buz.id
+    cache_policy_id          = data.aws_cloudfront_cache_policy.buz.id
   }
 
   restrictions {
     geo_restriction {
-      restriction_type = "whitelist"
-      locations        = ["US", "CA", "GB", "DE"]
+      restriction_type = "none"
     }
   }
 

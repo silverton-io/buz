@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "aws_profile" {
+  description = "AWS Profile"
+  type        = string
+  default     = "default"
+}
+
 variable "system" {
   description = "The name of the Buz implementation. \n\nExample: buz"
   type        = string
@@ -26,10 +32,16 @@ variable "buz_domain" {
   type        = string
 }
 
+variable "buz_image_repo" {
+  description = "The Buz image repository"
+  type        = string
+  default     = "ghcr.io/silverton-io"
+}
+
 variable "buz_version" {
   description = "The version of Buz to run."
   type        = string
-  default     = "v0.17.0"
+  default     = "v0.18.0"
 }
 
 variable "buz_lambda_memory_limit" {

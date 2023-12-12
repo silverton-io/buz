@@ -108,8 +108,6 @@ func (a *App) initializeManifold() {
 func (a *App) initializeRouter() {
 	log.Info().Msg("🟢 initializing router")
 	a.engine = gin.New()
-	a.publicRouterGroup = a.engine.Group("")
-	a.switchableRouterGroup = a.engine.Group("")
 	if err := a.engine.SetTrustedProxies(nil); err != nil {
 		panic(err)
 	}
@@ -145,6 +143,11 @@ func (a *App) initializeMiddleware() {
 		log.Info().Msg("🟢 initializing auth middleware")
 		a.switchableRouterGroup.Use(middleware.Auth(a.config.Middleware.Auth))
 	}
+}
+
+func (a *App) initializeRouterGroups() {
+	a.publicRouterGroup = a.engine.Group("")
+	a.switchableRouterGroup = a.engine.Group("")
 }
 
 // 🐝 and healthcheck route are always public
@@ -201,6 +204,7 @@ func (a *App) Initialize() {
 	a.initializeRouter()
 	a.initializeManifold()
 	a.initializeMiddleware()
+	a.initializeRouterGroups()
 	a.initializePublicRoutes()
 	a.initializeOpsRoutes()
 	a.initializeSchemaCacheRoutes()
