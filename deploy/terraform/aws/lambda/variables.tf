@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "aws_profile" {
+  description = "AWS Profile"
+  type        = string
+  default     = "default"
+}
+
 variable "system" {
   description = "The name of the Buz implementation. \n\nExample: buz"
   type        = string
@@ -24,6 +30,12 @@ variable "debug" {
 variable "buz_domain" {
   description = "The subdomain to map Buz to. \n\nExample: track.yourdomain.com"
   type        = string
+}
+
+variable "buz_image_repo" {
+  description = "The Buz image repository"
+  type        = string
+  default     = "ghcr.io/silverton-io"
 }
 
 variable "buz_version" {

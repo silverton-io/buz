@@ -19,6 +19,7 @@ examples/quickstart/minio/*
 .terraform.lock.hcl
 .terraform.tfstate.lock*
 terraform.*
+backend.tf
 build/buz
 *.build
 target/*
