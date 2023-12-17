@@ -179,6 +179,9 @@ func (a *App) initializeSchemaCacheRoutes() {
 	if a.config.Registry.Http.Enabled {
 		log.Info().Msg("🟢 initializing schema registry routes")
 		a.switchableRouterGroup.GET(registry.SCHEMAS_ROUTE+"*"+registry.SCHEMA_PARAM, registry.GetSchemaHandler(r))
+		if a.config.SchemaRoute != "" {
+			a.switchableRouterGroup.GET(a.config.SchemaRoute+"*"+registry.SCHEMA_PARAM, registry.GetSchemaHandler(r))
+		}
 	}
 }
 
