@@ -142,7 +142,7 @@ resource "null_resource" "configure_docker" {
     always_run = timestamp()
   }
   provisioner "local-exec" {
-    command = "aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com"
+    command = "aws ecr get-login-password --region ${var.aws_region} --profile ${var.aws_profile} | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com"
   }
   depends_on = [
     aws_ecr_repository.buz_repository
