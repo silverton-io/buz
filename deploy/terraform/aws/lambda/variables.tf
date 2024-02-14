@@ -41,7 +41,7 @@ variable "buz_image_repo" {
 variable "buz_version" {
   description = "The version of Buz to run."
   type        = string
-  default     = "v0.18.0"
+  default     = "v0.18.1"
 }
 
 variable "buz_lambda_memory_limit" {
