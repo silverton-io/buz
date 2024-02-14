@@ -12,8 +12,8 @@ locals {
   config                     = "${local.system_env_base}config"
   schema_bucket              = "${local.system_env_base}${var.schema_bucket_name}"
   events_bucket              = "${local.system_env_base}${var.events_bucket_name}"
-  default_output             = "buz_events"
-  deadletter_output          = "buz_invalid_events"
+  default_output             = "${local.system_env_base}events"
+  deadletter_output          = "${local.system_env_base}invalid-events"
   metadata_extraction_params = "{isValid:.isValid,vendor:.vendor,namespace:.namespace,version:.version}"
   s3_dynamic_prefix          = "isValid=!{partitionKeyFromQuery:isValid}/vendor=!{partitionKeyFromQuery:vendor}/namespace=!{partitionKeyFromQuery:namespace}/version=!{partitionKeyFromQuery:version}/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/"
 }
