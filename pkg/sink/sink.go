@@ -18,6 +18,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/kafka"
 	"github.com/silverton-io/buz/pkg/backend/kinesis"
 	"github.com/silverton-io/buz/pkg/backend/kinesisFirehose"
+	"github.com/silverton-io/buz/pkg/backend/materializewebhook"
 	"github.com/silverton-io/buz/pkg/backend/mongodb"
 	"github.com/silverton-io/buz/pkg/backend/mysqldb"
 	"github.com/silverton-io/buz/pkg/backend/nats"
@@ -98,6 +99,10 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 		return &sink, nil
 	case constants.MATERIALIZE:
 		sink := postgresdb.Sink{}
+		return &sink, nil
+	case constants.MATERIALIZE_WEBHOOK:
+		sink :=
+			materializewebhook.Sink{}
 		return &sink, nil
 	case constants.SPLUNK:
 		sink := splunk.Sink{}

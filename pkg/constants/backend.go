@@ -6,14 +6,15 @@ package constants
 
 const (
 	// Databases
-	POSTGRES      string = "postgres"
-	MYSQL         string = "mysql"
-	MATERIALIZE   string = "materialize"
-	CLICKHOUSE    string = "clickhouse"
-	MONGODB       string = "mongodb"
-	ELASTICSEARCH string = "elasticsearch"
-	TIMESCALE     string = "timescale"
-	BIGQUERY      string = "bigquery"
+	POSTGRES            string = "postgres"
+	MYSQL               string = "mysql"
+	MATERIALIZE         string = "materialize"
+	MATERIALIZE_WEBHOOK string = "materializeWebhook"
+	CLICKHOUSE          string = "clickhouse"
+	MONGODB             string = "mongodb"
+	ELASTICSEARCH       string = "elasticsearch"
+	TIMESCALE           string = "timescale"
+	BIGQUERY            string = "bigquery"
 	// Streams and Queues
 	PUBSUB           string = "pubsub"
 	REDPANDA         string = "redpanda"

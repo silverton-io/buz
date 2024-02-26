@@ -29,6 +29,10 @@ type Backend struct {
 	DbName string `json:"-"`
 	DbUser string `json:"-"`
 	DbPass string `json:"-"`
+	// Materialize specific
+	Cluster       string `json:"cluster,omitempty"`
+	WebhookSecret string `json:"webhookApiKey,omitempty"`
+
 	// Mongodb
 	MongoHosts         []string `json:"mongoHosts,omitempty"`
 	MongoPort          string   `json:"mongoDbPort,omitempty"`

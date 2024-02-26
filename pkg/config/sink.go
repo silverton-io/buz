@@ -14,7 +14,7 @@ type Sink struct {
 	Project string `json:"project,omitempty"`
 	Dataset string `json:"dataset,omitempty"`
 	// Kafka
-	Brokers []string `json:"kakfaBrokers,omitempty"`
+	Brokers []string `json:"kafkaBrokers,omitempty"`
 	// Http / API
 	Url    string `json:"url"`
 	ApiKey string `json:"-"`
@@ -27,6 +27,9 @@ type Sink struct {
 	Database string   `json:"-"`
 	User     string   `json:"-"`
 	Password string   `json:"-"`
+	// Materialize specific
+	Cluster       string `json:"cluster,omitempty"`
+	WebhookSecret string `json:"webhookApiKey,omitempty"`
 	// Pubnub
 	PubnubPubKey string `json:"pubnubPubKey,omitempty"`
 	PubnubSubKey string `json:"pubnubSubKey,omitempty"`
