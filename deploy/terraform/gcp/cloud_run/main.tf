@@ -163,6 +163,11 @@ resource "google_cloud_run_service" "buz" {
           value = local.buz_config_path
         }
 
+        env {
+          name  = "GOMEMLIMIT"
+          value = floor(var.buz_service_gomemlimit_pct * var.buz_service_memory_limit)
+        }
+
         volume_mounts {
           name       = local.config
           mount_path = local.buz_config_dir
