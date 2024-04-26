@@ -6,6 +6,7 @@ package webhook
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -34,7 +35,7 @@ func (i *WebhookInput) Initialize(routerGroup *gin.RouterGroup, manifold *manifo
 
 func (i *WebhookInput) Handler(m manifold.Manifold, conf config.Config, metadata *meta.CollectorMeta) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		if c.ContentType() == "application/json" || c.ContentType() == "text/html" {
+		if c.ContentType() == "application/json" || strings.HasPrefix(c.ContentType(), "text/") {
 			envelopes := i.EnvelopeBuilder(c, &conf, metadata)
 			err := m.Enqueue(envelopes)
 			if err != nil {
