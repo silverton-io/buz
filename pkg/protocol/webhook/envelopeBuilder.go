@@ -29,11 +29,11 @@ func buildEnvelopesFromRequest(c *gin.Context, conf *config.Config, m *meta.Coll
     if c.GetHeader("Content-Encoding") == "gzip" {
         log.Debug().Msg("🟢 Request body is gzip encoded - attempting to decompress.")
     	reader, err := gzip.NewReader(bytes.NewReader(reqBody))
-    	defer reader.Close()
     	if err != nil {
     		log.Error().Err(err).Msg("🔴 could not decompress gzipped request body")
     		return envelopes
     	}
+    	defer reader.Close()
     	reqBody, err = io.ReadAll(reader)
     	if err != nil {
     		log.Error().Err(err).Msg("🔴 could not read decompressed gzipped request body")
