@@ -206,7 +206,6 @@ resource "aws_lambda_function" "buz" {
     variables = {
       (local.buz_config_var) = local.buz_config_path,
       (local.buz_debug_var)  = var.debug
-      GOMEMLIMIT             = floor(var.buz_lambda_gomemlimit_pct * var.buz_lambda_memory_limit)
     }
   }
 
