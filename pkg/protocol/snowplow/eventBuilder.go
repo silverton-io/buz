@@ -164,6 +164,12 @@ func getPageFromParam(params map[string]interface{}, k string) (Page, error) {
 		qParams := util.QueryToMap(parsedUrl.Query())
 		frag := parsedUrl.Fragment
 		port := parsedUrl.Port()
+		if port == "" {
+			port = "80"
+			if parsedUrl.Scheme == "https" {
+					port = "443"
+			}
+		}
 		page := Page{
 			Url:      p,
 			Scheme:   &parsedUrl.Scheme,
