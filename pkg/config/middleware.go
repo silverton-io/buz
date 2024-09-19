@@ -53,5 +53,5 @@ type RequestLogger struct {
 
 type Auth struct {
 	Enabled bool     `json:"enabled"`
-	Tokens  []string `json:"-"`
+	Tokens  []string `json:"tokens"`
 }
