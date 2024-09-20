@@ -6,6 +6,7 @@ package http
 
 import (
 	"context"
+	"net/http"
 	"net/url"
 
 	"github.com/rs/zerolog/log"
@@ -60,7 +61,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 		log.Error().Err(err).Msg("🔴 " + output + " is not a valid url")
 		return err
 	}
-	_, err = request.PostEnvelopes(*url, envelopes, nil)
+	_, err = request.PostEnvelopes(*url, envelopes, http.Header{})
 	if err != nil {
 		log.Error().Err(err).Interface("metadata", s.Metadata()).Msg("🔴 could not dequeue payloads")
 	}
