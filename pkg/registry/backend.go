@@ -9,6 +9,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/clickhousedb"
+	"github.com/silverton-io/buz/pkg/backend/duckdb"
 	"github.com/silverton-io/buz/pkg/backend/file"
 	"github.com/silverton-io/buz/pkg/backend/gcs"
 	"github.com/silverton-io/buz/pkg/backend/http"
@@ -58,6 +59,9 @@ func BuildSchemaCacheBackend(conf config.Backend) (backend SchemaCacheBackend, e
 		return &cacheBackend, nil
 	case constants.CLICKHOUSE:
 		cacheBackend := clickhousedb.RegistryBackend{}
+		return &cacheBackend, nil
+	case constants.DUCKDB:
+		cacheBackend := duckdb.RegistryBackend{}
 		return &cacheBackend, nil
 	case constants.MONGODB:
 		cacheBackend := mongodb.RegistryBackend{}

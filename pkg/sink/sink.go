@@ -11,6 +11,7 @@ import (
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	bq "github.com/silverton-io/buz/pkg/backend/bigquery"
 	"github.com/silverton-io/buz/pkg/backend/blackhole"
+	"github.com/silverton-io/buz/pkg/backend/duckdb"
 	"github.com/silverton-io/buz/pkg/backend/elasticsearch"
 	"github.com/silverton-io/buz/pkg/backend/eventbridge"
 	"github.com/silverton-io/buz/pkg/backend/file"
@@ -93,6 +94,9 @@ func getSink(conf config.Sink) (sink backendutils.Sink, err error) {
 	// case constants.CLICKHOUSE:
 	// 	sink := clickhousedb.Sink{}
 	// 	return &sink, nil
+	case constants.DUCKDB:
+		sink := duckdb.Sink{}
+		return &sink, nil
 	case constants.PUBNUB:
 		sink := pubnub.Sink{}
 		return &sink, nil

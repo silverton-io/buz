@@ -10,6 +10,7 @@ const (
 	MYSQL         string = "mysql"
 	MATERIALIZE   string = "materialize"
 	CLICKHOUSE    string = "clickhouse"
+	DUCKDB        string = "duckdb"
 	MONGODB       string = "mongodb"
 	ELASTICSEARCH string = "elasticsearch"
 	TIMESCALE     string = "timescale"
