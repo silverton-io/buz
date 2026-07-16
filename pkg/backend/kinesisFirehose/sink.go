@@ -77,7 +77,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 			log.Error().Err(err).Msg("🔴 could not publish event to kinesis firehose")
 			pubErr <- err
 		} else {
-			log.Debug().Msgf("🟡 published event batch to stream " + *input.DeliveryStreamName)
+			log.Debug().Msg("🟡 published event batch to stream " + *input.DeliveryStreamName)
 			pubErr <- nil
 		}
 	}(pubErr)

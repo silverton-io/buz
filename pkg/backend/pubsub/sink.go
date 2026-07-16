@@ -101,7 +101,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 				pErr <- err
 
 			} else {
-				log.Trace().Msgf("published event id " + id + " to topic " + topic.ID())
+				log.Trace().Msg("published event id " + id + " to topic " + topic.ID())
 				pErr <- nil
 			}
 		}(result, publishErr)
