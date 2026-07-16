@@ -10,28 +10,17 @@ permissions:
   contents: read
 jobs:
   build:
-    name: build & test
+    name: build & test (Go ${{ matrix.go-version }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ['1.25', '1.26']
+      fail-fast: false
     steps:
-      - uses: actions/setup-go@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
-          go-version: 1.19
-      - uses: actions/checkout@v3
-      - name: determine go cache paths
-        id: go-cache-path
-        run: |
-          echo "::set-output name=build::$(go env GOCACHE)"
-          echo "::set-output name=module::$(go env GOMODCACHE)"
-        shell: bash
-      - name: setup go cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ steps.go-cache-path.outputs.build }}
-            ${{ steps.go-cache-path.outputs.module }}
-          key: ${{ runner.os }}-go-buz-cache-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-buz-cache-
+          go-version: ${{ matrix.go-version }}
       - name: build
         run: make build
       - name: test
