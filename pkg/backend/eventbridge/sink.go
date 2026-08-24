@@ -8,8 +8,9 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/eventbridge"
+	awsconf "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/eventbridge"
+	"github.com/aws/aws-sdk-go-v2/service/eventbridge/types"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
@@ -19,7 +20,7 @@ import (
 
 type Sink struct {
 	metadata backendutils.SinkMetadata
-	client   *eventbridge.EventBridge
+	client   *eventbridge.Client
 	input    chan []envelope.Envelope
 	shutdown chan int
 }
@@ -29,10 +30,14 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 }
 
 func (s *Sink) Initialize(conf config.Sink) error {
-	es := session.Must(session.NewSession())
-	svc := eventbridge.New(es)
+	ctx := context.Background()
+	cfg, err := awsconf.LoadDefaultConfig(ctx)
+	if err != nil {
+		return err
+	}
+	client := eventbridge.NewFromConfig(cfg)
 	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
-	s.client = svc
+	s.client = client
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
 	return nil
@@ -50,25 +55,25 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 }
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
-	var entries []*eventbridge.PutEventsRequestEntry
+	var entries []types.PutEventsRequestEntry
 	for _, e := range envelopes {
 		byteString, err := e.AsByte()
 		if err != nil {
 			log.Error().Err(err).Msg("could not cast envelope to bytes")
 		}
-		entry := eventbridge.PutEventsRequestEntry{
+		entry := types.PutEventsRequestEntry{
 			EventBusName: &output,
 			Time:         &e.Timestamp,
 			Source:       aws.String(constants.BUZ),
 			DetailType:   &e.Schema,
 			Detail:       aws.String(string(byteString)),
 		}
-		entries = append(entries, &entry)
+		entries = append(entries, entry)
 	}
-	input := eventbridge.PutEventsInput{
+	input := &eventbridge.PutEventsInput{
 		Entries: entries,
 	}
-	result, err := s.client.PutEvents(&input)
+	result, err := s.client.PutEvents(ctx, input)
 	if err != nil {
 		log.Error().Err(err).Interface("result", result).Msg("could not dequeue")
 		return err
