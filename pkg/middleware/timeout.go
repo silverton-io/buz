@@ -24,9 +24,6 @@ func Timeout(conf config.Timeout) gin.HandlerFunc {
 	// TODO: pass context down the line so events aren't passed to invalid if the request times out.
 	return timeout.New(
 		timeout.WithTimeout(time.Duration(conf.Ms)*time.Millisecond),
-		timeout.WithHandler(func(c *gin.Context) {
-			c.Next()
-		}),
 		timeout.WithResponse(timeoutHandler),
 	)
 }

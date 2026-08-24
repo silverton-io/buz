@@ -6,21 +6,21 @@ package s3
 
 import (
 	"context"
+	"io"
 	"path/filepath"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconf "github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/config"
 )
 
 type RegistryBackend struct {
-	bucket     string
-	path       string
-	client     *s3.Client
-	downloader *manager.Downloader
+	bucket string
+	path   string
+	client *transfermanager.Client
 }
 
 func (b *RegistryBackend) Initialize(conf config.Backend) error {
@@ -31,9 +31,9 @@ func (b *RegistryBackend) Initialize(conf config.Backend) error {
 		log.Error().Err(err).Msg("🔴 could not load aws config")
 		return err
 	}
-	client := s3.NewFromConfig(cfg)
-	downloader := manager.NewDownloader(client)
-	b.bucket, b.path, b.client, b.downloader = conf.Bucket, conf.Path, client, downloader
+	s3Client := s3.NewFromConfig(cfg)
+	tmClient := transfermanager.New(s3Client)
+	b.bucket, b.path, b.client = conf.Bucket, conf.Path, tmClient
 	return nil
 }
 
@@ -45,9 +45,8 @@ func (b *RegistryBackend) GetRemote(schema string) (contents []byte, err error) 
 	} else {
 		schemaLocation = filepath.Join(b.path, schema)
 	}
-	buffer := manager.NewWriteAtBuffer([]byte{})
 	log.Debug().Msg("🟡 getting file from s3 backend " + schemaLocation)
-	_, err = b.downloader.Download(ctx, buffer, &s3.GetObjectInput{
+	output, err := b.client.GetObject(ctx, &transfermanager.GetObjectInput{
 		Bucket: aws.String(b.bucket),
 		Key:    aws.String(schemaLocation),
 	})
@@ -55,7 +54,12 @@ func (b *RegistryBackend) GetRemote(schema string) (contents []byte, err error) 
 		log.Error().Err(err).Msg("🔴 could not get file from s3: " + schemaLocation)
 		return nil, err
 	}
-	return buffer.Bytes(), nil
+	data, err := io.ReadAll(output.Body)
+	if err != nil {
+		log.Error().Err(err).Msg("🔴 could not read s3 object body: " + schemaLocation)
+		return nil, err
+	}
+	return data, nil
 }
 
 func (b *RegistryBackend) Close() {
