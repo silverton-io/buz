@@ -5,35 +5,20 @@
 package pubsub
 
 import (
+	"context"
 	"encoding/json"
 	"strconv"
+	"sync"
 	"time"
 
-	"sync"
-
-	"cloud.google.com/go/pubsub"
+	"cloud.google.com/go/pubsub/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/silverton-io/buz/pkg/backend/backendutils"
 	"github.com/silverton-io/buz/pkg/config"
 	"github.com/silverton-io/buz/pkg/envelope"
-	"golang.org/x/net/context"
 )
 
 const INIT_TIMEOUT_SECONDS = 10
-
-// See whether or not a topic exists.
-func checkTopicExistence(topic *pubsub.Topic) bool {
-	ctx := context.Background()
-	exists, err := topic.Exists(ctx)
-	if err != nil {
-		log.Debug().Err(err).Msg("🟡 cannot check valid event topic existence")
-		return false
-	}
-	if !exists {
-		return false
-	}
-	return true
-}
 
 type Sink struct {
 	metadata backendutils.SinkMetadata
@@ -48,16 +33,13 @@ func (s *Sink) Metadata() backendutils.SinkMetadata {
 
 func (s *Sink) Initialize(conf config.Sink) error {
 	s.metadata = backendutils.NewSinkMetadataFromConfig(conf)
-	ctx, _ := context.WithTimeout(context.Background(), INIT_TIMEOUT_SECONDS*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), INIT_TIMEOUT_SECONDS*time.Second)
+	defer cancel()
 	client, err := pubsub.NewClient(ctx, conf.Project)
 	if err != nil {
 		log.Debug().Err(err).Msg("🟡 could not initialize pubsub sink")
 		return err
 	}
-	defaultTopic := client.Topic(s.metadata.DefaultOutput)
-	checkTopicExistence(defaultTopic)
-	deadletterTopic := client.Topic(s.metadata.DeadletterOutput)
-	checkTopicExistence((deadletterTopic))
 	s.client = client
 	s.input = make(chan []envelope.Envelope, 10000)
 	s.shutdown = make(chan int, 1)
@@ -77,6 +59,8 @@ func (s *Sink) Enqueue(envelopes []envelope.Envelope) error {
 
 func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, output string) error {
 	var wg sync.WaitGroup
+	publisher := s.client.Publisher(output)
+	defer publisher.Stop()
 	for _, e := range envelopes {
 		payload, _ := json.Marshal(e)
 		msg := &pubsub.Message{
@@ -90,8 +74,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 				envelope.IS_VALID:  strconv.FormatBool(e.IsValid),
 			},
 		}
-		topic := s.client.Topic(output)
-		result := topic.Publish(ctx, msg)
+		result := publisher.Publish(ctx, msg)
 		wg.Add(1)
 		publishErr := make(chan error, 1)
 		go func(res *pubsub.PublishResult, pErr chan error) {
@@ -101,7 +84,7 @@ func (s *Sink) Dequeue(ctx context.Context, envelopes []envelope.Envelope, outpu
 				pErr <- err
 
 			} else {
-				log.Trace().Msg("published event id " + id + " to topic " + topic.ID())
+				log.Trace().Msg("published event id " + id + " to topic " + publisher.ID())
 				pErr <- nil
 			}
 		}(result, publishErr)
